@@ -1,5 +1,7 @@
 package com.slembers.alarmony.member.service;
 
+import com.slembers.alarmony.member.dto.response.IdCheckResponseDto;
+import com.slembers.alarmony.member.entity.Member;
 import com.slembers.alarmony.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -16,19 +18,19 @@ public class MemberServiceImpl implements MemberService {
      **/
 
     @Override
-    public boolean checkForDuplicateId(String id) {
+    public IdCheckResponseDto checkForDuplicateId(String username) {
 
-        return false;
+        return IdCheckResponseDto.builder().passed(memberRepo.existsByUsername(username)).build();
     }
 
 
     @Override
-    public Long getMemberByUsername(String username) {
+    public Member getMemberByUsername(String username) {
         return null;
     }
 
     @Override
-    public Long getMemberByNickName(String nickname) {
+    public Member getMemberByNickName(String nickname) {
         return null;
     }
 }
