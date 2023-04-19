@@ -32,7 +32,7 @@ public class GroupController {
     private NotificationService notificationService;
 
     @PostMapping("/{group-id}/members")
-    public ResponseEntity<?> inviteMemberToGroup(
+    public ResponseEntity<String> inviteMemberToGroup(
         @PathVariable(name = "group-id") int groupId,
         InviteMemberToGroupRequestDto inviteMemberToGroupRequestDto) {
 
