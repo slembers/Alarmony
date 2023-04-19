@@ -10,7 +10,6 @@ import com.slembers.alarmony.member.entity.Member;
 import com.slembers.alarmony.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -24,12 +23,13 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class GroupController {
 
-    @Autowired
-    private MemberService memberService;
-    @Autowired
-    private AlarmService alarmService;
-    @Autowired
-    private NotificationService notificationService;
+
+    private final MemberService memberService;
+
+    private final  AlarmService alarmService;
+
+
+    private final NotificationService notificationService;
 
     @PostMapping("/{group-id}/members")
     public ResponseEntity<String> inviteMemberToGroup(
