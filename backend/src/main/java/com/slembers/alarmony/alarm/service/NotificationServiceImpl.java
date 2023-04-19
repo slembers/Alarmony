@@ -1,7 +1,11 @@
 package com.slembers.alarmony.alarm.service;
 
 import com.slembers.alarmony.alarm.entity.Notification;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
 
+@Service
+@RequiredArgsConstructor
 public class NotificationServiceImpl implements NotificationService {
 
     /**

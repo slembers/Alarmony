@@ -28,7 +28,6 @@ public class GroupController {
 
     private final  AlarmService alarmService;
 
-
     private final NotificationService notificationService;
 
     @PostMapping("/{group-id}/members")

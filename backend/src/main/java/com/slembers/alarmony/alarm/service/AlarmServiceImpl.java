@@ -23,11 +23,11 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class AlarmServiceImpl implements AlarmService {
 
-    private AlarmRepository alarmRepository;
+    private final AlarmRepository alarmRepository;
 
-    private MemberAlarmRepository memberAlarmRepository;
+    private final MemberAlarmRepository memberAlarmRepository;
 
-    private MemberRepository memberRepository;
+    private final MemberRepository memberRepository;
 
     /**
      * 유저네임을 기준으로 멤버알람 리스트를 가져오고, 이를 responseDTO에 담는다.
@@ -39,7 +39,7 @@ public class AlarmServiceImpl implements AlarmService {
     public AlarmListResponseDto getAlarmList(String username) {
         Member member = memberRepository.findByUsername(username)
                 // 없으면 멤버 없음 예외 던지는 코드로 바꿀 것
-                .orElseThrow();
+                .orElseThrow(()->new RuntimeException());
 
         try {
             List<MemberAlarm> memberAlarmList = memberAlarmRepository.findAllByMember(member);
