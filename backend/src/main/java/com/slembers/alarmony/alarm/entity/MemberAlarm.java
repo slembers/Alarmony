@@ -1,9 +1,11 @@
 package com.slembers.alarmony.alarm.entity;
 
 import com.slembers.alarmony.member.entity.Member;
+import lombok.Getter;
 
 import javax.persistence.*;
 
+@Getter
 @Entity(name = "member_alarm")
 public class MemberAlarm {
 

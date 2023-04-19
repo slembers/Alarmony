@@ -5,6 +5,7 @@ import org.hibernate.annotations.DynamicInsert;
 
 import javax.persistence.*;
 
+
 @Entity(name = "member")
 @DynamicInsert
 public class Member {
@@ -20,14 +21,14 @@ public class Member {
     @Column(name = "nickname", nullable = false, unique = true)
     private String nickname;
 
-    @Column(name ="password", nullable = false)
+    @Column(name = "password", nullable = false)
     private String password;
 
 
-    @Column(name ="phone_number", nullable = false , unique = true)
-    private  String phoneNumber;
+    @Column(name = "phone_number", nullable = false, unique = true)
+    private String phoneNumber;
 
-    @Column(name ="authority")
+    @Column(name = "authority")
     @Enumerated(EnumType.STRING)
     @ColumnDefault("'ROLE_USER'")
     private AuthorityEnum authority;
