@@ -48,12 +48,18 @@ public class AlarmServiceImpl implements AlarmService {
             memberAlarmList.forEach((memberAlarm) -> {
                 Alarm alarm = memberAlarm.getAlarm();
                 LocalTime localTime = alarm.getTime();
+                Byte[] b = alarm.getAlarmDate();
+                for (Byte bb: b) {
+                    System.out.print(bb + " ");
+                }
+                System.out.println();
 
                 AlarmDto alarmDto = AlarmDto.builder()
-                        .alarmId(memberAlarm.getId())
+                        .alarmId(alarm.getId())
                         .title(alarm.getTitle())
-                        .time(localTime.getHour() % 12 == 0 ? localTime : localTime.minusHours(12))
-                        .ampm(alarm.getTime().getHour() % 12 == 0 ? "오전" : "오후")
+                        .hour(localTime.getHour() / 12 == 0 ? localTime.getHour() : localTime.getHour()-12)
+                        .minute(localTime.getMinute())
+                        .ampm(alarm.getTime().getHour() / 12 == 0 ? "오전" : "오후")
                         .alarmDate(CommonMethods.changeByteListToStringList(alarm.getAlarmDate()))
                         .build();
 
