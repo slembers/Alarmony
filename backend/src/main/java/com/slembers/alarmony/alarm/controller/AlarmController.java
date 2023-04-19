@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class AlarmController {
 
-    private AlarmService alarmService;
+    private final AlarmService alarmService;
 
     /**
      * 현재 로그인 유저의 알람 리스트를 가져온다

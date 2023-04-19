@@ -15,8 +15,14 @@ public class AlarmDto {
     @JsonProperty(value = "title")
     private String title;
 
-    @JsonProperty(value = "time")
-    private LocalTime time;
+//    @JsonProperty(value = "time")
+//    private LocalTime time;
+
+    @JsonProperty(value = "hour")
+    private int hour;
+
+    @JsonProperty(value = "minute")
+    private int minute;
 
     @JsonProperty(value = "ampm")
     private String ampm;

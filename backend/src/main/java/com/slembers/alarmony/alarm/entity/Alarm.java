@@ -27,8 +27,8 @@ public class Alarm {
     @JoinColumn(name = "host_id", nullable = false)
     private Member host;
 
-    @Column(name = "alarm_date")
-    @ColumnDefault("0x00")
+    @Column(name = "alarm_date",columnDefinition = "BINARY(7)")
+    @ColumnDefault("0x00000000000000")
     private Byte[] alarmDate;
 
     @Column(name = "sound_name", nullable = false)
