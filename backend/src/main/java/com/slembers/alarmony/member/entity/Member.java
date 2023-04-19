@@ -23,6 +23,10 @@ public class Member {
     @Column(name ="password", nullable = false)
     private String password;
 
+
+    @Column(name ="phone_number", nullable = false , unique = true)
+    private  String phoneNumber;
+
     @Column(name ="authority")
     @Enumerated(EnumType.STRING)
     @ColumnDefault("'ROLE_USER'")
