@@ -4,6 +4,7 @@ import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicInsert;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 @Entity(name = "alarm_record")
@@ -27,7 +28,7 @@ public class AlarmRecord {
     private int totalCount;
 
     @Column(name = "today_alarm_record")
-    private LocalTime todayAlarmRecord;
+    private LocalDateTime todayAlarmRecord;
 
     @Column(name = "message")
     private String message;
