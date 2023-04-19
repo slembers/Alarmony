@@ -1,12 +1,14 @@
 package com.slembers.alarmony.alarm.entity;
 
 import com.slembers.alarmony.member.entity.Member;
+import lombok.Getter;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicInsert;
 
 import javax.persistence.*;
 import java.time.LocalTime;
 
+@Getter
 @Entity(name = "alarm")
 @DynamicInsert
 public class Alarm {

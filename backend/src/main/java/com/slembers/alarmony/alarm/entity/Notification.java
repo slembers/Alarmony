@@ -1,10 +1,16 @@
 package com.slembers.alarmony.alarm.entity;
 
 import com.slembers.alarmony.member.entity.Member;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
 
 import javax.persistence.*;
 
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity(name = "notification")
 public class Notification {
 
