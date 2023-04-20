@@ -18,4 +18,12 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
      * @return
      */
     Optional<Member> findByUsername(String username);
+
+    /**
+     * 닉네임을 기준으로 Member를 찾는다.
+     *
+     * @param nickname 닉네임
+     * @return nickname으로 조회한 멤버
+     */
+    Optional<Member> findByNickname(String nickname);
 }
