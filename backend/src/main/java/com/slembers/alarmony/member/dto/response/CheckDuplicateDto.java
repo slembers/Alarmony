@@ -7,6 +7,6 @@ import lombok.Getter;
 
 @Getter
 @Builder
-public class IdCheckResponseDto {
-    private boolean passed;
+public class CheckDuplicateDto {
+    private boolean isDuplicated;
 }
