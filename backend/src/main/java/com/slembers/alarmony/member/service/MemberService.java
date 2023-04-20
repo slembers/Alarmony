@@ -19,7 +19,7 @@ public interface MemberService {
     /**
      * 닉네임 중복 체크
      */
-    CheckDuplicateDto checkForDuplicateNickName(String email);
+    CheckDuplicateDto checkForDuplicateNickname(String nickname);
 
     /**
      * username를 받으면 pk를 리턴
@@ -31,7 +31,7 @@ public interface MemberService {
      * nickname을 받으면 pk를 리턴
      */
 
-    Member getMemberByNickName(String nickname);
+    Member getMemberByNickname(String nickname);
 
 
 }
