@@ -1,5 +1,7 @@
 package com.slembers.alarmony.member.service;
 
+import com.slembers.alarmony.member.dto.vo.MemberVerificationDto;
+
 public interface EmailVerifyService {
 
 
@@ -14,9 +16,9 @@ public interface EmailVerifyService {
 
     /**
      * 인증 이메일 보내기
-     * @param email
+     * @param memberVerificationDto
      */
-    void sendVerificationMail(String email);
+    public void sendVerificationMail(MemberVerificationDto memberVerificationDto) ;
 
 
     /**
