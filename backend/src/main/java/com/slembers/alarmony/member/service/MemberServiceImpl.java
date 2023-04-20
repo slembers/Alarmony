@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class MemberServiceImpl implements MemberService {
 
-    private final MemberRepository memberRepo;
+    private final MemberRepository memberRepository;
 
     /**
      * 아이디 중복체크
@@ -21,7 +21,7 @@ public class MemberServiceImpl implements MemberService {
     @Override
     public CheckDuplicateDto checkForDuplicateId(String username) {
 
-        return CheckDuplicateDto.builder().isDuplicated(memberRepo.existsByUsername(username)).build();
+        return CheckDuplicateDto.builder().isDuplicated(memberRepository.existsByUsername(username)).build();
 
     }
 
@@ -32,7 +32,7 @@ public class MemberServiceImpl implements MemberService {
      */
     @Override
     public CheckDuplicateDto checkForDuplicateEmail(String email) {
-        return CheckDuplicateDto.builder().isDuplicated(memberRepo.existsByEmail(email)).build();
+        return CheckDuplicateDto.builder().isDuplicated(memberRepository.existsByEmail(email)).build();
     }
 
 
@@ -42,8 +42,8 @@ public class MemberServiceImpl implements MemberService {
      * @return 존재여부
      */
     @Override
-    public CheckDuplicateDto checkForDuplicateNickName(String nickname) {
-        return CheckDuplicateDto.builder().isDuplicated(memberRepo.existsByNickname(nickname)).build();
+    public CheckDuplicateDto checkForDuplicateNickname(String nickname) {
+        return CheckDuplicateDto.builder().isDuplicated(memberRepository.existsByNickname(nickname)).build();
     }
 
     @Override
@@ -52,7 +52,7 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public Member getMemberByNickName(String nickname) {
+    public Member getMemberByNickname(String nickname) {
         return null;
     }
 }
