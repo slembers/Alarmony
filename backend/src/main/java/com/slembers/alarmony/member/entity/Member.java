@@ -25,8 +25,8 @@ public class Member {
     private String password;
 
 
-    @Column(name = "phone_number", nullable = false, unique = true)
-    private String phoneNumber;
+    @Column(name = "email", nullable = false, unique = true)
+    private String email;
 
     @Column(name = "authority")
     @Enumerated(EnumType.STRING)
