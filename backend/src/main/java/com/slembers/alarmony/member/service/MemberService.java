@@ -1,6 +1,6 @@
 package com.slembers.alarmony.member.service;
 
-import com.slembers.alarmony.member.dto.response.IdCheckResponseDto;
+import com.slembers.alarmony.member.dto.response.CheckDuplicateDto;
 import com.slembers.alarmony.member.entity.Member;
 
 public interface MemberService {
@@ -8,8 +8,18 @@ public interface MemberService {
     /**
      * 아이디 중복체크
      **/
-    IdCheckResponseDto checkForDuplicateId(String username);
+    CheckDuplicateDto checkForDuplicateId(String username);
 
+
+    /**
+     * 이메일 중복체크
+     */
+    CheckDuplicateDto checkForDuplicateEmail(String email);
+
+    /**
+     * 닉네임 중복 체크
+     */
+    CheckDuplicateDto checkForDuplicateNickName(String email);
 
     /**
      * username를 받으면 pk를 리턴
@@ -22,7 +32,6 @@ public interface MemberService {
      */
 
     Member getMemberByNickName(String nickname);
-
 
 
 }
