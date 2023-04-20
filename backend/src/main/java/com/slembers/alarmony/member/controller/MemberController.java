@@ -1,7 +1,10 @@
 package com.slembers.alarmony.member.controller;
 
 
+import com.slembers.alarmony.member.dto.request.SignUpRequestDto;
 import com.slembers.alarmony.member.dto.response.CheckDuplicateDto;
+import com.slembers.alarmony.member.dto.vo.MemberVerificationDto;
+import com.slembers.alarmony.member.service.EmailVerifyService;
 import com.slembers.alarmony.member.service.MemberService;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
@@ -11,12 +14,16 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+
 @RestController
 @RequestMapping("/members")
 @RequiredArgsConstructor
 public class MemberController {
 
     private final MemberService memberService;
+
+    private final EmailVerifyService emailVerifyService;
 
 
     /**
@@ -46,36 +53,36 @@ public class MemberController {
         return new ResponseEntity<>(memberService.checkForDuplicateNickname(nickname), HttpStatus.OK);
     }
 
+
     /**
-     * 인증 이메일 발송
+     * 회원가입
      */
-    @ApiOperation(value = "회원 가입시 이메인 인증", notes = "입력한 이메일로 인증번호 발송한다.")
-    @ApiResponses({
-            @ApiResponse(code = 200, message = "인증번호 발송 성공"),
-            @ApiResponse(code = 401, message = "인증번호 발송 실패"),
-            @ApiResponse(code = 404, message = "사용자 없음"),
-            @ApiResponse(code = 500, message = "서버 오류")
-    })
-    @PostMapping("/email-confirm")
-    public ResponseEntity<String> sendEmailVerificationCode(@RequestBody String email) {
 
-        //존재하는 이메일인지 체크
-        if(!memberService.checkForDuplicateEmail(email).isDuplicated()){
-
-            //난수 생성
+    @PostMapping()
+    public ResponseEntity<String> signUp(@Valid @RequestBody SignUpRequestDto signUpRequestDto){
 
 
-            //난수 생성으로 이메일 발급
+       MemberVerificationDto memberVerificationDto =  memberService.signUp(signUpRequestDto);
 
-            //redis에 인증번호 저장
+       emailVerifyService.sendVerificationMail(memberVerificationDto);
 
+        return new ResponseEntity<>("회원 가입 성공", HttpStatus.CREATED);
+    }
 
-            //
+    /**
+     *  인증 이메일 확인
+     */
+    @GetMapping("/verify/{key}")
+    public ResponseEntity<String> getVerify(@PathVariable String key) {
 
+        try {
+            emailVerifyService.verifyEmail(key);
+            return ResponseEntity.ok("Email verified successfully");
+        } catch (Exception e) {
+            // Handle other exceptions
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Internal server error: " + e.getMessage());
         }
 
-
-        return new ResponseEntity<>("인증 번호 발송 완료", HttpStatus.OK);
-
     }
+
 }
