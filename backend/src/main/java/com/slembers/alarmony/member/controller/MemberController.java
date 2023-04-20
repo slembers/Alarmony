@@ -40,7 +40,7 @@ public class MemberController {
 
     @GetMapping("/check-nickname")
     public ResponseEntity<CheckDuplicateDto> checkForDuplicateNickname(@RequestParam("nickname") String nickname) {
-        return new ResponseEntity<>(memberService.checkForDuplicateNickName(nickname), HttpStatus.OK);
+        return new ResponseEntity<>(memberService.checkForDuplicateNickname(nickname), HttpStatus.OK);
     }
 
 }
