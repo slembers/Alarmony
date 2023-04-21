@@ -1,19 +1,58 @@
 package com.slembers.alarmony.member.service;
 
+import com.slembers.alarmony.global.execption.CustomException;
+import com.slembers.alarmony.member.dto.request.SignUpDto;
 import com.slembers.alarmony.member.dto.response.CheckDuplicateDto;
 import com.slembers.alarmony.member.entity.Member;
+import com.slembers.alarmony.member.exception.MemberErrorCode;
 import com.slembers.alarmony.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
+
+import javax.transaction.Transactional;
 
 @Service
 @RequiredArgsConstructor
 public class MemberServiceImpl implements MemberService {
 
+    private final ModelMapper modelMapper;
+
     private final MemberRepository memberRepository;
+
+    private final EmailVerifyService emailVerifyService;
+
+
+    @Transactional
+    @Override
+    public boolean signUp(SignUpDto signUpDto) {
+
+
+        //아이디 중복 체크
+        if (checkForDuplicateId(signUpDto.getUsername()).isDuplicated())
+            throw new CustomException(MemberErrorCode.ID_DUPLICATED);
+        //닉네임 중복 체크
+        if (checkForDuplicateNickname(signUpDto.getNickname()).isDuplicated())
+            throw new CustomException(MemberErrorCode.NICKNAME_DUPLICATED);
+        //이메일 중복 체크
+        if (checkForDuplicateEmail(signUpDto.getEmail()).isDuplicated())
+            throw new CustomException(MemberErrorCode.EMAIL_DUPLICATED);
+
+
+        Member member = modelMapper.map(signUpDto, Member.class);
+
+
+        //저장이 잘 완료 되었다면 인증 메일을 전송한다.
+        emailVerifyService.sendVerificationMail(member.getUsername(), member.getEmail());
+
+        memberRepository.save(member);
+        return true;
+    }
+
 
     /**
      * 아이디 중복체크
+     *
      * @param username 유저 아이디
      * @return 존재여부
      **/
@@ -27,6 +66,7 @@ public class MemberServiceImpl implements MemberService {
 
     /**
      * 이메일 중복 체크
+     *
      * @param email :이메일주소
      * @return 존재여부
      */
@@ -38,21 +78,12 @@ public class MemberServiceImpl implements MemberService {
 
     /**
      * 닉네임 중복 체크
+     *
      * @param nickname : 닉네임
      * @return 존재여부
      */
     @Override
     public CheckDuplicateDto checkForDuplicateNickname(String nickname) {
         return CheckDuplicateDto.builder().isDuplicated(memberRepository.existsByNickname(nickname)).build();
-    }
-
-    @Override
-    public Member getMemberByUsername(String username) {
-        return null;
-    }
-
-    @Override
-    public Member getMemberByNickname(String nickname) {
-        return null;
     }
 }
