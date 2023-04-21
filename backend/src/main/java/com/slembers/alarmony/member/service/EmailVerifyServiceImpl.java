@@ -89,7 +89,7 @@ public class EmailVerifyServiceImpl implements EmailVerifyService {
     public void verifyEmail(String key) {
 
         String username = redisUtil.getData(key);
-        log.info("[key로 조회한 회원아이디]" + " " + username);
+        log.info("[key로 조회한 회원아이디] " + username);
         if (username != null) {
             modifyAuthorityAccess(username);
             redisUtil.deleteData(key);
@@ -109,7 +109,7 @@ public class EmailVerifyServiceImpl implements EmailVerifyService {
         Member member = memberRepository.findByUsername(username).orElseThrow();
         member.modifyAuthority(AuthorityEnum.ROLE_USER);
         memberRepository.save(member);
-        log.info(username + " 의 " + "ROLE_USER 로" + "권한 변경");
+        log.info(username + "의 ROLE_USER로 권한 변경");
 
     }
 }
