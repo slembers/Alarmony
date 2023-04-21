@@ -5,11 +5,11 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 
 @AllArgsConstructor
-public enum AlarmErrorCode implements ErrorCode {
+public enum MemberAlarmErrorCode implements ErrorCode {
 
-    ALARM_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 알람 정보를 찾을 수 없습니다"),
+    MEMBER_ALARM_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 멤버-알람 정보를 찾을 수 없습니다."),
 
-    ALARM_GET_ERROR(HttpStatus.CONFLICT, "알람 정보를 가져오는 중 에러가 발생했습니다.")
+    MEMBER_ALARM_INPUT_ERROR(HttpStatus.CONFLICT, "기록 등록 중 에러가 발생했습니다.")
 
     ;
 

@@ -5,7 +5,6 @@ import org.hibernate.annotations.DynamicInsert;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 
 @Entity(name = "alarm_record")
 @DynamicInsert
@@ -32,4 +31,12 @@ public class AlarmRecord {
 
     @Column(name = "message")
     private String message;
+
+    /**
+     * 전달된 메시지로 기록한다.
+     * @param message
+     */
+    public void changeMessage(String message) {
+        this.message = message;
+    }
 }
