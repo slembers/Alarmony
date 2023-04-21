@@ -3,12 +3,8 @@ package com.slembers.alarmony.member.controller;
 
 import com.slembers.alarmony.member.dto.request.SignUpRequestDto;
 import com.slembers.alarmony.member.dto.response.CheckDuplicateDto;
-import com.slembers.alarmony.member.dto.vo.MemberVerificationDto;
 import com.slembers.alarmony.member.service.EmailVerifyService;
 import com.slembers.alarmony.member.service.MemberService;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,8 +18,7 @@ import javax.validation.Valid;
 public class MemberController {
 
     private final MemberService memberService;
-
-    private final EmailVerifyService emailVerifyService;
+    private  final  EmailVerifyService emailVerifyService;
 
 
     /**
@@ -62,9 +57,7 @@ public class MemberController {
     public ResponseEntity<String> signUp(@Valid @RequestBody SignUpRequestDto signUpRequestDto){
 
 
-       MemberVerificationDto memberVerificationDto =  memberService.signUp(signUpRequestDto);
-
-       emailVerifyService.sendVerificationMail(memberVerificationDto);
+         memberService.signUp(signUpRequestDto);
 
         return new ResponseEntity<>("회원 가입 성공", HttpStatus.CREATED);
     }
