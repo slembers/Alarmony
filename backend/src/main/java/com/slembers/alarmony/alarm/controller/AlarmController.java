@@ -1,13 +1,12 @@
 package com.slembers.alarmony.alarm.controller;
 
+import com.slembers.alarmony.alarm.dto.request.PutAlarmMessageRequestDto;
 import com.slembers.alarmony.alarm.dto.response.AlarmListResponseDto;
 import com.slembers.alarmony.alarm.service.AlarmService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/alarms")
@@ -26,5 +25,23 @@ public class AlarmController {
         // 추후에 jwt에서 찾은 유저네임으로 바꾸어야 한다
         String username = "test";
         return new ResponseEntity<>(alarmService.getAlarmList(username), HttpStatus.OK);
+    }
+
+    /**
+     * 특정 알람아이디를 주면, 알람 기록을 찾아서 메시지를 기록해둔다.
+     * @param alarmId
+     * @param putAlarmMessageRequestDto
+     * @return
+     */
+    @PutMapping("/{alarm-id}/message")
+    public ResponseEntity<String> putAlarmMessage(
+            @PathVariable("alarm-id") Long alarmId,
+            @RequestBody PutAlarmMessageRequestDto putAlarmMessageRequestDto) {
+
+        // TODO : 시큐리티에서 멤버 정보 얻어오기
+        String username = "test";
+
+        alarmService.putAlarmMessage(username, alarmId, putAlarmMessageRequestDto.getMessage());
+        return new ResponseEntity<>("알람 메시지가 기록되었습니다.", HttpStatus.OK);
     }
 }
