@@ -1,10 +1,8 @@
 package com.slembers.alarmony.member.service;
 
 import com.slembers.alarmony.global.execption.CustomException;
-import com.slembers.alarmony.member.dto.request.SignUpRequestDto;
+import com.slembers.alarmony.member.dto.request.SignUpDto;
 import com.slembers.alarmony.member.dto.response.CheckDuplicateDto;
-import com.slembers.alarmony.member.dto.vo.MemberVerificationDto;
-import com.slembers.alarmony.member.entity.AuthorityEnum;
 import com.slembers.alarmony.member.entity.Member;
 import com.slembers.alarmony.member.exception.MemberErrorCode;
 import com.slembers.alarmony.member.repository.MemberRepository;
@@ -27,21 +25,21 @@ public class MemberServiceImpl implements MemberService {
 
     @Transactional
     @Override
-    public boolean signUp(SignUpRequestDto signUpRequestDto) {
+    public boolean signUp(SignUpDto signUpDto) {
 
 
         //아이디 중복 체크
-        if (checkForDuplicateId(signUpRequestDto.getUsername()).isDuplicated())
+        if (checkForDuplicateId(signUpDto.getUsername()).isDuplicated())
             throw new CustomException(MemberErrorCode.ID_DUPLICATED);
         //닉네임 중복 체크
-        if (checkForDuplicateNickname(signUpRequestDto.getNickname()).isDuplicated())
+        if (checkForDuplicateNickname(signUpDto.getNickname()).isDuplicated())
             throw new CustomException(MemberErrorCode.NICKNAME_DUPLICATED);
         //이메일 중복 체크
-        if (checkForDuplicateEmail(signUpRequestDto.getEmail()).isDuplicated())
+        if (checkForDuplicateEmail(signUpDto.getEmail()).isDuplicated())
             throw new CustomException(MemberErrorCode.EMAIL_DUPLICATED);
 
-        // 중복 체크 생략
-        Member member = modelMapper.map(signUpRequestDto, Member.class);
+
+        Member member = modelMapper.map(signUpDto, Member.class);
 
 
         //저장이 잘 완료 되었다면 인증 메일을 전송한다.

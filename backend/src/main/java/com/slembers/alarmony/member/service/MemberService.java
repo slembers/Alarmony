@@ -1,6 +1,6 @@
 package com.slembers.alarmony.member.service;
 
-import com.slembers.alarmony.member.dto.request.SignUpRequestDto;
+import com.slembers.alarmony.member.dto.request.SignUpDto;
 import com.slembers.alarmony.member.dto.response.CheckDuplicateDto;
 
 public interface MemberService {
@@ -9,7 +9,7 @@ public interface MemberService {
      * 회원 가입
      */
 
-    boolean signUp(SignUpRequestDto signUpRequestDto);
+    boolean signUp(SignUpDto signUpDto);
 
 
     /**
