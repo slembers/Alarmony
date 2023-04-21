@@ -1,7 +1,7 @@
 package com.slembers.alarmony.member.controller;
 
 
-import com.slembers.alarmony.member.dto.request.SignUpRequestDto;
+import com.slembers.alarmony.member.dto.request.SignUpDto;
 import com.slembers.alarmony.member.dto.response.CheckDuplicateDto;
 import com.slembers.alarmony.member.service.EmailVerifyService;
 import com.slembers.alarmony.member.service.MemberService;
@@ -54,12 +54,12 @@ public class MemberController {
      */
 
     @PostMapping()
-    public ResponseEntity<String> signUp(@Valid @RequestBody SignUpRequestDto signUpRequestDto) {
+    public ResponseEntity<String> signUp(@Valid @RequestBody SignUpDto signUpDto) {
 
 
-        memberService.signUp(signUpRequestDto);
-
+        memberService.signUp(signUpDto);
         return new ResponseEntity<>("회원 가입 성공", HttpStatus.CREATED);
+
     }
 
     /**
@@ -68,13 +68,8 @@ public class MemberController {
     @GetMapping("/verify/{key}")
     public ResponseEntity<String> getVerify(@PathVariable String key) {
 
-        try {
-            emailVerifyService.verifyEmail(key);
-            return ResponseEntity.ok("Email verified successfully");
-        } catch (Exception e) {
-            // Handle other exceptions
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Internal server error: " + e.getMessage());
-        }
+        emailVerifyService.verifyEmail(key);
+        return new ResponseEntity<>("이메일 인증에 성공하였습니다.", HttpStatus.OK);
 
     }
 
