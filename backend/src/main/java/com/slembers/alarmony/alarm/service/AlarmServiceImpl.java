@@ -4,10 +4,7 @@ import com.slembers.alarmony.alarm.dto.AlarmDto;
 import com.slembers.alarmony.alarm.dto.response.AlarmListResponseDto;
 import com.slembers.alarmony.alarm.entity.Alarm;
 import com.slembers.alarmony.alarm.entity.MemberAlarm;
-import com.slembers.alarmony.alarm.exception.AlarmErrorCode;
-import com.slembers.alarmony.alarm.repository.AlarmRepository;
 import com.slembers.alarmony.alarm.repository.MemberAlarmRepository;
-import com.slembers.alarmony.global.execption.CustomException;
 import com.slembers.alarmony.global.util.CommonMethods;
 import com.slembers.alarmony.member.entity.Member;
 import com.slembers.alarmony.member.repository.MemberRepository;
@@ -18,14 +15,11 @@ import org.springframework.stereotype.Service;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class AlarmServiceImpl implements AlarmService {
-
-    private final AlarmRepository alarmRepository;
 
     private final MemberAlarmRepository memberAlarmRepository;
 
@@ -75,15 +69,4 @@ public class AlarmServiceImpl implements AlarmService {
         }
     }
 
-    /**
-     * 알람 id를 사용하여 데이터베이스에서 알람 객체를 얻어온다. 알람 정보가 존재하지 않을 경우 예외를 던진다.
-     *
-     * @param id
-     * @return 알람 객체
-     */
-    @Override
-    public Alarm getAlarmByAlarmId(Long id) {
-        return alarmRepository.findById(id)
-            .orElseThrow(() -> new CustomException(AlarmErrorCode.ALARM_NOT_FOUND));
-    }
 }
