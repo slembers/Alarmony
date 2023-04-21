@@ -9,11 +9,11 @@ import org.springframework.context.annotation.Configuration;
 public class ApplicationConfig {
 
     @Bean
-    public ModelMapper modelMapper(){
+    public ModelMapper modelMapper() {
         ModelMapper modelMapper = new ModelMapper();
-         modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT)
-                 .setFieldAccessLevel(org.modelmapper.config.Configuration.AccessLevel.PRIVATE)
-                 .setFieldMatchingEnabled(true);  //기본은 standard
+        modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT)
+                .setFieldAccessLevel(org.modelmapper.config.Configuration.AccessLevel.PRIVATE)
+                .setFieldMatchingEnabled(true);  //기본은 standard
         return modelMapper;
     }
 }
