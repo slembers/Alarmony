@@ -22,6 +22,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -97,7 +98,6 @@ public class AlarmServiceImpl implements AlarmService {
         } catch (Exception e) {
             throw new CustomException(MemberAlarmErrorCode.MEMBER_ALARM_INPUT_ERROR);
         }
-
     }
 
     /**
