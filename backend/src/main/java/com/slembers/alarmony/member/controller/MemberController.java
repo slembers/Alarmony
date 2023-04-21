@@ -18,7 +18,7 @@ import javax.validation.Valid;
 public class MemberController {
 
     private final MemberService memberService;
-    private  final  EmailVerifyService emailVerifyService;
+    private final EmailVerifyService emailVerifyService;
 
 
     /**
@@ -54,16 +54,16 @@ public class MemberController {
      */
 
     @PostMapping()
-    public ResponseEntity<String> signUp(@Valid @RequestBody SignUpRequestDto signUpRequestDto){
+    public ResponseEntity<String> signUp(@Valid @RequestBody SignUpRequestDto signUpRequestDto) {
 
 
-         memberService.signUp(signUpRequestDto);
+        memberService.signUp(signUpRequestDto);
 
         return new ResponseEntity<>("회원 가입 성공", HttpStatus.CREATED);
     }
 
     /**
-     *  인증 이메일 확인
+     * 인증 이메일 확인
      */
     @GetMapping("/verify/{key}")
     public ResponseEntity<String> getVerify(@PathVariable String key) {
