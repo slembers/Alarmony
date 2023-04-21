@@ -9,8 +9,8 @@ import org.springframework.http.HttpStatus;
 public enum EmailVerifyErrorCode implements ErrorCode {
 
 
-    EMAIL_INTERNAL_ERROR(HttpStatus.INTERNAL_SERVER_ERROR,"내부서버에서 Email 에러가 발생했습니다."),
-    VERIFY_KEY_NOT_FOUND(HttpStatus.NOT_FOUND,"해당하는 인증 키가 존재하지 않습니다.");
+    EMAIL_INTERNAL_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "내부서버에서 Email 에러가 발생했습니다."),
+    VERIFY_KEY_NOT_FOUND(HttpStatus.NOT_FOUND, "해당하는 인증 키가 존재하지 않습니다.");
 
     private final HttpStatus httpStatus;
     private final String detail;

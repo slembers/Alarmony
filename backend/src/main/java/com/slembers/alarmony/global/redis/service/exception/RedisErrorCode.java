@@ -7,7 +7,7 @@ import org.springframework.http.HttpStatus;
 @AllArgsConstructor
 public enum RedisErrorCode  implements ErrorCode {
 
-    REDIS_ERROR_CODE(HttpStatus.INTERNAL_SERVER_ERROR,"Redis 오류 발생");
+    REDIS_ERROR_CODE(HttpStatus.INTERNAL_SERVER_ERROR, "Redis 오류 발생");
 
     private final HttpStatus httpStatus;
     private final String detail;
