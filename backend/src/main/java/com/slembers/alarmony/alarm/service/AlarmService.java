@@ -12,4 +12,10 @@ public interface AlarmService {
      */
     AlarmListResponseDto getAlarmList(String username);
 
+    /**
+     * 특정 알람아이디를 주면, 알람 기록을 찾아서 메시지를 기록해둔다.
+     * @param alarmId
+     * @param message
+     */
+    void putAlarmMessage(String username, Long alarmId, String message);
 }

@@ -1,5 +1,6 @@
 package com.slembers.alarmony.member.entity;
 
+import lombok.Getter;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicInsert;
 
@@ -7,6 +8,7 @@ import javax.persistence.*;
 
 
 @Entity(name = "member")
+@Getter
 @DynamicInsert
 public class Member {
 
