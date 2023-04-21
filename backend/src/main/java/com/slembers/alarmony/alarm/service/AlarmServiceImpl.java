@@ -99,4 +99,30 @@ public class AlarmServiceImpl implements AlarmService {
         }
 
     }
+
+    /**
+     * 특정 알람 아이디의 정보를 반환한다.
+     * @param alarmId 알람 아이디
+     * @return 알람 정보
+     */
+    @Override
+    public AlarmDto getAlarmInfo(Long alarmId) {
+        try {
+            Alarm alarm = alarmRepository.findById(alarmId)
+                .orElseThrow(() -> new CustomException(AlarmErrorCode.ALARM_NOT_FOUND));
+
+            LocalTime localTime = alarm.getTime();
+
+            return AlarmDto.builder()
+                    .alarmId(alarm.getId())
+                    .title(alarm.getTitle())
+                    .hour(localTime.getHour() / 12 == 0 ? localTime.getHour() : localTime.getHour() - 12)
+                    .minute(localTime.getMinute())
+                    .ampm(alarm.getTime().getHour() / 12 == 0 ? "오전" : "오후")
+                    .alarmDate(CommonMethods.changeByteListToStringList(alarm.getAlarmDate()))
+                    .build();
+        } catch (Exception e) {
+            throw new CustomException(AlarmErrorCode.ALARM_GET_ERROR);
+        }
+    }
 }

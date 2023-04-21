@@ -1,5 +1,6 @@
 package com.slembers.alarmony.alarm.controller;
 
+import com.slembers.alarmony.alarm.dto.AlarmDto;
 import com.slembers.alarmony.alarm.dto.request.PutAlarmMessageRequestDto;
 import com.slembers.alarmony.alarm.dto.response.AlarmListResponseDto;
 import com.slembers.alarmony.alarm.service.AlarmService;
@@ -43,5 +44,15 @@ public class AlarmController {
 
         alarmService.putAlarmMessage(username, alarmId, putAlarmMessageRequestDto.getMessage());
         return new ResponseEntity<>("알람 메시지가 기록되었습니다.", HttpStatus.OK);
+    }
+
+    /**
+     * 특정 알람 아이디로 알람 정보를 가져온다
+     * @param alarmId 알람 아이디
+     * @return 알람 정보
+     */
+    @GetMapping("/{alarm-id}")
+    public ResponseEntity<AlarmDto> getAlarmInfo(@PathVariable("alarm-id") Long alarmId){
+        return new ResponseEntity<>(alarmService.getAlarmInfo(alarmId),HttpStatus.OK);
     }
 }

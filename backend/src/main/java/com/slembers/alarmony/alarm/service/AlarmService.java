@@ -1,5 +1,6 @@
 package com.slembers.alarmony.alarm.service;
 
+import com.slembers.alarmony.alarm.dto.AlarmDto;
 import com.slembers.alarmony.alarm.dto.response.AlarmListResponseDto;
 
 public interface AlarmService {
@@ -18,4 +19,11 @@ public interface AlarmService {
      * @param message
      */
     void putAlarmMessage(String username, Long alarmId, String message);
+
+    /**
+     * 유저네임을 기준으로 특정 알람 정보를 가져온다.
+     * @param alarmId 알람 아이디
+     * @return 알람 정보
+     */
+    AlarmDto getAlarmInfo(Long alarmId);
 }
