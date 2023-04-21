@@ -15,6 +15,7 @@ import javax.persistence.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @DynamicInsert
+@Entity(name = "member")
 public class Member {
 
     @Id
