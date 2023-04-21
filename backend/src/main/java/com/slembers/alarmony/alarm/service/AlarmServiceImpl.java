@@ -76,18 +76,6 @@ public class AlarmServiceImpl implements AlarmService {
     }
 
     /**
-     * 알람 id를 사용하여 데이터베이스에서 알람 객체를 얻어온다. 알람 정보가 존재하지 않을 경우 예외를 던진다.
-     *
-     * @param id
-     * @return 알람 객체
-     */
-    @Override
-    public Alarm getAlarmByAlarmId(Long id) {
-        return alarmRepository.findById(id)
-                .orElseThrow(() -> new CustomException(AlarmErrorCode.ALARM_NOT_FOUND));
-    }
-
-    /**
      * 특정 알람아이디를 주면, 알람 기록을 찾아서 메시지를 기록해둔다.
      *
      * @param alarmId
