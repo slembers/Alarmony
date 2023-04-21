@@ -11,7 +11,8 @@ public class ApplicationConfig {
     @Bean
     public ModelMapper modelMapper(){
         ModelMapper modelMapper = new ModelMapper();
-         modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT).setFieldAccessLevel(org.modelmapper.config.Configuration.AccessLevel.PRIVATE)
+         modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT)
+                 .setFieldAccessLevel(org.modelmapper.config.Configuration.AccessLevel.PRIVATE)
                  .setFieldMatchingEnabled(true);  //기본은 standard
         return modelMapper;
     }
