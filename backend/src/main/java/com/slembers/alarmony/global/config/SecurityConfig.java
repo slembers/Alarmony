@@ -54,7 +54,8 @@ public class SecurityConfig   {
                 .antMatchers(HttpMethod.DELETE,"/temp/{tempId}").hasAnyAuthority("ROLE_MANAGER")
                 .antMatchers(HttpMethod.POST, "/comments/**").authenticated()
                 .antMatchers(HttpMethod.DELETE,"/comments/**").authenticated()*/
-                .antMatchers("/**").permitAll()
+                .antMatchers("/api/members/sign-up", "api.=/members/login").permitAll()
+                // .antMatchers("/**").permitAll()
                 .anyRequest().authenticated()
                 .and().build();
     }

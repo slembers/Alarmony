@@ -1,7 +1,10 @@
 package com.slembers.alarmony.member.service;
 
+import com.slembers.alarmony.member.dto.LoginDto;
 import com.slembers.alarmony.member.dto.request.SignUpDto;
 import com.slembers.alarmony.member.dto.response.CheckDuplicateDto;
+
+import javax.servlet.http.HttpServletResponse;
 
 public interface MemberService {
 
@@ -10,6 +13,12 @@ public interface MemberService {
      */
 
     boolean signUp(SignUpDto signUpDto);
+
+
+    /**
+     * 로그인
+     */
+     void login(LoginDto loginDto , HttpServletResponse response);
 
 
     /**
