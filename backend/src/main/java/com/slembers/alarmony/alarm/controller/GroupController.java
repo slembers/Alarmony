@@ -69,6 +69,12 @@ public class GroupController {
         return new ResponseEntity<>("멤버에게 그룹 초대를 요청했습니다.", HttpStatus.OK);
     }
 
+    /**
+     * 그룹에서 떠납니다.
+     *
+     * @param groupId 그룹 id
+     * @return 성공 여부
+     */
     @DeleteMapping("/{group-id}")
     public ResponseEntity<String> leaveFromGroup(
         @PathVariable(name = "group-id") Long groupId) {
