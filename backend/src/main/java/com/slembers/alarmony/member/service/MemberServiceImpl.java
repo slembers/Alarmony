@@ -8,6 +8,7 @@ import com.slembers.alarmony.member.exception.MemberErrorCode;
 import com.slembers.alarmony.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -21,6 +22,8 @@ public class MemberServiceImpl implements MemberService {
     private final MemberRepository memberRepository;
 
     private final EmailVerifyService emailVerifyService;
+
+    private final PasswordEncoder passwordEncoder;
 
 
     @Transactional
@@ -40,6 +43,8 @@ public class MemberServiceImpl implements MemberService {
 
 
         Member member = modelMapper.map(signUpDto, Member.class);
+        //비밀번호 암호화
+        member.encodePassword(passwordEncoder);
 
 
         //저장이 잘 완료 되었다면 인증 메일을 전송한다.
