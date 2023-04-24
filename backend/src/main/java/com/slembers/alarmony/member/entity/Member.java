@@ -1,5 +1,6 @@
 package com.slembers.alarmony.member.entity;
 
+import java.util.Objects;
 import lombok.Getter;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -51,6 +52,19 @@ public class Member {
     public void encodePassword(PasswordEncoder passwordEncoder){
         this.password = passwordEncoder.encode(this.password);
 
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Member)) return false;
+        Member member = (Member) o;
+        return Objects.equals(this.getUsername(), member.getUsername());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(this.getUsername());
     }
 
 }
