@@ -1,6 +1,7 @@
 package com.slembers.alarmony.global.jwt.filter;
 
 import com.slembers.alarmony.global.jwt.JwtProvider;
+import com.slembers.alarmony.member.repository.MemberRepository;
 import com.slembers.alarmony.member.service.MemberService;
 import io.jsonwebtoken.JwtException;
 import lombok.RequiredArgsConstructor;
@@ -15,12 +16,16 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Objects;
+/*
 
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter  extends OncePerRequestFilter {
     private final JwtProvider jwtProvider;
     private final MemberService memberService;
-    @Override
+
+    private final MemberRepository memberRepository;
+  */
+/*  @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String authorization = request.getHeader("Authorization");
 
@@ -33,6 +38,7 @@ public class JwtAuthenticationFilter  extends OncePerRequestFilter {
                     throw new JwtException("토큰을 확인하세요.");
                 }
              //   UserDetails userDetails = memberService..loadUserByUsername(subject.getEmail());
+                UserDatails userDatails = memberRepository.findByUsername(u)
                 Authentication token = new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
                 SecurityContextHolder.getContext().setAuthentication(token);
             } catch (JwtException e) {
@@ -40,6 +46,8 @@ public class JwtAuthenticationFilter  extends OncePerRequestFilter {
             }
         }
         filterChain.doFilter(request, response);
-    }
+    }*//*
+
     }
 }
+*/

@@ -2,16 +2,26 @@ package com.slembers.alarmony.member.service;
 
 import com.slembers.alarmony.global.execption.CustomException;
 import com.slembers.alarmony.global.jwt.JwtProvider;
+import com.slembers.alarmony.global.jwt.RefreshToken;
 import com.slembers.alarmony.global.jwt.dto.TokenDto;
+import com.slembers.alarmony.global.redis.repository.RefreshTokenRepository;
 import com.slembers.alarmony.member.dto.LoginDto;
 import com.slembers.alarmony.member.dto.request.SignUpDto;
 import com.slembers.alarmony.member.dto.response.CheckDuplicateDto;
 import com.slembers.alarmony.member.entity.Member;
 import com.slembers.alarmony.member.exception.MemberErrorCode;
 import com.slembers.alarmony.member.repository.MemberRepository;
+import io.swagger.models.Response;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -20,6 +30,7 @@ import javax.transaction.Transactional;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class MemberServiceImpl implements MemberService {
 
     private final ModelMapper modelMapper;
@@ -32,6 +43,9 @@ public class MemberServiceImpl implements MemberService {
 
     private final JwtProvider jwtProvider;
 
+    private final AuthenticationManagerBuilder authenticationManagerBuilder;
+
+    private final RefreshTokenRepository refreshTokenRepository;
 
     /**
      * 회원가입
@@ -71,21 +85,57 @@ public class MemberServiceImpl implements MemberService {
      * @param loginDto 로그인 정보
      */
     @Override
-    public void login(LoginDto loginDto , HttpServletResponse response) {
-        //로그인 하는 유저ID가 존재하지 않는 경우 예외 발생
-        Member member = memberRepository.findByUsername(loginDto.getUsername()).orElseThrow(() -> new CustomException(MemberErrorCode.MEMBER_NOT_FOUND));
+    public ResponseEntity<String> login(LoginDto loginDto , HttpServletResponse response) {
 
-        //비밀번호가 일치하는지 확인한다.
-        boolean isMatch = passwordEncoder.matches(loginDto.getPassword(), member.getPassword());
-        if(!isMatch)  throw  new BadCredentialsException("아이디 또는 비밀번호를 확인후 다시 로그인하여 주시기 바랍니다.");
+        //로그인 검증
+        LOGIN_VALIDATE(loginDto);
 
-        //정상 적으로 로그인이 되었다면 Access Token을 생성한다.
+        log.info("검증완료");
+
+         // 1. Login ID/PW 를 기반으로 Authentication 객체 생성
+        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(loginDto.getUsername(),loginDto.getPassword());
+
+        log.info("정보"+ loginDto.getUsername() + " "+loginDto.getPassword());
+        log.info("Authentication 객체 생성"+ authenticationToken);
+
+        log.info("Authentication 객체 생성");
+        //실제 검증 (사용자 비밀번호 체크)이 이루어지는 부분
+        //authenticationToken으로부터 사용자 이름과 패스워드를 추출하여 실제 사용자 정보와 일치하는지 확인합니다.
+
+        try {
+            Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
+        }catch (Exception e){
+            log.info(e.getMessage());
+        }
+        Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
+        log.info("Authentication 객체 생성2"+authenticationManagerBuilder.getObject().authenticate(authenticationToken));
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+
+
+
+        //accessToken 발급
+        String accessToken = jwtProvider.createAccessToken(authentication);
+        log.info("accessToken 발급");
+
+        //refreshToken 발급
+        String refreshToken = jwtProvider.createRefreshToken(loginDto.getUsername());
+        log.info("refreshToken 발급");
+
+        log.info("accessToken :" + accessToken);
+        log.info("refreshToken :" + refreshToken);
+
+        //redis에 refreshToken 저장
+        refreshTokenRepository.save(RefreshToken.builder().
+                username(authentication.getName()).authorities(authentication.getAuthorities()).refreshToken(refreshToken)
+                .build());
+
+
         //아이디 정보로 Token생성
-        TokenDto tokenDto = jwtProvider.createAllToken(loginDto.getUsername());
-
+        TokenDto tokenDto = new TokenDto(accessToken,refreshToken);
+        //헤더에 저장
         setHeader(response, tokenDto);
 
-        //return new GlobalResDto("Success Login", HttpStatus.OK.value());
+       return ResponseEntity.ok().body("로그인 성공");
     }
 
     private void setHeader(HttpServletResponse response, TokenDto tokenDto) {
@@ -128,6 +178,19 @@ public class MemberServiceImpl implements MemberService {
     @Override
     public CheckDuplicateDto checkForDuplicateNickname(String nickname) {
         return CheckDuplicateDto.builder().isDuplicated(memberRepository.existsByNickname(nickname)).build();
+    }
+
+    /**
+     * 로그인 검증 확인
+     */
+    private void LOGIN_VALIDATE(LoginDto loginDto){
+        //존재하지 않는 회원으로 로그인을 시도할경우 예외처리 발생
+        Member member = memberRepository.findByUsername(loginDto.getUsername()).orElseThrow(() -> new CustomException(MemberErrorCode.MEMBER_NOT_FOUND));
+
+        //비밀번호가 일치하는지 확인한다.
+        boolean isMatch = passwordEncoder.matches(loginDto.getPassword(), member.getPassword());
+        if(!isMatch)  throw new BadCredentialsException("아이디 또는 비밀번호를 확인후 다시 로그인하여 주시기 바랍니다.");
+
     }
 
 

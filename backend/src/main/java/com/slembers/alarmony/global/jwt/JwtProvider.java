@@ -7,13 +7,15 @@ import io.jsonwebtoken.security.Keys;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.security.Key;
 import java.util.Base64;
 import java.util.Date;
+import java.util.stream.Collectors;
 
 
 //JwtProvider는 사용자 정보를 기반으로 JWT를 생성하고, 이후 요청에서 JWT를 검증하여 인증을 수행합니다.
@@ -26,9 +28,11 @@ public class JwtProvider {
     public static final String ACCESS_TOKEN = "Access_Token";
     public static final String REFRESH_TOKEN = "Refresh_Token";
 
+
+    private static final String AUTHORITIES_KEY ="rule";
     private  static final SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
 
-    @Value("${jwt.secret.key}")
+    @Value("${jwt.secret}")
     private String secretKey;
     private Key key;
 
@@ -68,6 +72,34 @@ public class JwtProvider {
                 .compact();
     }
 
+    //AccessToken, RefreshToken 을 생성하는 메서드
+    public String createAccessToken(Authentication authentication) {
+        String authorities = authentication.getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority)
+                .collect(Collectors.joining(","));
+        long now = (new Date()).getTime();
+
+
+        Date accessTokenExpiresIn = new Date(now + 86400000*3); // 유효기간 1일*3
+
+        return Jwts.builder()
+                .setSubject(authentication.getName())
+                .claim(AUTHORITIES_KEY, authorities)
+                .signWith(key, SignatureAlgorithm.HS512)
+                .setExpiration(accessTokenExpiresIn)
+                .compact();
+    }
+
+
+    public String createRefreshToken(String username) {
+        long now = (new Date()).getTime();
+        Date accessTokenExpiresIn = new Date(now + 86400000*3); // 유효기간 1일*3
+        return Jwts.builder()
+                .setSubject(username)
+                .setExpiration(accessTokenExpiresIn)
+                .signWith(key, SignatureAlgorithm.HS512)
+                .compact();
+    }
     // 토큰 검증
     public Boolean tokenValidation(String token) {
         try {

@@ -28,7 +28,7 @@ public class MemberController {
      * 회원가입
      */
 
-    @PostMapping()
+    @PostMapping("/sign-up")
     public ResponseEntity<String> signUp(@Valid @RequestBody SignUpDto signUpDto) {
 
         memberService.signUp(signUpDto);
@@ -40,7 +40,9 @@ public class MemberController {
      * 로그인
      */
     @PostMapping("/login")
-    public void login(@RequestBody LoginDto loginDto, HttpServletResponse response){
+    public ResponseEntity<String> login(@RequestBody LoginDto loginDto, HttpServletResponse response){
+
+       return memberService.login(loginDto,response);
 
     }
 
