@@ -14,6 +14,14 @@ public interface GroupService {
     boolean isGroupOwner(Long groupId, String username);
 
     /**
+     * 그룹 주인의 닉네임이 일치하는지 확인합니다.
+     *
+     * @param groupId  그룹 id
+     * @param nickname 닉네임
+     */
+    boolean isGroupOwnerByNickname(Long groupId, String nickname);
+
+    /**
      * 초대 가능한 멤버 리스트를 반환합니다.
      *
      * @param groupId 그룹 id
@@ -36,5 +44,13 @@ public interface GroupService {
      * @param username 그룹에서 제외할 멤버 유저네임
      */
     void removeMemberByUsername(Long groupId, String username);
+
+    /**
+     * 그룹에서 닉네임을 기준으로 멤버를 제외한다.
+     *
+     * @param groupId  그룹 id
+     * @param nickname 그룹에서 제외할 멤버 닉네임
+     */
+    void removeMemberByNickname(Long groupId, String nickname);
 
 }
