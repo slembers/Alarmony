@@ -1,6 +1,7 @@
 package com.slembers.alarmony.alarm.repository;
 
 import com.slembers.alarmony.alarm.entity.AlarmRecord;
+import com.slembers.alarmony.alarm.entity.MemberAlarm;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
