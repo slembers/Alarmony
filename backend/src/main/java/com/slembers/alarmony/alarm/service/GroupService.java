@@ -14,4 +14,12 @@ public interface GroupService {
      */
     List<MemberInfoDto> getInviteableMemberInfoList(Long groupId, String keyword);
 
+    /**
+     * 그룹에서 유저네임을 기준으로 멤버를 제외한다.
+     * 
+     * @param groupId 그룹 id
+     * @param username 그룹에서 제외할 멤버 유저네임
+     */
+    void removeMemberByUsername(Long groupId, String username);
+
 }
