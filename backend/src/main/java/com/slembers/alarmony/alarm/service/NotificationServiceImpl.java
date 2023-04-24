@@ -57,10 +57,10 @@ public class NotificationServiceImpl implements NotificationService {
     /**
      * 알림 객체를 받아서 초대 알림을 보낸다.
      *
-     * @param notification
+     * @param notification 알림 객체
      */
     @Override
     public void sendInviteNotification(Notification notification) {
-
+        //TODO : 초대 보내는 것 FCM으로 전송하기.
     }
 }

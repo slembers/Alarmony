@@ -8,16 +8,16 @@ public interface AlarmService {
     /**
      * 유저네임을 기준으로 멤버알람 리스트를 가져오고, 이를 responseDTO에 담는다.
      *
-     * @param username
-     * @return
+     * @param username 아이디
+     * @return 알람리스트
      */
     AlarmListResponseDto getAlarmList(String username);
 
     /**
      * 특정 알람아이디를 주면, 알람 기록을 찾아서 메시지를 기록해둔다.
      *
-     * @param alarmId
-     * @param message
+     * @param alarmId 알람 아이디
+     * @param message 메시지
      */
     void putAlarmMessage(String username, Long alarmId, String message);
 

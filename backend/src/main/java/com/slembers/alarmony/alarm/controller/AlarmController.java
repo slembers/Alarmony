@@ -19,11 +19,11 @@ public class AlarmController {
     /**
      * 현재 로그인 유저의 알람 리스트를 가져온다
      *
-     * @return
+     * @return 알람 정보 리스트
      */
     @GetMapping
     public ResponseEntity<AlarmListResponseDto> getAlarmList() {
-        // 추후에 jwt에서 찾은 유저네임으로 바꾸어야 한다
+        // TODO : 시큐리티에서 멤버 정보 얻어오기
         String username = "test";
         return new ResponseEntity<>(alarmService.getAlarmList(username), HttpStatus.OK);
     }
@@ -31,9 +31,9 @@ public class AlarmController {
     /**
      * 특정 알람아이디를 주면, 알람 기록을 찾아서 메시지를 기록해둔다.
      *
-     * @param alarmId
-     * @param putAlarmMessageRequestDto
-     * @return
+     * @param alarmId 알람 아이디
+     * @param putAlarmMessageRequestDto 넣을 메시지
+     * @return 확인 메시지
      */
     @PutMapping("/{alarm-id}/message")
     public ResponseEntity<String> putAlarmMessage(
