@@ -19,4 +19,12 @@ public interface AlarmRecordRepository extends JpaRepository<AlarmRecord, Long> 
     @Query(value = "select * from alarm_record ar join member_alarm ma on ar.member_alarm_id = ma.member_alarm_id " +
             "where ma.member_id = :memberId and ma.alarm_id = :alarmId", nativeQuery = true)
     Optional<AlarmRecord> findByMemberAndAlarm(Long memberId, Long alarmId);
+
+    /**
+     * 멤버 알람 정보를 기준으로 알람 기록을 삭제한다.
+     *
+     * @param memberAlarm 멤버 알람 정보
+     */
+    void deleteByMemberAlarm(MemberAlarm memberAlarm);
+
 }

@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -26,7 +27,6 @@ import org.springframework.web.bind.annotation.RestController;
 public class GroupController {
 
     private final GroupService groupService;
-
     private final NotificationService notificationService;
 
     /**
@@ -67,6 +67,17 @@ public class GroupController {
             .build();
         notificationService.inviteMemberToGroup(dto);
         return new ResponseEntity<>("멤버에게 그룹 초대를 요청했습니다.", HttpStatus.OK);
+    }
+
+    @DeleteMapping("/{group-id}")
+    public ResponseEntity<String> leaveFromGroup(
+        @PathVariable(name = "group-id") Long groupId) {
+
+        // TODO: 시큐리티에서 유저정보 가져오기
+        String username = null;
+
+        groupService.removeMemberByUsername(groupId, username);
+        return new ResponseEntity<>("그룹 탈퇴에 성공했습니다.", HttpStatus.OK);
     }
 
 }
