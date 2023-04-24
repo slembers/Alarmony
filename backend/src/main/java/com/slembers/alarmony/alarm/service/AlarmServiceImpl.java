@@ -22,7 +22,6 @@ import org.springframework.stereotype.Service;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Slf4j
 @Service
@@ -40,8 +39,8 @@ public class AlarmServiceImpl implements AlarmService {
     /**
      * 유저네임을 기준으로 멤버알람 리스트를 가져오고, 이를 responseDTO에 담는다.
      *
-     * @param username
-     * @return
+     * @param username 아이디
+     * @return 알람 리스트
      */
     @Override
     public AlarmListResponseDto getAlarmList(String username) {
@@ -50,14 +49,17 @@ public class AlarmServiceImpl implements AlarmService {
                 .orElseThrow(() -> new RuntimeException());
 
         try {
+            // 멤버의 멤버알람 목록을 가져온다
             List<MemberAlarm> memberAlarmList = memberAlarmRepository.findAllByMember(member);
             List<AlarmDto> alarms = new ArrayList<>();
 
             memberAlarmList.forEach(memberAlarm -> {
+                // 각 멤버알람에 대해 연관되어 있는 알람을 가져온다.
                 Alarm alarm = memberAlarm.getAlarm();
+                // 중복 계산을 피하기 위해 시간을 가져온다.
                 LocalTime localTime = alarm.getTime();
 
-
+                // 알람 리스트를 넣을 DTO를 빌딩한다.
                 AlarmDto alarmDto = AlarmDto.builder()
                         .alarmId(alarm.getId())
                         .title(alarm.getTitle())
@@ -69,7 +71,7 @@ public class AlarmServiceImpl implements AlarmService {
 
                 alarms.add(alarmDto);
             });
-
+            // 리스트를 객체에 담아서 전송한다.
             return AlarmListResponseDto.builder().alarms(alarms).build();
         } catch (Exception e) {
             throw new CustomException(AlarmErrorCode.ALARM_GET_ERROR);
@@ -79,8 +81,8 @@ public class AlarmServiceImpl implements AlarmService {
     /**
      * 특정 알람아이디를 주면, 알람 기록을 찾아서 메시지를 기록해둔다.
      *
-     * @param alarmId
-     * @param message
+     * @param alarmId 알람 아이디
+     * @param message 메시지
      */
     @Override
     public void putAlarmMessage(String username, Long alarmId, String message) {
@@ -89,11 +91,11 @@ public class AlarmServiceImpl implements AlarmService {
                     //TODO : 멤버 예외 Enum으로 바꾸기
                     .orElseThrow(() -> new RuntimeException());
 
+            // 멤버 정보와 알람 아이디를 바탕으로 알람 레코드를 가져온다.
             AlarmRecord alarmRecord = alarmRecordRepository.findByMemberAndAlarm(member.getId(), alarmId)
                     .orElseThrow(() -> new CustomException(AlarmRecordErrorCode.ALARM_RECORD_NOT_EXIST));
-
+            // 메시지를 바꾼다.
             alarmRecord.changeMessage(message);
-
             alarmRecordRepository.save(alarmRecord);
         } catch (Exception e) {
             throw new CustomException(MemberAlarmErrorCode.MEMBER_ALARM_INPUT_ERROR);
@@ -108,11 +110,13 @@ public class AlarmServiceImpl implements AlarmService {
     @Override
     public AlarmDto getAlarmInfo(Long alarmId) {
         try {
+            // 알람 정보를 가져온다.
             Alarm alarm = alarmRepository.findById(alarmId)
                 .orElseThrow(() -> new CustomException(AlarmErrorCode.ALARM_NOT_FOUND));
-
+            // 중복 계산을 피하기 위해 시간 정보를 가져온다.
             LocalTime localTime = alarm.getTime();
 
+            // 알람 객체를 빌딩해서 바로 리턴한다.
             return AlarmDto.builder()
                     .alarmId(alarm.getId())
                     .title(alarm.getTitle())
