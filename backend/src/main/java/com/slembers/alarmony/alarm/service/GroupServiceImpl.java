@@ -44,6 +44,20 @@ public class GroupServiceImpl implements GroupService {
     }
 
     /**
+     * 그룹 주인의 닉네임이 일치하는지 확인합니다.
+     *
+     * @param groupId  그룹 id
+     * @param nickname 닉네임
+     */
+    @Override
+    public boolean isGroupOwnerByNickname(Long groupId, String nickname) {
+        Alarm alarm = alarmRepository.findById(groupId)
+            .orElseThrow(() -> new CustomException(AlarmErrorCode.ALARM_NOT_FOUND));
+
+        return alarm.getHost().getNickname().equals(nickname);
+    }
+
+    /**
      * 초대 가능한 멤버 리스트를 반환합니다.
      *
      * @param groupId 그룹 id
@@ -88,6 +102,26 @@ public class GroupServiceImpl implements GroupService {
     @Override
     public void removeMemberByUsername(Long groupId, String username) {
         Member member = memberRepository.findByUsername(username)
+            .orElseThrow(() -> new CustomException(MemberErrorCode.MEMBER_NOT_FOUND));
+        Alarm alarm = alarmRepository.findById(groupId)
+            .orElseThrow(() -> new CustomException(AlarmErrorCode.ALARM_NOT_FOUND));
+
+        MemberAlarm memberAlarm = memberAlarmRepository.findByMemberAndAlarm(member, alarm)
+            .orElseThrow(() -> new CustomException(AlarmErrorCode.MEMBER_NOT_IN_GROUP));
+        alarmRecordRepository.deleteByMemberAlarm(memberAlarm);
+        memberAlarmRepository.delete(memberAlarm);
+    }
+
+    /**
+     * 그룹에서 닉네임을 기준으로 멤버를 제외한다.
+     *
+     * @param groupId  그룹 id
+     * @param nickname 그룹에서 제외할 멤버 닉네임
+     */
+    @Transactional
+    @Override
+    public void removeMemberByNickname(Long groupId, String nickname) {
+        Member member = memberRepository.findByNickname(nickname)
             .orElseThrow(() -> new CustomException(MemberErrorCode.MEMBER_NOT_FOUND));
         Alarm alarm = alarmRepository.findById(groupId)
             .orElseThrow(() -> new CustomException(AlarmErrorCode.ALARM_NOT_FOUND));
