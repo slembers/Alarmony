@@ -53,10 +53,19 @@ public class GroupServiceImpl implements GroupService {
         Alarm alarm = alarmRepository.findById(groupId)
             .orElseThrow(() -> new CustomException(AlarmErrorCode.ALARM_NOT_FOUND));
 
+        if (member.equals(alarm.getHost()) && memberAlarmRepository.countByAlarmId(groupId) != 1) {
+            throw new CustomException(AlarmErrorCode.MEMBER_IN_GROUP);
+        }
+
         MemberAlarm memberAlarm = memberAlarmRepository.findByMemberAndAlarm(member, alarm)
             .orElseThrow(() -> new CustomException(AlarmErrorCode.MEMBER_NOT_IN_GROUP));
 
         alarmRecordRepository.deleteByMemberAlarm(memberAlarm);
         memberAlarmRepository.delete(memberAlarm);
+
+        if (member.equals(alarm.getHost())) {
+            alarmRepository.delete(alarm);
+        }
     }
+
 }

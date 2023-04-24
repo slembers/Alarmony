@@ -15,8 +15,8 @@ public interface MemberAlarmRepository extends JpaRepository<MemberAlarm, Long> 
     /**
      * 멤버를 기준으로 멤버 알람을 모두 조회한다.
      *
-     * @param member
-     * @return
+     * @param member 멤버 정보
+     * @return 멤버의 알람 정보
      */
     List<MemberAlarm> findAllByMember(Member member);
 
@@ -28,5 +28,13 @@ public interface MemberAlarmRepository extends JpaRepository<MemberAlarm, Long> 
      * @return 멤버 알람 정보를 optional로 반환
      */
     Optional<MemberAlarm> findByMemberAndAlarm(Member member, Alarm alarm);
+
+    /**
+     * 알람에 속한 멤버 수를 반환한다.
+     *
+     * @param alarmId 알람 id
+     * @return 알람에 속한 멤버 수
+     */
+    int countByAlarmId(Long alarmId);
 
 }
