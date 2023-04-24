@@ -14,6 +14,7 @@ import com.slembers.alarmony.alarm.repository.MemberAlarmRepository;
 import com.slembers.alarmony.global.execption.CustomException;
 import com.slembers.alarmony.global.util.CommonMethods;
 import com.slembers.alarmony.member.entity.Member;
+import com.slembers.alarmony.member.exception.MemberErrorCode;
 import com.slembers.alarmony.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -45,8 +46,7 @@ public class AlarmServiceImpl implements AlarmService {
     @Override
     public AlarmListResponseDto getAlarmList(String username) {
         Member member = memberRepository.findByUsername(username)
-                // 없으면 멤버 없음 예외 던지는 코드로 바꿀 것
-                .orElseThrow(() -> new RuntimeException());
+                .orElseThrow(() -> new CustomException(MemberErrorCode.MEMBER_NOT_FOUND));
 
         try {
             // 멤버의 멤버알람 목록을 가져온다
@@ -88,8 +88,7 @@ public class AlarmServiceImpl implements AlarmService {
     public void putAlarmMessage(String username, Long alarmId, String message) {
         try {
             Member member = memberRepository.findByUsername(username)
-                    //TODO : 멤버 예외 Enum으로 바꾸기
-                    .orElseThrow(() -> new RuntimeException());
+                    .orElseThrow(() -> new CustomException(MemberErrorCode.MEMBER_NOT_FOUND));
 
             // 멤버 정보와 알람 아이디를 바탕으로 알람 레코드를 가져온다.
             AlarmRecord alarmRecord = alarmRecordRepository.findByMemberAndAlarm(member.getId(), alarmId)
