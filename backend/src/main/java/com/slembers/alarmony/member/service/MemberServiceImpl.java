@@ -1,7 +1,7 @@
 package com.slembers.alarmony.member.service;
 
 import com.slembers.alarmony.global.execption.CustomException;
-import com.slembers.alarmony.global.jwt.JwtProvider;
+import com.slembers.alarmony.global.jwt.JwtTokenProvider;
 import com.slembers.alarmony.global.jwt.RefreshToken;
 import com.slembers.alarmony.global.jwt.dto.TokenDto;
 import com.slembers.alarmony.global.redis.repository.RefreshTokenRepository;
@@ -11,12 +11,10 @@ import com.slembers.alarmony.member.dto.response.CheckDuplicateDto;
 import com.slembers.alarmony.member.entity.Member;
 import com.slembers.alarmony.member.exception.MemberErrorCode;
 import com.slembers.alarmony.member.repository.MemberRepository;
-import io.swagger.models.Response;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -41,7 +39,7 @@ public class MemberServiceImpl implements MemberService {
 
     private final PasswordEncoder passwordEncoder;
 
-    private final JwtProvider jwtProvider;
+    private final JwtTokenProvider jwtTokenProvider;
 
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
 
@@ -114,11 +112,11 @@ public class MemberServiceImpl implements MemberService {
 
 
         //accessToken 발급
-        String accessToken = jwtProvider.createAccessToken(authentication);
+        String accessToken = jwtTokenProvider.createAccessToken(authentication);
         log.info("accessToken 발급");
 
         //refreshToken 발급
-        String refreshToken = jwtProvider.createRefreshToken(loginDto.getUsername());
+        String refreshToken = jwtTokenProvider.createRefreshToken(loginDto.getUsername());
         log.info("refreshToken 발급");
 
         log.info("accessToken :" + accessToken);
@@ -139,8 +137,8 @@ public class MemberServiceImpl implements MemberService {
     }
 
     private void setHeader(HttpServletResponse response, TokenDto tokenDto) {
-        response.addHeader(JwtProvider.ACCESS_TOKEN, tokenDto.getAccessToken());
-        response.addHeader(JwtProvider.REFRESH_TOKEN, tokenDto.getRefreshToken());
+        response.addHeader(JwtTokenProvider.ACCESS_TOKEN, tokenDto.getAccessToken());
+        response.addHeader(JwtTokenProvider.REFRESH_TOKEN, tokenDto.getRefreshToken());
 
     }
     /**
