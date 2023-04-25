@@ -1,23 +1,45 @@
 package com.slembers.alarmony.global.config;
 
+import com.slembers.alarmony.global.jwt.CustomAuthenticationProvider;
+import com.slembers.alarmony.global.jwt.JwtTokenProvider;
+import com.slembers.alarmony.global.jwt.auth.PrincipalDetailsService;
+import com.slembers.alarmony.global.jwt.filter.CustomAuthenticationFilter;
+import com.slembers.alarmony.global.jwt.handler.CustomLoginSuccessHandler;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.SecurityBuilder;
+import org.springframework.security.config.annotation.SecurityConfigurerAdapter;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.web.WebSecurityConfigurer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.web.DefaultSecurityFilterChain;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @EnableWebSecurity
 @RequiredArgsConstructor
 @Configuration
+@Slf4j
 
  // Spring Security 사용을 위한 Configuration Class를 작성하기 위해서
  // WebSecurityConfigurerAdapter를 상속하여 클래스를 생성하고
   //@Configuration 애노테이션 대신 @EnableWebSecurity 애노테이션을 추가한다.
 
-public class SecurityConfig   {
+//SPring security 5.5 부터는  SecurityConfigurerAdapter<DefaultSecurityFilterChain, HttpSecurity>로 써야하나부다
+public class SecurityConfig extends WebSecurityConfigurerAdapter   {
 
+
+    private final PrincipalDetailsService principalDetailsService;
+    private final JwtTokenProvider jwtTokenProvider;
 
 
     /**
@@ -27,40 +49,49 @@ public class SecurityConfig   {
     public BCryptPasswordEncoder bCryptPasswordEncoder() {
         return new BCryptPasswordEncoder();
     }
-    @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        return http
-                // rest api만 사용
-                .httpBasic().disable()
-                .cors().and()
-                .csrf().disable() //csrf 방지
-                .formLogin().disable()// /기본 로그인페이지 없애기
-                // iframe 요소를 통한 전송 허용
-                .headers()
-                .frameOptions().sameOrigin()
+    @Override
+    protected void configure(HttpSecurity http) throws Exception {
+        http.csrf().disable().authorizeRequests()
+                // 토큰을 활용하는 경우 모든 요청에 대해 접근이 가능하도록 함
+                .antMatchers("/members/login").permitAll()
+                .anyRequest().permitAll()
                 .and()
-                //
-                .authorizeRequests()
-//                .antMatchers("/h2-console/**").permitAll() // 추가
-              /*  .antMatchers("/members/signup", "/members/login").permitAll()
-                .antMatchers(HttpMethod.PUT,"/boards/gif/{gifId}").authenticated()
-                .antMatchers(HttpMethod.DELETE,"/boards/gif/{boardId}").authenticated()
-                .antMatchers(HttpMethod.DELETE,"/boards/{boardId}").authenticated()
-                .antMatchers(HttpMethod.POST,"/boards/{boardId}").authenticated()
-                .antMatchers(HttpMethod.PUT,"/boards/{boardId}").authenticated()
-                .antMatchers(HttpMethod.POST,"/temp").authenticated()
-                .antMatchers(HttpMethod.GET,"/temp/all").hasAnyAuthority("ROLE_MANAGER")
-                .antMatchers(HttpMethod.PUT,"/temp/{tempId}").hasAnyAuthority("ROLE_MANAGER")
-                .antMatchers(HttpMethod.DELETE,"/temp/{tempId}").hasAnyAuthority("ROLE_MANAGER")
-                .antMatchers(HttpMethod.POST, "/comments/**").authenticated()
-                .antMatchers(HttpMethod.DELETE,"/comments/**").authenticated()*/
-                .antMatchers("/api/members/sign-up").permitAll()
-
-                .antMatchers("/members/sign-up", "/members/login" ,"/members/verify/**").permitAll()
-                // .antMatchers("/**").permitAll()
-                .anyRequest().authenticated()
-                .and().build();
+                // 토큰을 활용하면 세션이 필요 없으므로 STATELESS로 설정하여 Session을 사용하지 않는다.
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .and()
+                // form 기반의 로그인에 대해 비활성화 한다.
+                .formLogin()
+                .disable()
+                .addFilterBefore(customAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
     }
 
 
+    //필터 등록
+
+    @Bean
+    public CustomAuthenticationFilter customAuthenticationFilter() throws Exception {
+        CustomAuthenticationFilter customAuthenticationFilter = new CustomAuthenticationFilter(authenticationManager());
+        customAuthenticationFilter.setFilterProcessesUrl("/members/login");
+        customAuthenticationFilter.setAuthenticationSuccessHandler(customLoginSuccessHandler());
+        customAuthenticationFilter.afterPropertiesSet();
+        log.info("W@");
+        return customAuthenticationFilter;
+    }
+
+
+    @Bean
+    public CustomLoginSuccessHandler customLoginSuccessHandler() {
+        log.info("여긴머임");
+        return new CustomLoginSuccessHandler(jwtTokenProvider);
+    }
+
+    @Bean
+    public CustomAuthenticationProvider customAuthenticationProvider() {
+        return new CustomAuthenticationProvider(principalDetailsService, bCryptPasswordEncoder());
+    }
+
+    @Override
+    public void configure(AuthenticationManagerBuilder authenticationManagerBuilder) {
+        authenticationManagerBuilder.authenticationProvider(customAuthenticationProvider());
+    }
 }
