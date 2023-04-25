@@ -5,16 +5,20 @@ import com.google.auth.oauth2.GoogleCredentials;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.Message;
 import com.google.firebase.messaging.Notification;
+import com.slembers.alarmony.alarm.dto.AlertDto;
 import com.slembers.alarmony.alarm.dto.InviteMemberSetToGroupDto;
+import com.slembers.alarmony.alarm.dto.response.AlertListResponseDto;
 import com.slembers.alarmony.alarm.entity.Alarm;
 import com.slembers.alarmony.alarm.entity.Alert;
 import com.slembers.alarmony.alarm.entity.AlertTypeEnum;
 import com.slembers.alarmony.alarm.exception.AlarmErrorCode;
 import com.slembers.alarmony.alarm.exception.AlertErrorCode;
 import com.slembers.alarmony.alarm.repository.AlarmRepository;
+import com.slembers.alarmony.alarm.repository.AlertRepository;
 import com.slembers.alarmony.global.execption.CustomException;
 import com.slembers.alarmony.global.util.UrlInfo;
 import com.slembers.alarmony.member.entity.Member;
+import com.slembers.alarmony.member.exception.MemberErrorCode;
 import com.slembers.alarmony.member.repository.MemberRepository;
 
 import java.io.IOException;
@@ -34,6 +38,7 @@ public class AlertServiceImpl implements AlertService {
 
     private final MemberRepository memberRepository;
     private final AlarmRepository alarmRepository;
+    private final AlertRepository alertRepository;
     private final UrlInfo urlInfo;
 
     /**
@@ -72,10 +77,10 @@ public class AlertServiceImpl implements AlertService {
     /**
      * 알림 객체를 받아서 초대 알림을 보낸다.
      *
-     * @param notification 알림 객체
+     * @param alert 알림 객체
      */
     @Override
-    public void sendInviteNotification(Alert notification) {
+    public void sendInviteNotification(Alert alert) {
         //TODO : 초대 보내는 것 FCM으로 전송하기.
     }
 
@@ -88,6 +93,31 @@ public class AlertServiceImpl implements AlertService {
             sendMessageTo(this.getAccessToken(), "test", "This is Test Message");
         } catch (Exception e) {
             new CustomException(AlertErrorCode.ALERT_SERVER_ERROR);
+        }
+    }
+
+    @Override
+    public AlertListResponseDto getAlertList(String username) {
+        Member member = memberRepository.findByUsername(username)
+                .orElseThrow(() -> new CustomException(MemberErrorCode.MEMBER_NOT_FOUND));
+
+        try {
+            List<Alert> alerts = alertRepository.findAllByReceiver(member);
+            List<AlertDto> alertDtos = new ArrayList<>();
+
+            alerts.forEach(alert -> {
+                alertDtos.add(AlertDto.builder()
+                    .id(alert.getId())
+                    .profileImg(alert.getSender().getProfileImgUrl())
+                    .content(alert.getContent())
+                    .type(alert.getType().name())
+                    .build()
+                );
+            });
+            return AlertListResponseDto.builder().alerts(alertDtos).build();
+
+        } catch (Exception e) {
+            throw new CustomException(AlertErrorCode.ALERT_NOT_FOUND);
         }
     }
 
