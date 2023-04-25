@@ -87,7 +87,7 @@ public class AlertServiceImpl implements AlertService {
         try {
             sendMessageTo(this.getAccessToken(), "test", "This is Test Message");
         } catch (Exception e) {
-            new CustomException(AlertErrorCode.ALERT_SERVER_ERROR));
+            new CustomException(AlertErrorCode.ALERT_SERVER_ERROR);
         }
     }
 
