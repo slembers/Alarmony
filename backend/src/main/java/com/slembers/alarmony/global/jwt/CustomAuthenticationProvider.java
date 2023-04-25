@@ -1,9 +1,13 @@
 package com.slembers.alarmony.global.jwt;
 
+import com.slembers.alarmony.global.execption.CustomException;
 import com.slembers.alarmony.global.jwt.auth.PrincipalDetails;
 import com.slembers.alarmony.global.jwt.auth.PrincipalDetailsService;
+import com.slembers.alarmony.member.entity.AuthorityEnum;
+import com.slembers.alarmony.member.exception.MemberErrorCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -32,7 +36,17 @@ public class CustomAuthenticationProvider  implements AuthenticationProvider {
             throw new BadCredentialsException(memberDetails.getUsername() + "비밀번호가 일치하지 않습니다.");
 
         }
-        log.info("ddddddd");
+
+        //권한 체크
+        if(memberDetails.getMember().getAuthority().toString().equals(AuthorityEnum.ROLE_NOT_PERMITTED.name())){
+            log.info("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
+            throw new AccessDeniedException("You do not have permission to access this resource.");
+
+        }
+
+
+
+
         return new UsernamePasswordAuthenticationToken(memberDetails, password, memberDetails.getAuthorities());
     }
 
