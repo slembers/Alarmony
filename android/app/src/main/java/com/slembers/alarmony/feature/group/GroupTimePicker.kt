@@ -32,7 +32,7 @@ import java.util.Locale
 @Preview
 @Composable
 @ExperimentalMaterial3Api
-fun groupTimePicker() {
+fun GroupTimePicker() {
 
     var showTimePicker by remember { mutableStateOf(false) }
     val state = rememberTimePickerState()

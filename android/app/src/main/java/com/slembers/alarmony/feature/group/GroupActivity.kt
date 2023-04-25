@@ -10,7 +10,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.Text
+import androidx.compose.material3.Text
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -19,12 +19,11 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.slembers.alarmony.compose.group.groupTitle
-import org.intellij.lang.annotations.JdkConstants.HorizontalAlignment
+import com.slembers.alarmony.compose.group.GroupTitle
 
 @ExperimentalMaterial3Api
 class GroupActivity : AppCompatActivity() {
@@ -47,9 +46,7 @@ fun GroupScaffold() {
         },
         bottomBar = {
             BottomAppBar(
-                modifier = Modifier
-                    .height(50.dp),
-                containerColor = MaterialTheme.colorScheme.background,
+                modifier = Modifier.height(50.dp),
                 contentPadding = PaddingValues(0.dp),
                 content = {
                     TextButton(
@@ -64,8 +61,7 @@ fun GroupScaffold() {
                         content = {
                             Text(
                                 text = "저장",
-                                fontStyle = FontStyle.Normal,
-                                maxLines = 1
+                                color = Color.Black,
                             )
                         }
                     )
@@ -79,8 +75,9 @@ fun GroupScaffold() {
                     .padding(10.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                groupTitle()
-                groupTimePicker()
+                GroupTitle()
+                GroupTimePicker()
+                GroupWeeks()
             }
         }
     )

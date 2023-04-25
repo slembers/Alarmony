@@ -1,12 +1,25 @@
 package com.slembers.alarmony.feature.group
 
+import android.util.Log
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.ButtonDefaults
+import androidx.compose.material.TextButton
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -23,5 +36,40 @@ fun GroupText(
         text = title,
         style = MaterialTheme.typography.labelMedium,
         color = Color.Black
+    )
+}
+
+@Composable
+@ExperimentalMaterial3Api
+fun groupDateElementBox(
+    text : String
+) {
+
+    var isCheck = remember { mutableStateOf(false) }
+
+    Box(
+        modifier = Modifier
+            .size(41.dp)
+            .padding(5.dp)
+            .clip(CircleShape)
+            .wrapContentSize(Alignment.Center),
+        content = {
+            TextButton(
+                modifier = Modifier.fillMaxSize(),
+                onClick = {
+                    isCheck.value = !isCheck.value
+                    Log.i("click event","isCheck value : ${isCheck.value}")
+                },
+                colors = ButtonDefaults.textButtonColors(
+                    if (!isCheck.value) {
+                        MaterialTheme.colorScheme.primary
+                    }
+                    else
+                        MaterialTheme.colorScheme.background
+                ),
+                contentPadding = PaddingValues(0.dp),
+                content = { Text(text = text) }
+            )
+        }
     )
 }
