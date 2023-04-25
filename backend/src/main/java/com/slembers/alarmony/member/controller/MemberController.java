@@ -9,6 +9,8 @@ import com.slembers.alarmony.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
@@ -93,6 +95,14 @@ public class MemberController {
 
         emailVerifyService.verifyEmail(key);
         return new ResponseEntity<>("이메일 인증에 성공하였습니다.", HttpStatus.OK);
+
+    }
+
+
+    @GetMapping("/test")
+    public void test( @AuthenticationPrincipal User user) {
+
+   System.out.println("test 진입함@@@@@@@@@@@@@@@@@@@@@"+user.getUsername());
 
     }
 
