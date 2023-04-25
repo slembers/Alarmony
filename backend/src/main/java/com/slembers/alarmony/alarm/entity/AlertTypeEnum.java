@@ -1,5 +1,5 @@
 package com.slembers.alarmony.alarm.entity;
 
-public enum NotificationTypeEnum {
+public enum AlertTypeEnum {
     INVITE, BANN, REPLY, BASIC;
 }

@@ -40,6 +40,10 @@ dependencies {
 	implementation group: 'org.modelmapper', name: 'modelmapper', version: '2.3.8'
 	// Email
 	implementation 'org.springframework.boot:spring-boot-starter-mail'
+	// FCM
+	implementation group: 'com.squareup.okhttp3', name: 'okhttp', version: '4.2.2'
+	implementation 'com.google.firebase:firebase-admin:9.1.1'
+
 }
 
 tasks.named('test') {

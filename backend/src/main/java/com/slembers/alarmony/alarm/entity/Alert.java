@@ -12,7 +12,7 @@ import javax.persistence.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity(name = "notification")
-public class Notification {
+public class Alert {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -33,7 +33,7 @@ public class Notification {
     @Column(name = "type")
     @Enumerated(EnumType.STRING)
     @ColumnDefault("'BASIC'")
-    private NotificationTypeEnum type;
+    private AlertTypeEnum type;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "alarm_id")
