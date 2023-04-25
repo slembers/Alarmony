@@ -30,15 +30,60 @@ android {
     kotlinOptions {
         jvmTarget = '1.8'
     }
+
+    buildFeatures {
+        compose true
+    }
+
+    composeOptions {
+        kotlinCompilerExtensionVersion = "1.4.0"
+    }
 }
 
 dependencies {
 
     implementation 'androidx.core:core-ktx:1.8.0'
     implementation 'androidx.appcompat:appcompat:1.6.1'
-    implementation 'com.google.android.material:material:1.5.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
+
+    def composeBom = platform('androidx.compose:compose-bom:2023.01.00')
+    implementation composeBom
+    androidTestImplementation composeBom
+
+    // Choose one of the following:
+    // Material Design 3
+    implementation 'androidx.compose.material3:material3-android:1.1.0-beta02'
+    // or Material Design 2
+    implementation 'androidx.compose.material:material'
+    // 또는 Material Design을 건너뛰고 기초 구성 요소를 직접 빌드하십시오.
+    implementation 'androidx.compose.foundation:foundation'
+    // 또는 입력 및 측정/레이아웃과 같은 기본 도구킷 시스템의 주요 API만 가져옵니다.
+    implementation 'androidx.compose.ui:ui'
+    // Android Studio 미리보기 지원
+    implementation 'androidx.compose.ui:ui-tooling-preview'
+    debugImplementation 'androidx.compose.ui:ui-tooling'
+
+    // UI 테스트
+    androidTestImplementation 'androidx.compose.ui:ui-test-junit4'
+    debugImplementation 'androidx.compose.ui:ui-test-manifest'
+
+    // 선택 사항 - Material이 자동으로 포함되므로
+    // 아이콘만 필요하지만 Material3 또는 Foundation을 기반으로 한 사용자 정의 디자인 시스템을 사용하는 경우에만 추가하십시오.
+    implementation 'androidx.compose.material:material-icons-core'
+    // 선택 사항 - 전체 Material 아이콘 세트 추가
+    implementation 'androidx.compose.material:material-icons-extended'
+    // 선택 사항 - 창 크기 유틸리티 추가
+    implementation 'androidx.compose.material3:material3-window-size-class'
+    // 선택 사항 - 활동 통합
+    implementation 'androidx.activity:activity-compose:1.6.1'
+    // 선택 사항 - 뷰모델 통합
+    implementation 'androidx.lifecycle:lifecycle-viewmodel-compose:2.5.1'
+    // 선택 사항 - LiveData 통합
+    implementation 'androidx.compose.runtime:runtime-livedata'
+    // 선택 사항 - RxJava 통합
+    implementation 'androidx.compose.runtime:runtime-rxjava2'
+
 }
