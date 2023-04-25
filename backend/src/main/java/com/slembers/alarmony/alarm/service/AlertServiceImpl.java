@@ -1,6 +1,5 @@
 package com.slembers.alarmony.alarm.service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.Message;
@@ -92,10 +91,15 @@ public class AlertServiceImpl implements AlertService {
         try {
             sendMessageTo(this.getAccessToken(), "test", "This is Test Message");
         } catch (Exception e) {
-            new CustomException(AlertErrorCode.ALERT_SERVER_ERROR);
+            throw new CustomException(AlertErrorCode.ALERT_SERVER_ERROR);
         }
     }
 
+    /**
+     * 특정 유저의 알림 목록 가져오기
+     * @param username 아이디
+     * @return 알림 목록
+     */
     @Override
     public AlertListResponseDto getAlertList(String username) {
         Member member = memberRepository.findByUsername(username)
@@ -124,7 +128,7 @@ public class AlertServiceImpl implements AlertService {
     /**
      * 웹 토큰을 가져오는 메소드 (추후 수정)
      * @return 토큰
-     * @throws IOException
+     * @throws IOException 에러
      */
     public String getAccessToken() throws IOException {
         // firebase로 부터 access token을 가져온다.

@@ -47,5 +47,10 @@ public interface AlertService {
      */
     void testPushAlert();
 
+    /**
+     * 특정 유저의 알림 목록 가져오기
+     * @param username 아이디
+     * @return 알림 목록
+     */
     AlertListResponseDto getAlertList(String username);
 }
