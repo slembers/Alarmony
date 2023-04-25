@@ -2,7 +2,9 @@ package com.slembers.alarmony.alarm.controller;
 
 import com.slembers.alarmony.alarm.dto.InviteMemberSetToGroupDto;
 import com.slembers.alarmony.alarm.dto.request.InviteMemberToGroupRequestDto;
+import com.slembers.alarmony.alarm.dto.response.AlarmRecordResponseDto;
 import com.slembers.alarmony.alarm.exception.AlarmErrorCode;
+import com.slembers.alarmony.alarm.service.AlarmRecordService;
 import com.slembers.alarmony.alarm.service.GroupService;
 import com.slembers.alarmony.alarm.service.NotificationService;
 import com.slembers.alarmony.global.execption.CustomException;
@@ -29,6 +31,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class GroupController {
 
     private final GroupService groupService;
+    private final AlarmRecordService alarmRecordService;
     private final NotificationService notificationService;
 
     /**
@@ -116,6 +119,19 @@ public class GroupController {
 
         groupService.removeMemberByNickname(groupId, nickname);
         return new ResponseEntity<>("해당 멤버 퇴출에 성공했습니다.", HttpStatus.OK);
+    }
+
+    /**
+     * 오늘의 알람 기록 정보를 가져온다.
+     *
+     * @param groupId 그룹 id
+     * @return 알람 기록
+     */
+    @GetMapping("/{group-id}/records")
+    public ResponseEntity<AlarmRecordResponseDto> getTodayAlarmRecords(
+        @PathVariable(name = "group-id") Long groupId) {
+        return new ResponseEntity<>(alarmRecordService.getTodayAlarmRecords(groupId),
+            HttpStatus.OK);
     }
 
 }
