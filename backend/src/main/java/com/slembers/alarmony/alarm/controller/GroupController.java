@@ -6,7 +6,7 @@ import com.slembers.alarmony.alarm.dto.response.AlarmRecordResponseDto;
 import com.slembers.alarmony.alarm.exception.AlarmErrorCode;
 import com.slembers.alarmony.alarm.service.AlarmRecordService;
 import com.slembers.alarmony.alarm.service.GroupService;
-import com.slembers.alarmony.alarm.service.NotificationService;
+import com.slembers.alarmony.alarm.service.AlertService;
 import com.slembers.alarmony.global.execption.CustomException;
 import com.slembers.alarmony.member.dto.MemberInfoDto;
 import java.util.HashMap;
@@ -32,7 +32,7 @@ public class GroupController {
 
     private final GroupService groupService;
     private final AlarmRecordService alarmRecordService;
-    private final NotificationService notificationService;
+    private final AlertService alertService;
 
     /**
      * 초대 가능한 멤버 리스트를 반환합니다.
@@ -70,7 +70,7 @@ public class GroupController {
             .groupId(groupId)
             .nicknames(inviteMemberToGroupRequestDto.getMembers())
             .build();
-        notificationService.inviteMemberToGroup(dto);
+        alertService.inviteMemberToGroup(dto);
         return new ResponseEntity<>("멤버에게 그룹 초대를 요청했습니다.", HttpStatus.OK);
     }
 
