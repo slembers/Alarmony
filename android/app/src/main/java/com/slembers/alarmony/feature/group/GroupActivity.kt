@@ -23,9 +23,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.slembers.alarmony.compose.group.GroupTitle
 
 @ExperimentalMaterial3Api
+@ExperimentalGlideComposeApi
 class GroupActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,6 +40,7 @@ class GroupActivity : AppCompatActivity() {
 @Preview
 @Composable
 @ExperimentalMaterial3Api
+@ExperimentalGlideComposeApi
 fun GroupScaffold() {
 
     Scaffold(
@@ -78,6 +81,7 @@ fun GroupScaffold() {
                 GroupTitle()
                 GroupTimePicker()
                 GroupWeeks()
+                GroupProfile()
             }
         }
     )
