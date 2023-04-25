@@ -2,7 +2,9 @@ package com.slembers.alarmony.global.jwt.handler;
 
 import com.slembers.alarmony.global.jwt.AuthConstants;
 import com.slembers.alarmony.global.jwt.JwtTokenProvider;
+import com.slembers.alarmony.global.jwt.RefreshToken;
 import com.slembers.alarmony.global.jwt.auth.PrincipalDetails;
+import com.slembers.alarmony.global.redis.repository.RefreshTokenRepository;
 import com.slembers.alarmony.member.entity.Member;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,6 +25,7 @@ import java.io.IOException;
 public class CustomLoginSuccessHandler extends SavedRequestAwareAuthenticationSuccessHandler {
 
     private final JwtTokenProvider provider;
+    private final RefreshTokenRepository refreshTokenRepository;
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws ServletException, IOException {
 
@@ -30,13 +33,27 @@ public class CustomLoginSuccessHandler extends SavedRequestAwareAuthenticationSu
         log.info("[CustomLoginSuccessHandler 진입]");
         //Spring Security에서 인증된 사용자 정보를 가져와서 Member 객체로 변환하는 코드입니다.
         //authentication.getPrincipal() 메소드는 현재 인증된 사용자 정보를 반환하는 메소드입니다.
-         Member member = ((PrincipalDetails) authentication.getPrincipal()).getUser();
-         String token = provider.generateJwtToken(member);
+         Member member = ((PrincipalDetails) authentication.getPrincipal()).getMember();
 
-        log.info("[CustomLoginSuccessHandler에서 토큰 생성 ]"+ token);
 
-        response.addHeader(AuthConstants.AUTH_HEADER, AuthConstants.TOKEN_TYPE + ":" + AuthConstants.ACCESS_TOKEN + " " + token);
-       // response.addHeader(AuthConstants.AUTH_HEADER, AuthConstants.TOKEN_TYPE + ":" + AuthConstants.REFRESH_TOKEN + " " + token);
-      //  super.onAuthenticationSuccess(request, response, authentication);
+        log.info("멤버이름"+ member.getUsername());
+         String accessToken = provider.generateAccessToken(member);
+         String refreshToken = provider.generateRefreshToken(member);
+
+        log.info("[CustomLoginSuccessHandler에서 토큰 생성 ]"+ accessToken);
+        log.info("[CustomLoginSuccessHandler에서 토큰 생성 ]"+ refreshToken);
+
+        //Header에 AccessToken과 RefreshToken 정보를 저장한다.
+        response.addHeader(AuthConstants.AUTH_HEADER, AuthConstants.TOKEN_TYPE  + " " + accessToken);
+        response.addHeader(AuthConstants.REFRESH_TOKEN, AuthConstants.TOKEN_TYPE  + " " + refreshToken);
+
+
+        //Redis에 refreshToken 저장
+        refreshTokenRepository.save(RefreshToken.builder().
+                username(authentication.getName()).authorities(authentication.getAuthorities()).refreshToken(refreshToken)
+                .build());
+
+
+        log.info("토큰 저장완료");
     }
 }
