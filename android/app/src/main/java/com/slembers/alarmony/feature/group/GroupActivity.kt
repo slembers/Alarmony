@@ -80,6 +80,7 @@ fun GroupScaffold() {
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 groupTitle()
+                groupTimePicker()
             }
         }
     )
