@@ -1,6 +1,7 @@
 package com.slembers.alarmony.alarm.controller;
 
 import com.slembers.alarmony.alarm.dto.InviteMemberSetToGroupDto;
+import com.slembers.alarmony.alarm.dto.MemberRankingDto;
 import com.slembers.alarmony.alarm.dto.request.InviteMemberToGroupRequestDto;
 import com.slembers.alarmony.alarm.dto.response.AlarmRecordResponseDto;
 import com.slembers.alarmony.alarm.exception.AlarmErrorCode;
@@ -132,6 +133,23 @@ public class GroupController {
         @PathVariable(name = "group-id") Long groupId) {
         return new ResponseEntity<>(alarmRecordService.getTodayAlarmRecords(groupId),
             HttpStatus.OK);
+    }
+
+    /**
+     * 알람 랭킹 기록을 얻어온다.
+     *
+     * @param groupId 그룹 id
+     * @return 알람 랭킹 기록
+     */
+    @GetMapping("/{group-id}/ranks")
+    public ResponseEntity<Map<String, Object>> getAlarmRanking(
+        @PathVariable(name = "group-id") Long groupId) {
+
+        List<MemberRankingDto> alarmRanking = alarmRecordService.getAlarmRanking(groupId);
+
+        Map<String, Object> map = new HashMap<>();
+        map.put("members", alarmRanking);
+        return new ResponseEntity<>(map, HttpStatus.OK);
     }
 
 }

@@ -1,10 +1,12 @@
 package com.slembers.alarmony.alarm.service;
 
 import com.slembers.alarmony.alarm.dto.AlarmRecordDto;
+import com.slembers.alarmony.alarm.dto.MemberRankingDto;
 import com.slembers.alarmony.alarm.dto.response.AlarmRecordResponseDto;
 import com.slembers.alarmony.alarm.repository.AlarmRecordRepository;
 import com.slembers.alarmony.member.dto.MemberInfoDto;
 import java.time.LocalDate;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -45,6 +47,22 @@ public class AlarmRecordServiceImpl implements AlarmRecordService {
             .alarmOn(alarmOn)
             .alarmOff(alarmOff)
             .build();
+    }
+
+    /**
+     * 알람 랭킹 기록을 얻어온다.
+     *
+     * @param groupId 그룹 id
+     * @return 알람 랭킹 기록
+     */
+    @Override
+    public List<MemberRankingDto> getAlarmRanking(Long groupId) {
+        List<MemberRankingDto> alarmRanking = alarmRecordRepository.findMemberRankingsByAlarmId(
+            groupId);
+        return alarmRanking.stream()
+            .sorted(Comparator.comparing(MemberRankingDto::getWakeUpAvg,
+                Comparator.nullsLast(Float::compareTo)))
+            .collect(Collectors.toList());
     }
 
 }

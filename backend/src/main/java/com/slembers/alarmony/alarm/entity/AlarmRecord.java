@@ -26,6 +26,9 @@ public class AlarmRecord {
     @ColumnDefault("0")
     private int totalCount;
 
+    @Column(name = "total_wake_up_time")
+    private long totalWakeUpTime;
+
     @Column(name = "today_alarm_record")
     private LocalDateTime todayAlarmRecord;
 
