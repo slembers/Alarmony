@@ -2,6 +2,7 @@ package com.slembers.alarmony.alarm.service;
 
 import com.google.firebase.messaging.FirebaseMessagingException;
 import com.slembers.alarmony.alarm.dto.InviteMemberSetToGroupDto;
+import com.slembers.alarmony.alarm.dto.response.AlertListResponseDto;
 import com.slembers.alarmony.alarm.entity.Alert;
 
 import java.io.IOException;
@@ -45,4 +46,11 @@ public interface AlertService {
      * 알림 테스트 메소드
      */
     void testPushAlert();
+
+    /**
+     * 특정 유저의 알림 목록 가져오기
+     * @param username 아이디
+     * @return 알림 목록
+     */
+    AlertListResponseDto getAlertList(String username);
 }

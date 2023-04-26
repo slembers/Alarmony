@@ -41,4 +41,4 @@ out/
 .vscode/
 
 ### FCM config ###
-fcm-notify-config.json
+fcm-alert-config.json

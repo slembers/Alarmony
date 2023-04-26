@@ -45,6 +45,9 @@ public class Member {
     @Column(name = "profile_img_url", length = 1000)
     private String profileImgUrl;
 
+    @Column(name = "registration_token")
+    private String registrationToken;
+
     public void modifyAuthority(AuthorityEnum authority) {
         this.authority = authority;
     }
@@ -67,4 +70,7 @@ public class Member {
         return Objects.hash(this.getUsername());
     }
 
+    public void modifyToken(String newToken) {
+        this.registrationToken = newToken;
+    }
 }
