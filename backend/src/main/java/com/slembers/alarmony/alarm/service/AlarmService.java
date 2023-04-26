@@ -1,6 +1,7 @@
 package com.slembers.alarmony.alarm.service;
 
 import com.slembers.alarmony.alarm.dto.AlarmDto;
+import com.slembers.alarmony.alarm.dto.CreateAlarmDto;
 import com.slembers.alarmony.alarm.dto.response.AlarmListResponseDto;
 
 public interface AlarmService {
@@ -12,6 +13,13 @@ public interface AlarmService {
      * @return 알람리스트
      */
     AlarmListResponseDto getAlarmList(String username);
+
+    /**
+     * 신규 알람을 생성한다.
+     * @param username 현재 로그인 아이디
+     * @param createAlarmDto 알람 생성 정보
+     */
+    void createAlarm(String username, CreateAlarmDto createAlarmDto);
 
     /**
      * 특정 알람아이디를 주면, 알람 기록을 찾아서 메시지를 기록해둔다.

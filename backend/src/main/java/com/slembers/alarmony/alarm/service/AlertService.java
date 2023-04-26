@@ -19,9 +19,9 @@ public interface AlertService {
     /**
      * 알림 객체를 받아서 초대 알림을 보낸다.
      *
-     * @param notification 알림 객체
+     * @param alert 알림 객체
      */
-    void sendInviteNotification(Alert notification);
+    void sendInviteAlert(Alert alert);
 
     /**
      * 웹의 토큰을 가져오는 메소드 (테스트 이후 삭제)
