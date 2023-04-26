@@ -43,7 +43,7 @@ public class CustomAuthenticationProvider  implements AuthenticationProvider {
             throw new AccessDeniedException("You do not have permission to access this resource.");
 
         }
-
+        //!!!!!!!!!!!!!!!!!!!!!!!비번 null처리해야되나
         return new UsernamePasswordAuthenticationToken(memberDetails, password, memberDetails.getAuthorities());
     }
 
