@@ -91,6 +91,8 @@ dependencies {
     implementation 'androidx.compose.runtime:runtime-livedata'
     // 선택 사항 - RxJava 통합
     implementation 'androidx.compose.runtime:runtime-rxjava2'
+    // glide image
+    implementation "com.github.bumptech.glide:compose:1.0.0-alpha.1"
 
     // Glide image
     implementation "com.github.bumptech.glide:compose:1.0.0-alpha.1"
