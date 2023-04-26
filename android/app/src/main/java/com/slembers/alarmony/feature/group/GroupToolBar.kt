@@ -2,6 +2,7 @@ package com.slembers.alarmony.feature.group
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Colors
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
@@ -23,11 +24,9 @@ import com.slembers.alarmony.R
 fun groupToolBar() {
     TopAppBar(
         title = { Text(text = "그룹 생성")},
-        modifier = Modifier.border(
-            BorderStroke(
-                1.dp, Color.Black
-            )
-        ),
+        modifier = Modifier
+            .border(BorderStroke(1.dp, Color.Black))
+            .padding(start = 5.dp),
         navigationIcon = {
             Icon(
                 painter = painterResource(id = R.drawable.arrow_back_ios),

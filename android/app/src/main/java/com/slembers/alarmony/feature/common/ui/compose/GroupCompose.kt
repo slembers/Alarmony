@@ -64,6 +64,7 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -71,9 +72,9 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.slembers.alarmony.R
+import com.slembers.alarmony.model.db.dto.MemberDto
 import com.slembers.alarmony.feature.common.CardBox
 import com.slembers.alarmony.feature.common.CardTitle
-import com.slembers.alarmony.feature.common.ui.view.GroupDefalutProfileView
 import com.slembers.alarmony.feature.common.ui.view.SearchMemberView
 import com.slembers.alarmony.model.db.SoundItem
 import java.util.Locale
@@ -106,10 +107,13 @@ fun GroupText(
 @ExperimentalGlideComposeApi
 fun GroupTitle(
     title : String,
-    icon : @Composable() () -> Unit = {}
+    content : @Composable() () -> Unit = {}
 ) {
     Row(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier.fillMaxWidth()
+            .padding(
+                start = 0.dp,
+                end = 5.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
@@ -131,7 +135,7 @@ fun GroupTitle(
                 .weight(1f),
             textAlign = TextAlign.Start
         )
-        icon()
+        content()
     }
 }
 
@@ -185,7 +189,7 @@ fun GroupSubjet(
 @ExperimentalGlideComposeApi
 fun GroupCard(
     title : @Composable() () -> Unit,
-    content: @Composable() () -> Unit
+    content: @Composable() () -> Unit = {}
 ) {
 
     Card(
@@ -297,6 +301,69 @@ fun GroupWeeks() {
     }
 }
 
+@Composable
+@ExperimentalMaterial3Api
+@ExperimentalGlideComposeApi
+fun GroupDefalutProfile(
+    nickname : String
+) {
+
+    BoxWithConstraints(
+        modifier = Modifier
+            .width(60.dp)
+            .height(70.dp)
+    ) {
+        Image(
+            modifier = Modifier
+                .align(Alignment.TopCenter)
+                .size(this.maxWidth)
+                .padding(0.dp),
+            painter = painterResource(id = R.drawable.baseline_account_circle_24),
+            contentDescription = null)
+        Text(
+            text = "Sample01",
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .fillMaxWidth(),
+            maxLines = 1,
+            textAlign = TextAlign.Center,
+            fontSize = 10.sp
+        )
+    }
+}
+
+@Composable
+@ExperimentalMaterial3Api
+@ExperimentalGlideComposeApi
+fun GroupInvite(
+    profile : MemberDto
+) {
+
+    BoxWithConstraints(
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        LazyRow(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(
+                    start = 20.dp,
+                    top = 0.dp,
+                    bottom = 0.dp,
+                    end = 10.dp
+                ),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(2.dp),
+            userScrollEnabled = true
+
+        ) {
+            items(
+                count = 7
+            ) {
+                GroupDefalutProfile(profile.nickname)
+            }
+        }
+    }
+}
 @Composable
 @ExperimentalMaterial3Api
 fun SoundChooseGrid(
