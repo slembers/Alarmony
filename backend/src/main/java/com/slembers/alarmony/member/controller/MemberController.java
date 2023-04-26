@@ -1,9 +1,11 @@
 package com.slembers.alarmony.member.controller;
 
 
+import com.slembers.alarmony.global.jwt.SecurityUtil;
 import com.slembers.alarmony.member.dto.LoginDto;
 import com.slembers.alarmony.member.dto.request.SignUpDto;
 import com.slembers.alarmony.member.dto.response.CheckDuplicateDto;
+import com.slembers.alarmony.member.entity.Member;
 import com.slembers.alarmony.member.service.EmailVerifyService;
 import com.slembers.alarmony.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
@@ -103,11 +105,13 @@ public class MemberController {
 
 
     @GetMapping("/test")
-    public void test( @AuthenticationPrincipal User user) {
+    public void test(@AuthenticationPrincipal User user ) {
 
+        user.getAuthorities();
         log.info("test진입");
+        log.info("test진입"+ user.getAuthorities());
 
-  log.info("test 진입함@@@@@@@@@@@@@@@@@@@@@"+user.getPassword());
+  log.info("test 진입함@@@@@@@@@@@@@@@@@@@@@"+SecurityUtil.getCurrentUsername().get());
 
     }
 
