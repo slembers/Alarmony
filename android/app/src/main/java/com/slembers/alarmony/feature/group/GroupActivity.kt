@@ -4,7 +4,9 @@ import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.OverscrollEffect
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
@@ -15,19 +17,28 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Slider
+import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
@@ -63,6 +74,9 @@ class GroupActivity : AppCompatActivity() {
 @ExperimentalGlideComposeApi
 fun GroupScaffold() {
 
+    var musicTitle by remember{ mutableStateOf("노래 제목") }
+    var sliderValue by remember{ mutableStateOf(0f) }
+    val scrollstate = rememberScrollState()
     Scaffold(
         topBar = {
             groupToolBar()
@@ -95,7 +109,8 @@ fun GroupScaffold() {
             Column(
                 modifier = Modifier
                     .padding(innerPadding)
-                    .padding(10.dp),
+                    .padding(10.dp)
+                    .verticalScroll(scrollstate),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 GroupCard(
@@ -132,7 +147,7 @@ fun GroupScaffold() {
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
                                 Text(
-                                    text = "노래제목",
+                                    text = musicTitle,
                                     style = TextStyle(
                                         color = Color.Gray,
                                         fontSize = 15.sp,
@@ -155,7 +170,8 @@ fun GroupScaffold() {
                         title = "타입",
                         content = {
                             Row(
-                                modifier = Modifier.height(50.dp)
+                                modifier = Modifier
+                                    .height(50.dp)
                                     .padding(5.dp),
                                 verticalAlignment = Alignment.CenterVertically,
                             ) {
@@ -196,14 +212,33 @@ fun GroupScaffold() {
                                             contentDescription = null)
                                     }
                                 }
-
                             }
                         }
                     )},
                 )
                 GroupCard(
-                    title = { GroupTitle(title = "볼륨") },
-                    content = {}
+                    title = { GroupTitle(
+                        title = "볼륨",
+                        content = {
+                            Row(
+                                modifier = Modifier
+                                    .height(50.dp)
+                                    .padding(5.dp)
+                                    .weight(1f),
+                                verticalAlignment = Alignment.CenterVertically,
+                            ) {
+                                Slider(
+                                    value = sliderValue,
+                                    onValueChange = {sliderValue = it},
+                                    valueRange = 0f..10f,
+                                    colors = SliderDefaults.colors(
+                                        thumbColor = MaterialTheme.colorScheme.background,
+                                        activeTrackColor = MaterialTheme.colorScheme.primary
+                                    )
+                                )
+                            }
+                        }
+                    )}
                 )
             }
         }
