@@ -7,6 +7,7 @@ import com.slembers.alarmony.member.dto.response.CheckDuplicateDto;
 import com.slembers.alarmony.member.service.EmailVerifyService;
 import com.slembers.alarmony.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -19,6 +20,7 @@ import javax.validation.Valid;
 @RestController
 @RequestMapping("/members")
 @RequiredArgsConstructor
+@Slf4j
 public class MemberController {
 
     private final MemberService memberService;
@@ -33,6 +35,7 @@ public class MemberController {
     @PostMapping("/sign-up")
     public ResponseEntity<String> signUp(@Valid @RequestBody SignUpDto signUpDto) {
 
+        log.info("[회원 가입 Controller 들어왔음");
         memberService.signUp(signUpDto);
         return new ResponseEntity<>("회원 가입 성공", HttpStatus.CREATED);
 
@@ -102,7 +105,9 @@ public class MemberController {
     @GetMapping("/test")
     public void test( @AuthenticationPrincipal User user) {
 
-   System.out.println("test 진입함@@@@@@@@@@@@@@@@@@@@@"+user.getUsername());
+        log.info("test진입");
+
+  log.info("test 진입함@@@@@@@@@@@@@@@@@@@@@"+user.getPassword());
 
     }
 
