@@ -36,7 +36,7 @@ public class CustomLoginSuccessHandler extends SavedRequestAwareAuthenticationSu
          Member member = ((PrincipalDetails) authentication.getPrincipal()).getMember();
 
 
-        log.info("멤버이름"+ member.getUsername());
+         log.info("멤버이름"+ member.getUsername());
          String accessToken = provider.generateAccessToken(member);
          String refreshToken = provider.generateRefreshToken(member);
 
@@ -49,11 +49,12 @@ public class CustomLoginSuccessHandler extends SavedRequestAwareAuthenticationSu
 
 
         //Redis에 refreshToken 저장
+        //!!!!!!!!!!!!!!!!refresh토큰 설정방식을 지금 다르게 해야함.
         refreshTokenRepository.save(RefreshToken.builder().
                 username(authentication.getName()).authorities(authentication.getAuthorities()).refreshToken(refreshToken)
                 .build());
 
-
         log.info("토큰 저장완료");
+        log.info("로그인 성공 저장완료");
     }
 }

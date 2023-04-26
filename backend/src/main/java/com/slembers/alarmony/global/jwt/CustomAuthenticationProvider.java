@@ -32,7 +32,7 @@ public class CustomAuthenticationProvider  implements AuthenticationProvider {
         // UserDetailsService를 통해 DB에서 아이디로 사용자 조회
         final PrincipalDetails memberDetails = (PrincipalDetails) principalDetailsService.loadUserByUsername(username);
         if (!passwordEncoder.matches(password, memberDetails.getPassword())) {
-            log.info("ddddddd");
+            log.info("비번이 일치하지 않음");
             throw new BadCredentialsException(memberDetails.getUsername() + "비밀번호가 일치하지 않습니다.");
 
         }
@@ -43,9 +43,6 @@ public class CustomAuthenticationProvider  implements AuthenticationProvider {
             throw new AccessDeniedException("You do not have permission to access this resource.");
 
         }
-
-
-
 
         return new UsernamePasswordAuthenticationToken(memberDetails, password, memberDetails.getAuthorities());
     }
