@@ -97,6 +97,7 @@ public class AlertServiceImpl implements AlertService {
 
     /**
      * 특정 유저의 알림 목록 가져오기
+     *
      * @param username 아이디
      * @return 알림 목록
      */
@@ -109,15 +110,15 @@ public class AlertServiceImpl implements AlertService {
             List<Alert> alerts = alertRepository.findAllByReceiver(member);
             List<AlertDto> alertDtos = new ArrayList<>();
 
-            alerts.forEach(alert -> {
+            alerts.forEach(alert ->
                 alertDtos.add(AlertDto.builder()
-                    .id(alert.getId())
-                    .profileImg(alert.getSender().getProfileImgUrl())
-                    .content(alert.getContent())
-                    .type(alert.getType().name())
-                    .build()
-                );
-            });
+                        .id(alert.getId())
+                        .profileImg(alert.getSender().getProfileImgUrl())
+                        .content(alert.getContent())
+                        .type(alert.getType().name())
+                        .build()
+                )
+            );
             return AlertListResponseDto.builder().alerts(alertDtos).build();
 
         } catch (Exception e) {
@@ -126,7 +127,24 @@ public class AlertServiceImpl implements AlertService {
     }
 
     /**
+     * 특정 알림을 선택하여 지울 수 있다.
+     *
+     * @param alertId 알림 아이디
+     */
+    @Override
+    public void deleteAlert(Long alertId) {
+        Alert alert = alertRepository.findById(alertId)
+                .orElseThrow(() -> new CustomException(AlertErrorCode.ALERT_NOT_FOUND));
+        try {
+            alertRepository.delete(alert);
+        } catch (Exception e) {
+            throw new CustomException(AlertErrorCode.ALERT_DELETE_ERROR);
+        }
+    }
+
+    /**
      * 웹 토큰을 가져오는 메소드 (추후 수정)
+     *
      * @return 토큰
      * @throws IOException 에러
      */
@@ -144,10 +162,9 @@ public class AlertServiceImpl implements AlertService {
     }
 
     /**
-     *
      * @param targetToken 목표 기기 토큰
-     * @param title 제목
-     * @param body 내용
+     * @param title       제목
+     * @param body        내용
      */
     public void sendMessageTo(String targetToken, String title, String body) {
         try {

@@ -11,7 +11,7 @@ public interface AlertService {
 
     /**
      * 멤버 집합을 돌며 초대 알림을 보낸다.
-     * 
+     *
      * @param inviteMemberSetToGroupDto 그룹 초대에 필요한 dto
      */
     void inviteMemberToGroup(InviteMemberSetToGroupDto inviteMemberSetToGroupDto);
@@ -25,21 +25,23 @@ public interface AlertService {
 
     /**
      * 웹의 토큰을 가져오는 메소드 (테스트 이후 삭제)
+     *
      * @return 토큰
      * @throws IOException 예외
      */
-    public String getAccessToken() throws IOException;
+    String getAccessToken() throws IOException;
 
 
     /**
      * 메시지 전송하는 메소드 (추후 추가 커스텀 필요)
+     *
      * @param targetToken 목표 기기 토큰
-     * @param title 제목
-     * @param body 내용
-     * @throws IOException 예외
+     * @param title       제목
+     * @param body        내용
+     * @throws IOException                예외
      * @throws FirebaseMessagingException 파이어베이스 메시징 에러
      */
-    public void sendMessageTo(String targetToken, String title, String body) throws IOException, FirebaseMessagingException;
+    void sendMessageTo(String targetToken, String title, String body) throws IOException, FirebaseMessagingException;
 
 
     /**
@@ -49,8 +51,16 @@ public interface AlertService {
 
     /**
      * 특정 유저의 알림 목록 가져오기
+     *
      * @param username 아이디
      * @return 알림 목록
      */
     AlertListResponseDto getAlertList(String username);
+
+    /**
+     * 특정 알림을 선택하여 지울 수 있다.
+     *
+     * @param alertId 알림 아이디
+     */
+    void deleteAlert(Long alertId);
 }
