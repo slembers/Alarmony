@@ -26,6 +26,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Slider
 import androidx.compose.material3.SliderDefaults
+import androidx.compose.material3.SliderPositions
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TimeInput
@@ -381,7 +382,8 @@ fun GroupVolumnView() {
         colors = SliderDefaults.colors(
             thumbColor = MaterialTheme.colorScheme.background,
             activeTrackColor = MaterialTheme.colorScheme.primary
-        )
+        ),
+        steps = 1
     )
 
 }

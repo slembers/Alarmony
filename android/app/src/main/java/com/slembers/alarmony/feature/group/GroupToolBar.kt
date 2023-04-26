@@ -29,7 +29,7 @@ fun groupToolBar() {
             .padding(start = 5.dp),
         navigationIcon = {
             Icon(
-                painter = painterResource(id = R.drawable.arrow_back_ios),
+                painter = painterResource(id = R.drawable.baseline_arrow_back_24),
                 contentDescription = null
             )
         },

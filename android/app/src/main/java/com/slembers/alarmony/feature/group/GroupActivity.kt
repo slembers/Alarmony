@@ -75,7 +75,7 @@ class GroupActivity : AppCompatActivity() {
 fun GroupScaffold() {
 
     var musicTitle by remember{ mutableStateOf("노래 제목") }
-    var sliderValue by remember{ mutableStateOf(0f) }
+    var sliderValue by remember{ mutableStateOf(5f) }
     val scrollstate = rememberScrollState()
     Scaffold(
         topBar = {
@@ -140,7 +140,7 @@ fun GroupScaffold() {
                 )
                 GroupCard(
                     title = { GroupTitle(
-                        title = "알람 선택",
+                        title = "알람선택",
                         content = {
                             Row(
                                 modifier = Modifier.height(50.dp),
@@ -234,7 +234,8 @@ fun GroupScaffold() {
                                     colors = SliderDefaults.colors(
                                         thumbColor = MaterialTheme.colorScheme.background,
                                         activeTrackColor = MaterialTheme.colorScheme.primary
-                                    )
+                                    ),
+                                    steps = 1
                                 )
                             }
                         }
