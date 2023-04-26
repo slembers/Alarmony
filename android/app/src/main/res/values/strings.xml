@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">alarmony</string>
+    <string name="title_activity_alarm">AlarmActivity</string>
+    <string name="title_activity_notification_list">NotificationListActivity</string>
 </resources>
