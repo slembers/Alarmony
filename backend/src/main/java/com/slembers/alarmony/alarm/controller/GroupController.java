@@ -152,4 +152,26 @@ public class GroupController {
         return new ResponseEntity<>(map, HttpStatus.OK);
     }
 
+    /**
+     * 사용자에게 알람 보내기
+     *
+     * @param groupId  그룹 id
+     * @param nickname 알람 보낼 사람의 닉네임
+     * @return 성공 여부
+     */
+    @PostMapping("/{group-id}/members/{nickname}/alarms")
+    public ResponseEntity<String> sendAlarm(
+        @PathVariable(name = "group-id") Long groupId,
+        @PathVariable(name = "nickname") String nickname) {
+
+        // TODO: 시큐리티에서 유저정보 가져오기
+        String username = null;
+
+        if (!groupService.isGroupOwner(groupId, username)) {
+            throw new CustomException(AlarmErrorCode.MEMBER_NOT_HOST);
+        }
+        alertService.sendAlarm(groupId, nickname);
+        return new ResponseEntity<>("알람 보내기에 성공했습니다.", HttpStatus.OK);
+    }
+
 }

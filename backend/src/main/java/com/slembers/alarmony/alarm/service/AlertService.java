@@ -41,7 +41,8 @@ public interface AlertService {
      * @throws IOException                예외
      * @throws FirebaseMessagingException 파이어베이스 메시징 에러
      */
-    void sendMessageTo(String targetToken, String title, String body) throws IOException, FirebaseMessagingException;
+    void sendMessageTo(String targetToken, String title, String body)
+        throws IOException, FirebaseMessagingException;
 
 
     /**
@@ -63,4 +64,13 @@ public interface AlertService {
      * @param alertId 알림 아이디
      */
     void deleteAlert(Long alertId);
+
+    /**
+     * 사용자에게 알람을 보낸다.
+     *
+     * @param groupId  그룹 id
+     * @param nickname 알람을 보낼 사용자의 닉네임
+     */
+    void sendAlarm(Long groupId, String nickname);
+
 }

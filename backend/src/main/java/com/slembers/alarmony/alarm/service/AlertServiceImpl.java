@@ -22,7 +22,6 @@ import com.slembers.alarmony.member.repository.MemberRepository;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -52,28 +51,28 @@ public class AlertServiceImpl implements AlertService {
         List<Member> validMemberList = new ArrayList<>();
         for (String nickname : inviteMemberSetToGroupDto.getNicknames()) {
             memberRepository.findByNickname(nickname)
-                    .ifPresent(validMemberList::add);
+                .ifPresent(validMemberList::add);
         }
 
         // TODO: 시큐리티에서 멤버 정보 얻어오기
         String username = "test";
 
         Member sender = memberRepository.findByUsername(username)
-                .orElseThrow(() -> new CustomException(MemberErrorCode.MEMBER_NOT_FOUND));
+            .orElseThrow(() -> new CustomException(MemberErrorCode.MEMBER_NOT_FOUND));
 
         Alarm alarm = alarmRepository.findById(inviteMemberSetToGroupDto.getGroupId())
-                .orElseThrow(() -> new CustomException(AlarmErrorCode.ALARM_NOT_FOUND));
+            .orElseThrow(() -> new CustomException(AlarmErrorCode.ALARM_NOT_FOUND));
 
         for (Member receiver : validMemberList) {
             sendInviteAlert(
-                    Alert.builder()
-                            .type(AlertTypeEnum.INVITE)
-                            .content(String.format("'%s' 그룹 초대입니다.'",
-                                    alarm.getTitle()))
-                            .sender(sender)
-                            .receiver(receiver)
-                            .alarm(alarm)
-                            .build()
+                Alert.builder()
+                    .type(AlertTypeEnum.INVITE)
+                    .content(String.format("'%s' 그룹 초대입니다.'",
+                        alarm.getTitle()))
+                    .sender(sender)
+                    .receiver(receiver)
+                    .alarm(alarm)
+                    .build()
             );
         }
     }
@@ -89,12 +88,12 @@ public class AlertServiceImpl implements AlertService {
             String targetMobile = alert.getReceiver().getRegistrationToken();
             // 메시지 설정
             Message message = Message.builder()
-                    .setNotification(Notification.builder()
-                            .setTitle("Alarmony 그룹 초대 알림")
-                            .setBody(alert.getReceiver().getNickname() + "님에게 " + alert.getContent())
-                            .build())
-                    .setToken(targetMobile)
-                    .build();
+                .setNotification(Notification.builder()
+                    .setTitle("Alarmony 그룹 초대 알림")
+                    .setBody(alert.getReceiver().getNickname() + "님에게 " + alert.getContent())
+                    .build())
+                .setToken(targetMobile)
+                .build();
             // 웹 API 토큰을 가져와서 보냄
             String response = FirebaseMessaging.getInstance().send(message);
             // 결과 출력
@@ -134,20 +133,20 @@ public class AlertServiceImpl implements AlertService {
     @Override
     public AlertListResponseDto getAlertList(String username) {
         Member member = memberRepository.findByUsername(username)
-                .orElseThrow(() -> new CustomException(MemberErrorCode.MEMBER_NOT_FOUND));
+            .orElseThrow(() -> new CustomException(MemberErrorCode.MEMBER_NOT_FOUND));
 
         try {
             List<Alert> alerts = alertRepository.findAllByReceiver(member);
             List<AlertDto> alertDtos = new ArrayList<>();
 
             alerts.forEach(alert ->
-                    alertDtos.add(AlertDto.builder()
-                            .id(alert.getId())
-                            .profileImg(alert.getSender().getProfileImgUrl())
-                            .content(alert.getContent())
-                            .type(alert.getType().name())
-                            .build()
-                    )
+                alertDtos.add(AlertDto.builder()
+                    .id(alert.getId())
+                    .profileImg(alert.getSender().getProfileImgUrl())
+                    .content(alert.getContent())
+                    .type(alert.getType().name())
+                    .build()
+                )
             );
             return AlertListResponseDto.builder().alerts(alertDtos).build();
 
@@ -164,7 +163,7 @@ public class AlertServiceImpl implements AlertService {
     @Override
     public void deleteAlert(Long alertId) {
         Alert alert = alertRepository.findById(alertId)
-                .orElseThrow(() -> new CustomException(AlertErrorCode.ALERT_NOT_FOUND));
+            .orElseThrow(() -> new CustomException(AlertErrorCode.ALERT_NOT_FOUND));
         try {
             alertRepository.delete(alert);
         } catch (Exception e) {
@@ -182,8 +181,8 @@ public class AlertServiceImpl implements AlertService {
         // firebase로 부터 access token을 가져온다.
 
         GoogleCredentials googleCredentials = GoogleCredentials
-                .fromStream(new ClassPathResource("fcm-alert-config.json").getInputStream())
-                .createScoped(Collections.singletonList(urlInfo.getCloudPlatformUrl()));
+            .fromStream(new ClassPathResource("fcm-alert-config.json").getInputStream())
+            .createScoped(Collections.singletonList(urlInfo.getCloudPlatformUrl()));
 
         googleCredentials.refreshIfExpired();
 
@@ -202,12 +201,53 @@ public class AlertServiceImpl implements AlertService {
             String targetMobile = "duAc2AEfShGR2Hf_hUTBRP:APA91bHmPeeBzhoz5nHiOzSEa9eIbWVv8l2uBAehRA3XVmh2L2qUguuNHVjpBirOhlHlT_qJsssZj6gHwLNScC1vS21tKP6hqcP-qqZmoGFA1eL61XdYuj301BUjCUHQ1MMNN3En1ub0";
             // 메시지 설정
             Message message = Message.builder()
-                    .setNotification(Notification.builder()
-                            .setTitle("Alarmony")
-                            .setBody("초대 메시지를 전송했습니다.")
-                            .build())
-                    .setToken(targetMobile)
-                    .build();
+                .setNotification(Notification.builder()
+                    .setTitle("Alarmony")
+                    .setBody("일해라 박성완")
+                    .build())
+                .setToken(targetMobile)
+                .build();
+
+            // 웹 API 토큰을 가져와서 보냄
+            String response = FirebaseMessaging.getInstance().send(message);
+            // 결과 출력
+            log.info("Successfully sent message: " + response);
+        } catch (Exception e) {
+            throw new CustomException(AlertErrorCode.ALERT_SERVER_ERROR);
+        }
+    }
+
+    /**
+     * 사용자에게 알람을 보낸다.
+     *
+     * @param groupId  그룹 id
+     * @param nickname 알람을 보낼 사용자의 닉네임
+     */
+    @Override
+    public void sendAlarm(Long groupId, String nickname) {
+
+        Alarm alarm = alarmRepository.findById(groupId)
+            .orElseThrow(() -> new CustomException(AlertErrorCode.ALERT_NOT_FOUND));
+        // TODO: 닉네임으로 fcm 토큰 얻어오기
+        sendAlarmTo("", alarm.getTitle());
+    }
+
+    /**
+     * 사용자에게 알람을 보낸다.
+     *
+     * @param targetToken 목표 기기 토큰
+     * @param groupTitle  그룹 타이틀
+     */
+    private void sendAlarmTo(String targetToken, String groupTitle) {
+        try {
+            // TODO : 현재는 토큰이 있는 기기가 적으므로, 추후에 토큰 설정을 포함하도록 변경해야 함.
+            String targetMobile = "duAc2AEfShGR2Hf_hUTBRP:APA91bHmPeeBzhoz5nHiOzSEa9eIbWVv8l2uBAehRA3XVmh2L2qUguuNHVjpBirOhlHlT_qJsssZj6gHwLNScC1vS21tKP6hqcP-qqZmoGFA1eL61XdYuj301BUjCUHQ1MMNN3En1ub0";
+            // 메시지 설정
+            Message message = Message.builder()
+                .putData("type", "ALARM")
+                .putData("group", groupTitle)
+                .setToken(targetMobile)
+                .build();
 
             // 웹 API 토큰을 가져와서 보냄
             String response = FirebaseMessaging.getInstance().send(message);
