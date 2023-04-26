@@ -55,7 +55,6 @@ public class MemberServiceImpl implements MemberService {
     @Override
     public boolean signUp(SignUpDto signUpDto) {
 
-
         //아이디 중복 체크
         if (checkForDuplicateId(signUpDto.getUsername()).isDuplicated())
             throw new CustomException(MemberErrorCode.ID_DUPLICATED);
@@ -74,6 +73,8 @@ public class MemberServiceImpl implements MemberService {
         emailVerifyService.sendVerificationMail(member.getUsername(), member.getEmail());
 
         memberRepository.save(member);
+
+        //!!!!! 이걸 궅이.........true로 해줘야 했을까 !!!!! 좋은 리턴 방법 필요 //
         return true;
     }
 
@@ -85,7 +86,7 @@ public class MemberServiceImpl implements MemberService {
     @Override
     public ResponseEntity<String> login(LoginDto loginDto , HttpServletResponse response) {
 
-        //로그인 검증
+       /* //로그인 검증
         LOGIN_VALIDATE(loginDto);
 
         log.info("검증완료");
@@ -132,7 +133,7 @@ public class MemberServiceImpl implements MemberService {
         TokenDto tokenDto = new TokenDto(accessToken,refreshToken);
         //헤더에 저장
         setHeader(response, tokenDto);
-
+*/
        return ResponseEntity.ok().body("로그인 성공");
     }
 
