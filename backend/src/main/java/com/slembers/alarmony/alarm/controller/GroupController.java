@@ -2,8 +2,12 @@ package com.slembers.alarmony.alarm.controller;
 
 import com.slembers.alarmony.alarm.dto.InviteMemberSetToGroupDto;
 import com.slembers.alarmony.alarm.dto.request.InviteMemberToGroupRequestDto;
+import com.slembers.alarmony.alarm.dto.response.AlarmRecordResponseDto;
+import com.slembers.alarmony.alarm.exception.AlarmErrorCode;
+import com.slembers.alarmony.alarm.service.AlarmRecordService;
 import com.slembers.alarmony.alarm.service.GroupService;
-import com.slembers.alarmony.alarm.service.NotificationService;
+import com.slembers.alarmony.alarm.service.AlertService;
+import com.slembers.alarmony.global.execption.CustomException;
 import com.slembers.alarmony.member.dto.MemberInfoDto;
 import java.util.HashMap;
 import java.util.List;
@@ -27,7 +31,8 @@ import org.springframework.web.bind.annotation.RestController;
 public class GroupController {
 
     private final GroupService groupService;
-    private final NotificationService notificationService;
+    private final AlarmRecordService alarmRecordService;
+    private final AlertService alertService;
 
     /**
      * 초대 가능한 멤버 리스트를 반환합니다.
@@ -52,7 +57,7 @@ public class GroupController {
     /**
      * 멤버를 그룹으로 초대합니다.
      *
-     * @param groupId 그룹 id
+     * @param groupId                       그룹 id
      * @param inviteMemberToGroupRequestDto 그룹 초대에 필요한 dto (멤버 닉네임 집합)
      * @return 성공 여부
      */
@@ -65,10 +70,16 @@ public class GroupController {
             .groupId(groupId)
             .nicknames(inviteMemberToGroupRequestDto.getMembers())
             .build();
-        notificationService.inviteMemberToGroup(dto);
+        alertService.inviteMemberToGroup(dto);
         return new ResponseEntity<>("멤버에게 그룹 초대를 요청했습니다.", HttpStatus.OK);
     }
 
+    /**
+     * 그룹에서 떠납니다.
+     *
+     * @param groupId 그룹 id
+     * @return 성공 여부
+     */
     @DeleteMapping("/{group-id}")
     public ResponseEntity<String> leaveFromGroup(
         @PathVariable(name = "group-id") Long groupId) {
@@ -76,8 +87,51 @@ public class GroupController {
         // TODO: 시큐리티에서 유저정보 가져오기
         String username = null;
 
-        groupService.removeMemberByUsername(groupId, username);
+        if (groupService.isGroupOwner(groupId, username)) {
+            groupService.removeHostMember(groupId);
+        } else {
+            groupService.removeMemberByUsername(groupId, username);
+        }
         return new ResponseEntity<>("그룹 탈퇴에 성공했습니다.", HttpStatus.OK);
+    }
+
+    /**
+     * 그룹장 권한으로 그룹에서 멤버를 퇴출합니다.
+     *
+     * @param groupId  그룹 ID
+     * @param nickname 퇴출할 멤버의 nickname
+     * @return 성공 여부
+     */
+    @DeleteMapping("/{group-id}/members/{nickname}")
+    public ResponseEntity<String> removeMemberFromGroup(
+        @PathVariable(name = "group-id") Long groupId,
+        @PathVariable(name = "nickname") String nickname) {
+
+        // TODO: 시큐리티에서 유저정보 가져오기
+        String username = null;
+
+        if (!groupService.isGroupOwner(groupId, username)) {
+            throw new CustomException(AlarmErrorCode.MEMBER_NOT_HOST);
+        }
+        if (groupService.isGroupOwnerByNickname(groupId, nickname)) {
+            throw new CustomException(AlarmErrorCode.CANNOT_REMOVE_HOST);
+        }
+
+        groupService.removeMemberByNickname(groupId, nickname);
+        return new ResponseEntity<>("해당 멤버 퇴출에 성공했습니다.", HttpStatus.OK);
+    }
+
+    /**
+     * 오늘의 알람 기록 정보를 가져온다.
+     *
+     * @param groupId 그룹 id
+     * @return 알람 기록
+     */
+    @GetMapping("/{group-id}/records")
+    public ResponseEntity<AlarmRecordResponseDto> getTodayAlarmRecords(
+        @PathVariable(name = "group-id") Long groupId) {
+        return new ResponseEntity<>(alarmRecordService.getTodayAlarmRecords(groupId),
+            HttpStatus.OK);
     }
 
 }

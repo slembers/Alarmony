@@ -1,7 +1,9 @@
 package com.slembers.alarmony.alarm.repository;
 
+import com.slembers.alarmony.alarm.dto.AlarmRecordDto;
 import com.slembers.alarmony.alarm.entity.AlarmRecord;
 import com.slembers.alarmony.alarm.entity.MemberAlarm;
+import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -27,5 +29,18 @@ public interface AlarmRecordRepository extends JpaRepository<AlarmRecord, Long> 
      * @param memberAlarm 멤버 알람 정보
      */
     void deleteByMemberAlarm(MemberAlarm memberAlarm);
+
+    /**
+     * 오늘의 알람 기록 정보를 가져온다.
+     *
+     * @param groupId 그룹 id
+     * @return 알람 기록
+     */
+    @Query("SELECT new com.slembers.alarmony.alarm.dto.AlarmRecordDto(m.nickname, m.profileImgUrl, ar.todayAlarmRecord) "
+        + "FROM member_alarm AS ma "
+        + "INNER JOIN member AS m ON ma.member.id = m.id "
+        + "INNER JOIN alarm_record AS ar ON ma.id = ar.memberAlarm.id "
+        + "WHERE ma.alarm.id = :groupId")
+    List<AlarmRecordDto> findTodayAlarmRecordsByAlarmId(Long groupId);
 
 }

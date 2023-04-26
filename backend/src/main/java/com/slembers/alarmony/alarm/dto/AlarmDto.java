@@ -3,7 +3,6 @@ package com.slembers.alarmony.alarm.dto;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Builder;
 
-import java.time.LocalTime;
 import java.util.List;
 
 @Builder
@@ -14,9 +13,6 @@ public class AlarmDto {
 
     @JsonProperty(value = "title")
     private String title;
-
-//    @JsonProperty(value = "time")
-//    private LocalTime time;
 
     @JsonProperty(value = "hour")
     private int hour;

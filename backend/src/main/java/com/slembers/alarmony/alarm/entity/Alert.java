@@ -3,20 +3,22 @@ package com.slembers.alarmony.alarm.entity;
 import com.slembers.alarmony.member.entity.Member;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
 
 import javax.persistence.*;
 
 @Builder
+@Getter
 @NoArgsConstructor
 @AllArgsConstructor
-@Entity(name = "notification")
-public class Notification {
+@Entity(name = "alert")
+public class Alert {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "notify_id")
+    @Column(name = "alert_id")
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -33,7 +35,7 @@ public class Notification {
     @Column(name = "type")
     @Enumerated(EnumType.STRING)
     @ColumnDefault("'BASIC'")
-    private NotificationTypeEnum type;
+    private AlertTypeEnum type;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "alarm_id")
