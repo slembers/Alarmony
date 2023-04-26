@@ -107,5 +107,8 @@ dependencies {
     // glide image
     implementation "com.github.bumptech.glide:compose:1.0.0-alpha.1"
 
+    implementation 'androidx.navigation:navigation-fragment-ktx:2.4.0'
+    implementation 'androidx.navigation:navigation-ui-ktx:2.4.0'
+    implementation("androidx.navigation:navigation-compose:2.4.0-alpha08")
 }
 apply plugin: 'com.google.gms.google-services'
