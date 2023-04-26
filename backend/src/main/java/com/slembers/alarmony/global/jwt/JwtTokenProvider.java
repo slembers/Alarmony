@@ -49,6 +49,7 @@ public class JwtTokenProvider {
         // bean으로 등록 되면서 딱 한번 실행된다.
         @PostConstruct
         public void init() {
+            log.info("init 실행");
             byte[] bytes = Base64.getDecoder().decode(secretKey);
             key = Keys.hmacShaKeyFor(bytes);
         }
@@ -68,21 +69,14 @@ public class JwtTokenProvider {
         return c.getTime();
     }
 
-    private  Key createSigningKey() {
-        byte[] apiKeySecretBytes = DatatypeConverter.parseBase64Binary(secretKey);
-        return new SecretKeySpec(apiKeySecretBytes, SignatureAlgorithm.HS256.getJcaName());
-    }
-
-
     //access Token
     public  String generateAccessToken(Member member) {
         JwtBuilder builder = Jwts.builder()
                 .setClaims(createClaims(member))
                 .setSubject(member.getUsername())
                 .setHeader(createHeader())
-
                 .setExpiration(createExpireDateForOneDay())
-                .signWith(createSigningKey(),SignatureAlgorithm.HS256);
+                .signWith(key,SignatureAlgorithm.HS256);
 
         return builder.compact();
     }
@@ -94,7 +88,7 @@ public class JwtTokenProvider {
                 .setHeader(createHeader())
                 .setClaims(createClaims(member))
                 .setExpiration(createExpireDateForOneMonth())
-                .signWith(createSigningKey(),SignatureAlgorithm.HS256);
+                .signWith(key,SignatureAlgorithm.HS256);
 
         return builder.compact();
     }
@@ -146,7 +140,7 @@ public class JwtTokenProvider {
                 .compact();
     }
 
-    //AccessToken, RefreshToken 을 생성하는 메서드
+  /*  //AccessToken, RefreshToken 을 생성하는 메서드
     public String createAccessToken(Authentication authentication) {
         String authorities = authentication.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
@@ -163,9 +157,9 @@ public class JwtTokenProvider {
                 .setExpiration(accessTokenExpiresIn)
                 .compact();
     }
+*/
 
-
-    public String createRefreshToken(String username) {
+/*    public String createRefreshToken(String username) {
         long now = (new Date()).getTime();
         Date accessTokenExpiresIn = new Date(now + 86400000*3); // 유효기간 1일*3
         return Jwts.builder()
@@ -173,7 +167,7 @@ public class JwtTokenProvider {
                 .setExpiration(accessTokenExpiresIn)
                 .signWith(key, SignatureAlgorithm.HS512)
                 .compact();
-    }
+    }*/
   /*  // 토큰 검증
     public Boolean tokenValidation(String token) {
         try {
@@ -205,6 +199,7 @@ public class JwtTokenProvider {
     public boolean validateToken(String token) {
         log.info("받은 토큰:"+token);
         try {
+            //유효시간도 체크하나봄 개꿀 ㅋㅋ
             Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
             return true;
         }catch(ExpiredJwtException e) {   // Token이 만료된 경우 Exception이 발생한다.
@@ -212,6 +207,7 @@ public class JwtTokenProvider {
 
         }catch(JwtException e) {        // Token이 변조된 경우 Exception이 발생한다.
             log.error("Token Error");
+            log.error(e.getMessage());
         }
         return false;
     }
