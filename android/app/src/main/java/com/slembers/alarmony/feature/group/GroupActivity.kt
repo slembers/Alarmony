@@ -3,7 +3,10 @@ package com.slembers.alarmony.feature.group
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -11,6 +14,8 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -21,6 +26,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
@@ -149,9 +155,47 @@ fun GroupScaffold() {
                         title = "타입",
                         content = {
                             Row(
-                                modifier = Modifier.height(50.dp),
-                                verticalAlignment = Alignment.CenterVertically
+                                modifier = Modifier.height(50.dp)
+                                    .padding(5.dp),
+                                verticalAlignment = Alignment.CenterVertically,
                             ) {
+                                BoxWithConstraints(
+                                    modifier = Modifier.fillMaxHeight(),
+                                    contentAlignment = Alignment.Center,
+                                ) {
+                                    Box(
+                                        modifier = Modifier
+                                            .padding(2.dp)
+                                            .size(this.maxHeight)
+                                            .align(Alignment.Center)
+                                            .clip(CircleShape)
+                                            .background(MaterialTheme.colorScheme.primary)
+                                    ) {
+                                        Image(
+                                            modifier = Modifier.align(Alignment.Center),
+                                            painter = painterResource(id = R.drawable.baseline_music_note_24) ,
+                                            contentDescription = null)
+                                    }
+                                }
+
+                                BoxWithConstraints(
+                                    modifier = Modifier.fillMaxHeight(),
+                                    contentAlignment = Alignment.Center,
+                                ) {
+                                    Box(
+                                        modifier = Modifier
+                                            .padding(2.dp)
+                                            .size(this.maxHeight)
+                                            .align(Alignment.Center)
+                                            .clip(CircleShape)
+                                            .background(MaterialTheme.colorScheme.primary)
+                                    ) {
+                                        Image(
+                                            modifier = Modifier.align(Alignment.Center),
+                                            painter = painterResource(id = R.drawable.baseline_vibration_24) ,
+                                            contentDescription = null)
+                                    }
+                                }
 
                             }
                         }
