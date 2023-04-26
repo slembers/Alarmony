@@ -21,4 +21,24 @@ public class CommonMethods {
 
         return targetWeekdays;
     }
+
+    /**
+     * 신규 알람을 생성할 때, 요일 리스트를 DB 저장용 바이트 배열로 변환한다.
+     * @param list 요일 리스트
+     * @return 바이트 배열
+     */
+    public static Byte[] changeStringListToByteList(List<String> list) {
+        Byte[] bytes = new Byte[7];
+
+        for (int i = 0; i < 7; i++) {
+            bytes[i] = 0;
+            for (int j = 0, size = list.size(); j < size; j++) {
+                if (list.get(j).equals(weekdays[j])) {
+                    bytes[i] = 1;
+                    break;
+                }
+            }
+        }
+        return bytes;
+    }
 }

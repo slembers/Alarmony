@@ -23,6 +23,7 @@ import com.slembers.alarmony.member.repository.MemberRepository;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import lombok.RequiredArgsConstructor;
@@ -55,12 +56,16 @@ public class AlertServiceImpl implements AlertService {
         }
 
         // TODO: 시큐리티에서 멤버 정보 얻어오기
-        Member sender = null;
+        String username = "test";
+
+        Member sender = memberRepository.findByUsername(username)
+                .orElseThrow(() -> new CustomException(MemberErrorCode.MEMBER_NOT_FOUND));
+
         Alarm alarm = alarmRepository.findById(inviteMemberSetToGroupDto.getGroupId())
                 .orElseThrow(() -> new CustomException(AlarmErrorCode.ALARM_NOT_FOUND));
 
         for (Member receiver : validMemberList) {
-            sendInviteNotification(
+            sendInviteAlert(
                     Alert.builder()
                             .type(AlertTypeEnum.INVITE)
                             .content(String.format("'%s' 그룹 초대입니다.'",
@@ -79,8 +84,33 @@ public class AlertServiceImpl implements AlertService {
      * @param alert 알림 객체
      */
     @Override
-    public void sendInviteNotification(Alert alert) {
-        //TODO : 초대 보내는 것 FCM으로 전송하기.
+    public void sendInviteAlert(Alert alert) {
+        try {
+            String targetMobile = alert.getReceiver().getRegistrationToken();
+            // 메시지 설정
+            Message message = Message.builder()
+                    .setNotification(Notification.builder()
+                            .setTitle("Alarmony 그룹 초대 알림")
+                            .setBody(alert.getReceiver().getNickname() + "님에게 " + alert.getContent())
+                            .build())
+                    .setToken(targetMobile)
+                    .build();
+            // 웹 API 토큰을 가져와서 보냄
+            String response = FirebaseMessaging.getInstance().send(message);
+            // 결과 출력
+            log.info("초대 메시지 전송 완료: " + response);
+
+            // 푸쉬 알림을 보냈으니, 알림 테이블에도 추가해야 한다
+
+        } catch (Exception e) {
+            throw new CustomException(AlertErrorCode.ALERT_INVITE_SEND_ERROR);
+        }
+
+        try {
+            alertRepository.save(alert);
+        } catch (Exception e) {
+            throw new CustomException(AlertErrorCode.ALERT_SERVER_ERROR);
+        }
     }
 
     /**
@@ -111,13 +141,13 @@ public class AlertServiceImpl implements AlertService {
             List<AlertDto> alertDtos = new ArrayList<>();
 
             alerts.forEach(alert ->
-                alertDtos.add(AlertDto.builder()
-                        .id(alert.getId())
-                        .profileImg(alert.getSender().getProfileImgUrl())
-                        .content(alert.getContent())
-                        .type(alert.getType().name())
-                        .build()
-                )
+                    alertDtos.add(AlertDto.builder()
+                            .id(alert.getId())
+                            .profileImg(alert.getSender().getProfileImgUrl())
+                            .content(alert.getContent())
+                            .type(alert.getType().name())
+                            .build()
+                    )
             );
             return AlertListResponseDto.builder().alerts(alertDtos).build();
 
@@ -153,7 +183,7 @@ public class AlertServiceImpl implements AlertService {
 
         GoogleCredentials googleCredentials = GoogleCredentials
                 .fromStream(new ClassPathResource("fcm-alert-config.json").getInputStream())
-                .createScoped(Arrays.asList(urlInfo.getCloudPlatformUrl()));
+                .createScoped(Collections.singletonList(urlInfo.getCloudPlatformUrl()));
 
         googleCredentials.refreshIfExpired();
 
@@ -169,7 +199,7 @@ public class AlertServiceImpl implements AlertService {
     public void sendMessageTo(String targetToken, String title, String body) {
         try {
             // TODO : 현재는 토큰이 있는 기기가 적으므로, 추후에 토큰 설정을 포함하도록 변경해야 함.
-            String targetMobile = "csqE12UjSWiFc683d1q7SA:APA91bEujTQKaNu5f12FByxQJubWRl7HmnIF4ZMFbLl2yMc1yFZbwiyn8d2RIX7FGvMCFIi2XbPoIwnDEJM3mG6aD4HyR999fcXFPFvIyaFp6b2u20rELKCSNmnbQLZnmXkXu9KBza9F";
+            String targetMobile = "duAc2AEfShGR2Hf_hUTBRP:APA91bHmPeeBzhoz5nHiOzSEa9eIbWVv8l2uBAehRA3XVmh2L2qUguuNHVjpBirOhlHlT_qJsssZj6gHwLNScC1vS21tKP6hqcP-qqZmoGFA1eL61XdYuj301BUjCUHQ1MMNN3En1ub0";
             // 메시지 설정
             Message message = Message.builder()
                     .setNotification(Notification.builder()

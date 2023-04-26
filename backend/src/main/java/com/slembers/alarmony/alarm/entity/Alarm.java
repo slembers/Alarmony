@@ -1,19 +1,23 @@
 package com.slembers.alarmony.alarm.entity;
 
 import com.slembers.alarmony.member.entity.Member;
-import lombok.Getter;
+import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicInsert;
 
 import javax.persistence.*;
 import java.time.LocalTime;
 
-@Getter
 @Entity(name = "alarm")
+@Getter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @DynamicInsert
 public class Alarm {
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "alarm_id")
     private Long id;
 
@@ -27,7 +31,7 @@ public class Alarm {
     @JoinColumn(name = "host_id", nullable = false)
     private Member host;
 
-    @Column(name = "alarm_date",columnDefinition = "BINARY(7)")
+    @Column(name = "alarm_date", columnDefinition = "BINARY(7)")
     @ColumnDefault("0x00000000000000")
     private Byte[] alarmDate;
 
