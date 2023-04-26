@@ -275,6 +275,3 @@ fun MyListItem(item : Alarm, onItemClick: (String) -> Unit) {
 fun DefaultPreview() {
     MainScaffold()
 }
-
-
-
