@@ -25,6 +25,7 @@ public class RedisUtil {
      * @return Redis에서 key에 해당하는 value를 리턴합니다.
      */
     public String getData(String key){
+
         ValueOperations<String,String> valueOperations = stringRedisTemplate.opsForValue();
         return valueOperations.get(key);
     }
