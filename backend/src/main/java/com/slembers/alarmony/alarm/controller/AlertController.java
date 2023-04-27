@@ -1,7 +1,10 @@
 package com.slembers.alarmony.alarm.controller;
 
+import com.slembers.alarmony.alarm.dto.request.ResponseInviteRequestDto;
 import com.slembers.alarmony.alarm.dto.response.AlertListResponseDto;
+import com.slembers.alarmony.alarm.exception.AlertErrorCode;
 import com.slembers.alarmony.alarm.service.AlertService;
+import com.slembers.alarmony.global.execption.CustomException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -38,6 +41,26 @@ public class AlertController {
     public ResponseEntity<String> deleteAlert(@PathVariable("alert-id") Long alertId) {
         alertService.deleteAlert(alertId);
         return new ResponseEntity<>("알림을 삭제했습니다.", HttpStatus.OK);
+    }
+
+    /**
+     * 그룹 초대에 대해 수락/거절 응답을 한다.
+     * @param alertId 알림 아이디
+     * @param responseInviteRequestDto 응답 객체 true : 수락, false : 거절
+     * @return 응답 메시지
+     */
+    @PostMapping("/{alert-id}/response")
+    public ResponseEntity<String> responseInvite(@PathVariable("alert-id") Long alertId, @RequestBody ResponseInviteRequestDto responseInviteRequestDto) {
+
+        if (responseInviteRequestDto == null || responseInviteRequestDto.getAccept() == null)
+            throw new CustomException(AlertErrorCode.ALERT_BAD_REQUEST);
+        else if (responseInviteRequestDto.getAccept()) {
+            alertService.acceptInvite(alertId);
+            return new ResponseEntity<>("초대를 수락했습니다.", HttpStatus.OK);
+        } else {
+            alertService.refuseInvite(alertId);
+            return new ResponseEntity<>("초대를 거절했습니다.", HttpStatus.OK);
+        }
     }
 
     /**
