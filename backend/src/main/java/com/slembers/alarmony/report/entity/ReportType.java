@@ -1,7 +1,9 @@
 package com.slembers.alarmony.report.entity;
 
 import javax.persistence.*;
+import lombok.Getter;
 
+@Getter
 @Entity(name = "report_type")
 public class ReportType {
 

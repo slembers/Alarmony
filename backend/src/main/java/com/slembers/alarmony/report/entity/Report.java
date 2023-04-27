@@ -3,7 +3,9 @@ package com.slembers.alarmony.report.entity;
 import com.slembers.alarmony.member.entity.Member;
 
 import javax.persistence.*;
+import lombok.Getter;
 
+@Getter
 @Entity(name = "report_record")
 public class Report {
 
@@ -23,5 +25,8 @@ public class Report {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "reported_id", nullable = false)
     private Member reported;
+
+    @Column(name = "content", columnDefinition = "VARCHAR(1000)")
+    private String content;
 
 }
