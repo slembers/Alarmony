@@ -1,9 +1,12 @@
 package com.slembers.alarmony.alarm.controller;
 
+import com.slembers.alarmony.alarm.dto.AlarmSuccessDto;
 import com.slembers.alarmony.alarm.dto.CreateAlarmDto;
 import com.slembers.alarmony.alarm.dto.request.PutAlarmMessageRequestDto;
 import com.slembers.alarmony.alarm.dto.AlarmDto;
+import com.slembers.alarmony.alarm.dto.request.PutAlarmRecordTimeRequestDto;
 import com.slembers.alarmony.alarm.dto.response.AlarmListResponseDto;
+import com.slembers.alarmony.alarm.service.AlarmRecordService;
 import com.slembers.alarmony.alarm.service.AlarmService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -16,6 +19,8 @@ import org.springframework.web.bind.annotation.*;
 public class AlarmController {
 
     private final AlarmService alarmService;
+
+    private final AlarmRecordService alarmRecordService;
 
     /**
      * 현재 로그인 유저의 알람 리스트를 가져온다
@@ -70,5 +75,23 @@ public class AlarmController {
     @GetMapping("/{alarm-id}")
     public ResponseEntity<AlarmDto> getAlarmInfo(@PathVariable("alarm-id") Long alarmId) {
         return new ResponseEntity<>(alarmService.getAlarmInfo(alarmId), HttpStatus.OK);
+    }
+
+    /**
+     * 알람 종료에 성공하면 기록을 저장한다.
+     * @param alarmId 알람 아이디
+     * @param putAlarmRecordTimeRequestDto 알람 성공 요청 객체
+     * @return 성공 메시지
+     */
+    @PutMapping("/{alarm-id}/record")
+    public ResponseEntity<String> putAlarmRecord(@PathVariable("alarm-id") Long alarmId, @RequestBody PutAlarmRecordTimeRequestDto putAlarmRecordTimeRequestDto) {
+        // TODO : 시큐리티에서 멤버 정보 얻어오기
+        String username = "test";
+        alarmRecordService.putAlarmRecord(AlarmSuccessDto.builder()
+                .alarmId(alarmId)
+                .username(username)
+                .datetime(putAlarmRecordTimeRequestDto.getDatetime())
+                .build());
+        return new ResponseEntity<>("알람 종료 시간이 기록되었습니다.", HttpStatus.OK);
     }
 }
