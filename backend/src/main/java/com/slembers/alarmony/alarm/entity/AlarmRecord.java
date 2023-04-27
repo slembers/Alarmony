@@ -7,7 +7,9 @@ import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicInsert;
 
 import javax.persistence.*;
+import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 @Entity(name = "alarm_record")
 @Builder
@@ -34,6 +36,7 @@ public class AlarmRecord {
     private int totalCount;
 
     @Column(name = "total_wake_up_time")
+    @ColumnDefault("0")
     private long totalWakeUpTime;
 
     @Column(name = "today_alarm_record")
@@ -49,5 +52,19 @@ public class AlarmRecord {
      */
     public void changeMessage(String message) {
         this.message = message;
+    }
+
+    /**
+     * 알람 종료 성공으로 기록한다.
+     * @param alarmTime 알람 시간
+     * @param recordTime 기록 시간
+     */
+    public void recordSuccess(LocalTime alarmTime, LocalDateTime recordTime) {
+        this.totalCount++;
+        this.successCount++;
+        this.todayAlarmRecord = recordTime;
+        long seconds = Duration.between(alarmTime,recordTime.toLocalTime()).toSeconds();
+        totalWakeUpTime += seconds < 0 ? 86400 + seconds : seconds;
+
     }
 }
