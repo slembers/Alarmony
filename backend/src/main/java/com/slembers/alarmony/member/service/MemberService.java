@@ -12,14 +12,13 @@ public interface MemberService {
     /**
      * 회원 가입
      */
-
-    boolean signUp(SignUpDto signUpDto);
+    void signUp(SignUpDto signUpDto);
 
 
     /**
      * 로그인
      */
-    ResponseEntity<String> login(LoginDto loginDto , HttpServletResponse response);
+    ResponseEntity<String> login(LoginDto loginDto, HttpServletResponse response);
 
 
     /**
