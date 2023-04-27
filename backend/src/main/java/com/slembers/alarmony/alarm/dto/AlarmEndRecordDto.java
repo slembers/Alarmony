@@ -9,9 +9,10 @@ import java.time.LocalDateTime;
 @Builder
 @AllArgsConstructor
 @Getter
-public class AlarmSuccessDto {
+public class AlarmEndRecordDto {
 
     Long alarmId;
     String username;
     LocalDateTime datetime;
+    boolean success;
 }
