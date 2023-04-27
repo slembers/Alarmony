@@ -53,7 +53,7 @@ public class MemberServiceImpl implements MemberService {
      */
     @Transactional
     @Override
-    public boolean signUp(SignUpDto signUpDto) {
+    public void signUp(SignUpDto signUpDto) {
 
         //아이디 중복 체크
         if (checkForDuplicateId(signUpDto.getUsername()).isDuplicated())
@@ -74,8 +74,6 @@ public class MemberServiceImpl implements MemberService {
 
         memberRepository.save(member);
 
-        //!!!!! 이걸 궅이.........true로 해줘야 했을까 !!!!! 좋은 리턴 방법 필요 //
-        return true;
     }
 
     /**
@@ -84,11 +82,9 @@ public class MemberServiceImpl implements MemberService {
      * @param loginDto 로그인 정보
      */
     @Override
-    public ResponseEntity<String> login(LoginDto loginDto , HttpServletResponse response) {
+    public ResponseEntity<String> login(LoginDto loginDto, HttpServletResponse response) {
 
-       /* //로그인 검증
-        LOGIN_VALIDATE(loginDto);
-
+/*
         log.info("검증완료");
 
          // 1. Login ID/PW 를 기반으로 Authentication 객체 생성
@@ -133,8 +129,9 @@ public class MemberServiceImpl implements MemberService {
         TokenDto tokenDto = new TokenDto(accessToken,refreshToken);
         //헤더에 저장
         setHeader(response, tokenDto);
-*/
-       return ResponseEntity.ok().body("로그인 성공");
+        */
+        return ResponseEntity.ok().body("로그인 성공");
+
     }
 
     private void setHeader(HttpServletResponse response, TokenDto tokenDto) {
@@ -142,6 +139,7 @@ public class MemberServiceImpl implements MemberService {
         response.addHeader(JwtTokenProvider.REFRESH_TOKEN, tokenDto.getRefreshToken());
 
     }
+
     /**
      * 아이디 중복체크
      *
@@ -182,13 +180,13 @@ public class MemberServiceImpl implements MemberService {
     /**
      * 로그인 검증 확인
      */
-    private void LOGIN_VALIDATE(LoginDto loginDto){
+    private void LOGIN_VALIDATE(LoginDto loginDto) {
         //존재하지 않는 회원으로 로그인을 시도할경우 예외처리 발생
         Member member = memberRepository.findByUsername(loginDto.getUsername()).orElseThrow(() -> new CustomException(MemberErrorCode.MEMBER_NOT_FOUND));
 
         //비밀번호가 일치하는지 확인한다.
         boolean isMatch = passwordEncoder.matches(loginDto.getPassword(), member.getPassword());
-        if(!isMatch)  throw new BadCredentialsException("아이디 또는 비밀번호를 확인후 다시 로그인하여 주시기 바랍니다.");
+        if (!isMatch) throw new BadCredentialsException("아이디 또는 비밀번호를 확인후 다시 로그인하여 주시기 바랍니다.");
 
     }
 
