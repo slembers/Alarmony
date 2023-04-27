@@ -2,9 +2,8 @@ package com.slembers.alarmony.global.jwt.handler;
 
 import com.slembers.alarmony.global.jwt.AuthConstants;
 import com.slembers.alarmony.global.jwt.JwtTokenProvider;
-import com.slembers.alarmony.global.jwt.RefreshToken;
 import com.slembers.alarmony.global.jwt.auth.PrincipalDetails;
-import com.slembers.alarmony.global.redis.repository.RefreshTokenRepository;
+import com.slembers.alarmony.global.redis.service.RedisUtil;
 import com.slembers.alarmony.member.entity.Member;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,7 +24,8 @@ import java.io.IOException;
 public class CustomLoginSuccessHandler extends SavedRequestAwareAuthenticationSuccessHandler {
 
     private final JwtTokenProvider provider;
-    private final RefreshTokenRepository refreshTokenRepository;
+    private final RedisUtil redisUtil;
+
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws ServletException, IOException {
 
@@ -50,9 +50,12 @@ public class CustomLoginSuccessHandler extends SavedRequestAwareAuthenticationSu
 
         //Redis에 refreshToken 저장
         //!!!!!!!!!!!!!!!!refresh토큰 설정방식을 지금 다르게 해야함.
-        refreshTokenRepository.save(RefreshToken.builder().
+       /* refreshTokenRepository.save(RefreshToken.builder().
                 username(authentication.getName()).authorities(authentication.getAuthorities()).refreshToken(refreshToken)
-                .build());
+                .build());*/
+
+        String REFRESH_HEADER = "Refresh:";
+        redisUtil.setDataExpire(REFRESH_HEADER +member.getUsername(),refreshToken,30); //30일로 저장
 
         log.info("토큰 저장완료");
         log.info("로그인 성공 저장완료");
