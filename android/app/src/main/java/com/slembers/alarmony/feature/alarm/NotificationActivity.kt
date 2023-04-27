@@ -174,6 +174,7 @@ fun GroupNoti(item : Noti, isClicked : MutableState<Boolean>) {
     val openDialog = remember { mutableStateOf(true)  }
     if (openDialog.value) {
         AlertDialog(
+            shape = RoundedCornerShape(20.dp),
             onDismissRequest = {
                 openDialog.value = false
                 isClicked.value = false
