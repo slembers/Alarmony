@@ -43,12 +43,15 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TimeInput
+import androidx.compose.material3.TimePickerState
 import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -78,6 +81,7 @@ import com.slembers.alarmony.feature.common.CardTitle
 import com.slembers.alarmony.feature.common.ui.view.SearchMemberView
 import com.slembers.alarmony.model.db.SoundItem
 import java.util.Locale
+import kotlin.streams.toList
 
 @Composable
 @ExperimentalMaterial3Api
@@ -110,10 +114,12 @@ fun GroupTitle(
     content : @Composable() () -> Unit = {}
 ) {
     Row(
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier
+            .fillMaxWidth()
             .padding(
                 start = 0.dp,
-                end = 5.dp),
+                end = 5.dp
+            ),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
@@ -143,13 +149,12 @@ fun GroupTitle(
 @ExperimentalMaterial3Api
 @ExperimentalGlideComposeApi
 fun GroupSubjet(
+    onChangeValue : (String) -> Unit
 ) {
 
-    var text by remember{ mutableStateOf("") }
-
     OutlinedTextField(
-        value = text,
-        onValueChange = { text = it },
+        value = "",
+        onValueChange = onChangeValue,
         textStyle = TextStyle(
             color = Color.Black,
             fontSize = 20.sp,
@@ -204,11 +209,12 @@ fun GroupCard(
                 MaterialTheme.shapes.medium
             )
             .padding(4.dp)
-            .border(1.dp, Color.Black, MaterialTheme.shapes.medium)
+//            .border(1.dp, Color.Black, MaterialTheme.shapes.medium)
             .shadow(
-                elevation = 1.dp,
-                MaterialTheme.shapes.medium,
-                ambientColor = Color.Gray
+                elevation = 5.dp,
+                ambientColor = Color.Black,
+                spotColor = Color.Black,
+                shape = RoundedCornerShape(20.dp)
             ),
         content = {
             Column(
@@ -225,13 +231,13 @@ fun GroupCard(
 @Composable
 @ExperimentalMaterial3Api
 @ExperimentalGlideComposeApi
-fun GroupTimePicker() {
+fun GroupTimePicker(
+    state: TimePickerState
+) {
 
-    var showTimePicker by remember { mutableStateOf(false) }
     val state = rememberTimePickerState()
     val formatter = remember { SimpleDateFormat("hh:mm a", Locale.getDefault()) }
     val snackState = remember { SnackbarHostState() }
-    val showingPicker = remember { mutableStateOf(true) }
     val snackScope = rememberCoroutineScope()
     val configuration = LocalConfiguration.current
 
@@ -255,9 +261,7 @@ fun GroupWeeks() {
     val width = remember { mutableStateOf(0.dp) }
     val weeks = listOf<String>("월","화","수","목","금","토","일")
 
-    for(week in weeks) {
-        isCheck[week] = true
-    }
+    val weeks : List<String> = isWeeks.keys.stream().toList()
 
     BoxWithConstraints(
         modifier = Modifier
@@ -269,7 +273,7 @@ fun GroupWeeks() {
                 end = 10.dp
             )
     ) {
-        width.value = this.maxWidth
+        var buttonSize = this.maxWidth / 8
         LazyRow(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
@@ -278,20 +282,20 @@ fun GroupWeeks() {
         ) {
             items(weeks) {
                 TextButton(
-                    modifier = Modifier.size(width.value / 8),
+                    modifier = Modifier.size(buttonSize),
                     shape = CircleShape,
                     colors = ButtonDefaults.buttonColors(
                         contentColor = Color.Black,
                         containerColor =
-                        if (isCheck[it] == true) {
+                        if (isWeeks.getValue(it)) {
                             MaterialTheme.colorScheme.primary
                         }
                         else
                             MaterialTheme.colorScheme.background
                     ),
                     onClick = {
-                        isCheck[it] = if(isCheck[it] == true) false else true
-                        Log.d("click event","isCheck value : ${isCheck[it]}")
+                        isWeeks[it] = !isWeeks.getValue(it)
+                        Log.d("click event","isCheck value : ${isWeeks[it]}")
                     },
                     content = {
                         Text(text = it)
