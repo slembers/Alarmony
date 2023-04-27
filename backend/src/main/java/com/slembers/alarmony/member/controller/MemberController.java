@@ -29,7 +29,6 @@ public class MemberController {
     private final EmailVerifyService emailVerifyService;
 
 
-
     /**
      * 회원가입
      */
@@ -47,12 +46,11 @@ public class MemberController {
      * 로그인
      */
     @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody LoginDto loginDto, HttpServletResponse response){
+    public ResponseEntity<String> login(@RequestBody LoginDto loginDto, HttpServletResponse response) {
 
-       return memberService.login(loginDto,response);
+        return memberService.login(loginDto, response);
 
     }
-
 
 
     //가입된 유저인지 아이디와 비밀번호 검증 (Service Layer)
@@ -91,7 +89,6 @@ public class MemberController {
     }
 
 
-
     /**
      * 인증 이메일 확인
      */
@@ -105,13 +102,14 @@ public class MemberController {
 
 
     @GetMapping("/test")
-    public void test(@AuthenticationPrincipal User user ) {
+    public void test(@AuthenticationPrincipal User user) {
+
 
         user.getAuthorities();
         log.info("test진입");
-        log.info("test진입"+ user.getAuthorities());
+        log.info("test진입" + user.getAuthorities());
 
-  log.info("test 진입함@@@@@@@@@@@@@@@@@@@@@"+SecurityUtil.getCurrentUsername().get());
+        log.info("test 진입함@@@@@@@@@@@@@@@@@@@@@" + SecurityUtil.getCurrentUsername().get()); //
 
     }
 
