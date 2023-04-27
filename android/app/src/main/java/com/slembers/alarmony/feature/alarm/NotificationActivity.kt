@@ -1,8 +1,6 @@
 package com.slembers.alarmony.feature.alarm
 
 import android.os.Bundle
-import android.view.View
-import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
@@ -16,17 +14,16 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.MaterialTheme.colors
+import androidx.compose.material.AlertDialog
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.ArrowBackIos
 import androidx.compose.material.icons.outlined.Check
 import androidx.compose.material.icons.outlined.Close
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -35,16 +32,20 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
@@ -156,7 +157,7 @@ fun MyNotiItem(item : Noti) {
             )
         }
         if (isClicked.value) {
-            GroupNoti(item)
+            GroupNoti(item, isClicked)
         }
 
     }
@@ -169,53 +170,73 @@ fun NotificationPreview() {
 }
 
 @Composable
-fun GroupNoti(item : Noti) {
+fun GroupNoti(item : Noti, isClicked : MutableState<Boolean>) {
     val openDialog = remember { mutableStateOf(true)  }
     if (openDialog.value) {
-
         AlertDialog(
             onDismissRequest = {
                 openDialog.value = false
+                isClicked.value = false
             },
             title = {
-                Text(
-                    modifier = Modifier.fillMaxWidth(),
-                    text = item.content.substring(1, item.content.length-11),
-                    fontWeight = FontWeight.Bold,
-                    textAlign = TextAlign.Center)
-            },
-            confirmButton = {
-                Button(
-
-                    onClick = {
-                        openDialog.value = false
-                    },
-                    colors = ButtonDefaults.buttonColors(containerColor = "#31AF91".toColor()),
-                    ) {
-                    Icon(
-                        imageVector = Icons.Outlined.Check,
-                        contentDescription = "Notification",
-                        tint = Color.White,
-                        modifier = Modifier.size(25.dp)
+                Column() {
+                    Text(
+                        modifier = Modifier.fillMaxWidth(),
+                        text = "그룹초대",
+                        fontWeight = FontWeight.Bold,
+                        textAlign = TextAlign.Center,
+                        fontSize = 25.sp
                     )
-                    Text("초대 수락")
+                    Divider(
+                        modifier = Modifier
+                            .alpha(0.3f)
+                            .padding(top = 10.dp, bottom = 5.dp, start = 5.dp, end = 5.dp)
+                            .clip(shape = RoundedCornerShape(10.dp)),
+                        thickness = 2.dp,
+                        color = Color.Gray)
+                    Text(
+                        modifier = Modifier.fillMaxWidth(),
+                        color = Color.Gray,
+                        text = item.content.substring(0, item.content.length-10) + "에서\n 온 초대입니다.",
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 20.sp,
+                        textAlign = TextAlign.Center)
                 }
             },
-            dismissButton = {
-                Button(
-
-                    onClick = {
-                        openDialog.value = false
-                    },
-                    colors = ButtonDefaults.buttonColors(containerColor = "#C93636".toColor())
+            buttons = {
+                Row(
+                    horizontalArrangement = Arrangement.SpaceEvenly,
+                    modifier = Modifier.padding(20.dp).fillMaxWidth()
+                ) {
+                    Button(
+                        onClick = {
+                            openDialog.value = false
+                        },
+                        colors = ButtonDefaults.buttonColors(containerColor = "#C93636".toColor())
                     ) {
-                    Icon(
-                        imageVector = Icons.Outlined.Close,
-                        contentDescription = "Notification",
-                        tint = Color.White,
-                        modifier = Modifier.size(25.dp)
-                    )
-                    Text(text = "초대 거절")
+                        Icon(
+                            imageVector = Icons.Outlined.Close,
+                            contentDescription = "Notification",
+                            tint = Color.White,
+                            modifier = Modifier.size(25.dp)
+                        )
+                        Text(text = "거절")
+                    }
+                    Button(
+                        onClick = {
+                            openDialog.value = false
+                        },
+                        colors = ButtonDefaults.buttonColors(containerColor = "#31AF91".toColor()),
+                    ) {
+                        Icon(
+                            imageVector = Icons.Outlined.Check,
+                            contentDescription = "Notification",
+                            tint = Color.White,
+                            modifier = Modifier.size(25.dp)
+                        )
+                        Text("수락")
+                    }
+
                 }
             }
         )
