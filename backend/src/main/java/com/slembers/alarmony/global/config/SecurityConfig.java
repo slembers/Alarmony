@@ -6,6 +6,7 @@ import com.slembers.alarmony.global.jwt.JwtTokenProvider;
 import com.slembers.alarmony.global.jwt.auth.PrincipalDetailsService;
 import com.slembers.alarmony.global.jwt.filter.CustomAuthenticationFilter;
 import com.slembers.alarmony.global.jwt.handler.CustomLoginSuccessHandler;
+import com.slembers.alarmony.global.jwt.handler.JwtExceptionFilter;
 import com.slembers.alarmony.global.redis.service.RedisUtil;
 
 import lombok.RequiredArgsConstructor;
@@ -36,6 +37,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final PrincipalDetailsService principalDetailsService;
     private final JwtTokenProvider jwtTokenProvider;
+
+    private  final JwtAuthorizationFilter jwtAuthorizationFilter;
+
+    private final JwtExceptionFilter jwtExceptionFilter;
 
 
     private final RedisUtil redisUtil;
@@ -74,7 +79,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .formLogin().disable()
                 .httpBasic().disable()
                 .addFilterBefore(customAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
-                .addFilterBefore(new JwtAuthorizationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(jwtAuthorizationFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(jwtExceptionFilter,jwtAuthorizationFilter.getClass())
                 .authorizeRequests()
                 .antMatchers("/api/v1/user/**", "/members/test")
                 .access("hasRole('ROLE_USER') or hasRole('ROLE_MANAGER') or hasRole('ROLE_ADMIN')")
