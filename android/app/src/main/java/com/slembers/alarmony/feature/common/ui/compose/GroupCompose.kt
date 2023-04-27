@@ -46,13 +46,10 @@ import androidx.compose.material3.TimeInput
 import androidx.compose.material3.TimePickerState
 import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateMapOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -75,6 +72,7 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.slembers.alarmony.R
+import com.slembers.alarmony.model.db.Member
 import com.slembers.alarmony.model.db.dto.MemberDto
 import com.slembers.alarmony.feature.common.CardBox
 import com.slembers.alarmony.feature.common.CardTitle
@@ -326,7 +324,7 @@ fun GroupDefalutProfile(
             painter = painterResource(id = R.drawable.baseline_account_circle_24),
             contentDescription = null)
         Text(
-            text = "Sample01",
+            text = nickname,
             modifier = Modifier
                 .align(Alignment.BottomCenter)
                 .fillMaxWidth(),
@@ -341,7 +339,7 @@ fun GroupDefalutProfile(
 @ExperimentalMaterial3Api
 @ExperimentalGlideComposeApi
 fun GroupInvite(
-    profile : MemberDto
+    profiles : List<Member>
 ) {
 
     BoxWithConstraints(
@@ -361,10 +359,9 @@ fun GroupInvite(
             userScrollEnabled = true
 
         ) {
-            items(
-                count = 7
-            ) {
-                GroupDefalutProfile(profile.nickname)
+            items(profiles) {
+                item ->
+                    GroupDefalutProfile(item.nickname)
             }
         }
     }

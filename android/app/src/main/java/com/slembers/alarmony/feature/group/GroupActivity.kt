@@ -209,7 +209,7 @@ fun GroupScaffold() {
                             )
                         })},
                     content = { GroupInvite(
-                        profile = MemberDto("dkfsf","sample"))}
+                        profiles = groupProfile)}
                 )
                 GroupCard(
                     title = { GroupTitle(
