@@ -8,6 +8,7 @@ import org.hibernate.annotations.DynamicInsert;
 
 import javax.persistence.*;
 import java.time.Duration;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 
@@ -65,6 +66,19 @@ public class AlarmRecord {
         this.todayAlarmRecord = recordTime;
         long seconds = Duration.between(alarmTime,recordTime.toLocalTime()).toSeconds();
         totalWakeUpTime += seconds < 0 ? 86400 + seconds : seconds;
+
+    }
+
+    /**
+     * 알람 종료 실패로 기록한다.
+     * @param alarmTime 알람 시간
+     */
+    public void recordFailed(LocalTime alarmTime) {
+        // 최대 스누즈 시간 일단 30분으로 설정
+        long maxSnooze = 3600;
+        this.totalCount++;
+        this.todayAlarmRecord = LocalDateTime.of(LocalDate.now(),alarmTime.plusSeconds(maxSnooze));
+        totalWakeUpTime += maxSnooze;
 
     }
 }

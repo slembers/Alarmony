@@ -1,6 +1,6 @@
 package com.slembers.alarmony.alarm.controller;
 
-import com.slembers.alarmony.alarm.dto.AlarmSuccessDto;
+import com.slembers.alarmony.alarm.dto.AlarmEndRecordDto;
 import com.slembers.alarmony.alarm.dto.CreateAlarmDto;
 import com.slembers.alarmony.alarm.dto.request.PutAlarmMessageRequestDto;
 import com.slembers.alarmony.alarm.dto.AlarmDto;
@@ -87,11 +87,29 @@ public class AlarmController {
     public ResponseEntity<String> putAlarmRecord(@PathVariable("alarm-id") Long alarmId, @RequestBody PutAlarmRecordTimeRequestDto putAlarmRecordTimeRequestDto) {
         // TODO : 시큐리티에서 멤버 정보 얻어오기
         String username = "test";
-        alarmRecordService.putAlarmRecord(AlarmSuccessDto.builder()
+        alarmRecordService.putAlarmRecord(AlarmEndRecordDto.builder()
                 .alarmId(alarmId)
                 .username(username)
                 .datetime(putAlarmRecordTimeRequestDto.getDatetime())
+                .success(true)
                 .build());
         return new ResponseEntity<>("알람 종료 시간이 기록되었습니다.", HttpStatus.OK);
+    }
+
+    /**
+     * 알람 종료에 실패시 기록을 저장한다.
+     * @param alarmId 알람 아이디
+     * @return 실패 메시지
+     */
+    @PutMapping("/{alarm-id}/failed")
+    public ResponseEntity<String> putAlarmFailed(@PathVariable("alarm-id") Long alarmId) {
+        // TODO : 시큐리티에서 멤버 정보 얻어오기
+        String username = "test";
+        alarmRecordService.putAlarmRecord(AlarmEndRecordDto.builder()
+                .alarmId(alarmId)
+                .username(username)
+                .success(false)
+                .build());
+        return new ResponseEntity<>("알람 종료 실패로 기록되었습니다.", HttpStatus.OK);
     }
 }

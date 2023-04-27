@@ -1,7 +1,7 @@
 package com.slembers.alarmony.alarm.service;
 
 import com.slembers.alarmony.alarm.dto.AlarmRecordDto;
-import com.slembers.alarmony.alarm.dto.AlarmSuccessDto;
+import com.slembers.alarmony.alarm.dto.AlarmEndRecordDto;
 import com.slembers.alarmony.alarm.dto.MemberRankingDto;
 import com.slembers.alarmony.alarm.dto.response.AlarmRecordResponseDto;
 import com.slembers.alarmony.alarm.entity.Alarm;
@@ -79,25 +79,26 @@ public class AlarmRecordServiceImpl implements AlarmRecordService {
     }
 
     /**
-     * 알람 종료에 성공하면 기록한다.
-     * @param alarmSuccessDto 알람 성공 객체
+     * 알람 종료에 성공여부에 따라 기록한다.
+     * @param alarmEndRecordDto 알람 종료 객체
      */
     @Override
-    public void putAlarmRecord(AlarmSuccessDto alarmSuccessDto) {
-        Member member = memberRepository.findByUsername(alarmSuccessDto.getUsername())
+    public void putAlarmRecord(AlarmEndRecordDto alarmEndRecordDto) {
+        Member member = memberRepository.findByUsername(alarmEndRecordDto.getUsername())
                 .orElseThrow(() -> new CustomException(MemberErrorCode.MEMBER_NOT_FOUND));
 
-        AlarmRecord alarmRecord = alarmRecordRepository.findByMemberAndAlarm(member.getId(), alarmSuccessDto.getAlarmId())
+        AlarmRecord alarmRecord = alarmRecordRepository.findByMemberAndAlarm(member.getId(), alarmEndRecordDto.getAlarmId())
                 .orElseThrow(() -> new CustomException(AlarmRecordErrorCode.ALARM_RECORD_NOT_EXIST));
 
-        Alarm alarm = alarmRepository.findById(alarmSuccessDto.getAlarmId())
+        Alarm alarm = alarmRepository.findById(alarmEndRecordDto.getAlarmId())
                 .orElseThrow(() -> new CustomException(AlarmErrorCode.ALARM_NOT_FOUND));
 
         try {
-            alarmRecord.recordSuccess(alarm.getTime(), alarmSuccessDto.getDatetime());
+            if(alarmEndRecordDto.isSuccess()) alarmRecord.recordSuccess(alarm.getTime(), alarmEndRecordDto.getDatetime());
+            else alarmRecord.recordFailed(alarm.getTime());
             alarmRecordRepository.save(alarmRecord);
         } catch (Exception e) {
-            throw new CustomException(AlarmRecordErrorCode.ALARM_RECORD_SUCCESS_RECORD_ERROR);
+            throw new CustomException(AlarmRecordErrorCode.ALARM_RECORD_RECORD_ERROR);
         }
     }
 
