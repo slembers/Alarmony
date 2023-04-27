@@ -48,12 +48,6 @@ public class CustomLoginSuccessHandler extends SavedRequestAwareAuthenticationSu
         response.addHeader(AuthConstants.REFRESH_TOKEN, AuthConstants.TOKEN_TYPE  + " " + refreshToken);
 
 
-        //Redis에 refreshToken 저장
-        //!!!!!!!!!!!!!!!!refresh토큰 설정방식을 지금 다르게 해야함.
-       /* refreshTokenRepository.save(RefreshToken.builder().
-                username(authentication.getName()).authorities(authentication.getAuthorities()).refreshToken(refreshToken)
-                .build());*/
-
         String REFRESH_HEADER = "Refresh:";
         redisUtil.setDataExpire(REFRESH_HEADER +member.getUsername(),refreshToken,30); //30일로 저장
 
