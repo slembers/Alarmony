@@ -1,6 +1,10 @@
 package com.slembers.alarmony.report.service;
 
+import com.slembers.alarmony.global.execption.CustomException;
 import com.slembers.alarmony.report.dto.ReportDto;
+import com.slembers.alarmony.report.dto.response.ReportResponseDto;
+import com.slembers.alarmony.report.entity.Report;
+import com.slembers.alarmony.report.exception.ReportErrorCode;
 import com.slembers.alarmony.report.repository.ReportRepository;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -23,7 +27,8 @@ public class ReportServiceImpl implements ReportService {
     @Override
     public List<ReportDto> getReportList() {
         return reportRepository.findAll().stream()
-            .map(report -> ReportDto.builder().reportId(report.getId())
+            .map(report -> ReportDto.builder()
+                .reportId(report.getId())
                 .reportType(report.getReportType().getReportTypeName())
                 .reporter(report.getReporter().getNickname())
                 .reported(report.getReported().getNickname())
@@ -31,4 +36,22 @@ public class ReportServiceImpl implements ReportService {
             .collect(Collectors.toList());
     }
 
+    /**
+     * 신고 상세 정보를 가져온다.
+     *
+     * @param reportId 신고 id
+     * @return 상제 정보
+     */
+    @Override
+    public ReportResponseDto getReportDetail(Long reportId) {
+        Report report = reportRepository.findById(reportId)
+            .orElseThrow(() -> new CustomException(ReportErrorCode.REPORT_NOT_FOUND));
+        return ReportResponseDto.builder()
+            .reportId(report.getId())
+            .reportType(report.getReportType().getReportTypeName())
+            .reporter(report.getReporter().getNickname())
+            .reported(report.getReported().getNickname())
+            .content(report.getContent())
+            .build();
+    }
 }
