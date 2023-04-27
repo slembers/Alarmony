@@ -36,15 +36,13 @@ public class CustomAuthenticationProvider  implements AuthenticationProvider {
             throw new BadCredentialsException(memberDetails.getUsername() + "비밀번호가 일치하지 않습니다.");
 
         }
-
         //권한 체크
         if(memberDetails.getMember().getAuthority().toString().equals(AuthorityEnum.ROLE_NOT_PERMITTED.name())){
             log.info("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
             throw new AccessDeniedException("You do not have permission to access this resource.");
 
         }
-        //!!!!!!!!!!!!!!!!!!!!!!!비번 null처리해야되나
-        return new UsernamePasswordAuthenticationToken(memberDetails, password, memberDetails.getAuthorities());
+        return new UsernamePasswordAuthenticationToken(memberDetails, null, memberDetails.getAuthorities());
     }
 
     @Override
