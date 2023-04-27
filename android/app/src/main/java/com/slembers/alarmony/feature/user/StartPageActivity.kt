@@ -3,6 +3,7 @@ package com.slembers.alarmony.feature.user
 
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 
 
@@ -49,6 +50,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import com.slembers.alarmony.R
+import com.slembers.alarmony.feature.network.LoginData
 import com.slembers.alarmony.feature.network.LoginResponse
 import com.slembers.alarmony.feature.network.RetrofitClient
 import kotlinx.coroutines.Dispatchers
@@ -207,21 +209,26 @@ fun LoginScreen() {
                 .clip(RoundedCornerShape(20.dp))
         )
 
-//        아래는 로그인을 위한 통신로직을 RetrofitClient에서 가져와서 수행
 
+//        아래는 로그인을 위한 통신로직을 RetrofitClient에서 가져와서 수행
 
         Button(
             onClick = {
+                Log.d("TAG", "클릭버튼누럴ㅆ다!!")
 //                getService(this) 오류가 나니 아래 코드와 같이 수정
 //                Call, Callback이 아니라 retrofit2.Call, retrofit2.Callback
                 val service = RetrofitClient.getService(this as Context)
                 service.login(idState.value, passwordState.value).enqueue(object : retrofit2.Callback<LoginResponse?> {
+
                     override fun onResponse(call: retrofit2.Call<LoginResponse?>, response: retrofit2.Response<LoginResponse?>) {
+                        Log.d("TAG", "리스폰스버튼누럴ㅆ다!!")
                         if (response.isSuccessful) {
+                            Log.d("TAG", "성공")
                             val loginResponse = response.body()
 //                            성공했을때
                             Toast.makeText(context, "성공 " + response, Toast.LENGTH_SHORT).show()
                         } else {
+                            Log.d("TAG", "실패")
                             // 응답이 실패했을 때 처리할 작업
                             Toast.makeText(context, "실패 " + response.body(), Toast.LENGTH_SHORT).show()
                         }
@@ -229,6 +236,8 @@ fun LoginScreen() {
 
                     override fun onFailure(call: retrofit2.Call<LoginResponse?>, t: Throwable) {
                         // 네트워크 오류 발생 시 처리할 코드 작성
+                        Log.d("TAG", "뭐임?")
+                        Toast.makeText(context, "실패 ", Toast.LENGTH_SHORT).show()
                     }
                 })
 
