@@ -14,11 +14,14 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Alarmony"
         tools:targetApi="31">
+
+
         <activity
-            android:name=".feature.alarm.NotificationListActivity"
-            android:exported="false"
-            android:label="@string/title_activity_notification_list"
+            android:name=".feature.user.StartPageActivity"
+            android:exported="true"
+            android:label="@string/title_activity_alarm"
             android:theme="@style/Theme.Alarmony" />
+
         <activity
             android:name=".feature.group.GroupActivity"
             android:exported="false"

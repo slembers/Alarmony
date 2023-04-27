@@ -36,6 +36,6 @@ fun BtnFm() {
             .padding(16.dp),
 
         ) {
-        Text("로그인")
+        Text("로그인하하 임포트됨")
     }
 }
