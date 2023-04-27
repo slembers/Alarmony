@@ -1,6 +1,5 @@
 package com.slembers.alarmony.global.jwt;
 
-import com.slembers.alarmony.global.jwt.dto.TokenDto;
 import com.slembers.alarmony.member.entity.Member;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
@@ -13,12 +12,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.util.StringUtils;
-
 import javax.annotation.PostConstruct;
-import javax.crypto.spec.SecretKeySpec;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.xml.bind.DatatypeConverter;
+
 import java.security.Key;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -27,6 +23,13 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 //JwtProvider는 사용자 정보를 기반으로 JWT를 생성하고, 이후 요청에서 JWT를 검증하여 인증을 수행합니다.
+
+
+/**
+ * [JwtProvider]
+ * 사용자 정보를 기반으로 JWT를 생성
+ * 이후 요청에서 JWT를 검증하여 인증을 수행
+ */
 @Component
 @RequiredArgsConstructor
 @Slf4j
@@ -69,25 +72,35 @@ public class JwtTokenProvider {
         return c.getTime();
     }
 
-    //access Token
+    public Date createExpireDateForThreeHours() {
+        long nowMillis = System.currentTimeMillis();
+        long expireMillis = nowMillis + (3 * 60 * 60 * 1000); // 3시간(180분) 후의 밀리초 단위 시간
+       // long expireMillis = nowMillis + (1 * 60 * 1000); // 1분(60초) 후의 밀리초 단위 시간
+
+        return new Date(expireMillis);
+    }
+
+    //access Token 발급
     public  String generateAccessToken(Member member) {
         JwtBuilder builder = Jwts.builder()
                 .setClaims(createClaims(member))
                 .setSubject(member.getUsername())
                 .setHeader(createHeader())
-                .setExpiration(createExpireDateForOneDay())
+                .setExpiration(createExpireDateForThreeHours())
+                .setIssuedAt(new Date(System.currentTimeMillis()))
                 .signWith(key,SignatureAlgorithm.HS256);
 
         return builder.compact();
     }
 
-    //Refresh Token
+    //Refresh Token 발급
     public  String generateRefreshToken(Member member) {
         JwtBuilder builder = Jwts.builder()
                 .setSubject(member.getUsername())
                 .setHeader(createHeader())
                 .setClaims(createClaims(member))
                 .setExpiration(createExpireDateForOneMonth())
+                .setIssuedAt(new Date(System.currentTimeMillis()))
                 .signWith(key,SignatureAlgorithm.HS256);
 
         return builder.compact();
@@ -116,11 +129,13 @@ public class JwtTokenProvider {
 
         return claims;
     }
+/*
 
     // header 토큰을 가져오는 기능
     public String getHeaderToken(HttpServletRequest request, String type) {
         return type.equals("Access") ? request.getHeader(ACCESS_TOKEN) :request.getHeader(REFRESH_TOKEN);
     }
+*/
 
 
 
@@ -140,45 +155,7 @@ public class JwtTokenProvider {
                 .compact();
     }
 
-  /*  //AccessToken, RefreshToken 을 생성하는 메서드
-    public String createAccessToken(Authentication authentication) {
-        String authorities = authentication.getAuthorities().stream()
-                .map(GrantedAuthority::getAuthority)
-                .collect(Collectors.joining(","));
-        long now = (new Date()).getTime();
 
-
-        Date accessTokenExpiresIn = new Date(now + 86400000*3); // 유효기간 1일*3
-
-        return Jwts.builder()
-                .setSubject(authentication.getName())
-                .claim(AUTHORITIES_KEY, authorities)
-                .signWith(key, SignatureAlgorithm.HS512)
-                .setExpiration(accessTokenExpiresIn)
-                .compact();
-    }
-*/
-
-/*    public String createRefreshToken(String username) {
-        long now = (new Date()).getTime();
-        Date accessTokenExpiresIn = new Date(now + 86400000*3); // 유효기간 1일*3
-        return Jwts.builder()
-                .setSubject(username)
-                .setExpiration(accessTokenExpiresIn)
-                .signWith(key, SignatureAlgorithm.HS512)
-                .compact();
-    }*/
-  /*  // 토큰 검증
-    public Boolean tokenValidation(String token) {
-        try {
-            Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
-            return true;
-        } catch (Exception ex) {
-           // log.error(ex.getMessage());
-            return false;
-        }
-    }
-  */
 
 
 
