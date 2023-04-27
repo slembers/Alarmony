@@ -1,0 +1,46 @@
+package com.slembers.alarmony.feature.common.ui
+
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.material3.BottomAppBar
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
+
+
+@Composable
+@ExperimentalMaterial3Api
+fun AlamonyBottomButton(
+    text : String = "버튼 이름"
+) {
+    BottomAppBar(
+        modifier = Modifier.height(50.dp),
+        contentPadding = PaddingValues(0.dp),
+        content = {
+            TextButton(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .fillMaxHeight()
+                    .background(
+                        MaterialTheme.colorScheme.primary,
+                        MaterialTheme.shapes.extraSmall
+                    ),
+                onClick = { /*TODO*/ },
+                content = {
+                    Text(
+                        text = text,
+                        color = Color.Black,
+                    )
+                }
+            )
+        }
+    )
+}
