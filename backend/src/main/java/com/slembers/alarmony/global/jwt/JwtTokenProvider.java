@@ -129,34 +129,6 @@ public class JwtTokenProvider {
 
         return claims;
     }
-/*
-
-    // header 토큰을 가져오는 기능
-    public String getHeaderToken(HttpServletRequest request, String type) {
-        return type.equals("Access") ? request.getHeader(ACCESS_TOKEN) :request.getHeader(REFRESH_TOKEN);
-    }
-*/
-
-
-
-
-
-    public String createToken(String username, String type) {
-
-        Date date = new Date();
-
-        long time = type.equals("Access") ? ACCESS_TIME : REFRESH_TIME;
-
-        return Jwts.builder()
-                .setSubject(username)
-                .setExpiration(new Date(date.getTime() + time))
-                .setIssuedAt(date)
-                .signWith(key, signatureAlgorithm)
-                .compact();
-    }
-
-
-
 
 
     // Request Header 에서 토큰 정보 추출
@@ -181,12 +153,14 @@ public class JwtTokenProvider {
             return true;
         }catch(ExpiredJwtException e) {   // Token이 만료된 경우 Exception이 발생한다.
             log.error("Token 만료");
-
+            //throw  new CustomException(MemberErrorCode.MEMBER_NOT_FOUND);
+            throw  new JwtException("Token 유효기간이 만료되었습니다");
         }catch(JwtException e) {        // Token이 변조된 경우 Exception이 발생한다.
-            log.error("Token Error");
+            log.error("Token 만료");
             log.error(e.getMessage());
+            throw  new JwtException("Token 에러되었습니다.");
         }
-        return false;
+       // return false;
     }
     // JWT token 복호화 하여 토큰에 들어있는 정보를 꺼내는 매서드
     public Authentication getAuthentication(String accessToken) {
