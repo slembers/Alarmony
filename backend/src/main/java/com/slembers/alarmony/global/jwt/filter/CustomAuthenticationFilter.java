@@ -3,7 +3,6 @@ package com.slembers.alarmony.global.jwt.filter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.slembers.alarmony.global.execption.CustomException;
 import com.slembers.alarmony.member.dto.LoginDto;
-import com.slembers.alarmony.member.entity.Member;
 import com.slembers.alarmony.member.exception.MemberErrorCode;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -28,7 +27,6 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
 
 
     // Authentication 객체 만들어서 리턴 => 의존 : AuthenticationManager
-
     /**
      *  인증 요청(request)을 처리하는 메소드
      * @param request from which to extract parameters and perform the authentication
@@ -40,11 +38,9 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
 
-
         //Authentication 객체는 스프링 시큐리티에서 인증을 수행하는 과정에서 인증된 사용자의 정보를 담고 있는 객체입니다.
         final UsernamePasswordAuthenticationToken authenticationToken;
         log.info("[AuthenticationFilter 진입]");
-
         try {
             final LoginDto loginDto = new ObjectMapper().readValue(request.getInputStream(), LoginDto.class);
             log.info(loginDto.getUsername()+" "+ loginDto.getPassword());
