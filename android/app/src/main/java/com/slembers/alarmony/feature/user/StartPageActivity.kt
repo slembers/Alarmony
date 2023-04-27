@@ -1,10 +1,12 @@
 package com.slembers.alarmony.feature.user
 
 
+import android.content.Context
 import android.os.Bundle
 
 
 import androidx.activity.compose.setContent
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.Image
 import com.slembers.alarmony.feature.user.Navigation
@@ -46,7 +48,15 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import com.slembers.alarmony.R
+import com.slembers.alarmony.feature.network.LoginResponse
 import com.slembers.alarmony.feature.network.RetrofitClient
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
+import retrofit2.http.Body
+import retrofit2.http.POST
 
 
 //import kotlin.coroutines.jvm.internal.CompletedContinuation.context
@@ -113,7 +123,7 @@ fun extra() {
         }
     }
 }
-
+//
 //interface ApiService {
 //    @POST("login")
 //    suspend fun login(@Body credentials: LoginCredentials): Response<LoginResponse>
@@ -155,6 +165,8 @@ fun extra() {
 @Preview
 @Composable
 fun LoginScreen() {
+
+
     val context = LocalContext.current
     val scaffoldState = rememberScaffoldState()
 
@@ -194,11 +206,27 @@ fun LoginScreen() {
                 .clip(RoundedCornerShape(20.dp))
         )
 
+//        아래는 로그인을 위한 통신로직을 RetrofitClient에서 가져와서 수행
+
+
         Button(
             onClick = {
-                // 아이디와 비밀번호를 서버에 전송
-                val service = RetrofitClient.getService(context)
-                val call = service.login(idState.value, passwordState.value)
+//                getService(this) 오류가 나니 아래 코드와 같이 수정
+                val service = RetrofitClient.getService(this as Context)
+                service.login(idState.value, passwordState.value).enqueue(object : Callback<LoginResponse?> {
+                    override fun onResponse(call: Call<LoginResponse?>, response: Response<LoginResponse?>) {
+                        if (response.isSuccessful) {
+                            val loginResponse = response.body()
+                            // 성공적으로 응답을 받았을 때 처리할 작업
+                        } else {
+                            // 응답이 실패했을 때 처리할 작업
+                        }
+                    }
+
+                    override fun onFailure(call: Call<LoginResponse?>, t: Throwable) {
+                        // 네트워크 오류 발생 시 처리할 코드 작성
+                    }
+                })
 
 
             },
@@ -210,10 +238,6 @@ fun LoginScreen() {
         }
     }
 
-//    Scaffold(
-//        scaffoldState = scaffoldState,
-//        snackbarHost = { SnackbarHost(it) }
-//    )
 }
 
 @Composable
