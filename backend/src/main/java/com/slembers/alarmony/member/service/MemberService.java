@@ -1,15 +1,24 @@
 package com.slembers.alarmony.member.service;
 
+import com.slembers.alarmony.member.dto.LoginDto;
 import com.slembers.alarmony.member.dto.request.SignUpDto;
 import com.slembers.alarmony.member.dto.response.CheckDuplicateDto;
+import org.springframework.http.ResponseEntity;
+
+import javax.servlet.http.HttpServletResponse;
 
 public interface MemberService {
 
     /**
      * 회원 가입
      */
+    void signUp(SignUpDto signUpDto);
 
-    boolean signUp(SignUpDto signUpDto);
+
+    /**
+     * 로그인
+     */
+    ResponseEntity<String> login(LoginDto loginDto, HttpServletResponse response);
 
 
     /**

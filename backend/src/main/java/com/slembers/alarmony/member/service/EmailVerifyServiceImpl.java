@@ -7,6 +7,7 @@ import com.slembers.alarmony.member.dto.vo.MemberVerificationDto;
 import com.slembers.alarmony.member.entity.AuthorityEnum;
 import com.slembers.alarmony.member.entity.Member;
 import com.slembers.alarmony.member.exception.EmailVerifyErrorCode;
+import com.slembers.alarmony.member.exception.MemberErrorCode;
 import com.slembers.alarmony.member.repository.MemberRepository;
 import io.lettuce.core.RedisCommandExecutionException;
 import lombok.RequiredArgsConstructor;
@@ -55,14 +56,15 @@ public class EmailVerifyServiceImpl implements EmailVerifyService {
     @Override
     public void sendVerificationMail(String username, String email) {
 
+        //TODO: 배포후 배포한 경로로 변경작업해줘야함
         String verificationLink = "http://localhost:5000/api/members/verify";
-        UUID uuid = UUID.randomUUID();
 
+        UUID uuid = UUID.randomUUID();
         try {
-            redisUtil.setDataExpire(uuid.toString(), username, 60 * 30L);
+            redisUtil.setData(uuid.toString(), username);
         } catch (Exception e) {
             // 인증 실패 예외 처리
-            log.error("Redis 인증 실패: " + e.getMessage());
+            log.error("Redis에 문제 발생 " + e.getMessage());
             throw new CustomException(RedisErrorCode.REDIS_ERROR_CODE);
         }
 
@@ -89,7 +91,7 @@ public class EmailVerifyServiceImpl implements EmailVerifyService {
     public void verifyEmail(String key) {
 
         String username = redisUtil.getData(key);
-        log.info("[key로 조회한 회원아이디] " + username);
+        log.info("[회원가입 인증을 하려고하는 회원] : " + username);
         if (username != null) {
             modifyAuthorityAccess(username);
             redisUtil.deleteData(key);
@@ -99,14 +101,15 @@ public class EmailVerifyServiceImpl implements EmailVerifyService {
     }
 
     /**
-     * 회원의 권한을 ROLE_USER인 이용가능한 권한으로 수정한다.
+     * 회원의 권한을 인증완료한 회원권한으로 수정한다.
      *
      * @param username 회원아이디
      */
     @Transactional
     public void modifyAuthorityAccess(String username) {
 
-        Member member = memberRepository.findByUsername(username).orElseThrow();
+        Member member = memberRepository.findByUsername(username)
+                .orElseThrow(() -> new CustomException(MemberErrorCode.MEMBER_NOT_FOUND));
         member.modifyAuthority(AuthorityEnum.ROLE_USER);
         memberRepository.save(member);
         log.info(username + "의 ROLE_USER로 권한 변경");
