@@ -1,14 +1,25 @@
 package com.slembers.alarmony.alarm.service;
 
 import com.slembers.alarmony.alarm.dto.AlarmRecordDto;
+import com.slembers.alarmony.alarm.dto.AlarmSuccessDto;
 import com.slembers.alarmony.alarm.dto.MemberRankingDto;
 import com.slembers.alarmony.alarm.dto.response.AlarmRecordResponseDto;
+import com.slembers.alarmony.alarm.entity.Alarm;
+import com.slembers.alarmony.alarm.entity.AlarmRecord;
+import com.slembers.alarmony.alarm.exception.AlarmErrorCode;
+import com.slembers.alarmony.alarm.exception.AlarmRecordErrorCode;
 import com.slembers.alarmony.alarm.repository.AlarmRecordRepository;
+import com.slembers.alarmony.alarm.repository.AlarmRepository;
+import com.slembers.alarmony.global.execption.CustomException;
 import com.slembers.alarmony.member.dto.MemberInfoDto;
 import java.time.LocalDate;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import com.slembers.alarmony.member.entity.Member;
+import com.slembers.alarmony.member.exception.MemberErrorCode;
+import com.slembers.alarmony.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -20,7 +31,9 @@ import org.springframework.stereotype.Service;
 public class AlarmRecordServiceImpl implements AlarmRecordService {
 
     private final ModelMapper modelMapper;
+    private final AlarmRepository alarmRepository;
     private final AlarmRecordRepository alarmRecordRepository;
+    private final MemberRepository memberRepository;
 
     /**
      * 오늘의 알람 기록 정보를 가져온다.
@@ -63,6 +76,29 @@ public class AlarmRecordServiceImpl implements AlarmRecordService {
             .sorted(Comparator.comparing(MemberRankingDto::getWakeUpAvg,
                 Comparator.nullsLast(Float::compareTo)))
             .collect(Collectors.toList());
+    }
+
+    /**
+     * 알람 종료에 성공하면 기록한다.
+     * @param alarmSuccessDto 알람 성공 객체
+     */
+    @Override
+    public void putAlarmRecord(AlarmSuccessDto alarmSuccessDto) {
+        Member member = memberRepository.findByUsername(alarmSuccessDto.getUsername())
+                .orElseThrow(() -> new CustomException(MemberErrorCode.MEMBER_NOT_FOUND));
+
+        AlarmRecord alarmRecord = alarmRecordRepository.findByMemberAndAlarm(member.getId(), alarmSuccessDto.getAlarmId())
+                .orElseThrow(() -> new CustomException(AlarmRecordErrorCode.ALARM_RECORD_NOT_EXIST));
+
+        Alarm alarm = alarmRepository.findById(alarmSuccessDto.getAlarmId())
+                .orElseThrow(() -> new CustomException(AlarmErrorCode.ALARM_NOT_FOUND));
+
+        try {
+            alarmRecord.recordSuccess(alarm.getTime(), alarmSuccessDto.getDatetime());
+            alarmRecordRepository.save(alarmRecord);
+        } catch (Exception e) {
+            throw new CustomException(AlarmRecordErrorCode.ALARM_RECORD_SUCCESS_RECORD_ERROR);
+        }
     }
 
 }
