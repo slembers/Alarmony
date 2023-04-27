@@ -1,5 +1,6 @@
 package com.slembers.alarmony.alarm.controller;
 
+import com.slembers.alarmony.alarm.dto.CreateAlarmDto;
 import com.slembers.alarmony.alarm.dto.request.PutAlarmMessageRequestDto;
 import com.slembers.alarmony.alarm.dto.AlarmDto;
 import com.slembers.alarmony.alarm.dto.response.AlarmListResponseDto;
@@ -29,9 +30,22 @@ public class AlarmController {
     }
 
     /**
+     * 신규 알람을 생성한다.
+     * @param createAlarmDto 생성 알람 정보
+     * @return 성공 메시지
+     */
+    @PostMapping
+    public ResponseEntity<String> createAlarm(@RequestBody CreateAlarmDto createAlarmDto) {
+        // TODO : 시큐리티에서 멤버 정보 얻어오기
+        String username = "test";
+        alarmService.createAlarm(username, createAlarmDto);
+        return new ResponseEntity<>("알람이 생성되고 초대가 전송되었습니다.", HttpStatus.OK);
+    }
+
+    /**
      * 특정 알람아이디를 주면, 알람 기록을 찾아서 메시지를 기록해둔다.
      *
-     * @param alarmId 알람 아이디
+     * @param alarmId                   알람 아이디
      * @param putAlarmMessageRequestDto 넣을 메시지
      * @return 확인 메시지
      */

@@ -1,5 +1,8 @@
 package com.slembers.alarmony.alarm.entity;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicInsert;
 
@@ -7,10 +10,14 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity(name = "alarm_record")
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @DynamicInsert
 public class AlarmRecord {
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "alarm_record_id")
     private Long id;
 
@@ -26,6 +33,9 @@ public class AlarmRecord {
     @ColumnDefault("0")
     private int totalCount;
 
+    @Column(name = "total_wake_up_time")
+    private long totalWakeUpTime;
+
     @Column(name = "today_alarm_record")
     private LocalDateTime todayAlarmRecord;
 
@@ -34,6 +44,7 @@ public class AlarmRecord {
 
     /**
      * 전달된 메시지로 기록한다.
+     *
      * @param message
      */
     public void changeMessage(String message) {

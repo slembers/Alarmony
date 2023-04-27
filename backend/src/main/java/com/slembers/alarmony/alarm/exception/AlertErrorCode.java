@@ -9,8 +9,13 @@ public enum AlertErrorCode implements ErrorCode {
 
     ALERT_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "알림 설정 중 오류가 발생했습니다."),
 
-    ALERT_NOT_FOUND(HttpStatus.NOT_FOUND,"알림이 존재하지 않거나 조회 중 에러가 발생했습니다.")
-    ;
+    ALERT_BAD_REQUEST(HttpStatus.BAD_REQUEST, "잘못된 알림 요청입니다."),
+
+    ALERT_DELETE_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "알림 삭제 중 오류가 발생했습니다."),
+
+    ALERT_INVITE_SEND_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "초대 알림 설정 중 에러가 발생했습니다."),
+
+    ALERT_NOT_FOUND(HttpStatus.NOT_FOUND, "알림이 존재하지 않거나 조회 중 에러가 발생했습니다.");
 
     private final HttpStatus httpStatus;
     private final String detail;

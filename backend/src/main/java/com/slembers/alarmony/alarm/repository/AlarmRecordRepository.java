@@ -1,6 +1,7 @@
 package com.slembers.alarmony.alarm.repository;
 
 import com.slembers.alarmony.alarm.dto.AlarmRecordDto;
+import com.slembers.alarmony.alarm.dto.MemberRankingDto;
 import com.slembers.alarmony.alarm.entity.AlarmRecord;
 import com.slembers.alarmony.alarm.entity.MemberAlarm;
 import java.util.List;
@@ -42,5 +43,18 @@ public interface AlarmRecordRepository extends JpaRepository<AlarmRecord, Long> 
         + "INNER JOIN alarm_record AS ar ON ma.id = ar.memberAlarm.id "
         + "WHERE ma.alarm.id = :groupId")
     List<AlarmRecordDto> findTodayAlarmRecordsByAlarmId(Long groupId);
+
+    /**
+     * 알람 랭킹 기록을 얻어온다.
+     *
+     * @param groupId
+     * @return
+     */
+    @Query("SELECT new com.slembers.alarmony.alarm.dto.MemberRankingDto(m.nickname, m.profileImgUrl, CAST(ar.totalWakeUpTime / ar.totalCount AS float)) "
+        + "FROM member_alarm AS ma "
+        + "INNER JOIN member AS m ON ma.member.id = m.id "
+        + "INNER JOIN alarm_record AS ar ON ma.id = ar.memberAlarm.id "
+        + "WHERE ma.alarm.id = :groupId")
+    List<MemberRankingDto> findMemberRankingsByAlarmId(Long groupId);
 
 }

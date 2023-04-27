@@ -1,6 +1,7 @@
 package com.slembers.alarmony.alarm.controller;
 
 import com.slembers.alarmony.alarm.dto.InviteMemberSetToGroupDto;
+import com.slembers.alarmony.alarm.dto.MemberRankingDto;
 import com.slembers.alarmony.alarm.dto.request.InviteMemberToGroupRequestDto;
 import com.slembers.alarmony.alarm.dto.response.AlarmRecordResponseDto;
 import com.slembers.alarmony.alarm.exception.AlarmErrorCode;
@@ -132,6 +133,45 @@ public class GroupController {
         @PathVariable(name = "group-id") Long groupId) {
         return new ResponseEntity<>(alarmRecordService.getTodayAlarmRecords(groupId),
             HttpStatus.OK);
+    }
+
+    /**
+     * 알람 랭킹 기록을 얻어온다.
+     *
+     * @param groupId 그룹 id
+     * @return 알람 랭킹 기록
+     */
+    @GetMapping("/{group-id}/ranks")
+    public ResponseEntity<Map<String, Object>> getAlarmRanking(
+        @PathVariable(name = "group-id") Long groupId) {
+
+        List<MemberRankingDto> alarmRanking = alarmRecordService.getAlarmRanking(groupId);
+
+        Map<String, Object> map = new HashMap<>();
+        map.put("members", alarmRanking);
+        return new ResponseEntity<>(map, HttpStatus.OK);
+    }
+
+    /**
+     * 사용자에게 알람 보내기
+     *
+     * @param groupId  그룹 id
+     * @param nickname 알람 보낼 사람의 닉네임
+     * @return 성공 여부
+     */
+    @PostMapping("/{group-id}/members/{nickname}/alarms")
+    public ResponseEntity<String> sendAlarm(
+        @PathVariable(name = "group-id") Long groupId,
+        @PathVariable(name = "nickname") String nickname) {
+
+        // TODO: 시큐리티에서 유저정보 가져오기
+        String username = null;
+
+        if (!groupService.isGroupOwner(groupId, username)) {
+            throw new CustomException(AlarmErrorCode.MEMBER_NOT_HOST);
+        }
+        alertService.sendAlarm(groupId, nickname);
+        return new ResponseEntity<>("알람 보내기에 성공했습니다.", HttpStatus.OK);
     }
 
 }

@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 @AllArgsConstructor
 public enum AlarmRecordErrorCode implements ErrorCode {
 
+    ALARM_RECORD_INPUT_ERRER(HttpStatus.INTERNAL_SERVER_ERROR, "알람 기록 생성 중 에러가 발생했습니다."),
     ALARM_RECORD_NOT_EXIST(HttpStatus.NOT_FOUND, "알람 기록이 존재하지 않습니다.")
     ;
 
