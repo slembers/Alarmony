@@ -1,4 +1,4 @@
-package com.slembers.alarmony.feature.groupDetails
+package com.slembers.alarmony.feature.group
 
 import android.os.Bundle
 import androidx.activity.compose.setContent
