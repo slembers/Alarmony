@@ -22,6 +22,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.outlined.Notifications
+import androidx.compose.material.icons.outlined.NotificationsActive
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -101,7 +102,7 @@ fun MainScaffold() {
                     } else {
                         IconButton(onClick = { /*TODO*/ }) {
                             Icon(
-                                imageVector = Icons.Filled.Notifications,
+                                imageVector = Icons.Outlined.NotificationsActive,
                                 contentDescription = "Notification_Active",
                                 tint = Color.Red,
                                 modifier = Modifier.size(25.dp)
