@@ -3,6 +3,7 @@ package com.slembers.alarmony.feature.user
 
 import android.content.Context
 import android.os.Bundle
+import android.widget.Toast
 
 
 import androidx.activity.compose.setContent
@@ -212,18 +213,21 @@ fun LoginScreen() {
         Button(
             onClick = {
 //                getService(this) 오류가 나니 아래 코드와 같이 수정
+//                Call, Callback이 아니라 retrofit2.Call, retrofit2.Callback
                 val service = RetrofitClient.getService(this as Context)
-                service.login(idState.value, passwordState.value).enqueue(object : Callback<LoginResponse?> {
-                    override fun onResponse(call: Call<LoginResponse?>, response: Response<LoginResponse?>) {
+                service.login(idState.value, passwordState.value).enqueue(object : retrofit2.Callback<LoginResponse?> {
+                    override fun onResponse(call: retrofit2.Call<LoginResponse?>, response: retrofit2.Response<LoginResponse?>) {
                         if (response.isSuccessful) {
                             val loginResponse = response.body()
-                            // 성공적으로 응답을 받았을 때 처리할 작업
+//                            성공했을때
+                            Toast.makeText(context, "성공 " + response, Toast.LENGTH_SHORT).show()
                         } else {
                             // 응답이 실패했을 때 처리할 작업
+                            Toast.makeText(context, "실패 " + response.body(), Toast.LENGTH_SHORT).show()
                         }
                     }
 
-                    override fun onFailure(call: Call<LoginResponse?>, t: Throwable) {
+                    override fun onFailure(call: retrofit2.Call<LoginResponse?>, t: Throwable) {
                         // 네트워크 오류 발생 시 처리할 코드 작성
                     }
                 })
