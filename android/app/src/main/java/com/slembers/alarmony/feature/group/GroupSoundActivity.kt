@@ -26,7 +26,7 @@ import com.slembers.alarmony.model.db.SoundItem
 
 @ExperimentalMaterial3Api
 @ExperimentalGlideComposeApi
-class GroupDetailsActivity : AppCompatActivity() {
+class GroupSoundActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent{
