@@ -1,6 +1,7 @@
 package com.slembers.alarmony.report.controller;
 
 import com.slembers.alarmony.report.dto.ReportDto;
+import com.slembers.alarmony.report.dto.request.ReportRequestDto;
 import com.slembers.alarmony.report.dto.response.ReportResponseDto;
 import com.slembers.alarmony.report.service.ReportService;
 import java.util.HashMap;
@@ -11,6 +12,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -46,6 +49,25 @@ public class ReportController {
         @PathVariable(name = "report-id") Long reportId) {
 
         return new ResponseEntity<>(reportService.getReportDetail(reportId), HttpStatus.OK);
+    }
+
+    /**
+     * 신고 정보를 등록한다.
+     *
+     * @param reportRequestDto 신고 요청 dto
+     * @return 성공 여부
+     */
+    @PostMapping
+    public ResponseEntity<String> createReport(@RequestBody ReportRequestDto reportRequestDto) {
+
+        ReportDto reportDto = ReportDto.builder()
+            .reportType(reportRequestDto.getReportType())
+            .reporterUsername("subin")
+            .reportedNickname(reportRequestDto.getReportedNickname())
+            .content(reportRequestDto.getContent())
+            .build();
+        reportService.createReport(reportDto);
+        return new ResponseEntity<>("신고 요청에 성공했습니다.", HttpStatus.OK);
     }
 
 }

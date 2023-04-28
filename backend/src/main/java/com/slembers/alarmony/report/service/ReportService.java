@@ -21,4 +21,11 @@ public interface ReportService {
      */
     ReportResponseDto getReportDetail(Long reportId);
 
+    /**
+     * 신고 정보를 등록한다.
+     *
+     * @param reportDto 신고 정보가 담긴 dto
+     */
+    void createReport(ReportDto reportDto);
+
 }
