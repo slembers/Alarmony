@@ -14,7 +14,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 @RequiredArgsConstructor
-@Component
 @Slf4j
 public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
@@ -22,6 +21,8 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws ServletException,IOException  {
+
+
         log.info("JwtAuthorizationFilter 진입");
 
         // 헤더에서 토큰 받아오기
