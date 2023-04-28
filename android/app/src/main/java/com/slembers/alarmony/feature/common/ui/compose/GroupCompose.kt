@@ -8,10 +8,13 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -53,10 +56,14 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.slembers.alarmony.R
+import com.slembers.alarmony.feature.common.CardBox
+import com.slembers.alarmony.feature.common.CardTitle
+import com.slembers.alarmony.feature.common.ui.view.GroupDefalutProfileView
 import com.slembers.alarmony.model.db.SoundItem
 import java.util.Locale
 
@@ -338,6 +345,119 @@ fun soundIcon(
                     .padding(5.dp),
                 painter = image!!,
                 contentDescription = soundname)
+        }
+    )
+}
+
+@Composable
+@ExperimentalMaterial3Api
+@ExperimentalGlideComposeApi
+fun CurrentInvite() {
+    CardBox(
+        title = { CardTitle(title = "초대인원") },
+        content = {
+            LazyRow(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(
+                        start = 20.dp,
+                        top = 5.dp,
+                        bottom = 10.dp,
+                        end = 0.dp
+                    ),
+                userScrollEnabled = true
+            ) {
+                items( count = 8 ) {
+                    GroupDefalutProfile(
+                        image = painterResource(id = R.drawable.account_circle),
+                        nickname = "ssafy01",
+                        newMember = true
+                    )
+                }
+            }
+        }
+    )
+}
+
+@Composable
+@ExperimentalMaterial3Api
+@ExperimentalGlideComposeApi
+fun GroupDefalutProfile(
+    image : Painter = painterResource(id = R.drawable.baseline_account_circle_24),
+    nickname : String = "nothing",
+    newMember : Boolean = true
+) {
+
+    BoxWithConstraints(
+        modifier = Modifier
+            .width(60.dp)
+            .height(70.dp)
+    ) {
+        val maxWidth = this.maxWidth
+        Column(
+            modifier = Modifier
+                .width(maxWidth)
+                .fillMaxHeight()
+                .height(this.maxHeight)
+        ) {
+            Box(
+                modifier = Modifier
+                    .width(maxWidth)
+                    .weight(1f)
+                    .padding(0.dp),
+                content = {
+                    Image(
+                        modifier = Modifier
+                            .matchParentSize()
+                            .align(Alignment.Center),
+                        painter = image,
+                        contentDescription = null)
+                    if(newMember) {
+                        Box(
+                            modifier = Modifier
+                                .size(maxWidth / 2)
+                                .align(Alignment.BottomEnd)
+                                .padding(5.dp)
+                        ) {
+                            TextButton(
+                                modifier = Modifier
+                                    .size(maxWidth / 4)
+                                    .align(Alignment.Center),
+                                shape = CircleShape,
+                                colors = ButtonDefaults.buttonColors(
+                                    contentColor = Color.Black,
+                                    containerColor = MaterialTheme.colorScheme.error
+                                ),
+                                content = { Text(
+                                    text = "x",
+                                    color = Color.Black
+                                )},
+                                onClick = { /*TODO*/ }
+                            )
+                        }
+                    }
+                }
+            )
+            Text(
+                text = nickname,
+                modifier = Modifier
+                    .fillMaxWidth(),
+                maxLines = 1,
+                textAlign = TextAlign.Center,
+                fontSize = 10.sp
+            )
+        }
+    }
+}
+
+@Composable
+@ExperimentalMaterial3Api
+@ExperimentalGlideComposeApi
+fun SearchInviteMember() {
+    CardBox(
+        title = { CardTitle(title = "검색") },
+        content = {
+
         }
     )
 }
