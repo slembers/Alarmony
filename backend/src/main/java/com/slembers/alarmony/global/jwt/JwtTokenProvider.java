@@ -132,13 +132,11 @@ public class JwtTokenProvider {
 
 
     // Request Header 에서 토큰 정보 추출
-    public String resolveToken(HttpServletRequest request) {
-        String bearerToken = request.getHeader("Authorization");
+    public String resolveToken(HttpServletRequest request , String authHeader) {
+        String bearerToken = request.getHeader(authHeader);
         if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer ")) {
-
-
             String token = bearerToken.substring(7);
-            log.info("자른토큰"+token);
+            log.info(authHeader+ "-자른토큰"+token);
             return bearerToken.substring(7);
         }
         return null;
@@ -152,11 +150,11 @@ public class JwtTokenProvider {
             Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
             return true;
         }catch(ExpiredJwtException e) {   // Token이 만료된 경우 Exception이 발생한다.
-            log.error("Token 만료");
+            log.error("Token 유효시간");
             //throw  new CustomException(MemberErrorCode.MEMBER_NOT_FOUND);
             throw  new JwtException("Token 유효기간이 만료되었습니다");
         }catch(JwtException e) {        // Token이 변조된 경우 Exception이 발생한다.
-            log.error("Token 만료");
+            log.error("Token 에러");
             log.error(e.getMessage());
             throw  new JwtException("Token 에러되었습니다.");
         }
