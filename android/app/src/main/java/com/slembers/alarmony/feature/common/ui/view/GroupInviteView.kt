@@ -1,17 +1,26 @@
 package com.slembers.alarmony.feature.common.ui.view
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.material.Checkbox
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -26,11 +35,18 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.slembers.alarmony.R
 import com.slembers.alarmony.feature.common.CardBox
@@ -145,10 +161,92 @@ fun CurrentInviteView() {
 @ExperimentalMaterial3Api
 @ExperimentalGlideComposeApi
 fun SearchInviteMemberView() {
+
+    var text by remember{ mutableStateOf("") }
+
     CardBox(
         title = { CardTitle(title = "검색") },
         content = {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(
+                        start = 20.dp,
+                        top = 0.dp,
+                        bottom = 10.dp,
+                        end = 20.dp
+                    )
+            ) {
+                BasicTextField(
+                    value = text,
+                    onValueChange = {text = it},
+                    singleLine = true,
+                    textStyle = TextStyle(
+                        color = Color.Black,
+                        fontSize = 20.sp,
+                        fontFamily = FontFamily.Monospace,
+                        fontWeight = FontWeight.Bold,
+                        fontStyle = FontStyle.Normal,
+                        textAlign = TextAlign.End
+                    ),
+                    modifier = Modifier
+                        .height(50.dp)
+                        .background(
+                            Color(0xffD9D9D9),
+                            shape = MaterialTheme.shapes.extraLarge
+                        )
+                        .fillMaxWidth(),
+                )
 
+                LazyColumn() {
+                    items(count = 10) {
+                        SearchMemberView()
+                    }
+                }
+            }
         }
     )
+}
+
+@Preview
+@Composable
+fun SearchMemberView() {
+
+    var isClicked by remember { mutableStateOf(false)  }
+    val profile by remember { mutableStateOf(null) }
+
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween,
+        modifier = Modifier
+            .padding(start = 2.dp, end = 20.dp, top = 3.dp, bottom = 1.dp)
+            .fillMaxWidth()
+            .clickable { isClicked = !isClicked}
+    )
+    {
+        if(profile != null ) {
+            AsyncImage(
+                model = ImageRequest.Builder(LocalContext.current)
+                    .data(profile)
+                    .build(),
+                contentDescription = "ImageRequest example",
+                modifier = Modifier.size(65.dp)
+            )
+        } else {
+            Image(
+                painter = painterResource(id = R.drawable.baseline_account_circle_24),
+                contentDescription = "ImageRequest example",
+                modifier = Modifier.size(65.dp)
+            )
+        }
+        Text(
+            text = "SSAFY에 오신걸 환영합니다.",
+            fontSize = 17.sp,
+            modifier = Modifier.fillMaxWidth(1f)
+        )
+        Checkbox(
+            checked = isClicked,
+            onCheckedChange = { isClicked = it }
+        )
+    }
 }
