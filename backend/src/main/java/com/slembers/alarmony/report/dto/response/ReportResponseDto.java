@@ -13,8 +13,8 @@ public class ReportResponseDto {
 
     private Long reportId;
     private String reportType;
-    private String reporter;
-    private String reported;
+    private String reporterNickname;
+    private String reportedNickname;
     private String content;
 
 }

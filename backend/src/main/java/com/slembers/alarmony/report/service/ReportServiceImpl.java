@@ -30,8 +30,8 @@ public class ReportServiceImpl implements ReportService {
             .map(report -> ReportResponseDto.builder()
                 .reportId(report.getId())
                 .reportType(report.getReportType().getReportTypeName())
-                .reporter(report.getReporter().getNickname())
-                .reported(report.getReported().getNickname())
+                .reporterNickname(report.getReporter().getNickname())
+                .reportedNickname(report.getReported().getNickname())
                 .build())
             .collect(Collectors.toList());
     }
@@ -49,8 +49,8 @@ public class ReportServiceImpl implements ReportService {
         return ReportResponseDto.builder()
             .reportId(report.getId())
             .reportType(report.getReportType().getReportTypeName())
-            .reporter(report.getReporter().getNickname())
-            .reported(report.getReported().getNickname())
+            .reporterNickname(report.getReporter().getNickname())
+            .reportedNickname(report.getReported().getNickname())
             .content(report.getContent())
             .build();
     }
