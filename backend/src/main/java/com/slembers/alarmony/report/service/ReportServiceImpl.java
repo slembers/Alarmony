@@ -25,9 +25,9 @@ public class ReportServiceImpl implements ReportService {
      * @return 신고 목록
      */
     @Override
-    public List<ReportDto> getReportList() {
+    public List<ReportResponseDto> getReportList() {
         return reportRepository.findAll().stream()
-            .map(report -> ReportDto.builder()
+            .map(report -> ReportResponseDto.builder()
                 .reportId(report.getId())
                 .reportType(report.getReportType().getReportTypeName())
                 .reporter(report.getReporter().getNickname())

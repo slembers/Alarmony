@@ -28,7 +28,7 @@ public class ReportController {
      */
     @GetMapping
     public ResponseEntity<Map<String, Object>> getReportList() {
-        List<ReportDto> reportList = reportService.getReportList();
+        List<ReportResponseDto> reportList = reportService.getReportList();
 
         Map<String, Object> map = new HashMap<>();
         map.put("reports", reportList);

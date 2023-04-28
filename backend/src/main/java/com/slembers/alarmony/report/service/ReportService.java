@@ -11,7 +11,7 @@ public interface ReportService {
      *
      * @return 신고 목록
      */
-    List<ReportDto> getReportList();
+    List<ReportResponseDto> getReportList();
 
     /**
      * 신고 상세 정보를 가져온다.
