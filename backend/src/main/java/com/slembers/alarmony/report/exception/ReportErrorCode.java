@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 public enum ReportErrorCode implements ErrorCode {
 
     REPORT_NOT_FOUND(HttpStatus.NOT_FOUND, "신고 기록이 존재하지 않습니다."),
+    REPORT_TYPE_NOT_FOUND(HttpStatus.NOT_FOUND, "신고 타입이 존재하지 않습니다."),
 
     ;
 
