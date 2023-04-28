@@ -6,6 +6,7 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
@@ -52,13 +53,10 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.slembers.alarmony.R
-import com.slembers.alarmony.feature.common.ui.view.soundIcon
 import com.slembers.alarmony.model.db.SoundItem
 import java.util.Locale
 
@@ -282,23 +280,34 @@ fun GroupWeeks() {
 }
 
 @Composable
+@ExperimentalMaterial3Api
 fun SoundChooseGrid(
     modifier: Modifier = Modifier.width(320.dp),
-    itemList: List<SoundItem>
+    itemList: List<SoundItem> = listOf()
 ) {
+    var checkbox by remember { mutableStateOf(itemList[0].soundName) }
+
     LazyVerticalGrid(
         modifier = modifier,
         columns = GridCells.Adaptive(minSize = 100.dp),
         content = {
-            items(items = itemList) {
-                soundIcon(image = it.soundImage!!)
+            items(itemList) {
+                soundIcon(
+                    image = it.soundImage,
+                    soundname = it.soundName,
+                    onClick = checkbox.equals(it.soundName),
+                    checkBox = { checkbox = it }
+                )
             }
         })
 }
 
 @Composable
 fun soundIcon(
-    image : Painter = painterResource(id = R.drawable.main_app_image_foreground)
+    image : Painter? = painterResource(id = R.drawable.main_app_image_foreground),
+    soundname : String,
+    onClick : Boolean = false,
+    checkBox : ((String) -> Unit) =  {}
 ) {
     BoxWithConstraints(
         modifier = Modifier
@@ -311,8 +320,14 @@ fun soundIcon(
                 shape = RoundedCornerShape(20.dp)
             )
             .clip(MaterialTheme.shapes.medium)
-            .background(MaterialTheme.colorScheme.background)
-            .fillMaxWidth(),
+            .background(
+                if (!onClick)
+                    MaterialTheme.colorScheme.background
+                else
+                    MaterialTheme.colorScheme.primary
+            )
+            .fillMaxWidth()
+            .clickable { checkBox(soundname) },
         content = {
             Image(
                 modifier = Modifier
@@ -321,8 +336,8 @@ fun soundIcon(
                         height = this.maxHeight
                     )
                     .padding(5.dp),
-                painter = image,
-                contentDescription = null)
+                painter = image!!,
+                contentDescription = soundname)
         }
     )
 }

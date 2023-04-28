@@ -4,12 +4,16 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 
-class SoundModel(private var soundItems : MutableLiveData<ArrayList<SoundItem>>) : ViewModel() {
+interface SoundModelInterface {
+    var items : ArrayList<SoundItem>?
+}
 
-    var items = soundItems
+class SoundModel(private val soundItems : MutableLiveData<ArrayList<SoundItem>>) : ViewModel() , SoundModelInterface {
 
-    fun addSoundList(items : ArrayList<SoundItem>) {
-        soundItems.value = items
+    override var items : ArrayList<SoundItem>? = soundItems.value
+
+    fun addSoundList(item : SoundItem) {
+        soundItems.value?.add(item)
     }
 }
 
