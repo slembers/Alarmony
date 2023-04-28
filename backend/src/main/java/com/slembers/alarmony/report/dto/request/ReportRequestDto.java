@@ -1,4 +1,4 @@
-package com.slembers.alarmony.report.dto;
+package com.slembers.alarmony.report.dto.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,11 +9,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class ReportDto {
+public class ReportRequestDto {
 
-    private Long reportId;
     private String reportType;
-    private String reporterUsername;
     private String reportedNickname;
     private String content;
 

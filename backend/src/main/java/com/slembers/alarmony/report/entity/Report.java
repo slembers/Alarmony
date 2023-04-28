@@ -3,9 +3,15 @@ package com.slembers.alarmony.report.entity;
 import com.slembers.alarmony.member.entity.Member;
 
 import javax.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity(name = "report_record")
 public class Report {
 
