@@ -48,17 +48,21 @@ public class RedisUtil {
      * @param value (key ,value) 에 "value"에 해당합니다.
      * @param durationInDays 초단위 기준으로 입력합니다. 예를들어 300이라면 5분을 의미합니다.
      */
-    /*    public void setDataExpire(String key,String value, long duration){
+      public void setDataExpireWithSecond(String key,String value, long duration){
             ValueOperations<String,String> valueOperations = stringRedisTemplate.opsForValue();
             Duration expireDuration = Duration.ofSeconds(duration);
             valueOperations.set(key,value,expireDuration);
         }
-*/
 
-    public void setDataExpire(String key, String value, long durationInDays) {
+
+    public void setDataExpireWithDays(String key, String value, long durationInDays) {
         ValueOperations<String, String> valueOperations = stringRedisTemplate.opsForValue();
         Duration expireDuration = Duration.ofDays(durationInDays);
         valueOperations.set(key, value, expireDuration);
+    }
+
+    public boolean existToken(String token){
+       return stringRedisTemplate.hasKey("Black:"+token);
     }
     /**
      * Redis에서 특정 키-값 쌍을 삭제하는 메소드입니다.
