@@ -62,6 +62,7 @@ import com.slembers.alarmony.feature.common.ui.compose.GroupInvite
 import com.slembers.alarmony.feature.common.ui.compose.GroupSubjet
 import com.slembers.alarmony.feature.common.ui.compose.GroupTitle
 import com.slembers.alarmony.model.db.dto.MemberDto
+import com.slembers.alarmony.model.db.memberList
 import kotlin.streams.toList
 
 @ExperimentalMaterial3Api
@@ -209,7 +210,7 @@ fun GroupScaffold() {
                             )
                         })},
                     content = { GroupInvite(
-                        profiles = groupProfile)}
+                        profiles = memberList)}
                 )
                 GroupCard(
                     title = { GroupTitle(

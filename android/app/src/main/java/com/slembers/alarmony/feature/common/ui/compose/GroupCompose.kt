@@ -46,10 +46,13 @@ import androidx.compose.material3.TimeInput
 import androidx.compose.material3.TimePickerState
 import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateMapOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -257,9 +260,16 @@ fun GroupWeeks() {
 
     var isCheck = remember { mutableMapOf<String,Boolean>() }
     val width = remember { mutableStateOf(0.dp) }
+    var isWeeks = remember{ mutableStateMapOf(
+        "월" to true,
+        "화" to true,
+        "수" to true,
+        "목" to true,
+        "금" to true,
+        "토" to true,
+        "일" to true
+    )}
     val weeks = listOf<String>("월","화","수","목","금","토","일")
-
-    val weeks : List<String> = isWeeks.keys.stream().toList()
 
     BoxWithConstraints(
         modifier = Modifier
