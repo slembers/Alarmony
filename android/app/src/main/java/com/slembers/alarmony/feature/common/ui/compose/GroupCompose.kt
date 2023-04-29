@@ -154,11 +154,12 @@ fun GroupTitle(
 @ExperimentalMaterial3Api
 @ExperimentalGlideComposeApi
 fun GroupSubjet(
+    title : String,
     onChangeValue : (String) -> Unit
 ) {
 
     OutlinedTextField(
-        value = "",
+        value = title!!,
         onValueChange = onChangeValue,
         textStyle = TextStyle(
             color = Color.Black,

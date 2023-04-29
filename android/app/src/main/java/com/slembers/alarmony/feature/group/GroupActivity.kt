@@ -2,6 +2,7 @@ package com.slembers.alarmony.feature.group
 
 import android.os.Bundle
 import android.util.Log
+import android.widget.Toast
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.Image
@@ -32,9 +33,11 @@ import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TimeInput
+import androidx.compose.material3.TimePickerState
 import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
@@ -44,6 +47,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
@@ -51,6 +55,7 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -62,6 +67,7 @@ import com.slembers.alarmony.feature.common.ui.compose.GroupCard
 import com.slembers.alarmony.feature.common.ui.compose.GroupInvite
 import com.slembers.alarmony.feature.common.ui.compose.GroupSubjet
 import com.slembers.alarmony.feature.common.ui.compose.GroupTitle
+import com.slembers.alarmony.model.db.GroupModel
 import com.slembers.alarmony.model.db.memberList
 
 @ExperimentalMaterial3Api
@@ -79,7 +85,16 @@ class GroupActivity : AppCompatActivity() {
 @Composable
 @ExperimentalMaterial3Api
 @ExperimentalGlideComposeApi
-fun GroupScreen(navController : NavHostController = rememberNavController()) {
+fun GroupScreen(
+    navController : NavHostController = rememberNavController(),
+    groupViewModel : GroupModel = viewModel()
+) {
+
+    val content = LocalContext.current
+    var notification = "\"this is text : ${groupViewModel.title.value} " +
+            "\nhour : ${groupViewModel.alarmTime.value?.hour}" +
+            "\nminue : ${groupViewModel.alarmTime.value?.minute}" +
+            "\nampm : ${groupViewModel.alarmTime.value?.is24hour}"
 
     Scaffold(
         topBar = {
@@ -89,7 +104,12 @@ fun GroupScreen(navController : NavHostController = rememberNavController()) {
             )
          },
         bottomBar = {
-            GroupBottomBar( text = "저장" )
+            GroupBottomBar(
+                text = "저장",
+                onClick = {
+                    Toast.makeText(content, notification, Toast.LENGTH_SHORT).show()
+                }
+            )
         },
         content = { innerPadding ->
             NavHost(
@@ -97,7 +117,7 @@ fun GroupScreen(navController : NavHostController = rememberNavController()) {
                 startDestination = NavItem.Group.route,
                 modifier = Modifier.padding(innerPadding)
             ) {
-                composable( route = NavItem.Group.route ) { GroupScreenMain(navController) }
+                composable( route = NavItem.Group.route ) { GroupScreenMain(navController, groupViewModel) }
                 composable( route = NavItem.Sound.route ) { SoundScreen(navController) }
                 composable( route = NavItem.GroupMember.route ) { InviteScreen(navController) }
             }
@@ -110,11 +130,16 @@ fun GroupScreen(navController : NavHostController = rememberNavController()) {
 @Composable
 @ExperimentalMaterial3Api
 @ExperimentalGlideComposeApi
-fun GroupScreenMain(navController : NavHostController) {
+fun GroupScreenMain(
+    navController : NavHostController,
+    groupViewModel : GroupModel = viewModel(),
+) {
 
 
-    var title by remember{ mutableStateOf( "" ) }
-    val timePickerState = rememberTimePickerState()
+    val title by groupViewModel.title.observeAsState("")
+    val timePickerState by groupViewModel.alarmTime.observeAsState(
+        TimePickerState(7,0,false)
+    )
     val isWeeks = remember{ mutableStateMapOf(
         "월" to true,
         "화" to true,
@@ -140,7 +165,10 @@ fun GroupScreenMain(navController : NavHostController) {
     ) {
         GroupCard(
             title = { GroupTitle(title = "그룹제목") },
-            content = { GroupSubjet( onChangeValue = { title = it } ) }
+            content = { GroupSubjet(
+                title = title,
+                onChangeValue = { groupViewModel.onChangeTitle(it) })
+            }
         )
         GroupCard(
             title = { GroupTitle(title = "알람시간") },
@@ -375,7 +403,10 @@ fun GroupSubScreen() {
             ) {
                 GroupCard(
                     title = { GroupTitle(title = "그룹제목") },
-                    content = { GroupSubjet( onChangeValue = { title = it } ) }
+                    content = { GroupSubjet(
+                        title = title,
+                        onChangeValue = { title = it })
+                    }
                 )
                 GroupCard(
                     title = { GroupTitle(title = "알람시간") },
