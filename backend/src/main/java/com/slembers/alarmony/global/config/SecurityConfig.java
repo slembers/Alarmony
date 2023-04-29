@@ -24,7 +24,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.util.AntPathMatcher;
+import org.springframework.security.web.authentication.logout.LogoutFilter;
+
 
 @EnableWebSecurity(debug = true)
 @RequiredArgsConstructor
@@ -36,16 +37,16 @@ import org.springframework.util.AntPathMatcher;
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final PrincipalDetailsService principalDetailsService;
+
     private final JwtTokenProvider jwtTokenProvider;
+
     private final JwtExceptionFilter jwtExceptionFilter;
 
     private final CustomLogoutHandler customLogoutHandler;
+
     private final RedisUtil redisUtil;
 
 
-    /**
-     * BCryptPasswordEncoder Bean으로 등록
-     */
     @Bean
     public BCryptPasswordEncoder bCryptPasswordEncoder() {
         return new BCryptPasswordEncoder();
@@ -72,7 +73,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .addFilterBefore(customAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(new JwtAuthorizationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(jwtExceptionFilter, JwtAuthorizationFilter.class)
-                .logout().logoutUrl("members/logout").addLogoutHandler(customLogoutHandler).logoutSuccessHandler(((request, response, authentication) ->
+                .addFilterBefore(jwtExceptionFilter, LogoutFilter.class)
+                .logout().logoutUrl("/members/logout").addLogoutHandler(customLogoutHandler).logoutSuccessHandler(((request, response, authentication) ->
                         SecurityContextHolder.clearContext()
                 ));
     }
