@@ -1,15 +1,14 @@
 package com.slembers.alarmony.feature.common.ui.view
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -21,8 +20,11 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.Checkbox
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -186,16 +188,40 @@ fun SearchInviteMemberView() {
                         fontSize = 20.sp,
                         fontFamily = FontFamily.Monospace,
                         fontWeight = FontWeight.Bold,
-                        fontStyle = FontStyle.Normal,
-                        textAlign = TextAlign.End
+                        fontStyle = FontStyle.Normal
                     ),
                     modifier = Modifier
                         .height(50.dp)
-                        .background(
-                            Color(0xffD9D9D9),
-                            shape = MaterialTheme.shapes.extraLarge
-                        )
                         .fillMaxWidth(),
+                    decorationBox = { innerTextField ->
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .background(
+                                    Color(0xffD9D9D9),
+                                    shape = MaterialTheme.shapes.extraLarge
+                                )
+                                .padding(horizontal = 16.dp), // inner padding
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Search,
+                                contentDescription = "Favorite icon",
+                                tint = Color.DarkGray
+                            )
+                            Spacer(modifier = Modifier.width(width = 8.dp))
+                            if (text.isEmpty()) {
+                                Text(
+                                    text = "닉네임을 입력새주세요.",
+                                    modifier = Modifier.fillMaxWidth(1f),
+                                    fontSize = 18.sp,
+                                    fontWeight = FontWeight.Normal,
+                                    color = Color.LightGray
+                                )
+                            }
+                            innerTextField()
+                        }
+                    }
                 )
 
                 LazyColumn() {

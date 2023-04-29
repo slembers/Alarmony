@@ -16,11 +16,13 @@ import com.slembers.alarmony.feature.common.ui.AlamonyTopBar
 import com.slembers.alarmony.feature.common.ui.compose.CurrentInvite
 import com.slembers.alarmony.feature.common.ui.compose.SearchInviteMember
 
+@ExperimentalMaterial3Api
+@ExperimentalGlideComposeApi
 class GroupInviteActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-
+            InviteScreen()
         }
     }
 }

@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -28,11 +29,14 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.Checkbox
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.SnackbarHostState
@@ -487,15 +491,39 @@ fun SearchInviteMember() {
                         fontFamily = FontFamily.Monospace,
                         fontWeight = FontWeight.Bold,
                         fontStyle = FontStyle.Normal,
-                        textAlign = TextAlign.End
                     ),
                     modifier = Modifier
                         .height(50.dp)
-                        .background(
-                            Color(0xffD9D9D9),
-                            shape = MaterialTheme.shapes.extraLarge
-                        )
                         .fillMaxWidth(),
+                    decorationBox = { innerTextField ->
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .background(
+                                    Color(0xffD9D9D9),
+                                    shape = MaterialTheme.shapes.extraLarge
+                                )
+                                .padding(horizontal = 16.dp), // inner padding
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Search,
+                                contentDescription = "Favorite icon",
+                                tint = Color.DarkGray
+                            )
+                            Spacer(modifier = Modifier.width(width = 8.dp))
+                            if (text.isEmpty()) {
+                                Text(
+                                    text = "닉네임을 입력새해주세요.",
+                                    modifier = Modifier.fillMaxWidth(1f),
+                                    fontSize = 18.sp,
+                                    fontWeight = FontWeight.Normal,
+                                    color = Color.LightGray
+                                )
+                            }
+                            innerTextField()
+                        }
+                    }
                 )
 
                 LazyColumn() {
