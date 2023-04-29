@@ -14,4 +14,6 @@ public  final class AuthConstants {
     public static final  String ACCESS_TOKEN = "AccessToken";
     public static final  String REFRESH_TOKEN = "RefreshToken";
 
+    public static final String REDIS_REFRESH_TOKEN_HEADER = "Refresh:";
+
 }
