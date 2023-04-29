@@ -41,7 +41,6 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -55,8 +54,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.slembers.alarmony.R
+import com.slembers.alarmony.feature.common.Navigation
 import com.slembers.alarmony.feature.common.ui.compose.GroupCard
 import com.slembers.alarmony.feature.common.ui.compose.GroupInvite
 import com.slembers.alarmony.feature.common.ui.compose.GroupSubjet
@@ -68,20 +70,22 @@ import kotlin.streams.toList
 @ExperimentalMaterial3Api
 @ExperimentalGlideComposeApi
 class GroupActivity : AppCompatActivity() {
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 //        val groupModel = Group()
         setContent {
-            GroupScaffold()
+            // 네비게이션 객체를 생성한다.
+            val navController = rememberNavController()
+            Navigation(navController)
         }
     }
 }
 
-@Preview
 @Composable
 @ExperimentalMaterial3Api
 @ExperimentalGlideComposeApi
-fun GroupScaffold() {
+fun GroupScreen(navController: NavHostController) {
 
     var title by remember{ mutableStateOf( "" ) }
     var timePickerState = rememberTimePickerState()
@@ -260,7 +264,7 @@ fun GroupScaffold() {
                                             .align(Alignment.Center)
                                             .clip(CircleShape)
                                             .background(
-                                                if(soundStatus)
+                                                if (soundStatus)
                                                     MaterialTheme.colorScheme.primary
                                                 else
                                                     MaterialTheme.colorScheme.background
@@ -287,7 +291,7 @@ fun GroupScaffold() {
                                             .align(Alignment.Center)
                                             .clip(CircleShape)
                                             .background(
-                                                if(vibration)
+                                                if (vibration)
                                                     MaterialTheme.colorScheme.primary
                                                 else
                                                     MaterialTheme.colorScheme.background
