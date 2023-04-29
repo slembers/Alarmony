@@ -8,6 +8,8 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.material.Icon
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBackIos
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -35,10 +37,7 @@ fun AlamonyTopBar(
             )
         ),
         navigationIcon = {
-            Icon(
-                painter = painterResource(id = R.drawable.arrow_back_ios),
-                contentDescription = null
-            )
+            Icons.Default.ArrowBackIos
         },
         colors = TopAppBarDefaults.mediumTopAppBarColors()
     )

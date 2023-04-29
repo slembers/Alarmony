@@ -112,7 +112,8 @@ fun GroupText(
 @ExperimentalGlideComposeApi
 fun GroupTitle(
     title : String,
-    content : @Composable() () -> Unit = {}
+    content : @Composable() () -> Unit = {},
+    onClick : () -> Unit = {}
 ) {
     Row(
         modifier = Modifier
@@ -120,6 +121,9 @@ fun GroupTitle(
             .padding(
                 start = 0.dp,
                 end = 5.dp
+            )
+            .clickable(
+                onClick = onClick
             ),
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -380,7 +384,10 @@ fun GroupInvite(
 @ExperimentalMaterial3Api
 fun SoundChooseGrid(
     modifier: Modifier = Modifier.width(320.dp),
-    itemList: List<SoundItem> = listOf()
+    itemList: List<SoundItem> = (1..10).map {
+        SoundItem(
+            painterResource(id = R.drawable.main_app_image_foreground),
+            "sound$it") }.toList()
 ) {
     var checkbox by remember { mutableStateOf(itemList[0].soundName) }
 

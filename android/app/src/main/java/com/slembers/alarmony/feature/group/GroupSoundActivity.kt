@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
@@ -15,6 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.MutableLiveData
+import androidx.navigation.NavHostController
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.slembers.alarmony.R
 import com.slembers.alarmony.feature.common.CardBox
@@ -35,11 +37,31 @@ class GroupSoundActivity : AppCompatActivity() {
     }
 }
 
-@Preview
 @Composable
 @ExperimentalMaterial3Api
 @ExperimentalGlideComposeApi
-fun DetailsScreen() {
+fun SoundScreen(navController : NavHostController) {
+
+    val soundList : List<SoundItem> = (1..20).map {
+        SoundItem(
+            painterResource(id = R.drawable.main_app_image_foreground),
+            "sound$it") }.toList()
+
+    Column( modifier = Modifier.fillMaxSize() ) {
+        CardBox(
+            title = { CardTitle(title = "사용가능한 알람") },
+            content = { SoundChooseGrid(
+                modifier = Modifier.fillMaxWidth(),
+                itemList = soundList
+            ) }
+        )
+    }
+}
+
+@Composable
+@ExperimentalMaterial3Api
+@ExperimentalGlideComposeApi
+fun SoundSubScreen(navController : NavHostController) {
 
     var soundList : MutableList<SoundItem> = mutableListOf()
     val scrollState = rememberScrollState()

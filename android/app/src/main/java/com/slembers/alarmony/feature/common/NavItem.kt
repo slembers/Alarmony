@@ -1,32 +1,30 @@
 package com.slembers.alarmony.feature.common
 
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowForwardIos
+import androidx.compose.material.icons.filled.Home
 import androidx.compose.ui.graphics.vector.ImageVector
 
-data class NavItem(
+sealed class NavItem (
     val title : String,
     val route : String,
-    val routeWithPostFix : String,
     val image : ImageVector,
-    val badgeCount : Int = 0,
-)
+) {
+    object Group : NavItem(
+        route = "group",
+        title = "그룹생성",
+        image = Icons.Default.Home
+    )
 
-val items = listOf(
-    NavItem(
-        NavItems.Group.title,
-        NavItems.Group.route,
-        NavItems.Group.routeWithPostFix,
-        NavItems.Group.image,
-    ),
-    NavItem(
-      NavItems.Sound.title,
-      NavItems.Sound.route,
-      NavItems.Sound.routeWithPostFix,
-      NavItems.Sound.image,
-    ),
-    NavItem(
-        NavItems.Member.title,
-        NavItems.Member.route,
-        NavItems.Member.routeWithPostFix,
-        NavItems.Member.image,
-    ),
-)
+    object Sound : NavItem(
+        route = "sound",
+        title = "알람소리",
+        image = Icons.Default.ArrowForwardIos
+    )
+
+    object GroupMember : NavItem(
+        route = "groupMember",
+        title = "그룹초대",
+        image = Icons.Default.ArrowForwardIos
+    )
+}

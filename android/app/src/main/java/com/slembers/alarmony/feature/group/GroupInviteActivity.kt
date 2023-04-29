@@ -10,6 +10,8 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.slembers.alarmony.feature.common.ui.AlamonyBottomButton
 import com.slembers.alarmony.feature.common.ui.AlamonyTopBar
@@ -27,11 +29,23 @@ class GroupInviteActivity : AppCompatActivity() {
     }
 }
 
+@Composable
+@ExperimentalMaterial3Api
+@ExperimentalGlideComposeApi
+fun InviteScreen(navController : NavHostController = rememberNavController()) {
+    Column(
+        content = {
+            CurrentInvite()
+            SearchInviteMember()
+        }
+    )
+}
+
 @Preview
 @Composable
 @ExperimentalMaterial3Api
 @ExperimentalGlideComposeApi
-fun InviteScreen() {
+fun InviteSubScreen() {
     Scaffold (
         topBar = { AlamonyTopBar( title = "그룹원 추가") },
         bottomBar = { AlamonyBottomButton(text = "저장") },
