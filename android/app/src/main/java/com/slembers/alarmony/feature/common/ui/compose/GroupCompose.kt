@@ -51,7 +51,6 @@ import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -67,22 +66,17 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.IntSize
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.slembers.alarmony.R
-import com.slembers.alarmony.model.db.Member
-import com.slembers.alarmony.model.db.dto.MemberDto
+import com.slembers.alarmony.data.MemberData
 import com.slembers.alarmony.feature.common.CardBox
 import com.slembers.alarmony.feature.common.CardTitle
-import com.slembers.alarmony.feature.common.ui.view.SearchMemberView
 import com.slembers.alarmony.model.db.SoundItem
 import java.util.Locale
-import kotlin.streams.toList
 
 @Composable
 @ExperimentalMaterial3Api
@@ -354,7 +348,7 @@ fun GroupDefalutProfile(
 @ExperimentalMaterial3Api
 @ExperimentalGlideComposeApi
 fun GroupInvite(
-    profiles : List<Member>
+    profiles : List<MemberData>
 ) {
 
     BoxWithConstraints(

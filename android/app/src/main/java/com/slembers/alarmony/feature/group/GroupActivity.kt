@@ -2,6 +2,7 @@ package com.slembers.alarmony.feature.group
 
 import android.os.Bundle
 import android.util.Log
+import android.view.Gravity
 import android.widget.Toast
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
@@ -34,7 +35,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TimeInput
 import androidx.compose.material3.TimePickerState
-import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
@@ -56,7 +56,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.map
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -64,13 +63,13 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.slembers.alarmony.R
+import com.slembers.alarmony.data.memberList
 import com.slembers.alarmony.feature.common.NavItem
 import com.slembers.alarmony.feature.common.ui.compose.GroupCard
 import com.slembers.alarmony.feature.common.ui.compose.GroupInvite
 import com.slembers.alarmony.feature.common.ui.compose.GroupSubjet
 import com.slembers.alarmony.feature.common.ui.compose.GroupTitle
 import com.slembers.alarmony.model.db.GroupModel
-import com.slembers.alarmony.model.db.memberList
 
 @ExperimentalMaterial3Api
 @ExperimentalGlideComposeApi
@@ -93,14 +92,15 @@ fun GroupScreen(
     groupViewModel : GroupModel = viewModel()
 ) {
 
-    val content = LocalContext.current
     var notification = "\"this is text : ${groupViewModel.title.value} " +
-            "\nhour : ${groupViewModel.alarmTime.value?.hour}" +
-            "\nminue : ${groupViewModel.alarmTime.value?.minute}" +
-            "\nampm : ${groupViewModel.alarmTime.value?.is24hour}" +
-            "\nvibration : ${groupViewModel.vibration}" +
-            "\nsound : ${groupViewModel.sound}" +
-            "\nvolumn : ${groupViewModel.volumn}"
+            "\n hour : ${groupViewModel.alarmTime.value?.hour}" +
+            "\n minue : ${groupViewModel.alarmTime.value?.minute}" +
+            "\n ampm : ${groupViewModel.alarmTime.value?.is24hour}" +
+            "\n vibration : ${groupViewModel.vibration}" +
+            "\n sound : ${groupViewModel.sound}" +
+            "\n volumn : ${groupViewModel.volumn}"
+
+    val context = LocalContext.current
 
     Scaffold(
         topBar = {
@@ -113,7 +113,9 @@ fun GroupScreen(
             GroupBottomBar(
                 text = "저장",
                 onClick = {
-                    Toast.makeText(content, notification, Toast.LENGTH_SHORT).show()
+                    val toast = Toast.makeText(context, notification, Toast.LENGTH_SHORT)
+                    toast.setGravity(Gravity.FILL_HORIZONTAL, 0, 0)
+                    toast.show()
                 }
             )
         },
