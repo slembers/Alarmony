@@ -39,8 +39,12 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.SnackbarHost
 import androidx.compose.material.TextField
+import androidx.compose.material.TopAppBar
 import androidx.compose.material.rememberScaffoldState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.FocusRequester
 
 
 import androidx.compose.ui.graphics.Color
@@ -48,6 +52,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import com.slembers.alarmony.R
 import com.slembers.alarmony.feature.network.LoginData
@@ -86,6 +91,7 @@ class StartPageActivity : AppCompatActivity() {
                 horizontalAlignment = Alignment.CenterHorizontally
             )  {
                 Navigation()
+                SignupScreen()
                 mascott(drawing = R.drawable.mascot_foreground)
                 logo(drawing = R.drawable.alarmony)
                 LoginScreen()
@@ -163,6 +169,8 @@ fun extra() {
 //        }
 //    }
 //}
+
+
 
 
 @Preview
