@@ -214,14 +214,14 @@ fun LoginScreen() {
 
         Button(
             onClick = {
-                Log.d("TAG", "클릭버튼누럴ㅆ다!!")
+                Log.d("TAG", "클릭버튼누르다!!")
 //                getService(this) 오류가 나니 아래 코드와 같이 수정
 //                Call, Callback이 아니라 retrofit2.Call, retrofit2.Callback
                 val service = RetrofitClient.getService(this as Context)
                 service.login(idState.value, passwordState.value).enqueue(object : retrofit2.Callback<LoginResponse?> {
 
                     override fun onResponse(call: retrofit2.Call<LoginResponse?>, response: retrofit2.Response<LoginResponse?>) {
-                        Log.d("TAG", "리스폰스버튼누럴ㅆ다!!")
+                        Log.d("TAG", "리스폰스버튼누르다!!")
                         if (response.isSuccessful) {
                             Log.d("TAG", "성공")
                             val loginResponse = response.body()
