@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -30,7 +31,10 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.Checkbox
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Campaign
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -47,6 +51,7 @@ import androidx.compose.material3.TimePickerState
 import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -66,7 +71,8 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -76,6 +82,7 @@ import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.slembers.alarmony.R
 import com.slembers.alarmony.data.MemberData
 import com.slembers.alarmony.feature.common.CardBox
+import com.slembers.alarmony.feature.common.CardDivider
 import com.slembers.alarmony.feature.common.CardTitle
 import com.slembers.alarmony.model.db.SoundItem
 import java.util.Locale
@@ -633,7 +640,7 @@ fun SearchMember() {
         modifier = Modifier
             .padding(start = 2.dp, end = 20.dp, top = 3.dp, bottom = 1.dp)
             .fillMaxWidth()
-            .clickable { isClicked = !isClicked}
+            .clickable { isClicked = !isClicked }
     )
     {
         if(profile != null ) {
@@ -660,5 +667,225 @@ fun SearchMember() {
             checked = isClicked,
             onCheckedChange = { isClicked = it }
         )
+    }
+}
+
+@Preview
+@Composable
+@ExperimentalMaterial3Api
+@ExperimentalGlideComposeApi
+fun GroupDetailsTitle(
+    title : String = "제목"
+) {
+    CardBox(
+        title = { CardTitle(title = title) },
+        content = {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(
+                        start = 20.dp,
+                        top = 0.dp,
+                        bottom = 10.dp,
+                        end = 10.dp
+                    ),
+                content = {
+                    CardDivider()
+                    GroupDetailsRepeat()
+                }
+            )
+        }
+    )
+}
+
+@Preview
+@Composable
+fun GroupDetailsRepeat() {
+
+    val week = remember { mutableStateListOf("월","화","수","목","금","토","일",) }
+
+    Column(
+        modifier = Modifier.padding(
+            start = 20.dp,
+            top = 0.dp,
+            bottom = 0.dp,
+            end = 0.dp
+        ),
+        content = {
+            GroupDetailsText("오전")
+            GroupDetailsText(text = "07:30", fontsize = 50.sp)
+            LazyRow(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                content = {
+                    items(week) {
+                        GroupDetailsText(
+                            text = it,
+                            color = Color.Gray
+                        )
+                    }
+                }
+            )
+        }
+    )
+}
+
+@Composable
+fun GroupDetailsText(
+    text : String = "폰트",
+    fontsize : TextUnit = 20.sp,
+    color : Color = Color.Black
+) {
+    Text(
+        text = text,
+        style = TextStyle(
+            color = color,
+            fontSize = fontsize,
+            fontFamily = FontFamily.Monospace,
+            fontWeight = FontWeight.Bold,
+            fontStyle = FontStyle.Normal
+        ),
+        textAlign = TextAlign.Start
+    )
+}
+@Preview
+@Composable
+@ExperimentalMaterial3Api
+@ExperimentalGlideComposeApi
+fun GroupDetailsBoard() {
+    CardBox(
+        title = { CardTitle(
+            title = "오늘 알람 기록",
+            content =  {
+                Text(
+                    text = "23/04/19",
+                    style = TextStyle(
+                        color = Color.Black,
+                        fontSize = 15.sp,
+                        fontFamily = FontFamily.Monospace,
+                        fontWeight = FontWeight.Bold,
+                        fontStyle = FontStyle.Normal
+                    ),
+                    modifier = Modifier.padding(end = 10.dp),
+                    textAlign = TextAlign.Start
+                )
+            }
+        ) },
+        content = {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(
+                        start = 20.dp,
+                        top = 0.dp,
+                        bottom = 10.dp,
+                        end = 10.dp
+                    ),
+                content = {
+                    CardDivider()
+                    LazyColumn(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        userScrollEnabled = false,
+                        content = {
+                            items(count = 3) {
+                                MemberDetails( isCheck = true )
+                            }
+                    })
+                    CardDivider()
+                    LazyColumn(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        userScrollEnabled = false,
+                        content = {
+                            items(count = 3) {
+                                MemberDetails()
+                            }
+                    })
+                }
+            )
+        }
+    )
+}
+
+@Preview
+@Composable
+fun MemberDetails(
+    profile : String? = null,
+    nickname : String = "Alarmony",
+    isCheck : Boolean = false,
+    onClick : () -> Unit = {}
+) {
+
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween,
+        modifier = Modifier
+            .padding(start = 2.dp, end = 20.dp, top = 3.dp, bottom = 1.dp)
+            .fillMaxWidth()
+            .wrapContentHeight()
+    )
+    {
+        if(profile != null ) {
+            AsyncImage(
+                model = ImageRequest.Builder(LocalContext.current)
+                    .data(profile)
+                    .build(),
+                contentDescription = "ImageRequest example",
+                modifier = Modifier.size(65.dp)
+            )
+        } else {
+            Image(
+                painter = painterResource(id = R.drawable.baseline_account_circle_24),
+                contentDescription = "ImageRequest example",
+                modifier = Modifier.size(65.dp)
+            )
+        }
+        Text(
+            text = nickname,
+            fontSize = 17.sp,
+            modifier = Modifier.weight(1f),
+            maxLines = 1
+        )
+        GroupDetailsBoardBtn(isCheck = isCheck)
+    }
+}
+
+@Preview
+@Composable
+fun GroupDetailsBoardBtn(
+    isCheck : Boolean = false,
+    modifier : Modifier = Modifier,
+    onClick : () -> Unit = {}
+) {
+    TextButton(
+        colors = ButtonDefaults.buttonColors(
+            contentColor = AlarmisCheck(isCheck, MaterialTheme.colorScheme.primary, MaterialTheme.colorScheme.background),
+            containerColor = AlarmisCheck(isCheck, MaterialTheme.colorScheme.background, MaterialTheme.colorScheme.primary)
+        ),
+        onClick = onClick,
+        modifier = modifier,
+        content = {
+            Icon(
+                imageVector = AlarmisCheck(isCheck, Icons.Default.Check, Icons.Default.Campaign),
+                contentDescription = null
+            )
+            Text(
+                text = AlarmisCheck(isCheck, "일어났어요", "알람보내기"),
+                style = TextStyle(
+                    fontSize = 8.sp,
+                    fontFamily = FontFamily.Monospace,
+                    fontWeight = FontWeight.Bold,
+                ),
+                maxLines = 1
+            )
+        }
+    )
+}
+
+private fun <T> AlarmisCheck(isCheck : Boolean, True : T, False : T) : T {
+    return isCheck.let { check ->
+        when(check) {
+            true -> True
+            false -> False
+        }
     }
 }
