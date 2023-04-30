@@ -27,4 +27,5 @@ sealed class NavItem (
         title = "그룹초대",
         image = Icons.Default.ArrowForwardIos
     )
+
 }

@@ -53,8 +53,10 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.map
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -82,6 +84,7 @@ class GroupActivity : AppCompatActivity() {
     }
 }
 
+@Preview
 @Composable
 @ExperimentalMaterial3Api
 @ExperimentalGlideComposeApi
@@ -94,7 +97,10 @@ fun GroupScreen(
     var notification = "\"this is text : ${groupViewModel.title.value} " +
             "\nhour : ${groupViewModel.alarmTime.value?.hour}" +
             "\nminue : ${groupViewModel.alarmTime.value?.minute}" +
-            "\nampm : ${groupViewModel.alarmTime.value?.is24hour}"
+            "\nampm : ${groupViewModel.alarmTime.value?.is24hour}" +
+            "\nvibration : ${groupViewModel.vibration}" +
+            "\nsound : ${groupViewModel.sound}" +
+            "\nvolumn : ${groupViewModel.volumn}"
 
     Scaffold(
         topBar = {
@@ -117,7 +123,7 @@ fun GroupScreen(
                 startDestination = NavItem.Group.route,
                 modifier = Modifier.padding(innerPadding)
             ) {
-                composable( route = NavItem.Group.route ) { GroupScreenMain(navController, groupViewModel) }
+                composable( route = NavItem.Group.route ) { GroupScreenMain(navController) }
                 composable( route = NavItem.Sound.route ) { SoundScreen(navController) }
                 composable( route = NavItem.GroupMember.route ) { InviteScreen(navController) }
             }
@@ -127,18 +133,19 @@ fun GroupScreen(
 
 }
 
+@Preview
 @Composable
 @ExperimentalMaterial3Api
 @ExperimentalGlideComposeApi
 fun GroupScreenMain(
-    navController : NavHostController,
+    navController : NavHostController = rememberNavController(),
     groupViewModel : GroupModel = viewModel(),
 ) {
 
 
     val title by groupViewModel.title.observeAsState("")
     val timePickerState by groupViewModel.alarmTime.observeAsState(
-        TimePickerState(7,0,false)
+        TimePickerState(0,0,false)
     )
     val isWeeks = remember{ mutableStateMapOf(
         "월" to true,
@@ -149,11 +156,12 @@ fun GroupScreenMain(
         "토" to true,
         "일" to true
     )}
+    val weekList = remember{ mutableStateListOf(groupViewModel.week.value?.stream()?.toArray()) }
     val weeks = remember{ mutableStateListOf("월","화","수","목","금","토","일") }
     var soundStatus by remember { mutableStateOf(true) }
-    var vibration by remember{ mutableStateOf(true) }
-    val soundName by remember{ mutableStateOf("노래 제목") }
-    var soundVolume by remember{ mutableStateOf(7f) }
+    val vibration by groupViewModel.vibration.observeAsState(true)
+    val soundName by groupViewModel.sound.observeAsState("노래제목")
+    val soundVolume by groupViewModel.volumn.observeAsState(7f)
 
     val scrollerState = rememberScrollState()
 
@@ -184,7 +192,7 @@ fun GroupScreenMain(
             }
         )
         GroupCard(
-            title = { GroupTitle(title = "알람요일") },
+            title = { GroupTitle(title = "요일선택") },
             content = {
                 BoxWithConstraints(
                     modifier = Modifier.fillMaxWidth()
@@ -207,6 +215,9 @@ fun GroupScreenMain(
                                 modifier = Modifier.size(boxSize),
                                 onClick = {
                                     isWeeks[it] = !isWeeks.getValue(it)
+                                    if(isWeeks.getValue(it)) {
+                                        groupViewModel.addAlarmWeeks(weeks)
+                                    }
                                     Log.d("click event","isCheck key : $it value : ${isWeeks[it]}")
                                 },
                                 colors = ButtonDefaults.buttonColors(
@@ -317,13 +328,16 @@ fun GroupScreenMain(
                                     .align(Alignment.Center)
                                     .clip(CircleShape)
                                     .background(
-                                        if (vibration)
+                                        if (vibration == true)
                                             MaterialTheme.colorScheme.primary
                                         else
                                             MaterialTheme.colorScheme.background
                                     )
                                     .clickable {
-                                        vibration = !vibration
+                                        vibration?.let {
+                                            groupViewModel.onChangeVibration(!it)
+                                            Log.i("vibration", "vibration value : $it")
+                                        }
                                     }
                             ) {
                                 Image(
@@ -347,258 +361,21 @@ fun GroupScreenMain(
                             .weight(1f),
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
-                        Slider(
-                            value = soundVolume,
-                            onValueChange = { soundVolume = it},
-                            valueRange = 0f..15f,
-                            enabled = vibration,
-                            colors = SliderDefaults.colors(
-                                thumbColor = MaterialTheme.colorScheme.background,
-                                activeTrackColor = MaterialTheme.colorScheme.primary
-                            ),
-                        )
+                        vibration?.let { vibration ->
+                            Slider(
+                                value = soundVolume,
+                                onValueChange = { groupViewModel.onChangeVolumn(it) },
+                                valueRange = 0f..15f,
+                                enabled = vibration,
+                                colors = SliderDefaults.colors(
+                                    thumbColor = MaterialTheme.colorScheme.background,
+                                    activeTrackColor = MaterialTheme.colorScheme.primary
+                                ),
+                            )
+                        }
                     }
                 }
             )}
         )
     }
-}
-
-
-
-@Composable
-@ExperimentalMaterial3Api
-@ExperimentalGlideComposeApi
-fun GroupSubScreen() {
-
-    var title by remember{ mutableStateOf( "" ) }
-    val timePickerState = rememberTimePickerState()
-    val isWeeks = remember{ mutableStateMapOf(
-        "월" to true,
-        "화" to true,
-        "수" to true,
-        "목" to true,
-        "금" to true,
-        "토" to true,
-        "일" to true
-    )}
-    val weeks = remember{ mutableStateListOf("월","화","수","목","금","토","일") }
-    var soundStatus by remember { mutableStateOf(true) }
-    var vibration by remember{ mutableStateOf(true) }
-    val soundName by remember{ mutableStateOf("노래 제목") }
-    var soundVolume by remember{ mutableStateOf(7f) }
-
-    val scrollerState = rememberScrollState()
-
-    Scaffold(
-        topBar = { GroupToolBar() },
-        bottomBar = { GroupBottomBar( text = "저장" ) },
-        content = { innerPadding ->
-            Column(
-                modifier = Modifier
-                    .padding(innerPadding)
-                    .padding(10.dp)
-                    .verticalScroll(scrollerState),
-                horizontalAlignment = Alignment.CenterHorizontally,
-            ) {
-                GroupCard(
-                    title = { GroupTitle(title = "그룹제목") },
-                    content = { GroupSubjet(
-                        title = title,
-                        onChangeValue = { title = it })
-                    }
-                )
-                GroupCard(
-                    title = { GroupTitle(title = "알람시간") },
-                    content = {
-                        TimeInput(
-                            state = timePickerState,
-                            modifier = Modifier.padding(
-                                start = 20.dp,
-                                top = 10.dp,
-                                bottom = 0.dp,
-                                end = 0.dp)
-                        )
-                    }
-                )
-                GroupCard(
-                    title = { GroupTitle(title = "알람요일") },
-                    content = {
-                        BoxWithConstraints(
-                            modifier = Modifier.fillMaxWidth()
-                        ) {
-                            val boxSize = this.maxWidth / 8
-                            LazyRow(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(
-                                        start = 20.dp,
-                                        top = 0.dp,
-                                        bottom = 0.dp,
-                                        end = 10.dp
-                                    ),
-                                verticalAlignment = Alignment.CenterVertically,
-                                horizontalArrangement = Arrangement.spacedBy(2.dp)
-                            ) {
-                                items(weeks) {
-                                    TextButton(
-                                        modifier = Modifier.size(boxSize),
-                                        onClick = {
-                                            isWeeks[it] = !isWeeks.getValue(it)
-                                            Log.d("click event","isCheck key : $it value : ${isWeeks[it]}")
-                                        },
-                                        colors = ButtonDefaults.buttonColors(
-                                            contentColor = Color.Black,
-                                            containerColor =
-                                            if(isWeeks.getValue(it)) {
-                                                MaterialTheme.colorScheme.primary
-                                            } else {
-                                                MaterialTheme.colorScheme.background
-                                            },
-                                        ),
-                                        content = {
-                                            Text( text = it )
-                                        }
-                                    )
-                                }
-                            }
-                        }
-                    }
-                )
-                GroupCard(
-                    title = { GroupTitle(
-                        title = "그룹초대",
-                        content = {
-                            Icon(
-                                painter = painterResource(id = R.drawable.arrow_forward),
-                                contentDescription = null,
-                                modifier = Modifier.padding(2.dp)
-                            )
-                        })},
-                    content = { GroupInvite(
-                        profiles = memberList)}
-                )
-                GroupCard(
-                    title = { GroupTitle(
-                        title = "알람소리",
-                        onClick = { /*navController.navigate(NavItems.Sound.route)*/ },
-                        content = {
-                            Row(
-                                modifier = Modifier.height(50.dp),
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Text(
-                                    text = soundName,
-                                    style = TextStyle(
-                                        color = Color.Gray,
-                                        fontSize = 15.sp,
-                                        fontFamily = FontFamily.Monospace,
-                                        fontWeight = FontWeight.Bold,
-                                        fontStyle = FontStyle.Normal
-                                    )
-                                )
-                                Icon(
-                                    painter = painterResource(id = R.drawable.arrow_forward),
-                                    contentDescription = null,
-                                    modifier = Modifier.padding(2.dp)
-                                )
-                            }
-                        }
-                    )}
-                )
-                GroupCard(
-                    title = { GroupTitle(
-                        title = "타입",
-                        content = {
-                            Row(
-                                modifier = Modifier
-                                    .height(50.dp)
-                                    .padding(5.dp),
-                                verticalAlignment = Alignment.CenterVertically,
-                            ) {
-                                BoxWithConstraints(
-                                    modifier = Modifier.fillMaxHeight(),
-                                    contentAlignment = Alignment.Center,
-                                ) {
-                                    Box(
-                                        modifier = Modifier
-                                            .padding(2.dp)
-                                            .size(this.maxHeight)
-                                            .align(Alignment.Center)
-                                            .clip(CircleShape)
-                                            .background(
-                                                if (soundStatus)
-                                                    MaterialTheme.colorScheme.primary
-                                                else
-                                                    MaterialTheme.colorScheme.background
-                                            )
-                                            .clickable {
-                                                soundStatus = !soundStatus
-                                            }
-                                    ) {
-                                        Image(
-                                            modifier = Modifier.align(Alignment.Center),
-                                            painter = painterResource(id = R.drawable.baseline_music_note_24) ,
-                                            contentDescription = null)
-                                    }
-                                }
-
-                                BoxWithConstraints(
-                                    modifier = Modifier.fillMaxHeight(),
-                                    contentAlignment = Alignment.Center,
-                                ) {
-                                    Box(
-                                        modifier = Modifier
-                                            .padding(2.dp)
-                                            .size(this.maxHeight)
-                                            .align(Alignment.Center)
-                                            .clip(CircleShape)
-                                            .background(
-                                                if (vibration)
-                                                    MaterialTheme.colorScheme.primary
-                                                else
-                                                    MaterialTheme.colorScheme.background
-                                            )
-                                            .clickable {
-                                                vibration = !vibration
-                                            }
-                                    ) {
-                                        Image(
-                                            modifier = Modifier.align(Alignment.Center),
-                                            painter = painterResource(id = R.drawable.baseline_vibration_24) ,
-                                            contentDescription = null)
-                                    }
-                                }
-                            }
-                        }
-                    )},
-                )
-                GroupCard(
-                    title = { GroupTitle(
-                        title = "볼륨",
-                        content = {
-                            Row(
-                                modifier = Modifier
-                                    .height(50.dp)
-                                    .padding(5.dp)
-                                    .weight(1f),
-                                verticalAlignment = Alignment.CenterVertically,
-                            ) {
-                                Slider(
-                                    value = 7f,
-                                    onValueChange = { soundVolume = it},
-                                    valueRange = 0f..15f,
-                                    enabled = vibration,
-                                    colors = SliderDefaults.colors(
-                                        thumbColor = MaterialTheme.colorScheme.background,
-                                        activeTrackColor = MaterialTheme.colorScheme.primary
-                                    ),
-                                )
-                            }
-                        }
-                    )}
-                )
-            }
-        }
-    )
 }
