@@ -717,6 +717,7 @@ fun GroupDetailsRepeat() {
             LazyRow(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
+                userScrollEnabled = false,
                 content = {
                     items(week) {
                         GroupDetailsText(
@@ -784,8 +785,8 @@ fun GroupDetailsBoard() {
                 content = {
                     CardDivider()
                     LazyColumn(
+                        modifier = Modifier.height(200.dp),
                         horizontalAlignment = Alignment.CenterHorizontally,
-                        userScrollEnabled = false,
                         content = {
                             items(count = 3) {
                                 MemberDetails( isCheck = true )
@@ -793,8 +794,8 @@ fun GroupDetailsBoard() {
                     })
                     CardDivider()
                     LazyColumn(
+                        modifier = Modifier.height(200.dp),
                         horizontalAlignment = Alignment.CenterHorizontally,
-                        userScrollEnabled = false,
                         content = {
                             items(count = 3) {
                                 MemberDetails()

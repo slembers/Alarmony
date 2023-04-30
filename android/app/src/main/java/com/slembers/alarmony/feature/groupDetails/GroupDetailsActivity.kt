@@ -5,11 +5,13 @@ import android.view.Gravity
 import android.widget.Toast
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -44,13 +46,13 @@ class GroupDetailsActivity : AppCompatActivity() {
     }
 }
 
-@Preview(showBackground = true)
+@Preview
 @Composable
 @ExperimentalMaterial3Api
 @ExperimentalGlideComposeApi
 fun GroupDetailsScreen() {
 
-//    val scrollState = rememberScrollState()
+    val scrollState = rememberScrollState()
 
     Scaffold(
         topBar = {
@@ -58,16 +60,14 @@ fun GroupDetailsScreen() {
                 title = NavItem.Group.title,
             )
         },
-        bottomBar = {
-            GroupBottomBar(
-                text = "저장",
-            )
-        },
         content = { innerPadding ->
             Column(
                 modifier = Modifier
                     .padding(innerPadding)
-                    .padding(10.dp),
+                    .padding(10.dp)
+                    .verticalScroll(
+                        state = scrollState,
+                        enabled = true),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 GroupDetailsTitle(title = "장덕모임")
@@ -76,6 +76,7 @@ fun GroupDetailsScreen() {
                     title = { GroupTitle(
                         title = "그룹원 통계",
                         content = { Icon(
+                            modifier = Modifier.size(50.dp),
                             imageVector = Icons.Filled.BarChart,
                             contentDescription = null
                         )}
@@ -84,6 +85,7 @@ fun GroupDetailsScreen() {
                 CardBox( title = { GroupTitle(
                     title = "그룹 나가기",
                     content = { Icon(
+                        modifier = Modifier.size(50.dp),
                         imageVector = Icons.Filled.ExitToApp,
                         contentDescription = null,
                         tint = Color.Red
