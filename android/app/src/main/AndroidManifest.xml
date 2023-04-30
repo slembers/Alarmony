@@ -15,26 +15,36 @@
         android:theme="@style/Theme.Alarmony"
         tools:targetApi="31">
         <activity
-            android:name=".feature.alarm.NotificationActivity"
+            android:name=".feature.group.GroupActivity"
             android:exported="true"
-            android:label="@string/title_activity_notification"
-            android:theme="@style/Theme.Alarmony" >
+            android:label="@string/title_activity_notification" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <!--
         <activity
             android:name=".feature.group.GroupActivity"
             android:exported="false"
             android:label="@string/title_activity_alarm"
-            android:theme="@style/Theme.Alarmony" />
+            android:theme="@style/Theme.Alarmony" >
+        </activity>
+        -->
         <activity
             android:name=".feature.alarm.AlarmActivity"
             android:exported="true">
 
-        </activity> <!-- FCM 메시징 서비스를 추가하고 인텐트 필터를 설정한다. -->
+        </activity>
+<!--
+        <activity
+            android:name=".feature.group.GroupSoundActivity"
+            android:exported="false"
+            android:label="@string/title_activity_alarm"
+            android:theme="@style/Theme.Alarmony">
+        </activity>
+-->
+        <!-- FCM 메시징 서비스를 추가하고 인텐트 필터를 설정한다. -->
         <service
             android:name=".MyFirebaseMessagingService"
             android:exported="true">

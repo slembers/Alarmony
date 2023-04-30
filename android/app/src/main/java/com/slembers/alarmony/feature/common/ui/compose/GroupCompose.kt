@@ -43,9 +43,11 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TimeInput
+import androidx.compose.material3.TimePickerState
 import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -64,17 +66,15 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.slembers.alarmony.R
+import com.slembers.alarmony.data.MemberData
 import com.slembers.alarmony.feature.common.CardBox
 import com.slembers.alarmony.feature.common.CardTitle
-import com.slembers.alarmony.feature.common.ui.view.GroupDefalutProfileView
-import com.slembers.alarmony.feature.common.ui.view.SearchMemberView
 import com.slembers.alarmony.model.db.SoundItem
 import java.util.Locale
 
@@ -106,10 +106,19 @@ fun GroupText(
 @ExperimentalGlideComposeApi
 fun GroupTitle(
     title : String,
-    icon : @Composable() () -> Unit = {}
+    content : @Composable() () -> Unit = {},
+    onClick : () -> Unit = {}
 ) {
     Row(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(
+                start = 0.dp,
+                end = 5.dp
+            )
+            .clickable(
+                onClick = onClick
+            ),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
@@ -131,7 +140,7 @@ fun GroupTitle(
                 .weight(1f),
             textAlign = TextAlign.Start
         )
-        icon()
+        content()
     }
 }
 
@@ -139,13 +148,13 @@ fun GroupTitle(
 @ExperimentalMaterial3Api
 @ExperimentalGlideComposeApi
 fun GroupSubjet(
+    title : String,
+    onChangeValue : (String) -> Unit
 ) {
 
-    var text by remember{ mutableStateOf("") }
-
     OutlinedTextField(
-        value = text,
-        onValueChange = { text = it },
+        value = title!!,
+        onValueChange = onChangeValue,
         textStyle = TextStyle(
             color = Color.Black,
             fontSize = 20.sp,
@@ -185,7 +194,7 @@ fun GroupSubjet(
 @ExperimentalGlideComposeApi
 fun GroupCard(
     title : @Composable() () -> Unit,
-    content: @Composable() () -> Unit
+    content: @Composable() () -> Unit = {}
 ) {
 
     Card(
@@ -200,14 +209,16 @@ fun GroupCard(
                 MaterialTheme.shapes.medium
             )
             .padding(4.dp)
-            .border(1.dp, Color.Black, MaterialTheme.shapes.medium)
+//            .border(1.dp, Color.Black, MaterialTheme.shapes.medium)
             .shadow(
-                elevation = 1.dp,
-                MaterialTheme.shapes.medium,
-                ambientColor = Color.Gray
+                elevation = 5.dp,
+                ambientColor = Color.Black,
+                spotColor = Color.Black,
+                shape = RoundedCornerShape(20.dp)
             ),
         content = {
             Column(
+                modifier = Modifier.padding(top = 5.dp, bottom = 5.dp),
                 content = {
                     title()
                     content()
@@ -220,13 +231,13 @@ fun GroupCard(
 @Composable
 @ExperimentalMaterial3Api
 @ExperimentalGlideComposeApi
-fun GroupTimePicker() {
+fun GroupTimePicker(
+    state: TimePickerState
+) {
 
-    var showTimePicker by remember { mutableStateOf(false) }
     val state = rememberTimePickerState()
     val formatter = remember { SimpleDateFormat("hh:mm a", Locale.getDefault()) }
     val snackState = remember { SnackbarHostState() }
-    val showingPicker = remember { mutableStateOf(true) }
     val snackScope = rememberCoroutineScope()
     val configuration = LocalConfiguration.current
 
@@ -248,11 +259,16 @@ fun GroupWeeks() {
 
     var isCheck = remember { mutableMapOf<String,Boolean>() }
     val width = remember { mutableStateOf(0.dp) }
+    var isWeeks = remember{ mutableStateMapOf(
+        "월" to true,
+        "화" to true,
+        "수" to true,
+        "목" to true,
+        "금" to true,
+        "토" to true,
+        "일" to true
+    )}
     val weeks = listOf<String>("월","화","수","목","금","토","일")
-
-    for(week in weeks) {
-        isCheck[week] = true
-    }
 
     BoxWithConstraints(
         modifier = Modifier
@@ -264,7 +280,7 @@ fun GroupWeeks() {
                 end = 10.dp
             )
     ) {
-        width.value = this.maxWidth
+        var buttonSize = this.maxWidth / 8
         LazyRow(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
@@ -273,20 +289,20 @@ fun GroupWeeks() {
         ) {
             items(weeks) {
                 TextButton(
-                    modifier = Modifier.size(width.value / 8),
+                    modifier = Modifier.size(buttonSize),
                     shape = CircleShape,
                     colors = ButtonDefaults.buttonColors(
                         contentColor = Color.Black,
                         containerColor =
-                        if (isCheck[it] == true) {
+                        if (isWeeks.getValue(it)) {
                             MaterialTheme.colorScheme.primary
                         }
                         else
                             MaterialTheme.colorScheme.background
                     ),
                     onClick = {
-                        isCheck[it] = if(isCheck[it] == true) false else true
-                        Log.d("click event","isCheck value : ${isCheck[it]}")
+                        isWeeks[it] = !isWeeks.getValue(it)
+                        Log.d("click event","isCheck value : ${isWeeks[it]}")
                     },
                     content = {
                         Text(text = it)
@@ -299,9 +315,74 @@ fun GroupWeeks() {
 
 @Composable
 @ExperimentalMaterial3Api
+@ExperimentalGlideComposeApi
+fun GroupDefalutProfile(
+    nickname : String
+) {
+
+    BoxWithConstraints(
+        modifier = Modifier
+            .width(60.dp)
+            .height(70.dp)
+    ) {
+        Image(
+            modifier = Modifier
+                .align(Alignment.TopCenter)
+                .size(this.maxWidth)
+                .padding(0.dp),
+            painter = painterResource(id = R.drawable.baseline_account_circle_24),
+            contentDescription = null)
+        Text(
+            text = nickname,
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .fillMaxWidth(),
+            maxLines = 1,
+            textAlign = TextAlign.Center,
+            fontSize = 10.sp
+        )
+    }
+}
+
+@Composable
+@ExperimentalMaterial3Api
+@ExperimentalGlideComposeApi
+fun GroupInvite(
+    profiles : List<MemberData>
+) {
+
+    BoxWithConstraints(
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        LazyRow(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(
+                    start = 20.dp,
+                    top = 0.dp,
+                    bottom = 0.dp,
+                    end = 10.dp
+                ),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(2.dp),
+            userScrollEnabled = true
+
+        ) {
+            items(profiles) {
+                item ->
+                    GroupDefalutProfile(item.nickname)
+            }
+        }
+    }
+}
+@Composable
+@ExperimentalMaterial3Api
 fun SoundChooseGrid(
     modifier: Modifier = Modifier.width(320.dp),
-    itemList: List<SoundItem> = listOf()
+    itemList: List<SoundItem> = (1..10).map {
+        SoundItem(
+            painterResource(id = R.drawable.main_app_image_foreground),
+            "sound$it") }.toList()
 ) {
     var checkbox by remember { mutableStateOf(itemList[0].soundName) }
 
