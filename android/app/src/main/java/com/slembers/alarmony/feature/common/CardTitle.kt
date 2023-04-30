@@ -23,7 +23,7 @@ import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 @ExperimentalGlideComposeApi
 fun CardTitle(
     title : String,
-    icon : @Composable() () -> Unit = {}
+    content : @Composable() () -> Unit = {}
 ) {
     Row(
         modifier = Modifier.fillMaxWidth(),
@@ -48,6 +48,6 @@ fun CardTitle(
                 .weight(1f),
             textAlign = TextAlign.Start
         )
-        icon()
+        content()
     }
 }
