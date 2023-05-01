@@ -6,6 +6,7 @@ import android.graphics.drawable.Icon
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -24,13 +25,21 @@ import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Switch
+import androidx.compose.material.TextButton
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
+import androidx.compose.material3.CardDefaults
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.graphics.Color
+
 import androidx.compose.ui.text.style.TextAlign
+import com.slembers.alarmony.feature.common.ui.theme.toColor
+
+//import androidx.compose.ui.graphics.Color
+
 
 class SettingView : AppCompatActivity() {
 
@@ -69,7 +78,7 @@ fun AccountMtnc() {
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("비밀번호 찾기") },
+                title = { Text("설정") },
                 navigationIcon = {
                     IconButton(onClick = { }) {
                         Icon(Icons.Filled.ArrowBack, "뒤로가기")
@@ -169,6 +178,7 @@ fun AccountMtnc() {
             }
 
         }
+
     }
 
 }
