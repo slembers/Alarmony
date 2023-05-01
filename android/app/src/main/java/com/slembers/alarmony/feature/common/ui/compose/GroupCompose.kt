@@ -66,6 +66,7 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
@@ -81,13 +82,14 @@ import java.util.Locale
 @Composable
 @ExperimentalMaterial3Api
 fun GroupText(
-    title : String
+    title : String = "폰트",
+    fontsize : TextUnit = 20.sp
 ) {
     Text(
         text = title,
         style = TextStyle(
             color = Color.Black,
-            fontSize = 20.sp,
+            fontSize = fontsize,
             fontFamily = FontFamily.Monospace,
             fontWeight = FontWeight.Bold,
             fontStyle = FontStyle.Normal
@@ -106,6 +108,7 @@ fun GroupText(
 @ExperimentalGlideComposeApi
 fun GroupTitle(
     title : String,
+    modifier: Modifier = Modifier,
     content : @Composable() () -> Unit = {},
     onClick : () -> Unit = {}
 ) {
@@ -629,7 +632,7 @@ fun SearchMember() {
         modifier = Modifier
             .padding(start = 2.dp, end = 20.dp, top = 3.dp, bottom = 1.dp)
             .fillMaxWidth()
-            .clickable { isClicked = !isClicked}
+            .clickable { isClicked = !isClicked }
     )
     {
         if(profile != null ) {

@@ -1,4 +1,4 @@
-package com.slembers.alarmony
+package com.slembers.alarmony.util
 
 import android.Manifest
 import android.app.Notification
@@ -12,6 +12,7 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
+import com.slembers.alarmony.R
 
 class MyFirebaseMessagingService : FirebaseMessagingService() {
 
