@@ -31,10 +31,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.Checkbox
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Campaign
-import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -71,7 +68,6 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
@@ -84,6 +80,7 @@ import com.slembers.alarmony.data.MemberData
 import com.slembers.alarmony.feature.common.CardBox
 import com.slembers.alarmony.feature.common.CardDivider
 import com.slembers.alarmony.feature.common.CardTitle
+import com.slembers.alarmony.feature.groupDetails.GroupDetailsBoardBtn
 import com.slembers.alarmony.model.db.SoundItem
 import java.util.Locale
 
@@ -847,46 +844,5 @@ fun MemberDetails(
             maxLines = 1
         )
         GroupDetailsBoardBtn(isCheck = isCheck)
-    }
-}
-
-@Preview
-@Composable
-fun GroupDetailsBoardBtn(
-    isCheck : Boolean = false,
-    modifier : Modifier = Modifier,
-    onClick : () -> Unit = {}
-) {
-    TextButton(
-        colors = ButtonDefaults.buttonColors(
-            contentColor = AlarmisCheck(isCheck, MaterialTheme.colorScheme.primary, MaterialTheme.colorScheme.background),
-            containerColor = AlarmisCheck(isCheck, MaterialTheme.colorScheme.background, MaterialTheme.colorScheme.primary)
-        ),
-        onClick = onClick,
-        modifier = modifier,
-        content = {
-            Icon(
-                imageVector = AlarmisCheck(isCheck, Icons.Default.Check, Icons.Default.Campaign),
-                contentDescription = null
-            )
-            Text(
-                text = AlarmisCheck(isCheck, "일어났어요", "알람보내기"),
-                style = TextStyle(
-                    fontSize = 8.sp,
-                    fontFamily = FontFamily.Monospace,
-                    fontWeight = FontWeight.Bold,
-                ),
-                maxLines = 1
-            )
-        }
-    )
-}
-
-private fun <T> AlarmisCheck(isCheck : Boolean, True : T, False : T) : T {
-    return isCheck.let { check ->
-        when(check) {
-            true -> True
-            false -> False
-        }
     }
 }
