@@ -54,7 +54,6 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation 'com.google.android.material:material:1.5.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
-    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.3.1'
     implementation platform('androidx.compose:compose-bom:2022.10.00')
     implementation 'androidx.compose.ui:ui-graphics'
     implementation 'androidx.compose.material3:material3'
@@ -71,8 +70,8 @@ dependencies {
 
 
     def composeBom = platform('androidx.compose:compose-bom:2023.01.00')
-    implementation composeBom
-    androidTestImplementation composeBom
+    implementation 'androidx.compose:compose-bom:2023.04.01'
+    androidTestImplementation 'androidx.compose:compose-bom:2023.04.01'
 
     // Choose one of the following:
     // Material Design 3
@@ -99,9 +98,10 @@ dependencies {
     // 선택 사항 - 창 크기 유틸리티 추가
     implementation 'androidx.compose.material3:material3-window-size-class'
     // 선택 사항 - 활동 통합
-    implementation 'androidx.activity:activity-compose:1.6.1'
+    implementation 'androidx.activity:activity-compose:1.7.1'
     // 선택 사항 - 뷰모델 통합
-    implementation 'androidx.lifecycle:lifecycle-viewmodel-compose:2.5.1'
+    implementation 'androidx.lifecycle:lifecycle-viewmodel-compose:2.6.1'
+    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.3.1'
     // 선택 사항 - LiveData 통합
     implementation 'androidx.compose.runtime:runtime-livedata'
     // 선택 사항 - RxJava 통합
@@ -114,5 +114,15 @@ dependencies {
     implementation 'androidx.navigation:navigation-fragment-ktx:2.5.3'
     implementation 'androidx.navigation:navigation-ui-ktx:2.5.3'
     implementation 'androidx.navigation:navigation-compose:2.5.3'
+    // Gson
+    implementation 'com.google.code.gson:gson:2.8.7'
+    // Retrofit
+    implementation 'com.squareup.retrofit2:retrofit:2.9.0'
+    implementation 'com.squareup.retrofit2:converter-gson:2.8.1'
+    // OkHttp
+    implementation 'com.squareup.okhttp3:okhttp:4.9.1'
+    implementation 'com.squareup.okhttp3:logging-interceptor:4.9.1'
+    // Coroutine
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.0'
 }
 apply plugin: 'com.google.gms.google-services'
