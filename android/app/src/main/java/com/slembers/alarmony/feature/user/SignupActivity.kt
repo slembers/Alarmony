@@ -88,6 +88,7 @@ fun SignupScreen() {
 
 
                 TextField(
+
                     value = password.value,
                     onValueChange = { password.value = it },
                     label = { Text(text = "비밀번호") },

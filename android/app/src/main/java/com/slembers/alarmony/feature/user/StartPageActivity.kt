@@ -94,6 +94,7 @@ class StartPageActivity : AppCompatActivity() {
 //                SignupScreen()
 //                Findpswd()
 //                FindId()
+                AccountMtnc()
                 mascott(drawing = R.drawable.mascot_foreground)
                 logo(drawing = R.drawable.alarmony)
                 LoginScreen()
