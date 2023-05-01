@@ -2,6 +2,7 @@ package com.slembers.alarmony.global.jwt.handler;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.JwtException;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
@@ -19,6 +20,7 @@ import java.util.Map;
 
 
 @Component
+@Slf4j
 public class JwtExceptionFilter extends OncePerRequestFilter {
 
 
@@ -32,6 +34,7 @@ public class JwtExceptionFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         try {
+            log.info("[JwtExceptionFilter] 진입");
             filterChain.doFilter(request, response);
         } catch (JwtException e) {
             setErrorResponse(request, response, e);
@@ -39,7 +42,6 @@ public class JwtExceptionFilter extends OncePerRequestFilter {
     }
 
     private void setErrorResponse(HttpServletRequest request, HttpServletResponse response, Throwable e) throws IOException {
-
 
         final Map<String, Object> body = new HashMap<>();
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
@@ -51,7 +53,6 @@ public class JwtExceptionFilter extends OncePerRequestFilter {
         // response 객체에 응답 객체를 넣어줌
         mapper.writeValue(response.getOutputStream(), body);
         response.setStatus(HttpServletResponse.SC_OK);
-
 
     }
 }
