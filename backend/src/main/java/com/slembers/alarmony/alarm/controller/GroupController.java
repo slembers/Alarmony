@@ -1,9 +1,9 @@
 package com.slembers.alarmony.alarm.controller;
 
+import com.slembers.alarmony.alarm.dto.AlarmRecordDto;
 import com.slembers.alarmony.alarm.dto.InviteMemberSetToGroupDto;
 import com.slembers.alarmony.alarm.dto.MemberRankingDto;
 import com.slembers.alarmony.alarm.dto.request.InviteMemberToGroupRequestDto;
-import com.slembers.alarmony.alarm.dto.response.AlarmRecordResponseDto;
 import com.slembers.alarmony.alarm.exception.AlarmErrorCode;
 import com.slembers.alarmony.alarm.service.AlarmRecordService;
 import com.slembers.alarmony.alarm.service.GroupService;
@@ -129,10 +129,15 @@ public class GroupController {
      * @return 알람 기록
      */
     @GetMapping("/{group-id}/records")
-    public ResponseEntity<AlarmRecordResponseDto> getTodayAlarmRecords(
+    public ResponseEntity<Map<String, Object>> getTodayAlarmRecords(
         @PathVariable(name = "group-id") Long groupId) {
-        return new ResponseEntity<>(alarmRecordService.getTodayAlarmRecords(groupId),
-            HttpStatus.OK);
+
+
+        List<AlarmRecordDto> alarmList = alarmRecordService.getTodayAlarmRecords(groupId);
+
+        Map<String, Object> map = new HashMap<>();
+        map.put("alarmList", alarmList);
+        return new ResponseEntity<>(map, HttpStatus.OK);
     }
 
     /**
