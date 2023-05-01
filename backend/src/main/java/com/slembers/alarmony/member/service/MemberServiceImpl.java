@@ -5,9 +5,12 @@ import com.slembers.alarmony.global.jwt.JwtTokenProvider;
 import com.slembers.alarmony.global.jwt.RefreshToken;
 import com.slembers.alarmony.global.jwt.dto.TokenDto;
 import com.slembers.alarmony.global.redis.repository.RefreshTokenRepository;
+import com.slembers.alarmony.global.redis.service.RedisUtil;
 import com.slembers.alarmony.member.dto.LoginDto;
+import com.slembers.alarmony.member.dto.request.ReissueTokenDto;
 import com.slembers.alarmony.member.dto.request.SignUpDto;
 import com.slembers.alarmony.member.dto.response.CheckDuplicateDto;
+import com.slembers.alarmony.member.dto.response.ReissueTokenResponseDto;
 import com.slembers.alarmony.member.entity.Member;
 import com.slembers.alarmony.member.exception.MemberErrorCode;
 import com.slembers.alarmony.member.repository.MemberRepository;
@@ -44,6 +47,8 @@ public class MemberServiceImpl implements MemberService {
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
 
     private final RefreshTokenRepository refreshTokenRepository;
+
+    private final RedisUtil redisUtil;
 
     /**
      * 회원가입
@@ -190,5 +195,27 @@ public class MemberServiceImpl implements MemberService {
 
     }
 
+    @Override
+    public ReissueTokenResponseDto reissueToken(ReissueTokenDto reissueTokenDto) {
 
+        //예외처리
+        jwtTokenProvider.validRefreshToken(reissueTokenDto.getRefreshToken());
+
+        String redisRefreshToken = redisUtil.getData("Refresh:"+reissueTokenDto.getUsername());
+
+        Member member = memberRepository.findByUsername(reissueTokenDto.getUsername()).orElseThrow(()-> new CustomException(MemberErrorCode.MEMBER_NOT_FOUND));
+
+        if(redisRefreshToken.equals(redisRefreshToken)){ //일치할때만 재발급
+
+            String accessToken = jwtTokenProvider.generateAccessToken(member);
+            String refreshToken = jwtTokenProvider.generateRefreshToken(member);
+
+            return new ReissueTokenResponseDto(accessToken,refreshToken);
+
+        }else{  //일치하지 않으면
+            log.error("[Refresh Controller] Refresh Token값이 일치하지 않습니다.");
+        }
+
+        return null;
+    }
 }

@@ -1,8 +1,10 @@
 package com.slembers.alarmony.member.service;
 
 import com.slembers.alarmony.member.dto.LoginDto;
+import com.slembers.alarmony.member.dto.request.ReissueTokenDto;
 import com.slembers.alarmony.member.dto.request.SignUpDto;
 import com.slembers.alarmony.member.dto.response.CheckDuplicateDto;
+import com.slembers.alarmony.member.dto.response.ReissueTokenResponseDto;
 import org.springframework.http.ResponseEntity;
 
 import javax.servlet.http.HttpServletResponse;
@@ -37,5 +39,7 @@ public interface MemberService {
      */
     CheckDuplicateDto checkForDuplicateNickname(String nickname);
 
+
+    ReissueTokenResponseDto reissueToken(ReissueTokenDto reissueTokenDto);
 
 }

@@ -1,10 +1,14 @@
 package com.slembers.alarmony.member.controller;
 
 
+import com.slembers.alarmony.global.jwt.JwtTokenProvider;
 import com.slembers.alarmony.global.jwt.SecurityUtil;
+import com.slembers.alarmony.global.redis.service.RedisUtil;
 import com.slembers.alarmony.member.dto.LoginDto;
+import com.slembers.alarmony.member.dto.request.ReissueTokenDto;
 import com.slembers.alarmony.member.dto.request.SignUpDto;
 import com.slembers.alarmony.member.dto.response.CheckDuplicateDto;
+import com.slembers.alarmony.member.dto.response.ReissueTokenResponseDto;
 import com.slembers.alarmony.member.entity.Member;
 import com.slembers.alarmony.member.service.EmailVerifyService;
 import com.slembers.alarmony.member.service.MemberService;
@@ -27,6 +31,10 @@ public class MemberController {
 
     private final MemberService memberService;
     private final EmailVerifyService emailVerifyService;
+
+    private final RedisUtil redisUtil;
+
+    private final JwtTokenProvider jwtTokenProvider;
 
 
     /**
@@ -110,6 +118,20 @@ public class MemberController {
         log.info("test진입" + user.getAuthorities());
 
         log.info("test 진입함@@@@@@@@@@@@@@@@@@@@@" + SecurityUtil.getCurrentUsername().get()); //
+
+    }
+
+    /**
+     * Access 토큰 및 Refresh 토큰 재발급
+     */
+    @PostMapping("/refresh")
+    public ResponseEntity<ReissueTokenResponseDto> refresh(@RequestBody ReissueTokenDto reissueTokenDto){
+
+
+       return new ResponseEntity<ReissueTokenResponseDto>(memberService.reissueToken(reissueTokenDto), HttpStatus.OK);
+
+
+
 
     }
 
