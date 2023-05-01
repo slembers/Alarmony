@@ -1,18 +1,22 @@
 package com.slembers.alarmony.feature.common.ui.view
 
 
+import android.util.Log
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -21,12 +25,15 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Slider
+import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TimeInput
 import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -46,6 +53,7 @@ import androidx.compose.ui.unit.sp
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.slembers.alarmony.R
 import com.slembers.alarmony.feature.common.ui.compose.GroupTitle
+import kotlin.streams.toList
 
 @Preview(showBackground = true)
 @Composable
@@ -178,9 +186,10 @@ fun GroupCardView() {
             .padding(4.dp)
             .border(1.dp, Color.Black, MaterialTheme.shapes.medium)
             .shadow(
-                elevation = 1.dp,
-                MaterialTheme.shapes.medium,
-                ambientColor = Color.Gray
+                elevation = 5.dp,
+                ambientColor = Color.Black,
+                spotColor = Color.Black,
+                shape = RoundedCornerShape(20.dp)
             ),
         content = {
             Column(
@@ -261,37 +270,50 @@ fun GroupTimePickerView() {
 @ExperimentalGlideComposeApi
 fun GroupWeekView() {
 
-    val width = remember { mutableStateOf(0.dp) }
-    val weeks = remember { mutableListOf("월","화","수","목","금","토","일") }
+    val isWeeks = remember { mutableStateMapOf(
+        "월" to true,
+        "화" to true,
+        "수" to true,
+        "목" to true,
+        "금" to true,
+        "토" to true,
+        "일" to true
+    )}
 
     BoxWithConstraints(
         modifier = Modifier.fillMaxWidth()
     ) {
-        width.value = this.maxWidth
+        val boxSize = this.maxWidth / 8
         LazyRow(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(
-                start = 20.dp,
-                top = 0.dp,
-                bottom = 0.dp,
-                end = 10.dp
-            ),
+                    start = 20.dp,
+                    top = 0.dp,
+                    bottom = 0.dp,
+                    end = 10.dp
+                ),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(2.dp)
-
         ) {
-            items(weeks) {
+            items(isWeeks.keys.stream().toList()) {
                 TextButton(
-                    modifier = Modifier.size(width.value / 9),
-                    shape = CircleShape,
+                    modifier = Modifier.size(boxSize),
+                    onClick = {
+                        isWeeks[it] = !isWeeks.getValue(it)
+                        Log.d("click event","isCheck key : $it value : ${isWeeks[it]}")
+                    },
                     colors = ButtonDefaults.buttonColors(
                         contentColor = Color.Black,
-                        containerColor = MaterialTheme.colorScheme.primary
+                        containerColor =
+                            if(isWeeks.getValue(it)) {
+                                MaterialTheme.colorScheme.primary
+                            } else {
+                                MaterialTheme.colorScheme.background
+                            },
                     ),
-                    onClick = {},
                     content = {
-                        Text(text = it)
+                        Text( text = it )
                     }
                 )
             }
@@ -299,3 +321,87 @@ fun GroupWeekView() {
     }
 }
 
+
+
+@Preview(showBackground = true)
+@Composable
+@ExperimentalMaterial3Api
+@ExperimentalGlideComposeApi
+fun GroupDefalutProfileView() {
+
+    BoxWithConstraints(
+        modifier = Modifier
+            .width(60.dp)
+            .height(70.dp)
+    ) {
+        Image(
+            modifier = Modifier
+                .align(Alignment.TopCenter)
+                .size(this.maxWidth)
+                .padding(0.dp),
+            painter = painterResource(id = R.drawable.baseline_account_circle_24),
+            contentDescription = null)
+        Text(
+            text = "Sample01",
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .fillMaxWidth(),
+            maxLines = 1,
+            textAlign = TextAlign.Center,
+            fontSize = 10.sp
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+@ExperimentalMaterial3Api
+@ExperimentalGlideComposeApi
+fun GroupInviteView() {
+
+    BoxWithConstraints(
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        LazyRow(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(
+                    start = 20.dp,
+                    top = 0.dp,
+                    bottom = 0.dp,
+                    end = 10.dp
+                ),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(2.dp),
+            userScrollEnabled = true
+
+        ) {
+            items(
+                count = 7
+            ) {
+                GroupDefalutProfileView()
+            }
+        }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+@ExperimentalMaterial3Api
+@ExperimentalGlideComposeApi
+fun GroupVolumnView() {
+
+    var sliderValue by remember{ mutableStateOf(0f) }
+
+    Slider(
+        value = sliderValue,
+        onValueChange = {sliderValue = it},
+        valueRange = 0f..10f,
+        colors = SliderDefaults.colors(
+            thumbColor = MaterialTheme.colorScheme.background,
+            activeTrackColor = MaterialTheme.colorScheme.primary
+        ),
+        steps = 1
+    )
+
+}

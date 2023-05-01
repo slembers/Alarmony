@@ -11,12 +11,17 @@ public class UrlInfo implements InitializingBean {
 
     private final String cloudPlatformUrl;
 
+    private final String alarmonyUrl;
+
     public UrlInfo(
             @Value("${url.fcm-message-send-url}") String fcmApi,
-            @Value("${url.cloud-platform-url}") String cloudPlatformUrl
+            @Value("${url.cloud-platform-url}") String cloudPlatformUrl,
+            @Value("${url.alarmony-url}") String alarmonyUrl
+
     ) {
         this.fcmApi = fcmApi;
         this.cloudPlatformUrl = cloudPlatformUrl;
+        this.alarmonyUrl = alarmonyUrl;
     }
 
     @Override
@@ -37,4 +42,6 @@ public class UrlInfo implements InitializingBean {
      * @return
      */
     public String getCloudPlatformUrl() { return this.cloudPlatformUrl; }
+
+    public String getAlarmonyUrl() { return this.alarmonyUrl; }
 }

@@ -1,4 +1,4 @@
-package com.slembers.alarmony.feature.common.ui
+package com.slembers.alarmony.feature.group
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.PaddingValues
@@ -13,13 +13,16 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 
 
+@Preview
 @Composable
 @ExperimentalMaterial3Api
-fun AlamonyBottomButton(
-    text : String = "버튼 이름"
+fun GroupBottomBar(
+    text : String = "버튼 이름",
+    onClick : () -> Unit = {}
 ) {
     BottomAppBar(
         modifier = Modifier.height(50.dp),
@@ -33,7 +36,7 @@ fun AlamonyBottomButton(
                         MaterialTheme.colorScheme.primary,
                         MaterialTheme.shapes.extraSmall
                     ),
-                onClick = { /*TODO*/ },
+                onClick = onClick,
                 content = {
                     Text(
                         text = text,
