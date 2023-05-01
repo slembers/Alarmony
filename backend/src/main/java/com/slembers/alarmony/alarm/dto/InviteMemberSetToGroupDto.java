@@ -10,5 +10,6 @@ public class InviteMemberSetToGroupDto {
 
     private Long groupId;
     private Set<String> nicknames;
+    private String sender;
 
 }
