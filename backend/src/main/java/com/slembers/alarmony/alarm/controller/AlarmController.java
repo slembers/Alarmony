@@ -8,6 +8,7 @@ import com.slembers.alarmony.alarm.dto.request.PutAlarmRecordTimeRequestDto;
 import com.slembers.alarmony.alarm.dto.response.AlarmListResponseDto;
 import com.slembers.alarmony.alarm.service.AlarmRecordService;
 import com.slembers.alarmony.alarm.service.AlarmService;
+import com.slembers.alarmony.global.jwt.SecurityUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,8 +30,7 @@ public class AlarmController {
      */
     @GetMapping
     public ResponseEntity<AlarmListResponseDto> getAlarmList() {
-        // TODO : 시큐리티에서 멤버 정보 얻어오기
-        String username = "test";
+        String username = SecurityUtil.getCurrentUsername().get();
         return new ResponseEntity<>(alarmService.getAlarmList(username), HttpStatus.OK);
     }
 
@@ -41,8 +41,7 @@ public class AlarmController {
      */
     @PostMapping
     public ResponseEntity<String> createAlarm(@RequestBody CreateAlarmDto createAlarmDto) {
-        // TODO : 시큐리티에서 멤버 정보 얻어오기
-        String username = "test";
+        String username = SecurityUtil.getCurrentUsername().get();
         alarmService.createAlarm(username, createAlarmDto);
         return new ResponseEntity<>("알람이 생성되고 초대가 전송되었습니다.", HttpStatus.OK);
     }
@@ -59,8 +58,7 @@ public class AlarmController {
             @PathVariable("alarm-id") Long alarmId,
             @RequestBody PutAlarmMessageRequestDto putAlarmMessageRequestDto) {
 
-        // TODO : 시큐리티에서 멤버 정보 얻어오기
-        String username = "test";
+        String username = SecurityUtil.getCurrentUsername().get();
 
         alarmService.putAlarmMessage(username, alarmId, putAlarmMessageRequestDto.getMessage());
         return new ResponseEntity<>("알람 메시지가 기록되었습니다.", HttpStatus.OK);
@@ -85,8 +83,7 @@ public class AlarmController {
      */
     @PutMapping("/{alarm-id}/record")
     public ResponseEntity<String> putAlarmRecord(@PathVariable("alarm-id") Long alarmId, @RequestBody PutAlarmRecordTimeRequestDto putAlarmRecordTimeRequestDto) {
-        // TODO : 시큐리티에서 멤버 정보 얻어오기
-        String username = "test";
+        String username = SecurityUtil.getCurrentUsername().get();
         alarmRecordService.putAlarmRecord(AlarmEndRecordDto.builder()
                 .alarmId(alarmId)
                 .username(username)
@@ -103,8 +100,7 @@ public class AlarmController {
      */
     @PutMapping("/{alarm-id}/failed")
     public ResponseEntity<String> putAlarmFailed(@PathVariable("alarm-id") Long alarmId) {
-        // TODO : 시큐리티에서 멤버 정보 얻어오기
-        String username = "test";
+        String username = SecurityUtil.getCurrentUsername().get();
         alarmRecordService.putAlarmRecord(AlarmEndRecordDto.builder()
                 .alarmId(alarmId)
                 .username(username)

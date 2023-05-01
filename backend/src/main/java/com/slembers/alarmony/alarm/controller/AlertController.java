@@ -5,6 +5,7 @@ import com.slembers.alarmony.alarm.dto.response.AlertListResponseDto;
 import com.slembers.alarmony.alarm.exception.AlertErrorCode;
 import com.slembers.alarmony.alarm.service.AlertService;
 import com.slembers.alarmony.global.execption.CustomException;
+import com.slembers.alarmony.global.jwt.SecurityUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -26,8 +27,7 @@ public class AlertController {
      */
     @GetMapping
     public ResponseEntity<AlertListResponseDto> getAlertList() {
-        // TODO : 시큐리티에서 멤버 정보 얻어오기
-        String username = "test";
+        String username = SecurityUtil.getCurrentUsername().get();
         return new ResponseEntity<>(alertService.getAlertList(username), HttpStatus.OK);
     }
 
@@ -70,7 +70,8 @@ public class AlertController {
      */
     @PostMapping("/test")
     public ResponseEntity<String> testPushAlert() {
-        alertService.testPushAlert();
+        String username = SecurityUtil.getCurrentUsername().get();
+        alertService.testPushAlert(username);
         return new ResponseEntity<>("메시지 전송 성공", HttpStatus.OK);
     }
 }
