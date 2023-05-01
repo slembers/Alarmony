@@ -47,7 +47,6 @@ import androidx.compose.material3.TimePickerState
 import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -67,7 +66,6 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -77,9 +75,7 @@ import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.slembers.alarmony.R
 import com.slembers.alarmony.data.MemberData
 import com.slembers.alarmony.feature.common.CardBox
-import com.slembers.alarmony.feature.common.CardDivider
 import com.slembers.alarmony.feature.common.CardTitle
-import com.slembers.alarmony.feature.groupDetails.MemberDetails
 import com.slembers.alarmony.model.db.SoundItem
 import java.util.Locale
 
@@ -664,84 +660,4 @@ fun SearchMember() {
             onCheckedChange = { isClicked = it }
         )
     }
-}
-
-@Preview
-@Composable
-@ExperimentalMaterial3Api
-@ExperimentalGlideComposeApi
-fun GroupDetailsTitle(
-    title : String = "제목"
-) {
-    CardBox(
-        title = { CardTitle(title = title) },
-        content = {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(
-                        start = 20.dp,
-                        top = 0.dp,
-                        bottom = 10.dp,
-                        end = 10.dp
-                    ),
-                content = {
-                    CardDivider()
-                    GroupDetailsRepeat()
-                }
-            )
-        }
-    )
-}
-
-@Preview
-@Composable
-fun GroupDetailsRepeat() {
-
-    val week = remember { mutableStateListOf("월","화","수","목","금","토","일",) }
-
-    Column(
-        modifier = Modifier.padding(
-            start = 20.dp,
-            top = 0.dp,
-            bottom = 0.dp,
-            end = 0.dp
-        ),
-        content = {
-            GroupDetailsText("오전")
-            GroupDetailsText(text = "07:30", fontsize = 50.sp)
-            LazyRow(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                userScrollEnabled = false,
-                content = {
-                    items(week) {
-                        GroupDetailsText(
-                            text = it,
-                            color = Color.Gray
-                        )
-                    }
-                }
-            )
-        }
-    )
-}
-
-@Composable
-fun GroupDetailsText(
-    text : String = "폰트",
-    fontsize : TextUnit = 20.sp,
-    color : Color = Color.Black
-) {
-    Text(
-        text = text,
-        style = TextStyle(
-            color = color,
-            fontSize = fontsize,
-            fontFamily = FontFamily.Monospace,
-            fontWeight = FontWeight.Bold,
-            fontStyle = FontStyle.Normal
-        ),
-        textAlign = TextAlign.Start
-    )
 }
