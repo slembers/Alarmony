@@ -58,10 +58,7 @@ public class AlertServiceImpl implements AlertService {
                 .ifPresent(validMemberList::add);
         }
 
-        // TODO: 시큐리티에서 멤버 정보 얻어오기
-        String username = "test";
-
-        Member sender = memberRepository.findByUsername(username)
+        Member sender = memberRepository.findByUsername(inviteMemberSetToGroupDto.getSender())
             .orElseThrow(() -> new CustomException(MemberErrorCode.MEMBER_NOT_FOUND));
 
         Alarm alarm = alarmRepository.findById(inviteMemberSetToGroupDto.getGroupId())
@@ -120,9 +117,11 @@ public class AlertServiceImpl implements AlertService {
      * 알림 테스트 전송 메소드
      */
     @Override
-    public void testPushAlert() {
+    public void testPushAlert(String username) {
+        Member member = memberRepository.findByUsername(username)
+                .orElseThrow(() -> new CustomException(MemberErrorCode.MEMBER_NOT_FOUND));
         try {
-            sendMessageTo(this.getAccessToken(), "test", "This is Test Message");
+            sendMessageTo(member.getRegistrationToken(), "test", "This is Test Message");
         } catch (Exception e) {
             throw new CustomException(AlertErrorCode.ALERT_SERVER_ERROR);
         }
@@ -284,40 +283,19 @@ public class AlertServiceImpl implements AlertService {
     }
 
     /**
-     * 웹 토큰을 가져오는 메소드 (추후 수정)
-     *
-     * @return 토큰
-     * @throws IOException 에러
-     */
-    public String getAccessToken() throws IOException {
-        // firebase로 부터 access token을 가져온다.
-
-        GoogleCredentials googleCredentials = GoogleCredentials
-            .fromStream(new ClassPathResource("fcm-alert-config.json").getInputStream())
-            .createScoped(Collections.singletonList(urlInfo.getCloudPlatformUrl()));
-
-        googleCredentials.refreshIfExpired();
-
-        return googleCredentials.getAccessToken().getTokenValue();
-
-    }
-
-    /**
      * @param targetToken 목표 기기 토큰
      * @param title       제목
      * @param body        내용
      */
     public void sendMessageTo(String targetToken, String title, String body) {
         try {
-            // TODO : 현재는 토큰이 있는 기기가 적으므로, 추후에 토큰 설정을 포함하도록 변경해야 함.
-            String targetMobile = "duAc2AEfShGR2Hf_hUTBRP:APA91bHmPeeBzhoz5nHiOzSEa9eIbWVv8l2uBAehRA3XVmh2L2qUguuNHVjpBirOhlHlT_qJsssZj6gHwLNScC1vS21tKP6hqcP-qqZmoGFA1eL61XdYuj301BUjCUHQ1MMNN3En1ub0";
             // 메시지 설정
             Message message = Message.builder()
                 .setNotification(Notification.builder()
                     .setTitle("Alarmony")
                     .setBody("일해라 박성완")
                     .build())
-                .setToken(targetMobile)
+                .setToken(targetToken)
                 .build();
 
             // 웹 API 토큰을 가져와서 보냄
@@ -340,8 +318,9 @@ public class AlertServiceImpl implements AlertService {
 
         Alarm alarm = alarmRepository.findById(groupId)
             .orElseThrow(() -> new CustomException(AlertErrorCode.ALERT_NOT_FOUND));
-        // TODO: 닉네임으로 fcm 토큰 얻어오기
-        sendAlarmTo("", alarm.getTitle());
+        Member member = memberRepository.findByNickname(nickname)
+            .orElseThrow(() -> new CustomException(MemberErrorCode.MEMBER_NOT_FOUND));
+        sendAlarmTo(member.getRegistrationToken(), alarm.getTitle());
     }
 
     /**
@@ -352,13 +331,11 @@ public class AlertServiceImpl implements AlertService {
      */
     private void sendAlarmTo(String targetToken, String groupTitle) {
         try {
-            // TODO : 현재는 토큰이 있는 기기가 적으므로, 추후에 토큰 설정을 포함하도록 변경해야 함.
-            String targetMobile = "duAc2AEfShGR2Hf_hUTBRP:APA91bHmPeeBzhoz5nHiOzSEa9eIbWVv8l2uBAehRA3XVmh2L2qUguuNHVjpBirOhlHlT_qJsssZj6gHwLNScC1vS21tKP6hqcP-qqZmoGFA1eL61XdYuj301BUjCUHQ1MMNN3En1ub0";
-            // 메시지 설정
+           // 메시지 설정
             Message message = Message.builder()
                 .putData("type", "ALARM")
                 .putData("group", groupTitle)
-                .setToken(targetMobile)
+                .setToken(targetToken)
                 .build();
 
             // 웹 API 토큰을 가져와서 보냄
