@@ -19,7 +19,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -80,7 +79,7 @@ import com.slembers.alarmony.data.MemberData
 import com.slembers.alarmony.feature.common.CardBox
 import com.slembers.alarmony.feature.common.CardDivider
 import com.slembers.alarmony.feature.common.CardTitle
-import com.slembers.alarmony.feature.groupDetails.GroupDetailsBoardBtn
+import com.slembers.alarmony.feature.groupDetails.MemberDetails
 import com.slembers.alarmony.model.db.SoundItem
 import java.util.Locale
 
@@ -802,47 +801,4 @@ fun GroupDetailsBoard() {
             )
         }
     )
-}
-
-@Preview
-@Composable
-fun MemberDetails(
-    profile : String? = null,
-    nickname : String = "Alarmony",
-    isCheck : Boolean = false,
-    onClick : () -> Unit = {}
-) {
-
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween,
-        modifier = Modifier
-            .padding(start = 2.dp, end = 20.dp, top = 3.dp, bottom = 1.dp)
-            .fillMaxWidth()
-            .wrapContentHeight()
-    )
-    {
-        if(profile != null ) {
-            AsyncImage(
-                model = ImageRequest.Builder(LocalContext.current)
-                    .data(profile)
-                    .build(),
-                contentDescription = "ImageRequest example",
-                modifier = Modifier.size(65.dp)
-            )
-        } else {
-            Image(
-                painter = painterResource(id = R.drawable.baseline_account_circle_24),
-                contentDescription = "ImageRequest example",
-                modifier = Modifier.size(65.dp)
-            )
-        }
-        Text(
-            text = nickname,
-            fontSize = 17.sp,
-            modifier = Modifier.weight(1f),
-            maxLines = 1
-        )
-        GroupDetailsBoardBtn(isCheck = isCheck)
-    }
 }
