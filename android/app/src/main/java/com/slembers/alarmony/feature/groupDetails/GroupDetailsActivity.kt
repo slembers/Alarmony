@@ -1,15 +1,9 @@
 package com.slembers.alarmony.feature.groupDetails
 
 import android.os.Bundle
-import android.view.Gravity
-import android.widget.Toast
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.foundation.gestures.scrollable
-import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
@@ -29,10 +23,7 @@ import androidx.compose.ui.unit.dp
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.slembers.alarmony.feature.common.CardBox
 import com.slembers.alarmony.feature.common.NavItem
-import com.slembers.alarmony.feature.common.ui.compose.GroupDetailsBoard
-import com.slembers.alarmony.feature.common.ui.compose.GroupDetailsTitle
 import com.slembers.alarmony.feature.common.ui.compose.GroupTitle
-import com.slembers.alarmony.feature.group.GroupBottomBar
 import com.slembers.alarmony.feature.group.GroupToolBar
 
 @ExperimentalMaterial3Api

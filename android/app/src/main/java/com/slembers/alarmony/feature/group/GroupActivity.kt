@@ -110,7 +110,7 @@ fun GroupScreen(
             )
          },
         bottomBar = {
-            GroupBottomBar(
+            GroupBottomButtom(
                 text = "저장",
                 onClick = {
                     val toast = Toast.makeText(context, notification, Toast.LENGTH_SHORT)
@@ -127,7 +127,7 @@ fun GroupScreen(
             ) {
                 composable( route = NavItem.Group.route ) { GroupScreenMain(navController) }
                 composable( route = NavItem.Sound.route ) { SoundScreen(navController) }
-                composable( route = NavItem.GroupMember.route ) { InviteScreen(navController) }
+                composable( route = NavItem.GroupInvite.route ) { InviteScreen(navController) }
             }
 
         }
@@ -242,14 +242,14 @@ fun GroupScreenMain(
         )
         GroupCard(
             title = { GroupTitle(
-                title = NavItem.GroupMember.title,
+                title = NavItem.GroupInvite.title,
                 content = {
                     Icon(
                         painter = painterResource(id = R.drawable.arrow_forward),
                         contentDescription = null,
                         modifier = Modifier.padding(2.dp)
                     )},
-                onClick = { navController.navigate( NavItem.GroupMember.route )}
+                onClick = { navController.navigate( NavItem.GroupInvite.route )}
             )},
             content = { GroupInvite(
                 profiles = memberList)}
