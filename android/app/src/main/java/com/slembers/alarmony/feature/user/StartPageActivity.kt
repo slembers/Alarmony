@@ -91,7 +91,8 @@ class StartPageActivity : AppCompatActivity() {
                 horizontalAlignment = Alignment.CenterHorizontally
             )  {
                 Navigation()
-                SignupScreen()
+//                SignupScreen()
+                FindId()
                 mascott(drawing = R.drawable.mascot_foreground)
                 logo(drawing = R.drawable.alarmony)
 //                LoginScreen()

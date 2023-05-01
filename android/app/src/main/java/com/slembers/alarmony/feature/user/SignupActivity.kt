@@ -174,7 +174,7 @@ fun SignupScreen() {
                     },
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    Text(text = "회원가입")
+                    Text(text = "본인인증하고 가입하기")
                 }
             }
         }
