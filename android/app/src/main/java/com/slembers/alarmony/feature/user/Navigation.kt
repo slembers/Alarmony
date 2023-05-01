@@ -26,11 +26,11 @@ fun Navigation() {
     NavHost(navController = navController, startDestination = Screen.MainScreen.route) {
 
         composable(Screen.MainScreen.route) {
-            MainScreen(navController = navController)
+            toMainScreen(navController = navController)
 
         }
         composable(Screen.SettingScreen.route) {
-            SettingScreen(navController = navController)
+            toSettingScreen(navController = navController)
 
         }
 
@@ -38,7 +38,7 @@ fun Navigation() {
 }
 
 @Composable
-fun MainScreen(navController: NavController) {
+fun toMainScreen(navController: NavController) {
 
     Text(text = "하하 메인스크린")
 
@@ -58,7 +58,7 @@ fun MainScreen(navController: NavController) {
 }
 
 @Composable
-fun SettingScreen(navController: NavController) {
+fun toSettingScreen(navController: NavController) {
 
     Text(text = "세팅스크린")
 
