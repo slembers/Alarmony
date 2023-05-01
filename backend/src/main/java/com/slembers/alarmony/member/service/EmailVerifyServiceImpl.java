@@ -3,6 +3,7 @@ package com.slembers.alarmony.member.service;
 import com.slembers.alarmony.global.execption.CustomException;
 import com.slembers.alarmony.global.redis.service.RedisUtil;
 import com.slembers.alarmony.global.redis.service.exception.RedisErrorCode;
+import com.slembers.alarmony.global.util.UrlInfo;
 import com.slembers.alarmony.member.dto.vo.MemberVerificationDto;
 import com.slembers.alarmony.member.entity.AuthorityEnum;
 import com.slembers.alarmony.member.entity.Member;
@@ -30,6 +31,7 @@ public class EmailVerifyServiceImpl implements EmailVerifyService {
     private final JavaMailSender emailSender;
     private final RedisUtil redisUtil;
     private final MemberRepository memberRepository;
+    private final UrlInfo urlInfo;
 
     /**
      * 이메일 보내기
@@ -55,9 +57,7 @@ public class EmailVerifyServiceImpl implements EmailVerifyService {
      **/
     @Override
     public void sendVerificationMail(String username, String email) {
-
-        //TODO: 배포후 배포한 경로로 변경작업해줘야함
-        String verificationLink = "http://localhost:5000/api/members/verify";
+        String verificationLink = urlInfo.getAlarmonyUrl() + "/api/members/verify";
 
         UUID uuid = UUID.randomUUID();
         try {
