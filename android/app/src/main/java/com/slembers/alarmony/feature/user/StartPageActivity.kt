@@ -92,10 +92,11 @@ class StartPageActivity : AppCompatActivity() {
             )  {
                 Navigation()
 //                SignupScreen()
-                FindId()
+//                Findpswd()
+//                FindId()
                 mascott(drawing = R.drawable.mascot_foreground)
                 logo(drawing = R.drawable.alarmony)
-//                LoginScreen()
+                LoginScreen()
 
                 Spacer(modifier = Modifier.height(8.dp))
 

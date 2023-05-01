@@ -11,6 +11,7 @@ import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.input.ImeAction
 
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -58,9 +59,13 @@ fun SignupScreen() {
                 TextField(
                     value = ID.value,
                     onValueChange = { ID.value = it },
-//            label = "아이디",
                     label = { Text(text = "아이디") },
-                    keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Email),
+//                    keyboardOptions = KeyboardOptions.Default.copy(
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Email,
+                        imeAction = ImeAction.Next
+                    ),
+
                     modifier = Modifier
                         .fillMaxWidth()
 ////                .focusRequester(focusRequester)
@@ -86,7 +91,10 @@ fun SignupScreen() {
                     value = password.value,
                     onValueChange = { password.value = it },
                     label = { Text(text = "비밀번호") },
-                    keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Password),
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Email,
+                        imeAction = ImeAction.Next
+                    ),
                     modifier = Modifier.fillMaxWidth(),
                     singleLine = true,
                     maxLines = 1,
@@ -110,7 +118,10 @@ fun SignupScreen() {
                     value = passwordConfirm.value,
                     onValueChange = { passwordConfirm.value = it },
                     label = { Text(text = "비밀번호 재입력") },
-                    keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Password),
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Email,
+                        imeAction = ImeAction.Next
+                    ),
                     modifier = Modifier.fillMaxWidth(),
                     singleLine = true,
 //            포커스가 바뀌면 입력창 안보이게 하기!
@@ -133,7 +144,10 @@ fun SignupScreen() {
                     value = email.value,
                     onValueChange = {email.value = it},
                     label = {Text(text = "이메일")},
-                    keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Email),
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Email,
+                        imeAction = ImeAction.Next
+                    ),
                     modifier = Modifier.fillMaxWidth(),
                     singleLine = true,
                     maxLines = 1,
@@ -147,6 +161,11 @@ fun SignupScreen() {
                 TextField(
                     value = nickname.value,
                     onValueChange = {nickname.value = it},
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Email,
+                        imeAction = ImeAction.Next
+                    ),
+
                     modifier = Modifier
                         .fillMaxWidth(),
                     label = {Text(text = "닉네임")},
