@@ -33,7 +33,7 @@ public class MemberController {
     @PostMapping("/sign-up")
     public ResponseEntity<String> signUp(@Valid @RequestBody SignUpDto signUpDto) {
 
-        log.info("[회원 가입 Controller 들어왔음");
+        log.info("[회원 가입 Controller 진입]");
         memberService.signUp(signUpDto);
         return new ResponseEntity<>("회원 가입 성공", HttpStatus.CREATED);
 
