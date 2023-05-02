@@ -5,7 +5,6 @@ import com.slembers.alarmony.global.jwt.JwtAuthorizationFilter;
 import com.slembers.alarmony.global.jwt.JwtTokenProvider;
 import com.slembers.alarmony.global.jwt.auth.PrincipalDetailsService;
 import com.slembers.alarmony.global.jwt.filter.CustomAuthenticationFilter;
-import com.slembers.alarmony.global.jwt.filter.RefreshTokenFilter;
 import com.slembers.alarmony.global.jwt.handler.CustomLoginSuccessHandler;
 import com.slembers.alarmony.global.jwt.handler.CustomLogoutHandler;
 import com.slembers.alarmony.global.jwt.handler.JwtExceptionFilter;
@@ -47,7 +46,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final RedisUtil redisUtil;
 
-   // private final RefreshTokenFilter refreshTokenFilter;
 
     @Bean
     public BCryptPasswordEncoder bCryptPasswordEncoder() {
@@ -73,10 +71,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         "/members/**"
                 )
                 .and()
-                .addFilterBefore(
-                         new RefreshTokenFilter(),
-                        BasicAuthenticationFilter.class
-                )
                 .authorizeRequests()
                 .antMatchers( "/members/test")
                 .access("hasRole('ROLE_USER') or hasRole('ROLE_MANAGER') or hasRole('ROLE_ADMIN')")
