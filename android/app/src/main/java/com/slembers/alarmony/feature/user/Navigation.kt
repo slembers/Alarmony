@@ -34,7 +34,7 @@ fun Navigation() {
 
         }
         composable(Screen.SignupScreen.route) {
-            SignupScreen()
+            SignupScreen(navController = navController)
 
         }
 
@@ -58,6 +58,7 @@ fun toMainScreen(navController: NavController) {
     ) {
         Text("메인스크린")
     }
+
 }
 
 @Composable
@@ -73,4 +74,5 @@ fun toSettingScreen(navController: NavController) {
     ) {
         Text("세팅스크린")
     }
+
 }
