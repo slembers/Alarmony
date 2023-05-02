@@ -22,11 +22,19 @@ import androidx.compose.foundation.interaction.*
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.ui.unit.dp
 import com.slembers.alarmony.network.repository.MemberService.singup
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.material.Text
+import androidx.compose.material.TextField
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.ui.focus.FocusState
+import androidx.compose.ui.focus.onFocusChanged
+import androidx.navigation.NavController
 
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
-fun SignupScreen() {
+fun SignupScreen(navController: NavController) {
 //    이번엔 state가 아니라 String형식으로 저장해보기
     var ID  = remember { mutableStateOf("") }
     var password = remember { mutableStateOf("") }

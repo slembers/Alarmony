@@ -33,6 +33,10 @@ fun Navigation() {
             toSettingScreen(navController = navController)
 
         }
+        composable(Screen.SignupScreen.route) {
+            SignupScreen()
+
+        }
 
     }
 }
@@ -44,7 +48,7 @@ fun toMainScreen(navController: NavController) {
 
     Button(
         onClick = {
-            navController.navigate(Screen.SettingScreen.route){
+            navController.navigate(Screen.SignupScreen.route){
 
             }
         },
@@ -54,7 +58,6 @@ fun toMainScreen(navController: NavController) {
     ) {
         Text("메인스크린")
     }
-
 }
 
 @Composable
@@ -70,5 +73,4 @@ fun toSettingScreen(navController: NavController) {
     ) {
         Text("세팅스크린")
     }
-
 }
