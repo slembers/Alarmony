@@ -2,6 +2,7 @@ package com.slembers.alarmony.member.controller;
 
 
 import com.slembers.alarmony.global.jwt.SecurityUtil;
+import com.slembers.alarmony.member.dto.request.PutRegistrationTokenRequestDto;
 import com.slembers.alarmony.member.dto.request.ReissueTokenDto;
 import com.slembers.alarmony.member.dto.request.SignUpDto;
 import com.slembers.alarmony.member.dto.response.CheckDuplicateDto;
@@ -97,4 +98,10 @@ public class MemberController {
 
     }
 
+    @PutMapping("/regist-token")
+    public ResponseEntity<String> putRegistrationToken(@RequestBody PutRegistrationTokenRequestDto registrationTokenRequestDto) {
+        String username = SecurityUtil.getCurrentUsername();
+        memberService.putRegistrationToken(username, registrationTokenRequestDto.getRegistrationToken());
+        return new ResponseEntity<>("등록토큰 변경에 성공했습니다.", HttpStatus.OK);
+    }
 }

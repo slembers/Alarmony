@@ -138,4 +138,19 @@ public class MemberServiceImpl implements MemberService {
 
         return null;
     }
+
+    @Override
+    public void putRegistrationToken(String username, String registrationToken) {
+        Member member = memberRepository.findByUsername(username)
+                .orElseThrow(() -> new CustomException(MemberErrorCode.MEMBER_NOT_FOUND));
+        if(registrationToken == null || registrationToken.length() == 0)
+            throw new CustomException(MemberErrorCode.MEMBER_REGISTRATION_TOKEN_WRONG);
+
+        try {
+            member.modifyToken(registrationToken);
+            memberRepository.save(member);
+        } catch (Exception e) {
+            throw new CustomException(MemberErrorCode.MEMBER_REGISTRATION_TOKEN_WRONG);
+        }
+    }
 }

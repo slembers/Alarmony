@@ -33,4 +33,5 @@ public interface MemberService {
 
     TokenResponseDto reissueToken(ReissueTokenDto reissueTokenDto);
 
+    void putRegistrationToken(String username, String registrationToken);
 }
