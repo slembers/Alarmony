@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools">
     <!-- 서버 연결 설정 -->
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission-sdk-23 android:name="android.permission.INTERNET"/>
 
     <application
         android:allowBackup="true"
@@ -20,11 +21,10 @@
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>
-
-        <!-- FCM 메시징 서비스를 추가하고 인텐트 필터를 설정한다. -->
+        </activity> <!-- FCM 메시징 서비스를 추가하고 인텐트 필터를 설정한다. -->
         <service
             android:name=".util.MyFirebaseMessagingService"
             android:exported="true">

@@ -54,6 +54,7 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation 'com.google.android.material:material:1.5.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.3.1'
     implementation platform('androidx.compose:compose-bom:2022.10.00')
     implementation 'androidx.compose.ui:ui-graphics'
     implementation 'androidx.compose.material3:material3'
@@ -108,6 +109,7 @@ dependencies {
     implementation 'androidx.compose.runtime:runtime-rxjava2'
     // glide image
     implementation "com.github.bumptech.glide:compose:1.0.0-alpha.1"
+
     // 외부 이미지 url
     implementation 'io.coil-kt:coil-compose:2.3.0'
     // navigation 관련 lib
@@ -126,3 +128,4 @@ dependencies {
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.0'
 }
 apply plugin: 'com.google.gms.google-services'
+
