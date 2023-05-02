@@ -1,5 +1,6 @@
-package com.slembers.alarmony.global.jwt;
+package com.slembers.alarmony.global.jwt.filter;
 
+import com.slembers.alarmony.global.jwt.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
