@@ -6,7 +6,10 @@ import lombok.Builder;
 
 @Builder
 @AllArgsConstructor
-public class ReissueTokenResponseDto {
+public class TokenResponseDto {
+
+    @JsonProperty(value = "token_type")
+    private String tokenType;
     @JsonProperty(value = "access_token")
     private String accessToken;
     @JsonProperty(value = "refresh_token")
