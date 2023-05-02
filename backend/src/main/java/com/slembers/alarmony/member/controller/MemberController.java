@@ -83,7 +83,7 @@ public class MemberController {
     public void test(@AuthenticationPrincipal User user) {
         user.getAuthorities();
         log.info("test진입");
-        log.info("test 진입함@@@@@@@@@@@@@@@@@@@@@" + SecurityUtil.getCurrentUsername().get()); //
+        log.info("test 진입함@@@@@@@@@@@@@@@@@@@@@" + SecurityUtil.getCurrentUsername()); //
 
     }
 
