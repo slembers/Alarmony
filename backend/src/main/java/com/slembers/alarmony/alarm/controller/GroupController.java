@@ -68,7 +68,7 @@ public class GroupController {
         @PathVariable(name = "group-id") Long groupId,
         InviteMemberToGroupRequestDto inviteMemberToGroupRequestDto) {
 
-        String username = SecurityUtil.getCurrentUsername().get();
+        String username = SecurityUtil.getCurrentUsername();
 
         InviteMemberSetToGroupDto dto = InviteMemberSetToGroupDto.builder()
             .groupId(groupId)
@@ -88,7 +88,7 @@ public class GroupController {
     @DeleteMapping("/{group-id}")
     public ResponseEntity<String> leaveFromGroup(
         @PathVariable(name = "group-id") Long groupId) {
-        String username = SecurityUtil.getCurrentUsername().get();
+        String username = SecurityUtil.getCurrentUsername();
 
         if (groupService.isGroupOwner(groupId, username)) {
             groupService.removeHostMember(groupId);
@@ -110,7 +110,7 @@ public class GroupController {
         @PathVariable(name = "group-id") Long groupId,
         @PathVariable(name = "nickname") String nickname) {
 
-        String username = SecurityUtil.getCurrentUsername().get();
+        String username = SecurityUtil.getCurrentUsername();
 
         if (!groupService.isGroupOwner(groupId, username)) {
             throw new CustomException(AlarmErrorCode.MEMBER_NOT_HOST);
@@ -170,7 +170,7 @@ public class GroupController {
         @PathVariable(name = "group-id") Long groupId,
         @PathVariable(name = "nickname") String nickname) {
 
-        String username = SecurityUtil.getCurrentUsername().get();
+        String username = SecurityUtil.getCurrentUsername();
 
         if (!groupService.isGroupOwner(groupId, username)) {
             throw new CustomException(AlarmErrorCode.MEMBER_NOT_HOST);
