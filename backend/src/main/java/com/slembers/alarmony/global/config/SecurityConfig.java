@@ -1,13 +1,14 @@
 package com.slembers.alarmony.global.config;
 
 import com.slembers.alarmony.global.jwt.CustomAuthenticationProvider;
-import com.slembers.alarmony.global.jwt.JwtAuthorizationFilter;
+import com.slembers.alarmony.global.jwt.filter.JwtAuthorizationFilter;
 import com.slembers.alarmony.global.jwt.JwtTokenProvider;
 import com.slembers.alarmony.global.jwt.auth.PrincipalDetailsService;
 import com.slembers.alarmony.global.jwt.filter.CustomAuthenticationFilter;
+import com.slembers.alarmony.global.jwt.handler.CustomLoginFailureHandler;
 import com.slembers.alarmony.global.jwt.handler.CustomLoginSuccessHandler;
 import com.slembers.alarmony.global.jwt.handler.CustomLogoutHandler;
-import com.slembers.alarmony.global.jwt.handler.JwtExceptionFilter;
+import com.slembers.alarmony.global.jwt.filter.JwtExceptionFilter;
 import com.slembers.alarmony.global.redis.service.RedisUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,9 +26,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.logout.LogoutFilter;
-import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 
-@EnableWebSecurity
+@EnableWebSecurity(debug = true)
 @RequiredArgsConstructor
 @Configuration
 @Slf4j
@@ -45,6 +45,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private final CustomLogoutHandler customLogoutHandler;
 
     private final RedisUtil redisUtil;
+
 
 
     @Bean
@@ -68,7 +69,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .httpBasic().disable()
                 .requestMatchers()
                 .antMatchers(
-                        "/members/**"
+                        "/members/**","/alert/**","/groups/**","/alarms/**"
                 )
                 .and()
                 .authorizeRequests()
@@ -77,6 +78,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .addFilterBefore(customAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(new JwtAuthorizationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(jwtExceptionFilter ,UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(jwtExceptionFilter, JwtAuthorizationFilter.class)
                 .addFilterBefore(jwtExceptionFilter, LogoutFilter.class)
                 .logout().logoutUrl("/logout").addLogoutHandler(customLogoutHandler).logoutSuccessHandler(((request, response, authentication) ->
@@ -110,6 +112,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         customAuthenticationFilter.setFilterProcessesUrl("/members/login");
         // 인증이 성공했을 때 실행될 핸들러를 등록
         customAuthenticationFilter.setAuthenticationSuccessHandler(customLoginSuccessHandler());
+        customAuthenticationFilter.setAuthenticationFailureHandler(customLoginFailureHandler());
         //afterPropertiesSet() 메소드는 빈이 초기화된 후에 필요한 설정들이 제대로 이루어졌는지 체크하고,
         //필요한 설정이 부족하다면 예외를 발생시키기 위해 사용된다.
         customAuthenticationFilter.afterPropertiesSet();
@@ -127,6 +130,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     public CustomLoginSuccessHandler customLoginSuccessHandler() {
         log.info("[CustomLoginSuccessHandler Bean 등록]");
         return new CustomLoginSuccessHandler(jwtTokenProvider, redisUtil);
+    }
+
+    @Bean
+    public CustomLoginFailureHandler customLoginFailureHandler(){
+        log.info("[CustomLoginFailureHandler Bean 등록]");
+        return new CustomLoginFailureHandler();
     }
 
     /**
