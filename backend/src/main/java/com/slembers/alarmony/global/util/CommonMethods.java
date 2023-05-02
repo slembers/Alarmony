@@ -1,5 +1,8 @@
 package com.slembers.alarmony.global.util;
 
+import com.slembers.alarmony.alarm.exception.AlarmErrorCode;
+import com.slembers.alarmony.global.execption.CustomException;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -7,38 +10,41 @@ public class CommonMethods {
     static String[] weekdays = new String[]{"월", "화", "수", "목", "금", "토", "일"};
 
     /**
-     * 알람 정보에서, Byte 배열로 된 알람 요일 정보를 스트링 배열로 변환하여 반환한다.
+     * 알람 정보에서, String 졍보를 boolean 리스트로 변환한다.
+     * DB 컬럼 -> AOS 전송용으로 변경
      *
-     * @param bytes
-     * @return
+     * @param dates 요일 정보
+     * @return 요일별 boolean 값
      */
-    public static List<String> changeByteListToStringList(Byte[] bytes) {
-        List<String> targetWeekdays = new ArrayList<>();
-
-        for (int i = 0, size = bytes.length; i < size; i++) {
-            if (bytes[i] == 1) targetWeekdays.add(weekdays[i]);
+    public static List<Boolean> changeStringToBooleanList(String dates) {
+        List<Boolean> targetWeekdays = new ArrayList<>();
+        if(dates.length() != 7) throw new CustomException(AlarmErrorCode.ALARM_DATE_INFO_WRONG);
+        for (int i = 0; i < 7; i++) {
+            if (dates.charAt(i) == '1') {
+                targetWeekdays.add(true);
+            }
+            else {
+                targetWeekdays.add(false);
+            }
         }
-
         return targetWeekdays;
     }
 
     /**
-     * 신규 알람을 생성할 때, 요일 리스트를 DB 저장용 바이트 배열로 변환한다.
-     * @param list 요일 리스트
-     * @return 바이트 배열
+     * 알람 정보에서, boolean 리스트를 string 요일 정보로 변환한다.
+     * AOS 요청 정보 -> DB 저장용 정보로 변환
+     *
+     * @param dates
+     * @return
      */
-    public static Byte[] changeStringListToByteList(List<String> list) {
-        Byte[] bytes = new Byte[7];
+    public static String changeBooleanListToString(List<Boolean> dates) {
+        StringBuilder targetWeekdays = new StringBuilder();
 
+        if(dates == null || dates.size() != 7) throw new CustomException(AlarmErrorCode.ALARM_DATE_INFO_WRONG);
         for (int i = 0; i < 7; i++) {
-            bytes[i] = 0;
-            for (int j = 0, size = list.size(); j < size; j++) {
-                if (list.get(j).equals(weekdays[j])) {
-                    bytes[i] = 1;
-                    break;
-                }
-            }
+            if (dates.get(i)) targetWeekdays.append("1");
+            else targetWeekdays.append("0");
         }
-        return bytes;
+        return targetWeekdays.toString();
     }
 }
