@@ -1,12 +1,15 @@
 package com.slembers.alarmony.feature.common
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -59,4 +62,18 @@ fun DefaultModifier() : Modifier {
             MaterialTheme.shapes.medium,
             ambientColor = Color.Gray
         )
+}
+
+@Composable
+fun CardDivider() {
+    Divider(
+        thickness = 2.dp,
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(2.dp)
+            .background(
+                color = Color(0xff9A9A9A),
+                shape = MaterialTheme.shapes.extraSmall
+            )
+    )
 }

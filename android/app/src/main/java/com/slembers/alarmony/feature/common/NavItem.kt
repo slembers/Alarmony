@@ -22,7 +22,7 @@ sealed class NavItem (
         image = Icons.Default.ArrowForwardIos
     )
 
-    object GroupMember : NavItem(
+    object GroupInvite : NavItem(
         route = "groupMember",
         title = "그룹초대",
         image = Icons.Default.ArrowForwardIos

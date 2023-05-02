@@ -1,14 +1,15 @@
 package com.slembers.alarmony.alarm.controller;
 
+import com.slembers.alarmony.alarm.dto.AlarmRecordDto;
 import com.slembers.alarmony.alarm.dto.InviteMemberSetToGroupDto;
 import com.slembers.alarmony.alarm.dto.MemberRankingDto;
 import com.slembers.alarmony.alarm.dto.request.InviteMemberToGroupRequestDto;
-import com.slembers.alarmony.alarm.dto.response.AlarmRecordResponseDto;
 import com.slembers.alarmony.alarm.exception.AlarmErrorCode;
 import com.slembers.alarmony.alarm.service.AlarmRecordService;
 import com.slembers.alarmony.alarm.service.GroupService;
 import com.slembers.alarmony.alarm.service.AlertService;
 import com.slembers.alarmony.global.execption.CustomException;
+import com.slembers.alarmony.global.jwt.SecurityUtil;
 import com.slembers.alarmony.member.dto.MemberInfoDto;
 import java.util.HashMap;
 import java.util.List;
@@ -67,9 +68,12 @@ public class GroupController {
         @PathVariable(name = "group-id") Long groupId,
         InviteMemberToGroupRequestDto inviteMemberToGroupRequestDto) {
 
+        String username = SecurityUtil.getCurrentUsername().get();
+
         InviteMemberSetToGroupDto dto = InviteMemberSetToGroupDto.builder()
             .groupId(groupId)
             .nicknames(inviteMemberToGroupRequestDto.getMembers())
+            .sender(username)
             .build();
         alertService.inviteMemberToGroup(dto);
         return new ResponseEntity<>("멤버에게 그룹 초대를 요청했습니다.", HttpStatus.OK);
@@ -84,9 +88,7 @@ public class GroupController {
     @DeleteMapping("/{group-id}")
     public ResponseEntity<String> leaveFromGroup(
         @PathVariable(name = "group-id") Long groupId) {
-
-        // TODO: 시큐리티에서 유저정보 가져오기
-        String username = null;
+        String username = SecurityUtil.getCurrentUsername().get();
 
         if (groupService.isGroupOwner(groupId, username)) {
             groupService.removeHostMember(groupId);
@@ -108,8 +110,7 @@ public class GroupController {
         @PathVariable(name = "group-id") Long groupId,
         @PathVariable(name = "nickname") String nickname) {
 
-        // TODO: 시큐리티에서 유저정보 가져오기
-        String username = null;
+        String username = SecurityUtil.getCurrentUsername().get();
 
         if (!groupService.isGroupOwner(groupId, username)) {
             throw new CustomException(AlarmErrorCode.MEMBER_NOT_HOST);
@@ -129,10 +130,15 @@ public class GroupController {
      * @return 알람 기록
      */
     @GetMapping("/{group-id}/records")
-    public ResponseEntity<AlarmRecordResponseDto> getTodayAlarmRecords(
+    public ResponseEntity<Map<String, Object>> getTodayAlarmRecords(
         @PathVariable(name = "group-id") Long groupId) {
-        return new ResponseEntity<>(alarmRecordService.getTodayAlarmRecords(groupId),
-            HttpStatus.OK);
+
+
+        List<AlarmRecordDto> alarmList = alarmRecordService.getTodayAlarmRecords(groupId);
+
+        Map<String, Object> map = new HashMap<>();
+        map.put("alarmList", alarmList);
+        return new ResponseEntity<>(map, HttpStatus.OK);
     }
 
     /**
@@ -164,8 +170,7 @@ public class GroupController {
         @PathVariable(name = "group-id") Long groupId,
         @PathVariable(name = "nickname") String nickname) {
 
-        // TODO: 시큐리티에서 유저정보 가져오기
-        String username = null;
+        String username = SecurityUtil.getCurrentUsername().get();
 
         if (!groupService.isGroupOwner(groupId, username)) {
             throw new CustomException(AlarmErrorCode.MEMBER_NOT_HOST);

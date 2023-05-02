@@ -145,6 +145,7 @@ public class AlarmServiceImpl implements AlarmService {
         alertService.inviteMemberToGroup(InviteMemberSetToGroupDto.builder()
                 .groupId(alarm.getId())
                 .nicknames(createAlarmDto.getMembers())
+                .sender(groupLeader.getUsername())
                 .build());
     }
 

@@ -59,7 +59,7 @@ import kotlin.streams.toList
 @Composable
 fun GroupTexteView() {
     Text(
-        text = "123456789abcdefghijklmn",
+        text = "123456789\n가나다라마바사아자차카타파하\nabcdefghijklmn",
         style = TextStyle(
             color = Color.Black,
             fontSize = 20.sp,

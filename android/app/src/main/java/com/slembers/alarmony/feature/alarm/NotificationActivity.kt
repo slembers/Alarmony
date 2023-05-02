@@ -48,40 +48,32 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.slembers.alarmony.feature.common.ui.theme.notosanskr
 import com.slembers.alarmony.feature.common.ui.theme.toColor
 
-class NotificationActivity : ComponentActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContent {
-            NotificationScaffold()
-        }
-    }
-}
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun NotificationScaffold() {
+fun NotificationScreen(navController: NavController) {
     Scaffold(
         topBar = {
             TopAppBar(
                 title = {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        IconButton(onClick = { /*TODO*/ }) {
-                            Icon(
-                                imageVector = Icons.Outlined.ArrowBackIos,
-                                contentDescription = "Notification",
-                                tint = Color.Black,
-                                modifier = Modifier.size(25.dp)
-                            )
-                        }
-                        Text(text = "알림",
-                            fontWeight = FontWeight.Bold,
-                            fontFamily = notosanskr,
-                            modifier = Modifier.padding(5.dp)
+                    Text(text = "알림",
+                        fontWeight = FontWeight.Bold,
+                        fontFamily = notosanskr,
+                        modifier = Modifier.padding(5.dp)
+                    )
+                },
+                navigationIcon = {
+                    IconButton(onClick = { navController.popBackStack() }) {
+                        Icon(
+                            imageVector = Icons.Outlined.ArrowBackIos,
+                            contentDescription = "Notification",
+                            tint = Color.Black,
+                            modifier = Modifier.size(25.dp)
                         )
                     }
                 },
@@ -91,9 +83,11 @@ fun NotificationScaffold() {
                     spotColor = Color.Gray,
 
                     ),
+
                 colors = TopAppBarDefaults.mediumTopAppBarColors(
                     containerColor = "#FFFFFF".toColor()
                 ),
+
             )
         },
         content = { innerPadding ->
@@ -161,12 +155,6 @@ fun MyNotiItem(item : Noti) {
         }
 
     }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun NotificationPreview() {
-    NotificationScaffold()
 }
 
 @Composable

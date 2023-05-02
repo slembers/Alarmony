@@ -20,7 +20,7 @@ import androidx.compose.ui.unit.dp
 @Preview
 @Composable
 @ExperimentalMaterial3Api
-fun GroupBottomBar(
+fun GroupBottomButtom(
     text : String = "버튼 이름",
     onClick : () -> Unit = {}
 ) {

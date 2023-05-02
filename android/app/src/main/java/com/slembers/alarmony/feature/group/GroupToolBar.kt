@@ -30,7 +30,7 @@ fun GroupToolBar(
     navEvent : NavHostController = rememberNavController()
 ) {
     TopAppBar(
-        title = { Text(text = "그룹 생성")},
+        title = { Text(text = title)},
         modifier = Modifier
             .border(BorderStroke(1.dp, Color.Black))
             .padding(start = 5.dp),

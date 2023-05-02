@@ -23,14 +23,6 @@ public interface AlertService {
      */
     void sendInviteAlert(Alert alert);
 
-    /**
-     * 웹의 토큰을 가져오는 메소드 (테스트 이후 삭제)
-     *
-     * @return 토큰
-     * @throws IOException 예외
-     */
-    String getAccessToken() throws IOException;
-
 
     /**
      * 메시지 전송하는 메소드 (추후 추가 커스텀 필요)
@@ -48,7 +40,7 @@ public interface AlertService {
     /**
      * 알림 테스트 메소드
      */
-    void testPushAlert();
+    void testPushAlert(String username);
 
     /**
      * 특정 유저의 알림 목록 가져오기
