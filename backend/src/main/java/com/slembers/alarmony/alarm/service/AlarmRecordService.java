@@ -1,7 +1,8 @@
 package com.slembers.alarmony.alarm.service;
 
+import com.slembers.alarmony.alarm.dto.AlarmEndRecordDto;
+import com.slembers.alarmony.alarm.dto.AlarmRecordDto;
 import com.slembers.alarmony.alarm.dto.MemberRankingDto;
-import com.slembers.alarmony.alarm.dto.response.AlarmRecordResponseDto;
 import java.util.List;
 
 public interface AlarmRecordService {
@@ -12,7 +13,7 @@ public interface AlarmRecordService {
      * @param groupId 그룹 id
      * @return 오늘 알람 기록
      */
-    AlarmRecordResponseDto getTodayAlarmRecords(Long groupId);
+    List<AlarmRecordDto> getTodayAlarmRecords(Long groupId);
 
     /**
      * 알람 랭킹 기록을 얻어온다.
@@ -22,4 +23,9 @@ public interface AlarmRecordService {
      */
     List<MemberRankingDto> getAlarmRanking(Long groupId);
 
+    /**
+     * 알람 종료 성공 시 기록한다.
+     * @param alarmEndRecordDto 알람 성공 객체
+     */
+    void putAlarmRecord(AlarmEndRecordDto alarmEndRecordDto);
 }

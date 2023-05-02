@@ -1,4 +1,4 @@
-package com.slembers.alarmony
+package com.slembers.alarmony.util
 
 import android.Manifest
 import android.app.Notification
@@ -12,6 +12,7 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
+import com.slembers.alarmony.R
 
 class MyFirebaseMessagingService : FirebaseMessagingService() {
 
@@ -31,23 +32,41 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         // 수신한 메시지를 처리
         val notificationManager = NotificationManagerCompat.from(applicationContext)
 
-        val builder: NotificationCompat.Builder? = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            if (notificationManager.getNotificationChannel(CHANNEL_ID) == null) {
-                val channel =
-                    NotificationChannel(CHANNEL_ID, CHANNEL_NAME, NotificationManager.IMPORTANCE_DEFAULT)
-                notificationManager.createNotificationChannel(channel)
+        val builder: NotificationCompat.Builder? =
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                if (notificationManager.getNotificationChannel(CHANNEL_ID) == null) {
+                    val channel =
+                        NotificationChannel(
+                            CHANNEL_ID,
+                            CHANNEL_NAME,
+                            NotificationManager.IMPORTANCE_DEFAULT
+                        )
+                    notificationManager.createNotificationChannel(channel)
+                }
+                NotificationCompat.Builder(applicationContext, CHANNEL_ID)
+            } else {
+                NotificationCompat.Builder(applicationContext)
             }
-            NotificationCompat.Builder(applicationContext, CHANNEL_ID)
+
+        if (remoteMessage.data?.get("type").equals("ALARM")) {
+            Log.i("디버깅", "알람 울려라!!!!!!!!!!!!!!!!!!!!!!!!!!");
+            // 알람 울리는 로직 넣어주십쇼
+
+            var group = remoteMessage.data?.get("group")
+
+            builder?.setContentTitle("Alarmony")
+                ?.setContentText("[$group] 알람이 울리는 중입니다.")
+                ?.setSmallIcon(R.drawable.ic_launcher_background)
+
         } else {
-            NotificationCompat.Builder(applicationContext)
+
+            val title = remoteMessage.notification?.title
+            val body = remoteMessage.notification?.body
+
+            builder?.setContentTitle(title)
+                ?.setContentText(body)
+                ?.setSmallIcon(R.drawable.ic_launcher_background)
         }
-
-        val title = remoteMessage.notification?.title
-        val body = remoteMessage.notification?.body
-
-        builder?.setContentTitle(title)
-            ?.setContentText(body)
-            ?.setSmallIcon(R.drawable.ic_launcher_background)
 
         val notification: Notification = builder?.build()!!
         if (ActivityCompat.checkSelfPermission(

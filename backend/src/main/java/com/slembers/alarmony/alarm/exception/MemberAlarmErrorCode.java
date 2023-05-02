@@ -9,7 +9,7 @@ public enum MemberAlarmErrorCode implements ErrorCode {
 
     MEMBER_ALARM_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 멤버-알람 정보를 찾을 수 없습니다."),
 
-    MEMBER_ALARM_INPUT_ERROR(HttpStatus.CONFLICT, "기록 등록 중 에러가 발생했습니다.")
+    MEMBER_ALARM_INPUT_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "기록 등록 중 에러가 발생했습니다.")
 
     ;
 

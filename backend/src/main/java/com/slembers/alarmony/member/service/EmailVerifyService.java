@@ -23,7 +23,7 @@ public interface EmailVerifyService {
     /**
      * 이메일 인증 확인하기
      *
-     * @param key
+     * @param key 이메일 인증 발급 키값
      */
     void verifyEmail(String key);
 

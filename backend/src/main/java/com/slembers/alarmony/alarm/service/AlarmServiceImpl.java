@@ -1,6 +1,8 @@
 package com.slembers.alarmony.alarm.service;
 
 import com.slembers.alarmony.alarm.dto.AlarmDto;
+import com.slembers.alarmony.alarm.dto.CreateAlarmDto;
+import com.slembers.alarmony.alarm.dto.InviteMemberSetToGroupDto;
 import com.slembers.alarmony.alarm.dto.response.AlarmListResponseDto;
 import com.slembers.alarmony.alarm.entity.Alarm;
 import com.slembers.alarmony.alarm.entity.AlarmRecord;
@@ -36,6 +38,8 @@ public class AlarmServiceImpl implements AlarmService {
     private final MemberRepository memberRepository;
 
     private final AlarmRecordRepository alarmRecordRepository;
+
+    private final AlertService alertService;
 
     /**
      * 유저네임을 기준으로 멤버알람 리스트를 가져오고, 이를 responseDTO에 담는다.
@@ -79,6 +83,73 @@ public class AlarmServiceImpl implements AlarmService {
     }
 
     /**
+     * 신규 알람을 생성한다.
+     * @param username 현재 로그인 아이디
+     * @param createAlarmDto 알람 생성 정보
+     */
+    @Override
+    public void createAlarm(String username, CreateAlarmDto createAlarmDto) {
+        Member groupLeader = memberRepository.findByUsername(username)
+                .orElseThrow(() -> new CustomException(MemberErrorCode.MEMBER_NOT_FOUND));
+
+        Alarm alarm;
+        // 알람을 생성한다
+        try {
+            // 알람을 생성한다.
+            alarm = Alarm.builder()
+                    .title(createAlarmDto.getTitle())
+                    .time(LocalTime.of(createAlarmDto.getHour(), createAlarmDto.getMinute()))
+                    .host(groupLeader)
+                    .alarmDate(CommonMethods.changeStringListToByteList(createAlarmDto.getAlarmDate()))
+                    .soundName(createAlarmDto.getSoundName())
+                    .soundVolume(createAlarmDto.getSoundVolume())
+                    .vibrate(createAlarmDto.isVibrate())
+                    .build();
+            alarmRepository.save(alarm);
+        } catch (Exception e) {
+            throw new CustomException(AlarmErrorCode.ALARM_CREATE_ERROR);
+        }
+
+        MemberAlarm memberAlarm;
+        // 그룹장을 알람-멤버에 추가한다.
+        try {
+            memberAlarm = MemberAlarm.builder()
+                    .member(groupLeader)
+                    .alarm(alarm)
+                    .build();
+            memberAlarmRepository.save(memberAlarm);
+        } catch (Exception e) {
+            // 알람-멤버에 추가하는 도중 에러가 생긴다면 알람도 지워야 한다.
+            alarmRepository.delete(alarm);
+            throw new CustomException(MemberAlarmErrorCode.MEMBER_ALARM_INPUT_ERROR);
+        }
+
+        // 그룹장의 알람을 알림-기록에 추가한다.
+        AlarmRecord alarmRecord;
+        try {
+            alarmRecord = AlarmRecord.builder()
+                    .memberAlarm(memberAlarm)
+                    .successCount(0)
+                    .totalCount(0)
+                    .message("")
+                    .build();
+            alarmRecordRepository.save(alarmRecord);
+        } catch (Exception e) {
+            // 알림-기록 추가에 실패하면 알람과 알람-멤버도 지워야 한다.
+            memberAlarmRepository.delete(memberAlarm);
+            alarmRepository.delete(alarm);
+            throw new CustomException(AlarmRecordErrorCode.ALARM_RECORD_INPUT_ERRER);
+        }
+
+        // 멤버들에게 초대를 보낸다.
+        alertService.inviteMemberToGroup(InviteMemberSetToGroupDto.builder()
+                .groupId(alarm.getId())
+                .nicknames(createAlarmDto.getMembers())
+                .sender(groupLeader.getUsername())
+                .build());
+    }
+
+    /**
      * 특정 알람아이디를 주면, 알람 기록을 찾아서 메시지를 기록해둔다.
      *
      * @param alarmId 알람 아이디
@@ -103,6 +174,7 @@ public class AlarmServiceImpl implements AlarmService {
 
     /**
      * 특정 알람 아이디의 정보를 반환한다.
+     *
      * @param alarmId 알람 아이디
      * @return 알람 정보
      */
@@ -111,7 +183,7 @@ public class AlarmServiceImpl implements AlarmService {
         try {
             // 알람 정보를 가져온다.
             Alarm alarm = alarmRepository.findById(alarmId)
-                .orElseThrow(() -> new CustomException(AlarmErrorCode.ALARM_NOT_FOUND));
+                    .orElseThrow(() -> new CustomException(AlarmErrorCode.ALARM_NOT_FOUND));
             // 중복 계산을 피하기 위해 시간 정보를 가져온다.
             LocalTime localTime = alarm.getTime();
 

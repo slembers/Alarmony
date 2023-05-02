@@ -7,14 +7,15 @@ import com.slembers.alarmony.member.entity.Member;
 import com.slembers.alarmony.member.exception.MemberErrorCode;
 import com.slembers.alarmony.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
 import javax.transaction.Transactional;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class MemberServiceImpl implements MemberService {
 
     private final ModelMapper modelMapper;
@@ -26,34 +27,26 @@ public class MemberServiceImpl implements MemberService {
     private final PasswordEncoder passwordEncoder;
 
 
+    /**
+     * 회원가입
+     *
+     * @param signUpDto 회원가입 정보
+     */
     @Transactional
     @Override
-    public boolean signUp(SignUpDto signUpDto) {
+    public void signUp(SignUpDto signUpDto) {
 
-
-        //아이디 중복 체크
-        if (checkForDuplicateId(signUpDto.getUsername()).isDuplicated())
-            throw new CustomException(MemberErrorCode.ID_DUPLICATED);
-        //닉네임 중복 체크
-        if (checkForDuplicateNickname(signUpDto.getNickname()).isDuplicated())
-            throw new CustomException(MemberErrorCode.NICKNAME_DUPLICATED);
-        //이메일 중복 체크
-        if (checkForDuplicateEmail(signUpDto.getEmail()).isDuplicated())
-            throw new CustomException(MemberErrorCode.EMAIL_DUPLICATED);
-
+        checkDuplicatedField(signUpDto);
 
         Member member = modelMapper.map(signUpDto, Member.class);
-        //비밀번호 암호화
+
         member.encodePassword(passwordEncoder);
 
-
-        //저장이 잘 완료 되었다면 인증 메일을 전송한다.
         emailVerifyService.sendVerificationMail(member.getUsername(), member.getEmail());
 
         memberRepository.save(member);
-        return true;
-    }
 
+    }
 
     /**
      * 아이디 중복체크
@@ -61,6 +54,7 @@ public class MemberServiceImpl implements MemberService {
      * @param username 유저 아이디
      * @return 존재여부
      **/
+
 
     @Override
     public CheckDuplicateDto checkForDuplicateId(String username) {
@@ -87,8 +81,30 @@ public class MemberServiceImpl implements MemberService {
      * @param nickname : 닉네임
      * @return 존재여부
      */
+
     @Override
     public CheckDuplicateDto checkForDuplicateNickname(String nickname) {
         return CheckDuplicateDto.builder().isDuplicated(memberRepository.existsByNickname(nickname)).build();
     }
+
+    /**
+     * 회원 가입시 발생하는 중복 체크
+     *
+     * @param signUpDto: 회원 가입 정보
+     */
+
+    private void checkDuplicatedField(SignUpDto signUpDto) {
+
+        //아이디 중복 체크
+        if (checkForDuplicateId(signUpDto.getUsername()).isDuplicated())
+            throw new CustomException(MemberErrorCode.ID_DUPLICATED);
+        //닉네임 중복 체크
+        if (checkForDuplicateNickname(signUpDto.getNickname()).isDuplicated())
+            throw new CustomException(MemberErrorCode.NICKNAME_DUPLICATED);
+        //이메일 중복 체크
+        if (checkForDuplicateEmail(signUpDto.getEmail()).isDuplicated())
+            throw new CustomException(MemberErrorCode.EMAIL_DUPLICATED);
+
+    }
+
 }

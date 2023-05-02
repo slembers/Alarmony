@@ -8,8 +8,7 @@ public interface MemberService {
     /**
      * 회원 가입
      */
-
-    boolean signUp(SignUpDto signUpDto);
+    void signUp(SignUpDto signUpDto);
 
 
     /**

@@ -19,17 +19,9 @@ public interface AlertService {
     /**
      * 알림 객체를 받아서 초대 알림을 보낸다.
      *
-     * @param notification 알림 객체
+     * @param alert 알림 객체
      */
-    void sendInviteNotification(Alert notification);
-
-    /**
-     * 웹의 토큰을 가져오는 메소드 (테스트 이후 삭제)
-     *
-     * @return 토큰
-     * @throws IOException 예외
-     */
-    String getAccessToken() throws IOException;
+    void sendInviteAlert(Alert alert);
 
 
     /**
@@ -41,13 +33,14 @@ public interface AlertService {
      * @throws IOException                예외
      * @throws FirebaseMessagingException 파이어베이스 메시징 에러
      */
-    void sendMessageTo(String targetToken, String title, String body) throws IOException, FirebaseMessagingException;
+    void sendMessageTo(String targetToken, String title, String body)
+        throws IOException, FirebaseMessagingException;
 
 
     /**
      * 알림 테스트 메소드
      */
-    void testPushAlert();
+    void testPushAlert(String username);
 
     /**
      * 특정 유저의 알림 목록 가져오기
@@ -63,4 +56,32 @@ public interface AlertService {
      * @param alertId 알림 아이디
      */
     void deleteAlert(Long alertId);
+
+    /**
+     * 사용자에게 알람을 보낸다.
+     *
+     * @param groupId  그룹 id
+     * @param nickname 알람을 보낼 사용자의 닉네임
+     */
+    void sendAlarm(Long groupId, String nickname);
+
+
+    /**
+     * 초대 요청을 수락한다.
+     * @param alertId 알림 아이디
+     */
+    void acceptInvite(Long alertId);
+
+    /**
+     * 초대 요청을 거절한다.
+     * @param alertId 알림 아이디
+     */
+    void refuseInvite(Long alertId);
+
+    /**
+     * 알림을 커스텀해서 보낸다.
+     * @param alert 알림
+     * @param title 제목
+     */
+    void sendCustomAlert(Alert alert, String title);
 }

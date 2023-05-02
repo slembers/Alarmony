@@ -22,6 +22,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.outlined.Notifications
+import androidx.compose.material.icons.outlined.NotificationsActive
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -46,6 +47,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import com.slembers.alarmony.R
 import com.slembers.alarmony.feature.common.ui.theme.notosanskr
 import com.slembers.alarmony.feature.common.ui.theme.toColor
@@ -54,14 +59,22 @@ class AlarmActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            MainScaffold()
+            val navController = rememberNavController()
+            NavHost(navController = navController, startDestination = "AlarmMain") {
+                composable(route = "AlarmMain") {
+                    AlarmMainScreen(navController = navController)
+                }
+                composable(route = "Notification") {
+                    NotificationScreen(navController = navController)
+                }
+            }
         }
     }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MainScaffold() {
+fun AlarmMainScreen(navController: NavController) {
     Scaffold(
         topBar = {
             TopAppBar(
@@ -90,7 +103,7 @@ fun MainScaffold() {
                 ),
                 actions = {
                     if (notiSample.isEmpty()) {
-                        IconButton(onClick = { /*TODO*/ }) {
+                        IconButton(onClick = { navController.navigate("Notification") }) {
                             Icon(
                                 imageVector = Icons.Outlined.Notifications,
                                 contentDescription = "Notification",
@@ -99,9 +112,9 @@ fun MainScaffold() {
                             )
                         }
                     } else {
-                        IconButton(onClick = { /*TODO*/ }) {
+                        IconButton(onClick = { navController.navigate("Notification") }) {
                             Icon(
-                                imageVector = Icons.Filled.Notifications,
+                                imageVector = Icons.Outlined.NotificationsActive,
                                 contentDescription = "Notification_Active",
                                 tint = Color.Red,
                                 modifier = Modifier.size(25.dp)
@@ -268,10 +281,4 @@ fun MyListItem(item : Alarm, onItemClick: (String) -> Unit) {
             }
         }
     }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun DefaultPreview() {
-    MainScaffold()
 }
