@@ -5,6 +5,7 @@ import com.slembers.alarmony.global.jwt.JwtAuthorizationFilter;
 import com.slembers.alarmony.global.jwt.JwtTokenProvider;
 import com.slembers.alarmony.global.jwt.auth.PrincipalDetailsService;
 import com.slembers.alarmony.global.jwt.filter.CustomAuthenticationFilter;
+import com.slembers.alarmony.global.jwt.filter.RefreshTokenFilter;
 import com.slembers.alarmony.global.jwt.handler.CustomLoginSuccessHandler;
 import com.slembers.alarmony.global.jwt.handler.CustomLogoutHandler;
 import com.slembers.alarmony.global.jwt.handler.JwtExceptionFilter;
@@ -25,7 +26,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.logout.LogoutFilter;
-
+import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 
 @EnableWebSecurity
 @RequiredArgsConstructor
@@ -46,6 +47,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final RedisUtil redisUtil;
 
+   // private final RefreshTokenFilter refreshTokenFilter;
 
     @Bean
     public BCryptPasswordEncoder bCryptPasswordEncoder() {
@@ -54,7 +56,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     public void configure(WebSecurity web) throws Exception {
-        web.ignoring().antMatchers("/members/sign-up", "/members/verify/**", "members/login");
+        web.ignoring().antMatchers("/members/sign-up", "/members/verify/**", "/members/login","/members/refresh");
     }
 
     @Override
@@ -66,15 +68,24 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .formLogin().disable()
                 .httpBasic().disable()
+                .requestMatchers()
+                .antMatchers(
+                        "/members/**"
+                )
+                .and()
+                .addFilterBefore(
+                         new RefreshTokenFilter(),
+                        BasicAuthenticationFilter.class
+                )
                 .authorizeRequests()
-                .antMatchers("/api/v1/user/**", "/members/test")
+                .antMatchers( "/members/test")
                 .access("hasRole('ROLE_USER') or hasRole('ROLE_MANAGER') or hasRole('ROLE_ADMIN')")
                 .and()
                 .addFilterBefore(customAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(new JwtAuthorizationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(jwtExceptionFilter, JwtAuthorizationFilter.class)
                 .addFilterBefore(jwtExceptionFilter, LogoutFilter.class)
-                .logout().logoutUrl("/members/logout").addLogoutHandler(customLogoutHandler).logoutSuccessHandler(((request, response, authentication) ->
+                .logout().logoutUrl("/logout").addLogoutHandler(customLogoutHandler).logoutSuccessHandler(((request, response, authentication) ->
                         SecurityContextHolder.clearContext()
                 ));
     }

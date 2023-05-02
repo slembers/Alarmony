@@ -1,7 +1,10 @@
 package com.slembers.alarmony.member.service;
 
+import com.slembers.alarmony.member.dto.request.ReissueTokenDto;
 import com.slembers.alarmony.member.dto.request.SignUpDto;
 import com.slembers.alarmony.member.dto.response.CheckDuplicateDto;
+import com.slembers.alarmony.member.dto.response.ReissueTokenResponseDto;
+
 
 public interface MemberService {
 
@@ -27,5 +30,7 @@ public interface MemberService {
      */
     CheckDuplicateDto checkForDuplicateNickname(String nickname);
 
+
+    ReissueTokenResponseDto reissueToken(ReissueTokenDto reissueTokenDto);
 
 }
