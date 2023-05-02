@@ -1,11 +1,12 @@
-package com.slembers.alarmony.global.jwt.handler;
+package com.slembers.alarmony.global.jwt.filter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.slembers.alarmony.global.execption.CustomException;
 import io.jsonwebtoken.JwtException;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
 import org.springframework.http.MediaType;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -18,25 +19,20 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-
+/**
+ * filter 처리중에 발생하는 에러 리턴
+ */
 @Component
 @Slf4j
 public class JwtExceptionFilter extends OncePerRequestFilter {
-
-
-    private static final Logger logger = LoggerFactory.getLogger(JwtExceptionFilter.class);
-
-    @PostConstruct
-    public void init() {
-        logger.info("JwtExceptionFilter bean is initialized.");
-    }
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         try {
             log.info("[JwtExceptionFilter] 진입");
             filterChain.doFilter(request, response);
-        } catch (JwtException e) {
+        } catch (JwtException | CustomException | BadCredentialsException e) {
+            log.info("[JwtExceptionFilter] setErrorResponse 호출");
             setErrorResponse(request, response, e);
         }
     }
