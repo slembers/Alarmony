@@ -133,7 +133,6 @@ public class GroupController {
     public ResponseEntity<Map<String, Object>> getTodayAlarmRecords(
         @PathVariable(name = "group-id") Long groupId) {
 
-
         List<AlarmRecordDto> alarmList = alarmRecordService.getTodayAlarmRecords(groupId);
 
         Map<String, Object> map = new HashMap<>();
@@ -175,6 +174,10 @@ public class GroupController {
         if (!groupService.isGroupOwner(groupId, username)) {
             throw new CustomException(AlarmErrorCode.MEMBER_NOT_HOST);
         }
+        if (groupService.isGroupOwnerByNickname(groupId, nickname)) {
+            throw new CustomException(AlarmErrorCode.CANNOT_SEND_TO_HOST);
+        }
+
         alertService.sendAlarm(groupId, nickname);
         return new ResponseEntity<>("알람 보내기에 성공했습니다.", HttpStatus.OK);
     }
