@@ -320,6 +320,9 @@ public class AlertServiceImpl implements AlertService {
             .orElseThrow(() -> new CustomException(AlertErrorCode.ALERT_NOT_FOUND));
         Member member = memberRepository.findByNickname(nickname)
             .orElseThrow(() -> new CustomException(MemberErrorCode.MEMBER_NOT_FOUND));
+        if (!memberAlarmRepository.existsByMemberAndAlarm(member, alarm)) {
+            throw new CustomException(MemberAlarmErrorCode.MEMBER_ALARM_NOT_FOUND);
+        }
         sendAlarmTo(member.getRegistrationToken(), alarm.getTitle());
     }
 
