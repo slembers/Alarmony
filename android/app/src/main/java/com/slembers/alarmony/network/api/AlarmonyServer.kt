@@ -17,8 +17,8 @@ object AlarmonyServer {
 
     val gson = GsonBuilder().serializeNulls().create()
 
-    private const val BASE_URL = "http://192.168.0.102:5000/api/"
-//    private const val BASE_URL = "https://k8c205.p.ssafy.io/api/"
+//    private const val BASE_URL = "http://192.168.0.102:5000/api/"
+    private const val BASE_URL = "https://k8c205.p.ssafy.io/api/"
 
     private val okHttpClient: OkHttpClient by lazy {
         OkHttpClient.Builder()

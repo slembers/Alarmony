@@ -21,16 +21,17 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.foundation.interaction.*
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.ui.unit.dp
+import com.slembers.alarmony.network.repository.MemberService.singup
 
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
 fun SignupScreen() {
 //    이번엔 state가 아니라 String형식으로 저장해보기
-    var ID  = remember { mutableStateOf("영문, 숫자 5-11자") }
-    var password = remember { mutableStateOf("숫자, 영문, 특수문자 조합 최소 8자") }
-    var passwordConfirm = remember { mutableStateOf("비밀번호 재입력") }
-    var nickname = remember { mutableStateOf("영문, 숫자 5-11자") }
+    var ID  = remember { mutableStateOf("") }
+    var password = remember { mutableStateOf("") }
+    var passwordConfirm = remember { mutableStateOf("") }
+    var nickname = remember { mutableStateOf("") }
     var email = remember { mutableStateOf("") }
     var passwordVisibility1 by remember { mutableStateOf(false) }
     var passwordVisibility2 by remember { mutableStateOf(false) }
@@ -69,9 +70,9 @@ fun SignupScreen() {
                     modifier = Modifier
                         .fillMaxWidth()
 ////                .focusRequester(focusRequester)
-                        .onFocusEvent {
-                            ID.value = ""
-                        }
+//                        .onFocusEvent {
+//                            ID.value = ""
+//                        }
                     ,
                     singleLine = true,
                     maxLines = 1,
@@ -164,7 +165,7 @@ fun SignupScreen() {
                     onValueChange = {nickname.value = it},
                     keyboardOptions = KeyboardOptions(
                         keyboardType = KeyboardType.Email,
-                        imeAction = ImeAction.Next
+                        imeAction = ImeAction.Done
                     ),
 
                     modifier = Modifier
@@ -190,6 +191,7 @@ fun SignupScreen() {
                         // TODO: 회원가입 로직 구현
                         // 회원가입이 완료되면 Snackbar 띄우기
                         Log.d("회원", "회원가입버튼누름")
+                        singup(ID.value, password.value, nickname.value, email.value)
 
                     },
                     modifier = Modifier.fillMaxWidth()
