@@ -1,13 +1,11 @@
 package com.slembers.alarmony.member.controller;
 
 
-import com.slembers.alarmony.global.jwt.JwtTokenProvider;
 import com.slembers.alarmony.global.jwt.SecurityUtil;
-import com.slembers.alarmony.global.redis.service.RedisUtil;
 import com.slembers.alarmony.member.dto.request.ReissueTokenDto;
 import com.slembers.alarmony.member.dto.request.SignUpDto;
 import com.slembers.alarmony.member.dto.response.CheckDuplicateDto;
-import com.slembers.alarmony.member.dto.response.ReissueTokenResponseDto;
+import com.slembers.alarmony.member.dto.response.TokenResponseDto;
 import com.slembers.alarmony.member.service.EmailVerifyService;
 import com.slembers.alarmony.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
@@ -94,7 +92,7 @@ public class MemberController {
      * Access 토큰 및 Refresh 토큰 재발급
      */
     @PostMapping("/refresh")
-    public ResponseEntity<ReissueTokenResponseDto> refresh(@RequestBody ReissueTokenDto reissueTokenDto) {
+    public ResponseEntity<TokenResponseDto> refresh(@RequestBody ReissueTokenDto reissueTokenDto) {
 
         return new ResponseEntity<>(memberService.reissueToken(reissueTokenDto), HttpStatus.OK);
 

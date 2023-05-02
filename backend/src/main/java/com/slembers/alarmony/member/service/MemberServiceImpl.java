@@ -6,7 +6,7 @@ import com.slembers.alarmony.global.redis.service.RedisUtil;
 import com.slembers.alarmony.member.dto.request.ReissueTokenDto;
 import com.slembers.alarmony.member.dto.request.SignUpDto;
 import com.slembers.alarmony.member.dto.response.CheckDuplicateDto;
-import com.slembers.alarmony.member.dto.response.ReissueTokenResponseDto;
+import com.slembers.alarmony.member.dto.response.TokenResponseDto;
 import com.slembers.alarmony.member.entity.Member;
 import com.slembers.alarmony.member.exception.MemberErrorCode;
 import com.slembers.alarmony.member.repository.MemberRepository;
@@ -116,7 +116,7 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public ReissueTokenResponseDto reissueToken(ReissueTokenDto reissueTokenDto) {
+    public TokenResponseDto reissueToken(ReissueTokenDto reissueTokenDto) {
 
         //예외처리
         jwtTokenProvider.validRefreshToken(reissueTokenDto.getRefreshToken());
@@ -130,7 +130,7 @@ public class MemberServiceImpl implements MemberService {
             String accessToken = jwtTokenProvider.generateAccessToken(member);
             String refreshToken = jwtTokenProvider.generateRefreshToken(member);
 
-            return new ReissueTokenResponseDto(accessToken, refreshToken);
+            return new TokenResponseDto("bearer",accessToken, refreshToken);
 
         } else {  //일치하지 않으면
             log.error("[Refresh Controller] Refresh Token값이 일치하지 않습니다.");
