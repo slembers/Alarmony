@@ -43,7 +43,7 @@ public class CustomLoginSuccessHandler extends SavedRequestAwareAuthenticationSu
         String accessToken = provider.generateAccessToken(member);
         String refreshToken = provider.generateRefreshToken(member);
 
-        log.info("[LoginSuccessHandler] AccessToken 발급" + accessToken);
+        log.info("[LoginSuccessHandler] AccessToken 발급 " + accessToken);
         log.info("[LoginSuccessHandler] RefreshToken 발급" + refreshToken);
 
         TokenResponseDto tokenResponseDto = new TokenResponseDto("bearer", accessToken, refreshToken);
