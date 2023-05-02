@@ -18,7 +18,9 @@ public enum MemberErrorCode implements ErrorCode {
     INPUT_NOT_VALID(HttpStatus.UNAUTHORIZED, "아이디와 비밀번호를 정확하게 입력해주세요"),
 
 
-    NICKNAME_DUPLICATED(HttpStatus.OK, "중복되는 닉네임 입니다.");
+    NICKNAME_DUPLICATED(HttpStatus.OK, "중복되는 닉네임 입니다."),
+
+    MEMBER_REGISTRATION_TOKEN_WRONG(HttpStatus.BAD_REQUEST, "기기 등록 토큰이 잘못되었습니다.");
 
 
     private final HttpStatus httpStatus;
