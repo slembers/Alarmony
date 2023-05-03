@@ -1,8 +1,6 @@
 package com.slembers.alarmony.feature.group
 
 import android.util.Log
-import android.view.Gravity
-import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -57,7 +55,6 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
-import com.google.gson.GsonBuilder
 import com.slembers.alarmony.R
 import com.slembers.alarmony.data.memberList
 import com.slembers.alarmony.feature.common.NavItem
@@ -66,13 +63,7 @@ import com.slembers.alarmony.feature.common.ui.compose.GroupInvite
 import com.slembers.alarmony.feature.common.ui.compose.GroupSubjet
 import com.slembers.alarmony.feature.common.ui.compose.GroupTitle
 import com.slembers.alarmony.model.db.GroupModel
-import com.slembers.alarmony.network.repository.MemberRepository
 import com.slembers.alarmony.network.repository.MemberService
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
 
 @Preview
 @Composable
@@ -129,7 +120,7 @@ fun GroupScreen(
 //                    val toast = Toast.makeText(context, notification, Toast.LENGTH_SHORT)
 //                    toast.setGravity(Gravity.FILL_HORIZONTAL, 0, 0)
 //                    toast.show()
-                    MemberService.login()
+//                    MemberService.login()
                 }
             )
         },

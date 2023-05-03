@@ -126,6 +126,8 @@ dependencies {
     implementation 'com.squareup.okhttp3:logging-interceptor:4.9.1'
     // Coroutine
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.0'
+//    AlertDialog
+    implementation "androidx.appcompat:appcompat:1.4.1"
 }
 apply plugin: 'com.google.gms.google-services'
 

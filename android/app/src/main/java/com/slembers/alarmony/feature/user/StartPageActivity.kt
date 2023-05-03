@@ -1,31 +1,23 @@
 package com.slembers.alarmony.feature.user
 
 
-import android.content.Context
 import android.os.Bundle
 import android.util.Log
-import android.widget.Toast
 
 
 import androidx.activity.compose.setContent
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.Image
-import com.slembers.alarmony.feature.user.Navigation
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Button
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.material.TextButton
 import androidx.compose.runtime.Composable
@@ -36,43 +28,31 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.Alignment
 
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.ButtonDefaults
-import androidx.compose.material.SnackbarHost
 import androidx.compose.material.TextField
-import androidx.compose.material.TopAppBar
 import androidx.compose.material.rememberScaffoldState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.graphics.BlendMode.Companion.Screen
 
 
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.NavController
+import androidx.navigation.NavOptions
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.rememberNavController
 import com.slembers.alarmony.R
-import com.slembers.alarmony.feature.network.LoginData
-import com.slembers.alarmony.feature.network.LoginResponse
-import com.slembers.alarmony.feature.network.RetrofitClient
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
-import retrofit2.http.Body
-import retrofit2.http.POST
+import com.slembers.alarmony.feature.common.NavItem
+
+//import com.slembers.alarmony.feature.user.Navigation
 
 
-//import kotlin.coroutines.jvm.internal.CompletedContinuation.context
+//통신api
+import com.slembers.alarmony.network.repository.MemberService.login
 
-//d아래는 통신을 위한 레트로핏, 오류때문에 주석처리
 
-//import retrofit2.Retrofit
-//import retrofit2.converter.gson.GsonConverterFactory
 
 enum class Routes() {
     Signup,
@@ -80,29 +60,28 @@ enum class Routes() {
 }
 
 
-
-
 class StartPageActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent{
+
             Column(
                 verticalArrangement = Arrangement.Top,
                 horizontalAlignment = Alignment.CenterHorizontally
             )  {
-                Navigation()
+
 //                SignupScreen()
 //                Findpswd()
 //                FindId()()
-                ProfileSetting()
+//                ProfileSetting()
 //                AccountMtnc()
-                mascott(drawing = R.drawable.mascot_foreground)
-                logo(drawing = R.drawable.alarmony)
-                LoginScreen()
 
-                Spacer(modifier = Modifier.height(8.dp))
+//                LoginScreen()
+//                Navigation()
 
-                extra()
+
+
+
 
 
             }
@@ -110,76 +89,25 @@ class StartPageActivity : AppCompatActivity() {
     }
 }
 
+
+
 @Preview
 @Composable
+
+//fun extra(navController: NavController) {
 fun extra() {
 
 
 
-    Row(
-        modifier = Modifier
-//            .fillMaxWidth(),
-        ,
 
-        horizontalArrangement = Arrangement.SpaceAround
-    ) {
-        TextButton(onClick = { /* 회원가입 버튼 클릭 시 처리할 동작 */ }) {
-            Text(text = "회원가입 |")
-        }
-
-        TextButton(onClick = { /* 아이디 찾기 버튼 클릭 시 처리할 동작 */ }) {
-            Text(text = "아이디 찾기 |")
-        }
-
-        TextButton(onClick = { /* 비밀번호 찾기 버튼 클릭 시 처리할 동작 */ }) {
-            Text(text = "비밀번호 찾기")
-        }
-    }
 }
-//
-//interface ApiService {
-//    @POST("login")
-//    suspend fun login(@Body credentials: LoginCredentials): Response<LoginResponse>
-//}
-//
-//data class LoginCredentials(
-//    val username: String,
-//    val password: String
-//)
-//
-//data class LoginResponse(
-//    val token: String
-//)
-//
-//val retrofit = Retrofit.Builder()
-//    .baseUrl("http://example.com/")
-//    .addConverterFactory(GsonConverterFactory.create())
-//    .build()
-//
-//val apiService = retrofit.create(ApiService::class.java)
-//
-//fun login(username: String, password: String) {
-//    GlobalScope.launch(Dispatchers.IO) {
-//        try {
-//            val response = apiService.login(LoginCredentials(username, password))
-//            if (response.isSuccessful) {
-//                val token = response.body()?.token
-//                // 서버에서 반환한 토큰을 사용하여 추가적인 작업 수행
-//            } else {
-//                // 서버에서 오류 응답 반환 시 처리할 작업 수행
-//            }
-//        } catch (e: Exception) {
-//            // 네트워크 오류 등 예외 발생 시 처리할 작업 수행
-//        }
-//    }
-//}
 
 
 
 
-@Preview
+
 @Composable
-fun LoginScreen() {
+fun LoginScreen(navController: NavController) {
 
 
     val context = LocalContext.current
@@ -193,6 +121,9 @@ fun LoginScreen() {
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+
+        mascott(drawing = R.drawable.mascot_foreground)
+        logo(drawing = R.drawable.alarmony)
         TextField(
             value = idState.value,
             onValueChange = { idState.value = it },
@@ -225,34 +156,10 @@ fun LoginScreen() {
 //        아래는 로그인을 위한 통신로직을 RetrofitClient에서 가져와서 수행
 
         Button(
+//MutableState<String>와 String은 형식이 다르기에 String 값을 보내기 위해 .value를 붙여준다.
             onClick = {
-                Log.d("TAG", "클릭버튼누르다!!")
-//                getService(this) 오류가 나니 아래 코드와 같이 수정
-//                Call, Callback이 아니라 retrofit2.Call, retrofit2.Callback
-                val service = RetrofitClient.getService(this as Context)
-                service.login(idState.value, passwordState.value).enqueue(object : retrofit2.Callback<LoginResponse?> {
-
-                    override fun onResponse(call: retrofit2.Call<LoginResponse?>, response: retrofit2.Response<LoginResponse?>) {
-                        Log.d("TAG", "리스폰스버튼누르다!!")
-                        if (response.isSuccessful) {
-                            Log.d("TAG", "성공")
-                            val loginResponse = response.body()
-//                            성공했을때
-                            Toast.makeText(context, "성공 " + response, Toast.LENGTH_SHORT).show()
-                        } else {
-                            Log.d("TAG", "실패")
-                            // 응답이 실패했을 때 처리할 작업
-                            Toast.makeText(context, "실패 " + response.body(), Toast.LENGTH_SHORT).show()
-                        }
-                    }
-
-                    override fun onFailure(call: retrofit2.Call<LoginResponse?>, t: Throwable) {
-                        // 네트워크 오류 발생 시 처리할 코드 작성
-                        Log.d("TAG", "뭐임?")
-                        Toast.makeText(context, "실패 ", Toast.LENGTH_SHORT).show()
-                    }
-                })
-
+                Log.d("확인", "${idState.value}, ${passwordState.value} +로그인")
+                      login(idState.value, passwordState.value)
 
             },
             modifier = Modifier
@@ -261,7 +168,36 @@ fun LoginScreen() {
         ) {
             Text("로그인")
         }
+        Spacer(modifier = Modifier.height(8.dp))
+        Row(
+            modifier = Modifier
+//            .fillMaxWidth(),
+            ,
+
+            horizontalArrangement = Arrangement.SpaceAround
+        ) {
+            TextButton(onClick = {
+                navController.navigate(NavItem.Signup.route)
+
+            }) {
+                Text(text = "회원가입 |")
+
+            }
+
+            TextButton(onClick = {
+                navController.navigate(NavItem.FindIdActivity.route)
+            }) {
+                Text(text = "아이디 찾기 |")
+            }
+
+            TextButton(onClick = {
+                navController.navigate(NavItem.FindPswdActivity.route)
+            }) {
+                Text(text = "비밀번호 찾기")
+            }
+        }
     }
+
 
 }
 
