@@ -62,8 +62,9 @@ import com.slembers.alarmony.feature.common.ui.compose.GroupCard
 import com.slembers.alarmony.feature.common.ui.compose.GroupInvite
 import com.slembers.alarmony.feature.common.ui.compose.GroupSubjet
 import com.slembers.alarmony.feature.common.ui.compose.GroupTitle
-import com.slembers.alarmony.model.db.GroupModel
-import com.slembers.alarmony.network.repository.MemberService
+import com.slembers.alarmony.network.service.GroupService
+import com.slembers.alarmony.viewModel.GroupViewModel
+import com.slembers.alarmony.viewModel.LoginViewModel
 
 @Preview
 @Composable
@@ -71,12 +72,13 @@ import com.slembers.alarmony.network.repository.MemberService
 @ExperimentalGlideComposeApi
 fun GroupScreen(
     navController : NavHostController = rememberNavController(),
-    groupViewModel : GroupModel = viewModel()
+    groupViewModel : GroupViewModel = viewModel(),
+    loginViewModel : LoginViewModel = viewModel()
 ) {
 
     val title by groupViewModel.title.observeAsState("")
     val timePickerState by groupViewModel.alarmTime.observeAsState(
-        TimePickerState(0,0,false)
+        TimePickerState(14,0,false)
     )
     val isWeeks = remember{ mutableStateMapOf(
         "월" to true,
@@ -87,7 +89,6 @@ fun GroupScreen(
         "토" to true,
         "일" to true
     )}
-    val weekList = remember{ mutableStateListOf(groupViewModel.week.value?.stream()?.toArray()) }
     val weeks = remember{ mutableStateListOf("월","화","수","목","금","토","일") }
     var soundStatus by remember { mutableStateOf(true) }
     val vibration by groupViewModel.vibration.observeAsState(true)
@@ -117,10 +118,7 @@ fun GroupScreen(
             GroupBottomButtom(
                 text = "저장",
                 onClick = {
-//                    val toast = Toast.makeText(context, notification, Toast.LENGTH_SHORT)
-//                    toast.setGravity(Gravity.FILL_HORIZONTAL, 0, 0)
-//                    toast.show()
-//                    MemberService.login()
+                    GroupService.addGroupAlarm(loginViewModel.access.value!!)
                 }
             )
         },
@@ -176,10 +174,7 @@ fun GroupScreen(
                                         modifier = Modifier.size(boxSize),
                                         onClick = {
                                             isWeeks[it] = !isWeeks.getValue(it)
-                                            if(isWeeks.getValue(it)) {
-                                                groupViewModel.addAlarmWeeks(weeks)
-                                            }
-                                            Log.d("click event","isCheck key : $it value : ${isWeeks[it]}")
+                                            Log.d("click event","[그룹생성] : $it value : ${isWeeks[it]}")
                                         },
                                         colors = ButtonDefaults.buttonColors(
                                             contentColor = Color.Black,
@@ -261,15 +256,7 @@ fun GroupScreen(
                                             .size(this.maxHeight)
                                             .align(Alignment.Center)
                                             .clip(CircleShape)
-                                            .background(
-                                                if (soundStatus)
-                                                    MaterialTheme.colorScheme.primary
-                                                else
-                                                    MaterialTheme.colorScheme.background
-                                            )
-                                            .clickable {
-                                                soundStatus = !soundStatus
-                                            }
+                                            .background(MaterialTheme.colorScheme.primary)
                                     ) {
                                         Image(
                                             modifier = Modifier.align(Alignment.Center),
@@ -322,18 +309,16 @@ fun GroupScreen(
                                     .weight(1f),
                                 verticalAlignment = Alignment.CenterVertically,
                             ) {
-                                vibration?.let { vibration ->
-                                    Slider(
-                                        value = soundVolume,
-                                        onValueChange = { groupViewModel.onChangeVolumn(it) },
-                                        valueRange = 0f..15f,
-                                        enabled = vibration,
-                                        colors = SliderDefaults.colors(
-                                            thumbColor = MaterialTheme.colorScheme.background,
-                                            activeTrackColor = MaterialTheme.colorScheme.primary
-                                        ),
-                                    )
-                                }
+                                Slider(
+                                    value = soundVolume,
+                                    onValueChange = { groupViewModel.onChangeVolumn(it) },
+                                    valueRange = 0f..15f,
+                                    enabled = true,
+                                    colors = SliderDefaults.colors(
+                                        thumbColor = MaterialTheme.colorScheme.background,
+                                        activeTrackColor = MaterialTheme.colorScheme.primary
+                                    ),
+                                )
                             }
                         }
                     )}

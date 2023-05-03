@@ -1,23 +1,22 @@
 package com.slembers.alarmony.feature.group
 
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
-import com.slembers.alarmony.feature.common.CardBox
-import com.slembers.alarmony.feature.common.CardTitle
 import com.slembers.alarmony.feature.common.NavItem
 import com.slembers.alarmony.feature.common.ui.compose.CurrentInvite
 import com.slembers.alarmony.feature.common.ui.compose.SearchInviteMember
-import com.slembers.alarmony.feature.common.ui.compose.SoundChooseGrid
+import com.slembers.alarmony.network.service.MemberService
+import com.slembers.alarmony.viewModel.LoginViewModel
 
 @Preview
 @Composable
@@ -25,6 +24,8 @@ import com.slembers.alarmony.feature.common.ui.compose.SoundChooseGrid
 @ExperimentalGlideComposeApi
 fun InviteScreen(navController : NavHostController = rememberNavController()) {
 
+    val viewModel : LoginViewModel = viewModel()
+    var token = viewModel.access.observeAsState()
     Scaffold(
         topBar = {
             GroupToolBar(
@@ -33,7 +34,12 @@ fun InviteScreen(navController : NavHostController = rememberNavController()) {
             )
         },
         bottomBar = {
-            GroupBottomButtom(text = "저장" )
+            GroupBottomButtom(
+                text = "저장",
+                onClick = {
+                    MemberService.login()
+                }
+            )
         },
         content = { innerPadding ->
             Column(
