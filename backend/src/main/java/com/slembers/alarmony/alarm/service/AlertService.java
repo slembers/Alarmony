@@ -2,6 +2,7 @@ package com.slembers.alarmony.alarm.service;
 
 import com.google.firebase.messaging.FirebaseMessagingException;
 import com.slembers.alarmony.alarm.dto.InviteMemberSetToGroupDto;
+import com.slembers.alarmony.alarm.dto.response.AlarmInviteResponseDto;
 import com.slembers.alarmony.alarm.dto.response.AlertListResponseDto;
 import com.slembers.alarmony.alarm.entity.Alert;
 
@@ -70,13 +71,13 @@ public interface AlertService {
      * 초대 요청을 수락한다.
      * @param alertId 알림 아이디
      */
-    void acceptInvite(Long alertId);
+    AlarmInviteResponseDto acceptInvite(Long alertId);
 
     /**
      * 초대 요청을 거절한다.
      * @param alertId 알림 아이디
      */
-    void refuseInvite(Long alertId);
+    AlarmInviteResponseDto refuseInvite(Long alertId);
 
     /**
      * 알림을 커스텀해서 보낸다.
