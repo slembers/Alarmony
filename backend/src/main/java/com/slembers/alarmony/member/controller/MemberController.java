@@ -2,6 +2,7 @@ package com.slembers.alarmony.member.controller;
 
 
 import com.slembers.alarmony.global.jwt.SecurityUtil;
+import com.slembers.alarmony.member.dto.request.FindMemberIdDto;
 import com.slembers.alarmony.member.dto.request.PutRegistrationTokenRequestDto;
 import com.slembers.alarmony.member.dto.request.ReissueTokenDto;
 import com.slembers.alarmony.member.dto.request.SignUpDto;
@@ -17,6 +18,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.*;
 
+import javax.mail.MessagingException;
 import javax.validation.Valid;
 
 @RestController
@@ -104,4 +106,20 @@ public class MemberController {
         memberService.putRegistrationToken(username, registrationTokenRequestDto.getRegistrationToken());
         return new ResponseEntity<>("등록토큰 변경에 성공했습니다.", HttpStatus.OK);
     }
+
+
+    /**
+     * 아이디 찾기
+     */
+    @PostMapping("/find-id")
+    public ResponseEntity<String> findId (@RequestBody FindMemberIdDto findMemberIdDto) throws MessagingException {
+
+        memberService.findMemberId(findMemberIdDto);
+        return new ResponseEntity<>("아이디 찾기 이메일 전송 선공", HttpStatus.OK);
+    }
+
+
+    /**
+     * 비밀번호 찾기
+     */
 }
