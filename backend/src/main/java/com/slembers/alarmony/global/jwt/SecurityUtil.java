@@ -1,5 +1,7 @@
 package com.slembers.alarmony.global.jwt;
 
+import com.slembers.alarmony.global.execption.CustomException;
+import com.slembers.alarmony.member.exception.AuthErrorCode;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -12,12 +14,12 @@ public class SecurityUtil {
     private SecurityUtil() {
     }
 
-    public static Optional<String> getCurrentUsername() {
+    public static String getCurrentUsername() {
         final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         if (authentication == null) {
-            log.error("Authentication의 정보가 없습니다.");
-            return Optional.empty();
+            log.error("[SecurityUtil] Authentication 정보가 없습니다.");
+            throw  new CustomException(AuthErrorCode.NO_AUTHENTICATION);
         }
 
         String username = null;
@@ -28,6 +30,6 @@ public class SecurityUtil {
             username = (String) authentication.getPrincipal();
         }
 
-        return Optional.ofNullable(username);
+        return username;
     }
 }

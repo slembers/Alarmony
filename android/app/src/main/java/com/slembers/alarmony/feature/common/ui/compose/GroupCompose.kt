@@ -28,6 +28,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.material.Checkbox
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
@@ -47,17 +48,25 @@ import androidx.compose.material3.TimePickerState
 import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.input.key.Key
+import androidx.compose.ui.input.key.KeyEvent
+import androidx.compose.ui.input.key.KeyEventType
+import androidx.compose.ui.input.key.key
+import androidx.compose.ui.input.key.onKeyEvent
+import androidx.compose.ui.input.key.type
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -69,6 +78,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.MutableLiveData
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
@@ -77,6 +87,8 @@ import com.slembers.alarmony.data.MemberData
 import com.slembers.alarmony.feature.common.CardBox
 import com.slembers.alarmony.feature.common.CardTitle
 import com.slembers.alarmony.model.db.SoundItem
+import com.slembers.alarmony.model.db.dto.MemberResponseDto
+import com.slembers.alarmony.network.service.GroupService
 import java.util.Locale
 
 @Composable
@@ -545,12 +557,14 @@ fun GroupDefalutProfile(
     }
 }
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 @ExperimentalMaterial3Api
 @ExperimentalGlideComposeApi
 fun SearchInviteMember() {
 
-    var text by remember{ mutableStateOf("") }
+    var text by remember { mutableStateOf("") }
+    var members : List<MemberResponseDto> = remember { mutableStateListOf() }
 
     CardBox(
         title = { CardTitle(title = "검색") },
@@ -567,7 +581,10 @@ fun SearchInviteMember() {
             ) {
                 BasicTextField(
                     value = text,
-                    onValueChange = {text = it},
+                    onValueChange = {
+                        text = it
+                        GroupService.searchMember(keyword = it)
+                    },
                     singleLine = true,
                     textStyle = TextStyle(
                         color = Color.Black,
@@ -578,7 +595,14 @@ fun SearchInviteMember() {
                     ),
                     modifier = Modifier
                         .height(50.dp)
-                        .fillMaxWidth(),
+                        .fillMaxWidth()
+                        .onKeyEvent { event: KeyEvent ->
+                            Log.d("keyEvent log", "[그룹검색] event type : ${event.type} key : ${event.key}")
+                            if (event.type == KeyEventType.KeyDown || event.key == Key.Enter) {
+                                GroupService.searchMember(keyword = text)
+                            }
+                            false
+                        },
                     decorationBox = { innerTextField ->
                         Row(
                             modifier = Modifier
@@ -611,7 +635,7 @@ fun SearchInviteMember() {
                 )
 
                 LazyColumn() {
-                    items(count = 10) {
+                    items(members) {
                         SearchMember()
                     }
                 }

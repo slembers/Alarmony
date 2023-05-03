@@ -141,7 +141,7 @@ public class JwtTokenProvider {
 
         //블랙리스트에 존재하면 에러 반환
 
-        if (redisUtil.existToken(token)) {
+        if (redisUtil.existToken("Black:"+token)) {
             throw new JwtException("블랙리스트에 존재하는 액세스 토큰입니다.");
         }
 
@@ -154,6 +154,28 @@ public class JwtTokenProvider {
         } catch (ExpiredJwtException e) {   // Token이 만료된 경우 Exception이 발생한다.
             log.error("Token 유효시간 만료. 재발급 필요");
             throw new JwtException("Token 유효시간 만료. 재발급 필요");
+        } catch (JwtException e) {        // Token이 변조된 경우 Exception이 발생한다.
+            log.error("Token 에러");
+            log.error(e.getMessage());
+            throw new JwtException("Token 에러되었습니다.");
+        }
+
+    }
+
+    public void validRefreshToken(String token) {
+        if (token == null) {
+            log.error("[JwtTokenProvider] Token값이 존재하지 않습니다.");
+            throw new JwtException("Token값이 존재하지 않습니다.");
+        }
+
+        log.info("받은 Refresh 토큰:" + token);
+        try {
+
+            Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
+
+        } catch (ExpiredJwtException e) {   // Token이 만료된 경우 Exception이 발생한다.
+            log.error("Token 유효시간 만료. 로그아웃 해야한다.");
+            throw new JwtException("Token 유효시간 만료. 로그아웃 해야한다.");
         } catch (JwtException e) {        // Token이 변조된 경우 Exception이 발생한다.
             log.error("Token 에러");
             log.error(e.getMessage());

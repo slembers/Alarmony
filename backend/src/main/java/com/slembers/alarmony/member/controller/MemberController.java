@@ -2,10 +2,11 @@ package com.slembers.alarmony.member.controller;
 
 
 import com.slembers.alarmony.global.jwt.SecurityUtil;
-import com.slembers.alarmony.member.dto.LoginDto;
+import com.slembers.alarmony.member.dto.request.PutRegistrationTokenRequestDto;
+import com.slembers.alarmony.member.dto.request.ReissueTokenDto;
 import com.slembers.alarmony.member.dto.request.SignUpDto;
 import com.slembers.alarmony.member.dto.response.CheckDuplicateDto;
-import com.slembers.alarmony.member.entity.Member;
+import com.slembers.alarmony.member.dto.response.TokenResponseDto;
 import com.slembers.alarmony.member.service.EmailVerifyService;
 import com.slembers.alarmony.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
@@ -16,7 +17,6 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 @RestController
@@ -28,7 +28,6 @@ public class MemberController {
     private final MemberService memberService;
     private final EmailVerifyService emailVerifyService;
 
-
     /**
      * 회원가입
      */
@@ -36,30 +35,10 @@ public class MemberController {
     @PostMapping("/sign-up")
     public ResponseEntity<String> signUp(@Valid @RequestBody SignUpDto signUpDto) {
 
-        log.info("[회원 가입 Controller 들어왔음");
         memberService.signUp(signUpDto);
-        return new ResponseEntity<>("회원 가입 성공", HttpStatus.CREATED);
+        return new ResponseEntity<>(signUpDto.getNickname()+"님의 회원 가입을 완료했습니다. 이메일 인증을 확인해주세요", HttpStatus.CREATED);
 
     }
-
-    /**
-     * 로그인
-     */
-    @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody LoginDto loginDto, HttpServletResponse response) {
-
-        return memberService.login(loginDto, response);
-
-    }
-
-
-    //가입된 유저인지 아이디와 비밀번호 검증 (Service Layer)
-    //AccessToken 발급 (Controller Layer)
-
-
-    /**
-     * 로그아웃
-     */
 
     /**
      * 아이디 중복 체크
@@ -103,14 +82,26 @@ public class MemberController {
 
     @GetMapping("/test")
     public void test(@AuthenticationPrincipal User user) {
-
-
         user.getAuthorities();
         log.info("test진입");
-        log.info("test진입" + user.getAuthorities());
-
-        log.info("test 진입함@@@@@@@@@@@@@@@@@@@@@" + SecurityUtil.getCurrentUsername().get()); //
+        log.info("test 진입함@@@@@@@@@@@@@@@@@@@@@" + SecurityUtil.getCurrentUsername()); //
 
     }
 
+    /**
+     * Access 토큰 및 Refresh 토큰 재발급
+     */
+    @PostMapping("/refresh")
+    public ResponseEntity<TokenResponseDto> refresh(@RequestBody ReissueTokenDto reissueTokenDto) {
+
+        return new ResponseEntity<>(memberService.reissueToken(reissueTokenDto), HttpStatus.OK);
+
+    }
+
+    @PutMapping("/regist-token")
+    public ResponseEntity<String> putRegistrationToken(@RequestBody PutRegistrationTokenRequestDto registrationTokenRequestDto) {
+        String username = SecurityUtil.getCurrentUsername();
+        memberService.putRegistrationToken(username, registrationTokenRequestDto.getRegistrationToken());
+        return new ResponseEntity<>("등록토큰 변경에 성공했습니다.", HttpStatus.OK);
+    }
 }

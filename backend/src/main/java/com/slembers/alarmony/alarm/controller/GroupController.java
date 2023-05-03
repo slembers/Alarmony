@@ -68,7 +68,7 @@ public class GroupController {
         @PathVariable(name = "group-id") Long groupId,
         InviteMemberToGroupRequestDto inviteMemberToGroupRequestDto) {
 
-        String username = SecurityUtil.getCurrentUsername().get();
+        String username = SecurityUtil.getCurrentUsername();
 
         InviteMemberSetToGroupDto dto = InviteMemberSetToGroupDto.builder()
             .groupId(groupId)
@@ -88,7 +88,7 @@ public class GroupController {
     @DeleteMapping("/{group-id}")
     public ResponseEntity<String> leaveFromGroup(
         @PathVariable(name = "group-id") Long groupId) {
-        String username = SecurityUtil.getCurrentUsername().get();
+        String username = SecurityUtil.getCurrentUsername();
 
         if (groupService.isGroupOwner(groupId, username)) {
             groupService.removeHostMember(groupId);
@@ -110,7 +110,7 @@ public class GroupController {
         @PathVariable(name = "group-id") Long groupId,
         @PathVariable(name = "nickname") String nickname) {
 
-        String username = SecurityUtil.getCurrentUsername().get();
+        String username = SecurityUtil.getCurrentUsername();
 
         if (!groupService.isGroupOwner(groupId, username)) {
             throw new CustomException(AlarmErrorCode.MEMBER_NOT_HOST);
@@ -132,7 +132,6 @@ public class GroupController {
     @GetMapping("/{group-id}/records")
     public ResponseEntity<Map<String, Object>> getTodayAlarmRecords(
         @PathVariable(name = "group-id") Long groupId) {
-
 
         List<AlarmRecordDto> alarmList = alarmRecordService.getTodayAlarmRecords(groupId);
 
@@ -170,11 +169,15 @@ public class GroupController {
         @PathVariable(name = "group-id") Long groupId,
         @PathVariable(name = "nickname") String nickname) {
 
-        String username = SecurityUtil.getCurrentUsername().get();
+        String username = SecurityUtil.getCurrentUsername();
 
         if (!groupService.isGroupOwner(groupId, username)) {
             throw new CustomException(AlarmErrorCode.MEMBER_NOT_HOST);
         }
+        if (groupService.isGroupOwnerByNickname(groupId, nickname)) {
+            throw new CustomException(AlarmErrorCode.CANNOT_SEND_TO_HOST);
+        }
+
         alertService.sendAlarm(groupId, nickname);
         return new ResponseEntity<>("알람 보내기에 성공했습니다.", HttpStatus.OK);
     }

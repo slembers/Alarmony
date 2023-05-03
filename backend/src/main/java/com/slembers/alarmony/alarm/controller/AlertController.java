@@ -27,7 +27,7 @@ public class AlertController {
      */
     @GetMapping
     public ResponseEntity<AlertListResponseDto> getAlertList() {
-        String username = SecurityUtil.getCurrentUsername().get();
+        String username = SecurityUtil.getCurrentUsername();
         return new ResponseEntity<>(alertService.getAlertList(username), HttpStatus.OK);
     }
 
@@ -70,7 +70,7 @@ public class AlertController {
      */
     @PostMapping("/test")
     public ResponseEntity<String> testPushAlert() {
-        String username = SecurityUtil.getCurrentUsername().get();
+        String username = SecurityUtil.getCurrentUsername();
         alertService.testPushAlert(username);
         return new ResponseEntity<>("메시지 전송 성공", HttpStatus.OK);
     }

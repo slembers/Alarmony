@@ -28,4 +28,14 @@ sealed class NavItem (
         image = Icons.Default.ArrowForwardIos
     )
 
+    object MainScreen : NavItem("main_screen", "main_screen", Icons.Default.Home)
+    object SettingScreen : NavItem("setting_screen", "setting_screen",Icons.Default.Home)
+    object LoginScreen : NavItem("login_screen","login_screen" ,Icons.Default.Home)
+
+    object FindIdActivity : NavItem("findid_screen", "findid_screen",Icons.Default.Home)
+    object FindPswdActivity : NavItem("findpswd_screen", "findpswd_screen",Icons.Default.Home)
+    object Signup : NavItem("signup_screen", "signup_screen",Icons.Default.Home)
+    object ProfileActivity : NavItem("profile_screen", "profile_screen",Icons.Default.Home)
+    object AccountMtnc : NavItem("accountmtnc_screen", "accountmtnc_screen",Icons.Default.Home)
+
 }

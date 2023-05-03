@@ -1,4 +1,4 @@
-package com.slembers.alarmony.global.jwt;
+package com.slembers.alarmony.global.jwt.handler;
 
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.web.access.AccessDeniedHandler;
