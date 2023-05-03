@@ -28,7 +28,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
-import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.material.Checkbox
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
@@ -78,7 +77,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.MutableLiveData
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
@@ -87,7 +85,7 @@ import com.slembers.alarmony.data.MemberData
 import com.slembers.alarmony.feature.common.CardBox
 import com.slembers.alarmony.feature.common.CardTitle
 import com.slembers.alarmony.model.db.SoundItem
-import com.slembers.alarmony.model.db.dto.MemberResponseDto
+import com.slembers.alarmony.model.db.dto.MemberDto
 import com.slembers.alarmony.network.service.GroupService
 import java.util.Locale
 
@@ -359,37 +357,7 @@ fun GroupDefalutProfile(
     }
 }
 
-@Composable
-@ExperimentalMaterial3Api
-@ExperimentalGlideComposeApi
-fun GroupInvite(
-    profiles : List<MemberData>
-) {
 
-    BoxWithConstraints(
-        modifier = Modifier.fillMaxWidth()
-    ) {
-        LazyRow(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(
-                    start = 20.dp,
-                    top = 0.dp,
-                    bottom = 0.dp,
-                    end = 10.dp
-                ),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(2.dp),
-            userScrollEnabled = true
-
-        ) {
-            items(profiles) {
-                item ->
-                    GroupDefalutProfile(item.nickname)
-            }
-        }
-    }
-}
 @Composable
 @ExperimentalMaterial3Api
 fun SoundChooseGrid(
@@ -564,7 +532,7 @@ fun GroupDefalutProfile(
 fun SearchInviteMember() {
 
     var text by remember { mutableStateOf("") }
-    var members : List<MemberResponseDto> = remember { mutableStateListOf() }
+    var members : List<MemberDto> = remember { mutableStateListOf() }
 
     CardBox(
         title = { CardTitle(title = "검색") },
@@ -583,7 +551,10 @@ fun SearchInviteMember() {
                     value = text,
                     onValueChange = {
                         text = it
-                        GroupService.searchMember(keyword = it)
+                        GroupService.searchMember(
+                            keyword = it,
+                            memberList = {members = it.memberList}
+                        )
                     },
                     singleLine = true,
                     textStyle = TextStyle(
@@ -595,14 +566,7 @@ fun SearchInviteMember() {
                     ),
                     modifier = Modifier
                         .height(50.dp)
-                        .fillMaxWidth()
-                        .onKeyEvent { event: KeyEvent ->
-                            Log.d("keyEvent log", "[그룹검색] event type : ${event.type} key : ${event.key}")
-                            if (event.type == KeyEventType.KeyDown || event.key == Key.Enter) {
-                                GroupService.searchMember(keyword = text)
-                            }
-                            false
-                        },
+                        .fillMaxWidth(),
                     decorationBox = { innerTextField ->
                         Row(
                             modifier = Modifier
@@ -635,8 +599,11 @@ fun SearchInviteMember() {
                 )
 
                 LazyColumn() {
-                    items(members) {
-                        SearchMember()
+                    items(members) { member ->
+                        SearchMember(
+                            member.nickname,
+                            member.profileImg
+                        )
                     }
                 }
             }
@@ -645,10 +612,12 @@ fun SearchInviteMember() {
 }
 
 @Composable
-fun SearchMember() {
+fun SearchMember(
+    nickname : String,
+    profiles : String? = null
+) {
 
     var isClicked by remember { mutableStateOf(false)  }
-    val profile by remember { mutableStateOf(null) }
 
     Row(
         verticalAlignment = Alignment.CenterVertically,
@@ -659,10 +628,10 @@ fun SearchMember() {
             .clickable { isClicked = !isClicked }
     )
     {
-        if(profile != null ) {
+        if(profiles != null ) {
             AsyncImage(
                 model = ImageRequest.Builder(LocalContext.current)
-                    .data(profile)
+                    .data(profiles)
                     .build(),
                 contentDescription = "ImageRequest example",
                 modifier = Modifier.size(65.dp)
@@ -675,7 +644,7 @@ fun SearchMember() {
             )
         }
         Text(
-            text = "SSAFY에 오신걸 환영합니다.",
+            text = nickname,
             fontSize = 17.sp,
             modifier = Modifier.fillMaxWidth(1f)
         )

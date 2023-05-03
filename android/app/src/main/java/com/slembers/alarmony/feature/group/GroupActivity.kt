@@ -56,15 +56,12 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.slembers.alarmony.R
-import com.slembers.alarmony.data.memberList
 import com.slembers.alarmony.feature.common.NavItem
 import com.slembers.alarmony.feature.common.ui.compose.GroupCard
-import com.slembers.alarmony.feature.common.ui.compose.GroupInvite
 import com.slembers.alarmony.feature.common.ui.compose.GroupSubjet
 import com.slembers.alarmony.feature.common.ui.compose.GroupTitle
 import com.slembers.alarmony.network.service.GroupService
 import com.slembers.alarmony.viewModel.GroupViewModel
-import com.slembers.alarmony.viewModel.LoginViewModel
 
 @Preview
 @Composable
@@ -72,14 +69,14 @@ import com.slembers.alarmony.viewModel.LoginViewModel
 @ExperimentalGlideComposeApi
 fun GroupScreen(
     navController : NavHostController = rememberNavController(),
-    groupViewModel : GroupViewModel = viewModel(),
-    loginViewModel : LoginViewModel = viewModel()
+    groupViewModel : GroupViewModel = viewModel()
 ) {
 
     val title by groupViewModel.title.observeAsState("")
     val timePickerState by groupViewModel.alarmTime.observeAsState(
         TimePickerState(14,0,false)
     )
+    val groupmembers by groupViewModel.groupMember.observeAsState()
     val isWeeks = remember{ mutableStateMapOf(
         "월" to true,
         "화" to true,
@@ -118,7 +115,7 @@ fun GroupScreen(
             GroupBottomButtom(
                 text = "저장",
                 onClick = {
-                    GroupService.addGroupAlarm(loginViewModel.access.value!!)
+                    GroupService.addGroupAlarm()
                 }
             )
         },
@@ -194,19 +191,9 @@ fun GroupScreen(
                         }
                     }
                 )
-                GroupCard(
-                    title = { GroupTitle(
-                        title = NavItem.GroupInvite.title,
-                        content = {
-                            Icon(
-                                painter = painterResource(id = R.drawable.arrow_forward),
-                                contentDescription = null,
-                                modifier = Modifier.padding(2.dp)
-                            )},
-                        onClick = { navController.navigate( NavItem.GroupInvite.route )}
-                    )},
-                    content = { GroupInvite(
-                        profiles = memberList)}
+                GroupInvite(
+                    navController = navController,
+                    members = groupmembers ?: listOf()
                 )
                 GroupCard(
                     title = { GroupTitle(
