@@ -1,6 +1,7 @@
 package com.slembers.alarmony.alarm.controller;
 
 import com.slembers.alarmony.alarm.dto.request.ResponseInviteRequestDto;
+import com.slembers.alarmony.alarm.dto.response.AlarmInviteResponseDto;
 import com.slembers.alarmony.alarm.dto.response.AlertListResponseDto;
 import com.slembers.alarmony.alarm.exception.AlertErrorCode;
 import com.slembers.alarmony.alarm.service.AlertService;
@@ -50,16 +51,14 @@ public class AlertController {
      * @return 응답 메시지
      */
     @PostMapping("/{alert-id}/response")
-    public ResponseEntity<String> responseInvite(@PathVariable("alert-id") Long alertId, @RequestBody ResponseInviteRequestDto responseInviteRequestDto) {
+    public ResponseEntity<AlarmInviteResponseDto> responseInvite(@PathVariable("alert-id") Long alertId, @RequestBody ResponseInviteRequestDto responseInviteRequestDto) {
 
         if (responseInviteRequestDto == null || responseInviteRequestDto.getAccept() == null)
             throw new CustomException(AlertErrorCode.ALERT_BAD_REQUEST);
-        else if (responseInviteRequestDto.getAccept()) {
-            alertService.acceptInvite(alertId);
-            return new ResponseEntity<>("초대를 수락했습니다.", HttpStatus.OK);
+        else if (Boolean.TRUE.equals(responseInviteRequestDto.getAccept())) {
+            return new ResponseEntity<>(alertService.acceptInvite(alertId), HttpStatus.OK);
         } else {
-            alertService.refuseInvite(alertId);
-            return new ResponseEntity<>("초대를 거절했습니다.", HttpStatus.OK);
+            return new ResponseEntity<>(alertService.refuseInvite(alertId), HttpStatus.OK);
         }
     }
 
