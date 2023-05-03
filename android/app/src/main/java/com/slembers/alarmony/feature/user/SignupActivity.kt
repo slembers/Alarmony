@@ -30,6 +30,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.focus.FocusState
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.navigation.NavController
+import androidx.navigation.ui.NavigationUI.navigateUp
 
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
@@ -51,7 +52,7 @@ fun SignupScreen(navController: NavController) {
             TopAppBar(
                 title = { Text("회원가입") },
                 navigationIcon = {
-                    IconButton(onClick = {  }) {
+                    IconButton(onClick = { navController.navigateUp() }) {
                         Icon(Icons.Filled.ArrowBack, "뒤로가기")
                     }
                 },

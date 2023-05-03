@@ -31,6 +31,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.TextField
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.BlendMode.Companion.Screen
 
 
 import androidx.compose.ui.platform.LocalContext
@@ -38,11 +39,20 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.NavController
+import androidx.navigation.NavOptions
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.rememberNavController
 import com.slembers.alarmony.R
+import com.slembers.alarmony.feature.common.NavItem
+
+//import com.slembers.alarmony.feature.user.Navigation
 
 
 //통신api
 import com.slembers.alarmony.network.repository.MemberService.login
+
+
 
 enum class Routes() {
     Signup,
@@ -50,29 +60,28 @@ enum class Routes() {
 }
 
 
-
-
 class StartPageActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent{
+
             Column(
                 verticalArrangement = Arrangement.Top,
                 horizontalAlignment = Alignment.CenterHorizontally
             )  {
-                Navigation()
+
 //                SignupScreen()
 //                Findpswd()
 //                FindId()()
 //                ProfileSetting()
 //                AccountMtnc()
-                mascott(drawing = R.drawable.mascot_foreground)
-                logo(drawing = R.drawable.alarmony)
-                LoginScreen()
 
-                Spacer(modifier = Modifier.height(8.dp))
+//                LoginScreen()
+//                Navigation()
 
-                extra()
+
+
+
 
 
             }
@@ -80,39 +89,25 @@ class StartPageActivity : AppCompatActivity() {
     }
 }
 
+
+
 @Preview
 @Composable
+
+//fun extra(navController: NavController) {
 fun extra() {
 
 
 
-    Row(
-        modifier = Modifier
-//            .fillMaxWidth(),
-        ,
 
-        horizontalArrangement = Arrangement.SpaceAround
-    ) {
-        TextButton(onClick = { /* 회원가입 버튼 클릭 시 처리할 동작 */ }) {
-            Text(text = "회원가입 |")
-        }
-
-        TextButton(onClick = { /* 아이디 찾기 버튼 클릭 시 처리할 동작 */ }) {
-            Text(text = "아이디 찾기 |")
-        }
-
-        TextButton(onClick = { /* 비밀번호 찾기 버튼 클릭 시 처리할 동작 */ }) {
-            Text(text = "비밀번호 찾기")
-        }
-    }
 }
 
 
 
 
-@Preview
+
 @Composable
-fun LoginScreen() {
+fun LoginScreen(navController: NavController) {
 
 
     val context = LocalContext.current
@@ -126,6 +121,9 @@ fun LoginScreen() {
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+
+        mascott(drawing = R.drawable.mascot_foreground)
+        logo(drawing = R.drawable.alarmony)
         TextField(
             value = idState.value,
             onValueChange = { idState.value = it },
@@ -170,7 +168,36 @@ fun LoginScreen() {
         ) {
             Text("로그인")
         }
+        Spacer(modifier = Modifier.height(8.dp))
+        Row(
+            modifier = Modifier
+//            .fillMaxWidth(),
+            ,
+
+            horizontalArrangement = Arrangement.SpaceAround
+        ) {
+            TextButton(onClick = {
+                navController.navigate(NavItem.Signup.route)
+
+            }) {
+                Text(text = "회원가입 |")
+
+            }
+
+            TextButton(onClick = {
+                navController.navigate(NavItem.FindIdActivity.route)
+            }) {
+                Text(text = "아이디 찾기 |")
+            }
+
+            TextButton(onClick = {
+                navController.navigate(NavItem.FindPswdActivity.route)
+            }) {
+                Text(text = "비밀번호 찾기")
+            }
+        }
     }
+
 
 }
 

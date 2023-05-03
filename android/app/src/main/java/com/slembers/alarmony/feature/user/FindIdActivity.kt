@@ -31,12 +31,12 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.slembers.alarmony.R
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
-@Preview
 @Composable
-fun FindId() {
+fun FindId(navController: NavController) {
 
     var email = remember { mutableStateOf("") }
     var certnum = remember { mutableStateOf("") }
@@ -48,7 +48,7 @@ fun FindId() {
             TopAppBar(
                 title = { Text("아이디 찾기") },
                 navigationIcon = {
-                    IconButton(onClick = { }) {
+                    IconButton(onClick = {navController.navigateUp() }) {
                         Icon(Icons.Filled.ArrowBack, "뒤로가기")
                     }
                 },

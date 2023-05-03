@@ -39,12 +39,12 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.slembers.alarmony.R
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
-@Preview
 @Composable
-fun ProfileSetting() {
+fun ProfileSetting(navController: NavController) {
 
     // 이메일과 닉네임 정보를 가지고 있는 상태 변수
     var nickname = remember { mutableStateOf("닉네임") }
@@ -61,7 +61,7 @@ fun ProfileSetting() {
             TopAppBar(
                 title = { Text("계정설정") },
                 navigationIcon = {
-                    IconButton(onClick = { }) {
+                    IconButton(onClick = { navController.navigateUp()}) {
                         Icon(Icons.Filled.ArrowBack, "뒤로가기")
                     }
                 },
