@@ -30,7 +30,7 @@ public class AlarmController {
      */
     @GetMapping
     public ResponseEntity<AlarmListResponseDto> getAlarmList() {
-        String username = SecurityUtil.getCurrentUsername().get();
+        String username = SecurityUtil.getCurrentUsername();
         return new ResponseEntity<>(alarmService.getAlarmList(username), HttpStatus.OK);
     }
 
@@ -41,7 +41,7 @@ public class AlarmController {
      */
     @PostMapping
     public ResponseEntity<String> createAlarm(@RequestBody CreateAlarmDto createAlarmDto) {
-        String username = SecurityUtil.getCurrentUsername().get();
+        String username = SecurityUtil.getCurrentUsername();
         alarmService.createAlarm(username, createAlarmDto);
         return new ResponseEntity<>("알람이 생성되고 초대가 전송되었습니다.", HttpStatus.OK);
     }
@@ -58,7 +58,7 @@ public class AlarmController {
             @PathVariable("alarm-id") Long alarmId,
             @RequestBody PutAlarmMessageRequestDto putAlarmMessageRequestDto) {
 
-        String username = SecurityUtil.getCurrentUsername().get();
+        String username = SecurityUtil.getCurrentUsername();
 
         alarmService.putAlarmMessage(username, alarmId, putAlarmMessageRequestDto.getMessage());
         return new ResponseEntity<>("알람 메시지가 기록되었습니다.", HttpStatus.OK);
@@ -83,7 +83,7 @@ public class AlarmController {
      */
     @PutMapping("/{alarm-id}/record")
     public ResponseEntity<String> putAlarmRecord(@PathVariable("alarm-id") Long alarmId, @RequestBody PutAlarmRecordTimeRequestDto putAlarmRecordTimeRequestDto) {
-        String username = SecurityUtil.getCurrentUsername().get();
+        String username = SecurityUtil.getCurrentUsername();
         alarmRecordService.putAlarmRecord(AlarmEndRecordDto.builder()
                 .alarmId(alarmId)
                 .username(username)
@@ -100,7 +100,7 @@ public class AlarmController {
      */
     @PutMapping("/{alarm-id}/failed")
     public ResponseEntity<String> putAlarmFailed(@PathVariable("alarm-id") Long alarmId) {
-        String username = SecurityUtil.getCurrentUsername().get();
+        String username = SecurityUtil.getCurrentUsername();
         alarmRecordService.putAlarmRecord(AlarmEndRecordDto.builder()
                 .alarmId(alarmId)
                 .username(username)

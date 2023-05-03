@@ -18,11 +18,8 @@ public class CreateAlarmDto {
     @JsonProperty(value = "minute")
     private int minute;
 
-    @JsonProperty(value = "ampm")
-    private String ampm;
-
     @JsonProperty(value = "alarm_date")
-    private List<String> alarmDate;
+    private List<Boolean> alarmDate;
 
     @JsonProperty(value = "members")
     private Set<String> members;

@@ -2,8 +2,11 @@ package com.slembers.alarmony.member.controller;
 
 
 import com.slembers.alarmony.global.jwt.SecurityUtil;
+import com.slembers.alarmony.member.dto.request.PutRegistrationTokenRequestDto;
+import com.slembers.alarmony.member.dto.request.ReissueTokenDto;
 import com.slembers.alarmony.member.dto.request.SignUpDto;
 import com.slembers.alarmony.member.dto.response.CheckDuplicateDto;
+import com.slembers.alarmony.member.dto.response.TokenResponseDto;
 import com.slembers.alarmony.member.service.EmailVerifyService;
 import com.slembers.alarmony.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
@@ -25,7 +28,6 @@ public class MemberController {
     private final MemberService memberService;
     private final EmailVerifyService emailVerifyService;
 
-
     /**
      * 회원가입
      */
@@ -33,9 +35,8 @@ public class MemberController {
     @PostMapping("/sign-up")
     public ResponseEntity<String> signUp(@Valid @RequestBody SignUpDto signUpDto) {
 
-        log.info("[회원 가입 Controller 진입]");
         memberService.signUp(signUpDto);
-        return new ResponseEntity<>("회원 가입 성공", HttpStatus.CREATED);
+        return new ResponseEntity<>(signUpDto.getNickname()+"님의 회원 가입을 완료했습니다. 이메일 인증을 확인해주세요", HttpStatus.CREATED);
 
     }
 
@@ -83,8 +84,24 @@ public class MemberController {
     public void test(@AuthenticationPrincipal User user) {
         user.getAuthorities();
         log.info("test진입");
-        log.info("test 진입함@@@@@@@@@@@@@@@@@@@@@" + SecurityUtil.getCurrentUsername().get()); //
+        log.info("test 진입함@@@@@@@@@@@@@@@@@@@@@" + SecurityUtil.getCurrentUsername()); //
 
     }
 
+    /**
+     * Access 토큰 및 Refresh 토큰 재발급
+     */
+    @PostMapping("/refresh")
+    public ResponseEntity<TokenResponseDto> refresh(@RequestBody ReissueTokenDto reissueTokenDto) {
+
+        return new ResponseEntity<>(memberService.reissueToken(reissueTokenDto), HttpStatus.OK);
+
+    }
+
+    @PutMapping("/regist-token")
+    public ResponseEntity<String> putRegistrationToken(@RequestBody PutRegistrationTokenRequestDto registrationTokenRequestDto) {
+        String username = SecurityUtil.getCurrentUsername();
+        memberService.putRegistrationToken(username, registrationTokenRequestDto.getRegistrationToken());
+        return new ResponseEntity<>("등록토큰 변경에 성공했습니다.", HttpStatus.OK);
+    }
 }

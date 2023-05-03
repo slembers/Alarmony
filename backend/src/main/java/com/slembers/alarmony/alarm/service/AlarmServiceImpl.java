@@ -23,7 +23,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalTime;
-import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -53,28 +52,8 @@ public class AlarmServiceImpl implements AlarmService {
                 .orElseThrow(() -> new CustomException(MemberErrorCode.MEMBER_NOT_FOUND));
 
         try {
-            // 멤버의 멤버알람 목록을 가져온다
-            List<MemberAlarm> memberAlarmList = memberAlarmRepository.findAllByMember(member);
-            List<AlarmDto> alarms = new ArrayList<>();
-
-            memberAlarmList.forEach(memberAlarm -> {
-                // 각 멤버알람에 대해 연관되어 있는 알람을 가져온다.
-                Alarm alarm = memberAlarm.getAlarm();
-                // 중복 계산을 피하기 위해 시간을 가져온다.
-                LocalTime localTime = alarm.getTime();
-
-                // 알람 리스트를 넣을 DTO를 빌딩한다.
-                AlarmDto alarmDto = AlarmDto.builder()
-                        .alarmId(alarm.getId())
-                        .title(alarm.getTitle())
-                        .hour(localTime.getHour() / 12 == 0 ? localTime.getHour() : localTime.getHour() - 12)
-                        .minute(localTime.getMinute())
-                        .ampm(alarm.getTime().getHour() / 12 == 0 ? "오전" : "오후")
-                        .alarmDate(CommonMethods.changeByteListToStringList(alarm.getAlarmDate()))
-                        .build();
-
-                alarms.add(alarmDto);
-            });
+            //멤버의 멤버알람 목록을 가져온다
+            List<AlarmDto> alarms = memberAlarmRepository.getAlarmDtosByMember(member.getId());
             // 리스트를 객체에 담아서 전송한다.
             return AlarmListResponseDto.builder().alarms(alarms).build();
         } catch (Exception e) {
@@ -100,7 +79,7 @@ public class AlarmServiceImpl implements AlarmService {
                     .title(createAlarmDto.getTitle())
                     .time(LocalTime.of(createAlarmDto.getHour(), createAlarmDto.getMinute()))
                     .host(groupLeader)
-                    .alarmDate(CommonMethods.changeStringListToByteList(createAlarmDto.getAlarmDate()))
+                    .alarmDate(CommonMethods.changeBooleanListToString(createAlarmDto.getAlarmDate()))
                     .soundName(createAlarmDto.getSoundName())
                     .soundVolume(createAlarmDto.getSoundVolume())
                     .vibrate(createAlarmDto.isVibrate())
@@ -187,15 +166,8 @@ public class AlarmServiceImpl implements AlarmService {
             // 중복 계산을 피하기 위해 시간 정보를 가져온다.
             LocalTime localTime = alarm.getTime();
 
-            // 알람 객체를 빌딩해서 바로 리턴한다.
-            return AlarmDto.builder()
-                    .alarmId(alarm.getId())
-                    .title(alarm.getTitle())
-                    .hour(localTime.getHour() / 12 == 0 ? localTime.getHour() : localTime.getHour() - 12)
-                    .minute(localTime.getMinute())
-                    .ampm(alarm.getTime().getHour() / 12 == 0 ? "오전" : "오후")
-                    .alarmDate(CommonMethods.changeByteListToStringList(alarm.getAlarmDate()))
-                    .build();
+            // 알람 객체를 바로 리턴한다.
+            return new AlarmDto(alarm.getId(), alarm.getTitle(), localTime.getHour(), localTime.getMinute(), alarm.getAlarmDate());
         } catch (Exception e) {
             throw new CustomException(AlarmErrorCode.ALARM_GET_ERROR);
         }

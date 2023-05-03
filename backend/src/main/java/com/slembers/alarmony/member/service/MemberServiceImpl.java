@@ -1,8 +1,12 @@
 package com.slembers.alarmony.member.service;
 
 import com.slembers.alarmony.global.execption.CustomException;
+import com.slembers.alarmony.global.jwt.JwtTokenProvider;
+import com.slembers.alarmony.global.redis.service.RedisUtil;
+import com.slembers.alarmony.member.dto.request.ReissueTokenDto;
 import com.slembers.alarmony.member.dto.request.SignUpDto;
 import com.slembers.alarmony.member.dto.response.CheckDuplicateDto;
+import com.slembers.alarmony.member.dto.response.TokenResponseDto;
 import com.slembers.alarmony.member.entity.Member;
 import com.slembers.alarmony.member.exception.MemberErrorCode;
 import com.slembers.alarmony.member.repository.MemberRepository;
@@ -11,6 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
 import javax.transaction.Transactional;
 
 @Service
@@ -26,6 +31,9 @@ public class MemberServiceImpl implements MemberService {
 
     private final PasswordEncoder passwordEncoder;
 
+    private final JwtTokenProvider jwtTokenProvider;
+
+    private final RedisUtil redisUtil;
 
     /**
      * 회원가입
@@ -107,4 +115,42 @@ public class MemberServiceImpl implements MemberService {
 
     }
 
+    @Override
+    public TokenResponseDto reissueToken(ReissueTokenDto reissueTokenDto) {
+
+        //예외처리
+        jwtTokenProvider.validRefreshToken(reissueTokenDto.getRefreshToken());
+
+        String redisRefreshToken = redisUtil.getData("Refresh:" + reissueTokenDto.getUsername());
+
+        Member member = memberRepository.findByUsername(reissueTokenDto.getUsername()).orElseThrow(() -> new CustomException(MemberErrorCode.MEMBER_NOT_FOUND));
+
+        if (redisRefreshToken.equals(redisRefreshToken)) { //일치할때만 재발급
+
+            String accessToken = jwtTokenProvider.generateAccessToken(member);
+            String refreshToken = jwtTokenProvider.generateRefreshToken(member);
+
+            return new TokenResponseDto("bearer",accessToken, refreshToken);
+
+        } else {  //일치하지 않으면
+            log.error("[Refresh Controller] Refresh Token값이 일치하지 않습니다.");
+        }
+
+        return null;
+    }
+
+    @Override
+    public void putRegistrationToken(String username, String registrationToken) {
+        Member member = memberRepository.findByUsername(username)
+                .orElseThrow(() -> new CustomException(MemberErrorCode.MEMBER_NOT_FOUND));
+        if(registrationToken == null || registrationToken.length() == 0)
+            throw new CustomException(MemberErrorCode.MEMBER_REGISTRATION_TOKEN_WRONG);
+
+        try {
+            member.modifyToken(registrationToken);
+            memberRepository.save(member);
+        } catch (Exception e) {
+            throw new CustomException(MemberErrorCode.MEMBER_REGISTRATION_TOKEN_WRONG);
+        }
+    }
 }
