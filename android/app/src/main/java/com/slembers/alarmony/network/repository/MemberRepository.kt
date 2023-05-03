@@ -2,10 +2,11 @@ package com.slembers.alarmony.network.repository
 
 import com.slembers.alarmony.model.db.LoginRequest
 import com.slembers.alarmony.model.db.Member
+import com.slembers.alarmony.model.db.SignupRequest
+import com.slembers.alarmony.model.db.dto.LoginResponseDto
+import com.slembers.alarmony.model.db.dto.SignupResponseDto
 import retrofit2.Call
 import retrofit2.http.Body
-import retrofit2.http.Field
-import retrofit2.http.FormUrlEncoded
 import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.POST
@@ -20,6 +21,14 @@ interface MemberRepository {
     @POST("members/login")
     fun login(
         @Body loginDto : LoginRequest
-    ) : Call<Unit>
+    ) : Call<LoginResponseDto>
+
+//    회원가입
+    @POST("members")
+    fun signup(
+        @Body signupDto : SignupRequest
+    ) : Call<SignupResponseDto>
+
+
 
 }

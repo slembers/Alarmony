@@ -1,6 +1,5 @@
 package com.slembers.alarmony.feature.user
 
-
 sealed class Screen(val route: String) {
 
     object MainScreen : Screen("main_screen")

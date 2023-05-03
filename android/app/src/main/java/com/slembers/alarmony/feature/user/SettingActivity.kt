@@ -36,6 +36,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Color
 
 import androidx.compose.ui.text.style.TextAlign
+import androidx.navigation.NavController
 import com.slembers.alarmony.feature.common.ui.theme.toColor
 
 //import androidx.compose.ui.graphics.Color
@@ -69,9 +70,9 @@ fun BtnFm() {
 }
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
-@Preview
+
 @Composable
-fun AccountMtnc() {
+fun AccountMtnc(navController: NavController) {
 
     var Notichecked = remember { mutableStateOf(false) }
 
@@ -80,7 +81,7 @@ fun AccountMtnc() {
             TopAppBar(
                 title = { Text("설정") },
                 navigationIcon = {
-                    IconButton(onClick = { }) {
+                    IconButton(onClick = {navController.navigateUp() }) {
                         Icon(Icons.Filled.ArrowBack, "뒤로가기")
                     }
                 },

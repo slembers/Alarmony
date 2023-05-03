@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -12,6 +13,14 @@ import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.slembers.alarmony.feature.group.GroupScreen
 import com.slembers.alarmony.feature.group.InviteScreen
 import com.slembers.alarmony.feature.group.SoundScreen
+import com.slembers.alarmony.feature.user.FindId
+import com.slembers.alarmony.feature.user.Findpswd
+import com.slembers.alarmony.feature.user.LoginScreen
+import com.slembers.alarmony.feature.user.ProfileSetting
+import com.slembers.alarmony.feature.user.SignupScreen
+import com.slembers.alarmony.feature.user.AccountMtnc
+import com.slembers.alarmony.feature.user.Routes
+import com.slembers.alarmony.viewModel.LoginViewModel
 
 
 @Composable
@@ -23,10 +32,39 @@ fun NavController(
     NavHost(
         modifier = Modifier.fillMaxSize(),
         navController = navController,
-        startDestination = NavItem.Group.route
+//        startDestination = NavItem.Group.route
+        startDestination = NavItem.LoginScreen.route
     ) {
+
         composable( route = NavItem.Group.route ) { GroupScreen( navController = navController) }
         composable( route = NavItem.Sound.route ) { SoundScreen(navController) }
         composable( route = NavItem.GroupInvite.route ) { InviteScreen(navController) }
+
+        composable(NavItem.LoginScreen.route) {LoginScreen(navController = navController)}
+        composable(NavItem.FindIdActivity.route) {FindId(navController = navController) }
+        composable(NavItem.Signup.route) {
+            SignupScreen(navController = navController)
+
+        }
+        composable(NavItem.FindIdActivity.route) {
+            FindId(navController = navController)
+
+        }
+        composable(NavItem.FindPswdActivity.route) {
+            Findpswd(navController = navController)
+
+        }
+        composable(NavItem.ProfileActivity.route) {
+            ProfileSetting(navController = navController)
+
+        }
+
+        composable(NavItem.ProfileActivity.route) {
+            AccountMtnc(navController = navController)
+
+        }
+
+
+
     }
 }
