@@ -13,7 +13,6 @@ import androidx.navigation.compose.rememberNavController
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.slembers.alarmony.feature.common.NavItem
 import com.slembers.alarmony.feature.common.ui.compose.CurrentInvite
-import com.slembers.alarmony.feature.common.ui.compose.SearchInviteMember
 import com.slembers.alarmony.network.service.MemberService
 import com.slembers.alarmony.viewModel.GroupViewModel
 

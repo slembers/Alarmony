@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -143,7 +144,8 @@ fun GroupScreen(
                                 start = 20.dp,
                                 top = 10.dp,
                                 bottom = 0.dp,
-                                end = 0.dp)
+                                end = 0.dp
+                            ).focusable(false)
                         )
                     }
                 )
@@ -195,33 +197,9 @@ fun GroupScreen(
                     navController = navController,
                     members = groupmembers ?: listOf()
                 )
-                GroupCard(
-                    title = { GroupTitle(
-                        title = NavItem.Sound.title,
-                        onClick = { navController.navigate( NavItem.Sound.route) },
-                        content = {
-                            Row(
-                                modifier = Modifier.height(50.dp),
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Text(
-                                    text = soundName,
-                                    style = TextStyle(
-                                        color = Color.Gray,
-                                        fontSize = 15.sp,
-                                        fontFamily = FontFamily.Monospace,
-                                        fontWeight = FontWeight.Bold,
-                                        fontStyle = FontStyle.Normal
-                                    )
-                                )
-                                Icon(
-                                    painter = painterResource(id = R.drawable.arrow_forward),
-                                    contentDescription = null,
-                                    modifier = Modifier.padding(2.dp)
-                                )
-                            }
-                        }
-                    )}
+                GroupSound(
+                    navController = navController,
+                    sound = soundName,
                 )
                 GroupCard(
                     title = { GroupTitle(
@@ -285,30 +263,9 @@ fun GroupScreen(
                         }
                     )},
                 )
-                GroupCard(
-                    title = { GroupTitle(
-                        title = "볼륨",
-                        content = {
-                            Row(
-                                modifier = Modifier
-                                    .height(50.dp)
-                                    .padding(5.dp)
-                                    .weight(1f),
-                                verticalAlignment = Alignment.CenterVertically,
-                            ) {
-                                Slider(
-                                    value = soundVolume,
-                                    onValueChange = { groupViewModel.onChangeVolumn(it) },
-                                    valueRange = 0f..15f,
-                                    enabled = true,
-                                    colors = SliderDefaults.colors(
-                                        thumbColor = MaterialTheme.colorScheme.background,
-                                        activeTrackColor = MaterialTheme.colorScheme.primary
-                                    ),
-                                )
-                            }
-                        }
-                    )}
+                GroupVolume(
+                    volume = soundVolume,
+                    setVolume = { groupViewModel.onChangeVolumn(it)}
                 )
             }
         }
