@@ -1,5 +1,6 @@
 package com.slembers.alarmony.report.controller;
 
+import com.slembers.alarmony.global.jwt.SecurityUtil;
 import com.slembers.alarmony.report.dto.ReportDto;
 import com.slembers.alarmony.report.dto.request.ReportRequestDto;
 import com.slembers.alarmony.report.dto.response.ReportResponseDto;
@@ -62,7 +63,7 @@ public class ReportController {
 
         ReportDto reportDto = ReportDto.builder()
             .reportType(reportRequestDto.getReportType())
-            .reporterUsername("subin")
+            .reporterUsername(SecurityUtil.getCurrentUsername())
             .reportedNickname(reportRequestDto.getReportedNickname())
             .content(reportRequestDto.getContent())
             .build();
