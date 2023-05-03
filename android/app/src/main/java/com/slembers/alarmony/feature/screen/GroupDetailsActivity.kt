@@ -24,7 +24,7 @@ import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.slembers.alarmony.feature.common.CardBox
 import com.slembers.alarmony.feature.common.NavItem
 import com.slembers.alarmony.feature.common.ui.compose.GroupTitle
-import com.slembers.alarmony.feature.group.GroupToolBar
+import com.slembers.alarmony.feature.ui.group.GroupToolBar
 
 @ExperimentalMaterial3Api
 @ExperimentalGlideComposeApi

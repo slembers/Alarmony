@@ -1,4 +1,4 @@
-package com.slembers.alarmony.feature.group
+package com.slembers.alarmony.feature.ui.group
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.BoxWithConstraints

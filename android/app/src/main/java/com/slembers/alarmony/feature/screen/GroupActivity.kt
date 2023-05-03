@@ -53,6 +53,11 @@ import com.slembers.alarmony.feature.common.NavItem
 import com.slembers.alarmony.feature.common.ui.compose.GroupCard
 import com.slembers.alarmony.feature.common.ui.compose.GroupSubjet
 import com.slembers.alarmony.feature.common.ui.compose.GroupTitle
+import com.slembers.alarmony.feature.ui.group.GroupBottomButtom
+import com.slembers.alarmony.feature.ui.group.GroupInvite
+import com.slembers.alarmony.feature.ui.group.GroupSound
+import com.slembers.alarmony.feature.ui.group.GroupToolBar
+import com.slembers.alarmony.feature.ui.group.GroupVolume
 import com.slembers.alarmony.network.service.GroupService
 import com.slembers.alarmony.viewModel.GroupViewModel
 

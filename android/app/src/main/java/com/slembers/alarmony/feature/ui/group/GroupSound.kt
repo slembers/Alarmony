@@ -1,4 +1,4 @@
-package com.slembers.alarmony.feature.group
+package com.slembers.alarmony.feature.ui.group
 
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.height
