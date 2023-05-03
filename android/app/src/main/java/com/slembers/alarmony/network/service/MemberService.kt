@@ -35,10 +35,10 @@ object MemberService {
                 if(response.isSuccessful) {
                     Log.d("success", "[로그인] 성공하였습니다.")
                     Log.d("success", "[로그인] 토큰 타입 : ${response.body()?.tokenType}.")
-                    Log.d("AccessToken", "[로그인] 엑세스 토큰 : ${response.body()?.AccessToken}")
-                    Log.d("RefreshToken", "[로그인] 리플래쉬 토큰 : ${response.body()?.RefreshToken}")
-                    MainActivity.prefs.setString("accessToken", response.body()?.AccessToken!!)
-                    MainActivity.prefs.setString("refreshToken", response.body()?.AccessToken!!)
+                    Log.d("AccessToken", "[로그인] 엑세스 토큰 : ${response.body()?.accessToken}")
+                    Log.d("RefreshToken", "[로그인] 리플래쉬 토큰 : ${response.body()?.refreshToken}")
+                    MainActivity.prefs.setString("accessToken", response.body()?.accessToken!!)
+                    MainActivity.prefs.setString("refreshToken", response.body()?.refreshToken!!)
                 } else {
                     Log.d("Failed", "로그인 통신하였습니다.")
                 }
