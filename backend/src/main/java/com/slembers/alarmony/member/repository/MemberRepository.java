@@ -53,16 +53,21 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
      * @param keyword 검색할 키워드
      * @return 초대 가능한 멤버 목록
      */
-    @Query("SELECT new com.slembers.alarmony.member.dto.MemberInfoDto(m.nickname, m.profileImgUrl) "
-            + "FROM member m LEFT JOIN member_alarm ma ON m.id = ma.member.id "
-            + "WHERE (ma.alarm.id is null OR ma.alarm.id <> :groupId) "
-            + "AND (m.nickname LIKE CONCAT('%', :keyword, '%') OR m.email LIKE CONCAT('%', :keyword, '%')) "
-            + "ORDER BY "
-            + "CASE WHEN m.nickname = :keyword THEN 0 "
-            + "WHEN m.nickname LIKE CONCAT(:keyword, '%') THEN 1 "
-            + "WHEN m.nickname LIKE CONCAT('%', :keyword, '%') THEN 2 "
-            + "WHEN m.nickname LIKE CONCAT('%', :keyword) THEN 3 "
-            + "ELSE 4 END")
+
+    @Query("SELECT distinct new com.slembers.alarmony.member.dto.MemberInfoDto(m.nickname, m.profileImgUrl) "
+        + "FROM member m "
+        + "WHERE (m.nickname LIKE CONCAT('%', :keyword, '%') OR m.email LIKE CONCAT('%', :keyword, '%')) "
+        + "AND m.id NOT IN ( "
+        + "SELECT ma.member.id "
+        + "FROM member_alarm ma "
+        + "WHERE (ma.alarm.id IS NULL OR ma.alarm.id = :groupId)"
+        + ") "
+        + "ORDER BY "
+        + "CASE WHEN m.nickname = :keyword THEN 0 "
+        + "WHEN m.nickname LIKE CONCAT(:keyword, '%') THEN 1 "
+        + "WHEN m.nickname LIKE CONCAT('%', :keyword, '%') THEN 2 "
+        + "WHEN m.nickname LIKE CONCAT('%', :keyword) THEN 3 "
+        + "ELSE 4 END")
     List<MemberInfoDto> findMembersWithGroupAndTeamByGroupId(@Param("groupId") Long groupId,
                                                              @Param("keyword") String keyword);
 
