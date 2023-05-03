@@ -3,6 +3,7 @@ package com.slembers.alarmony.member.service;
 import com.slembers.alarmony.global.execption.CustomException;
 import com.slembers.alarmony.global.jwt.JwtTokenProvider;
 import com.slembers.alarmony.global.redis.service.RedisUtil;
+import com.slembers.alarmony.member.dto.request.FindMemberIdDto;
 import com.slembers.alarmony.member.dto.request.ReissueTokenDto;
 import com.slembers.alarmony.member.dto.request.SignUpDto;
 import com.slembers.alarmony.member.dto.response.CheckDuplicateDto;
@@ -16,7 +17,10 @@ import org.modelmapper.ModelMapper;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.mail.MessagingException;
 import javax.transaction.Transactional;
+import java.util.HashMap;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -79,6 +83,8 @@ public class MemberServiceImpl implements MemberService {
      */
     @Override
     public CheckDuplicateDto checkForDuplicateEmail(String email) {
+
+        //TODO: 얘 리펙토링 필요한거 같음 리턴을 dto로 하면 안될듯
         return CheckDuplicateDto.builder().isDuplicated(memberRepository.existsByEmail(email)).build();
     }
 
@@ -130,7 +136,7 @@ public class MemberServiceImpl implements MemberService {
             String accessToken = jwtTokenProvider.generateAccessToken(member);
             String refreshToken = jwtTokenProvider.generateRefreshToken(member);
 
-            return new TokenResponseDto("bearer",accessToken, refreshToken);
+            return new TokenResponseDto("bearer", accessToken, refreshToken);
 
         } else {  //일치하지 않으면
             log.error("[Refresh Controller] Refresh Token값이 일치하지 않습니다.");
@@ -143,7 +149,7 @@ public class MemberServiceImpl implements MemberService {
     public void putRegistrationToken(String username, String registrationToken) {
         Member member = memberRepository.findByUsername(username)
                 .orElseThrow(() -> new CustomException(MemberErrorCode.MEMBER_NOT_FOUND));
-        if(registrationToken == null || registrationToken.length() == 0)
+        if (registrationToken == null || registrationToken.length() == 0)
             throw new CustomException(MemberErrorCode.MEMBER_REGISTRATION_TOKEN_WRONG);
 
         try {
@@ -152,5 +158,24 @@ public class MemberServiceImpl implements MemberService {
         } catch (Exception e) {
             throw new CustomException(MemberErrorCode.MEMBER_REGISTRATION_TOKEN_WRONG);
         }
+    }
+
+    /**
+     * 아이디 찾기
+     *
+     * @param findMemberIdDto 회원 이메일
+     */
+
+    @Override
+    public void findMemberId(FindMemberIdDto findMemberIdDto) throws MessagingException {
+
+        Member member = memberRepository.findMemberByEmail(findMemberIdDto.getEmail())
+                .orElseThrow(() -> new CustomException(MemberErrorCode.EMAIL_NOT_FOUND));
+
+        Map<String, String> values = new HashMap<>();
+        values.put("username", member.getUsername());
+
+        emailVerifyService.sendTemplateEmail("알라모니 아이디 찾기", findMemberIdDto.getEmail(), "findId",values);
+
     }
 }
