@@ -24,7 +24,7 @@ interface MemberRepository {
     ) : Call<LoginResponseDto>
 
 //    회원가입
-    @POST("members")
+    @POST("members/sign-up")
     fun signup(
         @Body signupDto : SignupRequest
     ) : Call<SignupResponseDto>

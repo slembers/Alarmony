@@ -59,7 +59,7 @@ fun NavController(
 
         }
 
-        composable(NavItem.ProfileActivity.route) {
+        composable(NavItem.AccountMtnc.route) {
             AccountMtnc(navController = navController)
 
         }
