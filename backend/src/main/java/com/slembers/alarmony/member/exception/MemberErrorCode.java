@@ -10,6 +10,7 @@ public enum MemberErrorCode implements ErrorCode {
 
     MEMBER_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 멤버입니다."),
     EMAIL_DUPLICATED(HttpStatus.OK, "중복되는 이메일 입니다."),
+    EMAIL_NOT_FOUND(HttpStatus.NOT_FOUND,"가입되지 않은 이메일 입니다."),
     ID_DUPLICATED(HttpStatus.OK, "중복되는 아이디 입니다."),
 
     MEMBER_NOT_ALLOW(HttpStatus.UNAUTHORIZED,"가입 인증이 완료되지 않았습니다. 이메일을 확인해 주세요"),

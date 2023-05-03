@@ -4,21 +4,29 @@ import com.slembers.alarmony.global.execption.CustomException;
 import com.slembers.alarmony.global.redis.service.RedisUtil;
 import com.slembers.alarmony.global.redis.service.exception.RedisErrorCode;
 import com.slembers.alarmony.global.util.UrlInfo;
-import com.slembers.alarmony.member.dto.vo.MemberVerificationDto;
 import com.slembers.alarmony.member.entity.AuthorityEnum;
 import com.slembers.alarmony.member.entity.Member;
 import com.slembers.alarmony.member.exception.EmailVerifyErrorCode;
 import com.slembers.alarmony.member.exception.MemberErrorCode;
 import com.slembers.alarmony.member.repository.MemberRepository;
-import io.lettuce.core.RedisCommandExecutionException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.mail.MailException;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import org.thymeleaf.context.Context;
+import org.thymeleaf.spring5.SpringTemplateEngine;
 
-import javax.naming.ldap.Rdn;
+import javax.mail.MessagingException;
+import javax.mail.internet.MimeMessage;
 import javax.transaction.Transactional;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 
@@ -32,6 +40,7 @@ public class EmailVerifyServiceImpl implements EmailVerifyService {
     private final RedisUtil redisUtil;
     private final MemberRepository memberRepository;
     private final UrlInfo urlInfo;
+    private final SpringTemplateEngine templateEngine;
 
     /**
      * 이메일 보내기
@@ -42,12 +51,56 @@ public class EmailVerifyServiceImpl implements EmailVerifyService {
      */
     @Override
     public void sendMail(String to, String sub, String text) {
+
         SimpleMailMessage message = new SimpleMailMessage();
         message.setTo(to);
         message.setSubject(sub);
         message.setText(text);
+
+        try {
+            emailSender.send(message);
+        } catch (MailException e) {
+            log.error("이메일 전송 실패 " + e.getMessage());
+            throw new CustomException(EmailVerifyErrorCode.EMAIL_INTERNAL_ERROR);
+        }
+
+    }
+
+    /**
+     * 이메일 발송 함수
+     * @param title 이메일 제목
+     * @param to 받는 사람
+     * @param templateName 이메일 템플릿
+     * @param values 이메일에 들어가는 값
+     * @throws MessagingException
+     */
+    @Async
+    public void sendTemplateEmail(String title, String to, String templateName, Map<String, String> values) throws MessagingException {
+
+        MimeMessage message = emailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(message, true);
+
+        //메일 제목 설정
+        helper.setSubject(title);
+
+        //수신자 설정
+        helper.setTo(to);
+
+        //템플릿에 전달할 데이터 설정
+        Context context = new Context();
+        values.forEach(context::setVariable);
+
+        //메일 내용 설정 : 템플릿 프로세스
+        String html = templateEngine.process(templateName, context);
+        helper.setText(html, true);
+
+        helper.addInline("alarmonyLogo", new ClassPathResource("static/image/alarmonyLogo.png"));
+
+        //메일 보내기
         emailSender.send(message);
     }
+
+
 
     /**
      * 인증 이메일 보내기
@@ -68,14 +121,8 @@ public class EmailVerifyServiceImpl implements EmailVerifyService {
             throw new CustomException(RedisErrorCode.REDIS_ERROR_CODE);
         }
 
-        try {
-            sendMail(email, "알라모니 회원가입 인증 메일", verificationLink + "/" + uuid);
-            log.info(email + " 로 이메일 전송 완료");
-        } catch (Exception e) {
-            // 인증 실패 예외 처리
-            log.error("이메일 전송 실패 " + e.getMessage());
-            throw new CustomException(EmailVerifyErrorCode.EMAIL_INTERNAL_ERROR);
-        }
+        sendMail(email, "알라모니 회원가입 인증 메일", verificationLink + "/" + uuid);
+        log.info(email + " 로 이메일 전송 완료");
 
 
     }
@@ -115,4 +162,6 @@ public class EmailVerifyServiceImpl implements EmailVerifyService {
         log.info(username + "의 ROLE_USER로 권한 변경");
 
     }
+
+
 }

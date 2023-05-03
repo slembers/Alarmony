@@ -16,81 +16,93 @@ import org.springframework.util.StringUtils;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
-
 import java.security.Key;
 import java.util.*;
 import java.util.stream.Collectors;
 
 import org.springframework.security.core.userdetails.User;
-
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 
 /**
- * [JwtProvider]
- * 사용자 정보를 기반으로 JWT를 생성
- * 이후 요청에서 JWT를 검증하여 인증을 수행
+ * Jwt 생성 및 검증
  */
 @Component
 @RequiredArgsConstructor
 @Slf4j
 public class JwtTokenProvider {
 
-    public static final String ACCESS_TOKEN = "Access_Token";
-    public static final String REFRESH_TOKEN = "Refresh_Token";
     private final RedisUtil redisUtil;
-
 
     @Value("${jwt.secret}")
     private String secretKey;
     private Key key;
 
 
-    // bean으로 등록 되면서 딱 한번 실행된다.
     @PostConstruct
     public void init() {
-        log.info("init 실행");
+        log.info("[JwtTokenProvider 생성 init]");
         byte[] bytes = Base64.getDecoder().decode(secretKey);
         key = Keys.hmacShaKeyFor(bytes);
     }
 
-
-    private static Date createExpireDateForOneMonth() {
-        // 토큰 만료시간은 30일으로 설정
+    /**
+     * 일 수로 만료시간을 생성
+     *
+     * @param days 일 수
+     * @return Date 만료날짜
+     */
+    private static Date createExpireDateWithDays(int days) {
         Calendar c = Calendar.getInstance();
-        c.add(Calendar.DATE, 30);
+        c.add(Calendar.DATE, days);
         return c.getTime();
     }
 
 
-    public Date createExpireDateForThreeHours() {
+    /**
+     * 밀리초로 만료시간을 생성
+     *
+     * @param Milliseconds 밀리 초
+     * @return Date 만료날짜
+     */
+    public Date createExpireDateWithMilliSeconds(long Milliseconds) {
         long nowMillis = System.currentTimeMillis();
-        long expireMillis = nowMillis + (3 * 60 * 60 * 1000); // 3시간(180분) 후의 밀리초 단위 시간
-        // long expireMillis = nowMillis + (1 * 60 * 1000); // 1분(60초) 후의 밀리초 단위 시간
-
+        long expireMillis = nowMillis + (Milliseconds);
         return new Date(expireMillis);
     }
 
-    //access Token 발급
+    /**
+     * Access Token 발급
+     *
+     * @param member 사용자 Entity
+     * @return Access Token
+     * 유효기간 : 3시간
+     */
     public String generateAccessToken(Member member) {
         JwtBuilder builder = Jwts.builder()
                 .setClaims(createClaims(member))
                 .setSubject(member.getUsername())
                 .setHeader(createHeader())
-                .setExpiration(createExpireDateForThreeHours())
+                .setExpiration(createExpireDateWithMilliSeconds(3 * 60 * 60 * 1000))
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .signWith(key, SignatureAlgorithm.HS256);
 
         return builder.compact();
     }
 
-    //Refresh Token 발급
+    /**
+     * Refresh Token 발급
+     *
+     * @param member 사용자 Entity
+     * @return Refresh Token
+     * 유효기간 14일 (2주)
+     */
     public String generateRefreshToken(Member member) {
         JwtBuilder builder = Jwts.builder()
                 .setSubject(member.getUsername())
                 .setHeader(createHeader())
                 .setClaims(createClaims(member))
-                .setExpiration(createExpireDateForOneMonth())
+                .setExpiration(createExpireDateWithDays(14))
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .signWith(key, SignatureAlgorithm.HS256);
 
@@ -113,8 +125,6 @@ public class JwtTokenProvider {
         //지금 당장에는 권한만 줘도되지만 나중에 다른 정보를 받는다 하면 ...  그래서 따로 수정안함.
         Map<String, Object> claims = new HashMap<>();
 
-        //claims.put("email", user.getEmail());
-        //member.getAuthority()는 Enum타입임.
         claims.put("role", member.getAuthority().toString());
 
         return claims;

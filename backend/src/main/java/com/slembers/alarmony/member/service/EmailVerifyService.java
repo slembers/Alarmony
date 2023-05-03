@@ -1,5 +1,8 @@
 package com.slembers.alarmony.member.service;
 
+import javax.mail.MessagingException;
+import java.util.Map;
+
 public interface EmailVerifyService {
 
 
@@ -18,7 +21,7 @@ public interface EmailVerifyService {
      * @param username 유저 아이디
      * @param email    이메일
      **/
-    public void sendVerificationMail(String username, String email);
+    void sendVerificationMail(String username, String email);
 
     /**
      * 이메일 인증 확인하기
@@ -27,5 +30,6 @@ public interface EmailVerifyService {
      */
     void verifyEmail(String key);
 
+    void sendTemplateEmail(String title, String to, String templateName, Map<String, String> values) throws MessagingException;
 
 }
