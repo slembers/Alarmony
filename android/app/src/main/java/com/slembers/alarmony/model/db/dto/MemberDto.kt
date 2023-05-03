@@ -1,6 +1,8 @@
 package com.slembers.alarmony.model.db.dto
 
-class MemberDto (
-    private val nickname : String,
-    private val profile_img : String
+import com.google.gson.annotations.SerializedName
+
+data class MemberDto (
+    @SerializedName("nickname") val nickname : String,
+    @SerializedName("profileImg") val profileImg : String
 )
