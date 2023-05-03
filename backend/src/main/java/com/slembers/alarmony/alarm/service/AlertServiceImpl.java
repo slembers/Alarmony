@@ -131,22 +131,9 @@ public class AlertServiceImpl implements AlertService {
     public AlertListResponseDto getAlertList(String username) {
         Member member = memberRepository.findByUsername(username)
             .orElseThrow(() -> new CustomException(MemberErrorCode.MEMBER_NOT_FOUND));
-
         try {
-            List<Alert> alerts = alertRepository.findAllByReceiver(member);
-            List<AlertDto> alertDtos = new ArrayList<>();
-
-            alerts.forEach(alert ->
-                alertDtos.add(AlertDto.builder()
-                    .id(alert.getId())
-                    .profileImg(alert.getSender().getProfileImgUrl())
-                    .content(alert.getContent())
-                    .type(alert.getType().name())
-                    .build()
-                )
-            );
+            List<AlertDto> alertDtos = alertRepository.findMemberAlertDtos(member);
             return AlertListResponseDto.builder().alerts(alertDtos).build();
-
         } catch (Exception e) {
             throw new CustomException(AlertErrorCode.ALERT_NOT_FOUND);
         }
