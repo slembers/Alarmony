@@ -22,9 +22,10 @@ import com.slembers.alarmony.member.entity.Member;
 import com.slembers.alarmony.member.exception.MemberErrorCode;
 import com.slembers.alarmony.member.repository.MemberRepository;
 
-import java.util.ArrayList;
 import java.util.List;
 
+import java.util.Optional;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -48,11 +49,11 @@ public class AlertServiceImpl implements AlertService {
     @Override
     public void inviteMemberToGroup(InviteMemberSetToGroupDto inviteMemberSetToGroupDto) {
 
-        List<Member> validMemberList = new ArrayList<>();
-        for (String nickname : inviteMemberSetToGroupDto.getNicknames()) {
-            memberRepository.findByNickname(nickname)
-                .ifPresent(validMemberList::add);
-        }
+        List<Member> validMemberList = inviteMemberSetToGroupDto.getNicknames().stream()
+            .map(memberRepository::findByNickname)
+            .filter(Optional::isPresent)
+            .map(Optional::get)
+            .collect(Collectors.toList());
 
         Member sender = memberRepository.findByUsername(inviteMemberSetToGroupDto.getSender())
             .orElseThrow(() -> new CustomException(MemberErrorCode.MEMBER_NOT_FOUND));
@@ -60,18 +61,15 @@ public class AlertServiceImpl implements AlertService {
         Alarm alarm = alarmRepository.findById(inviteMemberSetToGroupDto.getGroupId())
             .orElseThrow(() -> new CustomException(AlarmErrorCode.ALARM_NOT_FOUND));
 
-        for (Member receiver : validMemberList) {
-            sendInviteAlert(
-                Alert.builder()
-                    .type(AlertTypeEnum.INVITE)
-                    .content(String.format("'%s' 그룹 초대입니다.'",
-                        alarm.getTitle()))
-                    .sender(sender)
-                    .receiver(receiver)
-                    .alarm(alarm)
-                    .build()
-            );
-        }
+        validMemberList.stream()
+            .map(receiver -> Alert.builder()
+                .type(AlertTypeEnum.INVITE)
+                .content(String.format("'%s' 그룹 초대입니다.'", alarm.getTitle()))
+                .sender(sender)
+                .receiver(receiver)
+                .alarm(alarm)
+                .build())
+            .forEach(this::sendInviteAlert);
     }
 
     /**

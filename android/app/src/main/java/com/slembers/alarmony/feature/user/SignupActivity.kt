@@ -77,23 +77,10 @@ fun SignupScreen(navController: NavController) {
                     ),
 
                     modifier = Modifier
-                        .fillMaxWidth()
-////                .focusRequester(focusRequester)
-//                        .onFocusEvent {
-//                            ID.value = ""
-//                        }
-                    ,
+                        .fillMaxWidth(),
                     singleLine = true,
                     maxLines = 1,
-//            onFocusChange = { focusState: FocusState ->
-//                if (focusState.isFocused) {
-//                    ID.value = ""
-//                } else {
-//                    if (ID.value.isEmpty()) {
-//                        ID.value = "영문, 숫자 5-11자"
-//                    }
-//                }
-//            }
+
                 )
 
 
@@ -109,10 +96,6 @@ fun SignupScreen(navController: NavController) {
                     modifier = Modifier.fillMaxWidth(),
                     singleLine = true,
                     maxLines = 1,
-//            보안상 이유로 가리기
-//            visualTransformation = PasswordVisualTransformation(),
-//            아이콘 클리글 통해 비밀번호 보이게하기(클릭하고 있는 동안 보이게 하면 더 멋진 UI가 될듯!)
-//            아이콘은 tailingIcon사용
                     visualTransformation = if (passwordVisibility1) VisualTransformation.None else PasswordVisualTransformation(),
                     trailingIcon = {
                         IconButton(onClick = { passwordVisibility1 = !passwordVisibility1 }) {
@@ -122,8 +105,6 @@ fun SignupScreen(navController: NavController) {
                             )
                         }
                     }
-
-                    //            focusRequester = focusRequester
                 )
                 TextField(
                     value = passwordConfirm.value,
@@ -135,9 +116,7 @@ fun SignupScreen(navController: NavController) {
                     ),
                     modifier = Modifier.fillMaxWidth(),
                     singleLine = true,
-//            포커스가 바뀌면 입력창 안보이게 하기!
                     maxLines = 1,
-//            visualTransformation = PasswordVisualTransformation(),
                     visualTransformation = if (passwordVisibility2) VisualTransformation.None else PasswordVisualTransformation(),
                     trailingIcon = {
                         IconButton(onClick = { passwordVisibility2 = !passwordVisibility2 }) {
@@ -182,18 +161,7 @@ fun SignupScreen(navController: NavController) {
                     label = {Text(text = "닉네임")},
                     singleLine = true,
                     maxLines = 1,
-
-
-
                     )
-
-
-
-
-
-
-
-
 
                 Button(
                     onClick = {

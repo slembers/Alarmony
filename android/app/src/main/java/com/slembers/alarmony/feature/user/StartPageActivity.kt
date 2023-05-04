@@ -3,6 +3,7 @@ package com.slembers.alarmony.feature.user
 
 import android.os.Bundle
 import android.util.Log
+import android.widget.Toast
 
 
 import androidx.activity.compose.setContent
@@ -30,6 +31,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.TextField
 import androidx.compose.material.rememberScaffoldState
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.BlendMode.Companion.Screen
 
@@ -159,7 +161,12 @@ fun LoginScreen(navController: NavController) {
 //MutableState<String>와 String은 형식이 다르기에 String 값을 보내기 위해 .value를 붙여준다.
             onClick = {
                 Log.d("확인", "${idState.value}, ${passwordState.value} +로그인")
-                      login(idState.value, passwordState.value)
+                      login(idState.value, passwordState.value, navController, context)
+//                아이디 비밀번호 초기화
+                idState.value =""
+                passwordState.value=""
+
+
 
             },
             modifier = Modifier

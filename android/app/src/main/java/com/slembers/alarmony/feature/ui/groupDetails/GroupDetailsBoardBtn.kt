@@ -1,4 +1,4 @@
-package com.slembers.alarmony.feature.groupDetails
+package com.slembers.alarmony.feature.ui.groupDetails
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Campaign

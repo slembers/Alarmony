@@ -20,6 +20,7 @@ import com.slembers.alarmony.feature.user.ProfileSetting
 import com.slembers.alarmony.feature.user.SignupScreen
 import com.slembers.alarmony.feature.user.AccountMtnc
 import com.slembers.alarmony.feature.user.Routes
+import com.slembers.alarmony.viewModel.GroupViewModel
 import com.slembers.alarmony.viewModel.LoginViewModel
 
 
@@ -29,23 +30,28 @@ import com.slembers.alarmony.viewModel.LoginViewModel
 fun NavController(
     navController : NavHostController = rememberNavController()
 ) {
+
+    val groupModel : GroupViewModel = viewModel()
+
     NavHost(
         modifier = Modifier.fillMaxSize(),
         navController = navController,
 //        startDestination = NavItem.Group.route
-        startDestination = NavItem.LoginScreen.route
+        startDestination = NavItem.Group.route
     ) {
 
-        composable( route = NavItem.Group.route ) { GroupScreen( navController = navController) }
-        composable( route = NavItem.Sound.route ) { SoundScreen(navController) }
-        composable( route = NavItem.GroupInvite.route ) { InviteScreen(navController) }
-
-        composable(NavItem.LoginScreen.route) {LoginScreen(navController = navController)}
-        composable(NavItem.FindIdActivity.route) {FindId(navController = navController) }
-        composable(NavItem.Signup.route) {
-            SignupScreen(navController = navController)
-
+        // 그룹생성 페이지
+        composable( route = NavItem.Group.route ) {
+            GroupScreen( navController = navController, groupModel )
         }
+        composable( route = NavItem.Sound.route ) { SoundScreen(navController) }
+        composable( route = NavItem.GroupInvite.route ) { navBackStackEntry ->
+            InviteScreen(navController) }
+        // 로그인 페이지
+        composable( route = NavItem.LoginScreen.route) {LoginScreen(navController = navController)}
+        composable( route = NavItem.FindIdActivity.route) {FindId(navController = navController) }
+        // 회원가입 페이지
+        composable( route = NavItem.Signup.route) { SignupScreen(navController = navController) }
         composable(NavItem.FindIdActivity.route) {
             FindId(navController = navController)
 
@@ -59,7 +65,7 @@ fun NavController(
 
         }
 
-        composable(NavItem.ProfileActivity.route) {
+        composable(NavItem.AccountMtnc.route) {
             AccountMtnc(navController = navController)
 
         }
