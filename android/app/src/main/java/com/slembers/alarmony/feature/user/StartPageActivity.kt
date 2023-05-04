@@ -35,7 +35,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.BlendMode.Companion.Screen
-
+import androidx.compose.material.Checkbox
 
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
@@ -94,29 +94,13 @@ class StartPageActivity : AppCompatActivity() {
     }
 }
 
-
-
-@Preview
-@Composable
-
-//fun extra(navController: NavController) {
-fun extra() {
-
-
-
-
-}
-
-
-
-
-
 @OptIn(ExperimentalGlideComposeApi::class)
 //위 @OptIn(ExperimentalGlideComposeApi::class)이 회색으로 나오는 이유는
-//사요오디지 않아서가 아니라 실험적이고 불안정한 기능이기 때문이다.
+//사용되지 않아서가 아니라 실험적이고 불안정한 기능이기 때문이다.
 @Composable
 @ExperimentalMaterial3Api
 fun LoginScreen(navController: NavController) {
+    val checkedState = remember { mutableStateOf(false) }
 
 
     val context = LocalContext.current
@@ -160,6 +144,30 @@ fun LoginScreen(navController: NavController) {
                 .fillMaxWidth()
                 .clip(RoundedCornerShape(20.dp))
         )
+//아래는 자동로그인 체크박스
+
+        Row(modifier = Modifier.padding(0.dp)) {
+            // Checkbox Composable을 사용하여 체크박스 UI를 생성
+            Checkbox(
+                checked = checkedState.value,
+                onCheckedChange = {
+                    checkedState.value = it
+                    if (it) {
+//                        prefs.setString("autoLogin", "true")
+//                        prefs.setBoolean("auto_login", true)
+                      Log.d("체크박스", "자동 로그인 온")
+                      Log.d("체크박스", "${prefs.getBoolean("auto_login", false)}")
+                    } else {
+//                        prefs.setBoolean("auto_login", false)
+                        Log.d("체크박스", "자동 로그인 오프")
+                        Log.d("체크박스", "${prefs.getBoolean("auto_login", false)}")
+
+                    }
+                }
+            )
+            Text(text = "자동 로그인 ")
+        }
+
 
 
 //        아래는 로그인을 위한 통신로직을 RetrofitClient에서 가져와서 수행
@@ -182,6 +190,9 @@ fun LoginScreen(navController: NavController) {
 
                           prefs.setString("accessToken", accessToken)
                           prefs.setString("refreshToken", refreshToken)
+                          prefs.setString("id",idState.value )
+                          prefs.setString("password",passwordState.value )
+                          prefs.setBoolean("auto_login", checkedState.value)
                           val token = prefs.getString("accessToken", "기본값")
                           Log.d("getstring확인", "${token}")
 

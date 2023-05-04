@@ -67,7 +67,9 @@ object MemberService {
         username: String,
         password:String,
         navController: NavController,
+//        이건 왜있는거야..
         context: Context,
+//        아래는 login을 import한 composable함수에서 데이터를 사용하기 위해 callback함수로 건네주는 데이터들
         resultCallback: (resultText: String, accessToken: String?, refreshToken: String? ) -> Unit
     ) {
         var resultText = ""
@@ -135,6 +137,83 @@ object MemberService {
         } catch ( e : Exception ) {
             println(e.message)
             Toast.makeText(context,"로그인에 실패했어요...", Toast.LENGTH_SHORT).show()
+
+        }
+        Log.d("Exit", "login <-- 로그인 종료")
+    }
+
+    @ExperimentalMaterial3Api
+    fun autoLogin(
+        username: String,
+        password:String,
+//        아래는 login을 import한 composable함수에서 데이터를 사용하기 위해 callback함수로 건네주는 데이터들
+        resultCallback: (resultText: String, accessToken: String?, refreshToken: String? ) -> Unit
+    ) {
+        var resultText = ""
+
+        try {
+            Log.d("Start", "login --> 로그인 시도")
+            memberApi.login(
+                LoginRequest(
+                    username = username,
+                    password = password
+                )
+            ).enqueue(object : Callback<LoginResponseDto> {
+                override fun onResponse(call: Call<LoginResponseDto>, response: Response<LoginResponseDto>) {
+                    var loginResult = response.body();
+
+
+                    Log.i("response", "${loginResult}")
+                    Log.i("accessToken", "${loginResult?.accessToken}")
+//로그인이 성공했을 경우 로직
+                    if(loginResult!!.status == null) {
+                        Log.d("response", "로그인 성공!")
+                        Log.d("response", "${loginResult.accessToken}")
+                        //                        토큰값 저장해야함
+
+
+                        resultText = "로그인 성공"
+                        resultCallback(resultText, loginResult.accessToken, loginResult.refreshToken)
+//                        토큰을 저장하는 코드 삽입
+
+                    } else if(loginResult!!.status!! == "401") {
+
+                        Log.d("response","비밀번호가 일치하지 않는다.")
+//                        팝업으로 알려주기
+//                        유저아이디와 비밀번호 입력창 초기화
+                        resultText = "비밀번호를 확인해주세요."
+                        resultCallback(resultText, loginResult.accessToken, loginResult.refreshToken)
+
+                    } else if(loginResult!!.status!! == "403") {
+                        Log.d("response","이메일 정보를 확인해 주세요.")
+                        resultText = "이메일을 확인해주세요."
+                        resultCallback(resultText, loginResult.accessToken, loginResult.refreshToken)
+
+                    } else if(loginResult!!.status!! == "404") {
+//                        Log.d("response","회원이 존재하지 않음.")
+                        resultText = "회원이 존재하지 않습니다."
+                        resultCallback(resultText, loginResult.accessToken, loginResult.refreshToken)
+                        Log.d("response",resultText)
+                    }
+
+                    Log.d("test", "여기까지옴")
+
+
+
+
+                }
+
+
+                override fun onFailure(call: Call<LoginResponseDto>, t: Throwable) {
+                    Log.i("", "로그인 실패하였습니다..")
+//                    토스트는 어차피 화면단에 보이는 거니까 로직만 서비스에 보내고 토스트는 액티비티에서 띄우기
+
+                }
+            })
+
+        } catch ( e : Exception ) {
+            println(e.message)
+
 
         }
         Log.d("Exit", "login <-- 로그인 종료")

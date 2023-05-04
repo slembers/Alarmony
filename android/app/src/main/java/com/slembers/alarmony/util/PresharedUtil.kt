@@ -16,4 +16,13 @@ class PresharedUtil(context : Context) {
         prefs.edit().putString(key,str).apply()
     }
 
+
+    fun setBoolean(key: String, value: Boolean?) {
+        prefs.edit().putBoolean(key, value ?: false).apply()
+    }
+
+    fun getBoolean(key : String,  value: Boolean) : Boolean {
+        return prefs.getBoolean(key, value)
+    }
+
 }
