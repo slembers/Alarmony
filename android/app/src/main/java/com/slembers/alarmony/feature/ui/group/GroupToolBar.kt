@@ -26,8 +26,8 @@ import com.slembers.alarmony.feature.common.NavItem
 @Composable
  @ExperimentalMaterial3Api
 fun GroupToolBar(
-    title : String = "페이지 제목",
-    navEvent : NavHostController = rememberNavController()
+    title: String = "페이지 제목",
+    navcontroller: NavHostController = rememberNavController()
 ) {
     TopAppBar(
         title = { Text(text = title)},
@@ -38,7 +38,7 @@ fun GroupToolBar(
             Icon(
                 painter = painterResource(id = R.drawable.baseline_arrow_back_24),
                 contentDescription = null,
-                modifier = Modifier.clickable { navEvent.navigate(NavItem.Group.route) }
+                modifier = Modifier.clickable { navcontroller.popBackStack() }
             )
         },
         colors = TopAppBarDefaults.mediumTopAppBarColors()

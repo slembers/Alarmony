@@ -11,26 +11,22 @@ import retrofit2.Response
 
 object GroupService {
 
-    fun addGroupAlarm() {
+    fun addGroupAlarm(
+        group: Group,
+        connection: (Boolean) -> Unit
+    ) {
 
-        val group = AlarmonyServer.groupApi
-        group.addGroupAlarm(
-            group = Group(
-                title = "그룹생성",
-                hour = 10,
-                minute = 0,
-                alarmDate = listOf(true,true,true,false,true,true,true,),
-                members = listOf(),
-                soundName = "잘자요. 타요",
-                soundVolume = 10f,
-                vibrate = false
-            )
+        val groupApi = AlarmonyServer.groupApi
+        groupApi.addGroupAlarm(
+            group = group
         ).enqueue(object: Callback<Unit> {
             override fun onResponse(call: Call<Unit>, response: Response<Unit>) {
                 if(response.isSuccessful) {
                     Log.d("success", "[그룹생성] 정상적으로 저장되었습니다.")
+                    connection(true)
                 } else {
-                    Log.d("failed", "[그룹생성] 정상적으로 저장되었습니다.")
+                    Log.d("failed", "[그룹생성] 저장에 실패하였습니다.")
+                    connection(false)
                 }
             }
 
@@ -43,7 +39,7 @@ object GroupService {
     fun searchMember(
         keyword : String,
         groupId : String? = null,
-        memberList : (MemberListDto) -> Unit
+        memberList : (MemberListDto?) -> Unit
     ) {
 
         val group = AlarmonyServer.groupApi
@@ -58,8 +54,8 @@ object GroupService {
             ) {
                 Log.i("response", "[그룹검색] ${response.code()}")
                 if(response.isSuccessful && response.body() != null) {
-                    Log.d("success", "[그룹검색] 검색 성공...")
-                    memberList(response.body()!!)
+                    Log.d("success", "[그룹검색] 검색 성공... : ${response.body()}")
+                    memberList(response.body())
                 }
             }
 
