@@ -8,7 +8,7 @@ import com.slembers.alarmony.alarm.dto.request.PutAlarmRecordTimeRequestDto;
 import com.slembers.alarmony.alarm.dto.response.AlarmListResponseDto;
 import com.slembers.alarmony.alarm.service.AlarmRecordService;
 import com.slembers.alarmony.alarm.service.AlarmService;
-import com.slembers.alarmony.global.jwt.SecurityUtil;
+import com.slembers.alarmony.global.security.util.SecurityUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

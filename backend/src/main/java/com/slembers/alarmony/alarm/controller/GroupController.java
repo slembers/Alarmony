@@ -9,7 +9,7 @@ import com.slembers.alarmony.alarm.service.AlarmRecordService;
 import com.slembers.alarmony.alarm.service.GroupService;
 import com.slembers.alarmony.alarm.service.AlertService;
 import com.slembers.alarmony.global.execption.CustomException;
-import com.slembers.alarmony.global.jwt.SecurityUtil;
+import com.slembers.alarmony.global.security.util.SecurityUtil;
 import com.slembers.alarmony.member.dto.MemberInfoDto;
 import java.util.HashMap;
 import java.util.List;

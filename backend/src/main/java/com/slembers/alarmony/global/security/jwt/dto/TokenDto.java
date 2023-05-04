@@ -1,4 +1,4 @@
-package com.slembers.alarmony.global.jwt.dto;
+package com.slembers.alarmony.global.security.jwt.dto;
 
 
 import lombok.Getter;

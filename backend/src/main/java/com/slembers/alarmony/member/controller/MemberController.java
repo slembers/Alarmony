@@ -1,7 +1,7 @@
 package com.slembers.alarmony.member.controller;
 
 
-import com.slembers.alarmony.global.jwt.SecurityUtil;
+import com.slembers.alarmony.global.security.util.SecurityUtil;
 import com.slembers.alarmony.member.dto.request.*;
 import com.slembers.alarmony.member.dto.response.CheckDuplicateDto;
 import com.slembers.alarmony.member.dto.response.TokenResponseDto;

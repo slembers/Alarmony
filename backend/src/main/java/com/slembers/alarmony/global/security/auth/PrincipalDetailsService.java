@@ -1,5 +1,6 @@
-package com.slembers.alarmony.global.jwt.auth;
+package com.slembers.alarmony.global.security.auth;
 
+import com.slembers.alarmony.global.security.auth.PrincipalDetails;
 import com.slembers.alarmony.member.entity.Member;
 import com.slembers.alarmony.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;

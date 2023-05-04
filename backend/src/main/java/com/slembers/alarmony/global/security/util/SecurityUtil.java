@@ -1,4 +1,4 @@
-package com.slembers.alarmony.global.jwt;
+package com.slembers.alarmony.global.security.util;
 
 import com.slembers.alarmony.global.execption.CustomException;
 import com.slembers.alarmony.member.exception.AuthErrorCode;

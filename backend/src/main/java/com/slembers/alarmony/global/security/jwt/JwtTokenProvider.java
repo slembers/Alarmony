@@ -1,4 +1,4 @@
-package com.slembers.alarmony.global.jwt;
+package com.slembers.alarmony.global.security.jwt;
 
 import com.slembers.alarmony.global.redis.service.RedisUtil;
 import com.slembers.alarmony.member.entity.Member;
@@ -121,8 +121,7 @@ public class JwtTokenProvider {
     }
 
     private Map<String, Object> createClaims(Member member) {
-        // 공개 클레임에 사용자의 이름과 이메일을 설정하여 정보를 조회할 수 있다.
-        //지금 당장에는 권한만 줘도되지만 나중에 다른 정보를 받는다 하면 ...  그래서 따로 수정안함.
+
         Map<String, Object> claims = new HashMap<>();
 
         claims.put("role", member.getAuthority().toString());

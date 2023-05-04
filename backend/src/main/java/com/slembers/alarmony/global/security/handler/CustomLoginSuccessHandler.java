@@ -1,9 +1,9 @@
-package com.slembers.alarmony.global.jwt.handler;
+package com.slembers.alarmony.global.security.handler;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.slembers.alarmony.global.jwt.AuthConstants;
-import com.slembers.alarmony.global.jwt.JwtTokenProvider;
-import com.slembers.alarmony.global.jwt.auth.PrincipalDetails;
+import com.slembers.alarmony.global.security.jwt.AuthConstants;
+import com.slembers.alarmony.global.security.jwt.JwtTokenProvider;
+import com.slembers.alarmony.global.security.auth.PrincipalDetails;
 import com.slembers.alarmony.global.redis.service.RedisUtil;
 import com.slembers.alarmony.member.dto.response.TokenResponseDto;
 import com.slembers.alarmony.member.entity.Member;

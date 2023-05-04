@@ -1,6 +1,6 @@
 package com.slembers.alarmony.report.controller;
 
-import com.slembers.alarmony.global.jwt.SecurityUtil;
+import com.slembers.alarmony.global.security.util.SecurityUtil;
 import com.slembers.alarmony.report.dto.ReportDto;
 import com.slembers.alarmony.report.dto.request.ReportRequestDto;
 import com.slembers.alarmony.report.dto.response.ReportResponseDto;
