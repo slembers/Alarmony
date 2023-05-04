@@ -24,7 +24,6 @@ import org.thymeleaf.spring5.SpringTemplateEngine;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 import javax.transaction.Transactional;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -68,38 +67,52 @@ public class EmailVerifyServiceImpl implements EmailVerifyService {
 
     /**
      * 이메일 발송 함수
-     * @param title 이메일 제목
-     * @param to 받는 사람
+     *
+     * @param title        이메일 제목
+     * @param to           받는 사람
      * @param templateName 이메일 템플릿
-     * @param values 이메일에 들어가는 값
+     * @param values       이메일에 들어가는 값
      * @throws MessagingException
      */
     @Async
-    public void sendTemplateEmail(String title, String to, String templateName, Map<String, String> values) throws MessagingException {
+    public void sendTemplateEmail(String title, String to, String templateName, Map<String, String> values) {
 
-        MimeMessage message = emailSender.createMimeMessage();
-        MimeMessageHelper helper = new MimeMessageHelper(message, true);
 
-        //메일 제목 설정
-        helper.setSubject(title);
+        try {
+            MimeMessage message = emailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message, true);
 
-        //수신자 설정
-        helper.setTo(to);
+            //메일 제목 설정
+            helper.setSubject(title);
 
-        //템플릿에 전달할 데이터 설정
-        Context context = new Context();
-        values.forEach(context::setVariable);
+            //수신자 설정
+            helper.setTo(to);
 
-        //메일 내용 설정 : 템플릿 프로세스
-        String html = templateEngine.process(templateName, context);
-        helper.setText(html, true);
+            //템플릿에 전달할 데이터 설정
+            Context context = new Context();
+            values.forEach(context::setVariable);
 
-        helper.addInline("alarmonyLogo", new ClassPathResource("static/image/alarmonyLogo.png"));
+            //메일 내용 설정 : 템플릿 프로세스
+            String html = templateEngine.process(templateName, context);
+            helper.setText(html, true);
+
+            helper.addInline("alarmonyLogo", new ClassPathResource("static/image/alarmonyLogo.png"));
+
+
+            emailSender.send(message);
+
+        } catch (MessagingException e) {
+            log.error("메세지 작성 에 문제 발생: " + e.getMessage());
+            throw new CustomException(EmailVerifyErrorCode.EMAIL_INTERNAL_ERROR);
+
+        } catch (MailException e) {
+            log.error("메일 보내기에 문제 발생: " + e.getMessage());
+            throw new CustomException(EmailVerifyErrorCode.EMAIL_INTERNAL_ERROR);
+        }
 
         //메일 보내기
-        emailSender.send(message);
-    }
 
+    }
 
 
     /**
@@ -110,9 +123,10 @@ public class EmailVerifyServiceImpl implements EmailVerifyService {
      **/
     @Override
     public void sendVerificationMail(String username, String email) {
-        String verificationLink = urlInfo.getAlarmonyUrl() + "/api/members/verify";
 
         UUID uuid = UUID.randomUUID();
+        String verificationLink = urlInfo.getAlarmonyUrl() + "/api/members/verify/" + uuid;
+
         try {
             redisUtil.setData(uuid.toString(), username);
         } catch (Exception e) {
@@ -121,7 +135,13 @@ public class EmailVerifyServiceImpl implements EmailVerifyService {
             throw new CustomException(RedisErrorCode.REDIS_ERROR_CODE);
         }
 
-        sendMail(email, "알라모니 회원가입 인증 메일", verificationLink + "/" + uuid);
+
+        Map<String, String> values = new HashMap<>();
+        values.put("username", username);
+        values.put("verify_link", verificationLink);
+
+        sendTemplateEmail("알라모니 회원가입 인증 메일", email, "Verify", values);
+
         log.info(email + " 로 이메일 전송 완료");
 
 

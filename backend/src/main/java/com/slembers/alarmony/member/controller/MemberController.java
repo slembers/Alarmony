@@ -2,10 +2,7 @@ package com.slembers.alarmony.member.controller;
 
 
 import com.slembers.alarmony.global.jwt.SecurityUtil;
-import com.slembers.alarmony.member.dto.request.FindMemberIdDto;
-import com.slembers.alarmony.member.dto.request.PutRegistrationTokenRequestDto;
-import com.slembers.alarmony.member.dto.request.ReissueTokenDto;
-import com.slembers.alarmony.member.dto.request.SignUpDto;
+import com.slembers.alarmony.member.dto.request.*;
 import com.slembers.alarmony.member.dto.response.CheckDuplicateDto;
 import com.slembers.alarmony.member.dto.response.TokenResponseDto;
 import com.slembers.alarmony.member.service.EmailVerifyService;
@@ -122,4 +119,10 @@ public class MemberController {
     /**
      * 비밀번호 찾기
      */
+    @PostMapping("/find-pw")
+    public ResponseEntity<String> findPassword (@RequestBody FindPasswordDto findPasswordDto) {
+
+        memberService.findMemberPassword(findPasswordDto);
+        return new ResponseEntity<>("임시 비밀번호 발급",HttpStatus.OK);
+    }
 }

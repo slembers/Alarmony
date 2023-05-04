@@ -1,6 +1,5 @@
 package com.slembers.alarmony.member.service;
 
-import javax.mail.MessagingException;
 import java.util.Map;
 
 public interface EmailVerifyService {
@@ -30,6 +29,6 @@ public interface EmailVerifyService {
      */
     void verifyEmail(String key);
 
-    void sendTemplateEmail(String title, String to, String templateName, Map<String, String> values) throws MessagingException;
+    void sendTemplateEmail(String title, String to, String templateName, Map<String, String> values);
 
 }

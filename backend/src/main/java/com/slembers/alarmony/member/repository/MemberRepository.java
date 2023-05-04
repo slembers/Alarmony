@@ -47,6 +47,13 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     Optional<Member> findMemberByEmail(String email);
 
     /**
+     * 아이디와 이메일을 기준으로 Member를 찾는다.
+     * @param username 회원 아이디
+     * @param email 회원 이메일
+     */
+    Optional<Member> findMemberByUsernameAndEmail(String username, String email);
+
+    /**
      * 그룹 id와 검색할 키워드로 초대 가능한 멤버 리스트를 찾는다. 그룹에 속한 멤버는 제외하고, 키워드가 들어간 멤버를 찾는다.
      *
      * @param groupId 그룹 id
@@ -54,21 +61,21 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
      * @return 초대 가능한 멤버 목록
      */
 
-    @Query("SELECT distinct new com.slembers.alarmony.member.dto.MemberInfoDto(m.nickname, m.profileImgUrl) "
-        + "FROM member m "
-        + "WHERE (m.nickname LIKE CONCAT('%', :keyword, '%') OR m.email LIKE CONCAT('%', :keyword, '%')) "
-        + "AND m.id NOT IN ( "
-        + "SELECT ma.member.id "
-        + "FROM member_alarm ma "
-        + "WHERE (ma.alarm.id IS NULL OR ma.alarm.id = :groupId)"
-        + ") "
-        + "ORDER BY "
-        + "CASE WHEN m.nickname = :keyword THEN 0 "
-        + "WHEN m.nickname LIKE CONCAT(:keyword, '%') THEN 1 "
-        + "WHEN m.nickname LIKE CONCAT('%', :keyword, '%') THEN 2 "
-        + "WHEN m.nickname LIKE CONCAT('%', :keyword) THEN 3 "
-        + "ELSE 4 END")
+    @Query(
+        "SELECT new com.slembers.alarmony.member.dto.MemberInfoDto(m.nickname, m.profileImgUrl) "
+            + "FROM member m "
+            + "LEFT OUTER JOIN member_alarm  ma ON m.id = ma.member.id AND (ma.alarm.id IS NULL OR ma.alarm.id = :groupId) "
+            + "WHERE m.id <> :memberId "
+            + "AND ma.member.id IS NULL "
+            + "AND (m.nickname LIKE CONCAT('%', :keyword, '%') OR m.email LIKE CONCAT('%', :keyword, '%')) "
+            + "ORDER BY "
+            + "CASE WHEN m.nickname = :keyword THEN 0 "
+            + "WHEN m.nickname LIKE CONCAT(:keyword, '%') THEN 1 "
+            + "WHEN m.nickname LIKE CONCAT('%', :keyword, '%') THEN 2 "
+            + "WHEN m.nickname LIKE CONCAT('%', :keyword) THEN 3 "
+            + "ELSE 4 END")
     List<MemberInfoDto> findMembersWithGroupAndTeamByGroupId(@Param("groupId") Long groupId,
-                                                             @Param("keyword") String keyword);
+        @Param("keyword") String keyword,
+        @Param("memberId") Long memberId);
 
 }
