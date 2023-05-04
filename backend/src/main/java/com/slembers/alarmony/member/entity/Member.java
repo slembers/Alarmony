@@ -57,6 +57,9 @@ public class Member {
 
     }
 
+    public void changePassword(String password){
+        this.password = password;
+    }
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
