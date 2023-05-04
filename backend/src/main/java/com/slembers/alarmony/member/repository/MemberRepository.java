@@ -47,6 +47,13 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     Optional<Member> findMemberByEmail(String email);
 
     /**
+     * 아이디와 이메일을 기준으로 Member를 찾는다.
+     * @param username 회원 아이디
+     * @param email 회원 이메일
+     */
+    Optional<Member> findMemberByUsernameAndEmail(String username, String email);
+
+    /**
      * 그룹 id와 검색할 키워드로 초대 가능한 멤버 리스트를 찾는다. 그룹에 속한 멤버는 제외하고, 키워드가 들어간 멤버를 찾는다.
      *
      * @param groupId 그룹 id

@@ -1,4 +1,4 @@
-package com.slembers.alarmony.feature.groupDetails
+package com.slembers.alarmony.feature.ui.groupDetails
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth

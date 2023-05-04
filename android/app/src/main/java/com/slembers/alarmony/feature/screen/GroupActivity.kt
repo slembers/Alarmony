@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -21,11 +22,8 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Slider
-import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TimeInput
@@ -44,27 +42,24 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.font.FontStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.slembers.alarmony.R
-import com.slembers.alarmony.data.memberList
 import com.slembers.alarmony.feature.common.NavItem
 import com.slembers.alarmony.feature.common.ui.compose.GroupCard
-import com.slembers.alarmony.feature.common.ui.compose.GroupInvite
 import com.slembers.alarmony.feature.common.ui.compose.GroupSubjet
 import com.slembers.alarmony.feature.common.ui.compose.GroupTitle
+import com.slembers.alarmony.feature.ui.group.GroupBottomButtom
+import com.slembers.alarmony.feature.ui.group.GroupInvite
+import com.slembers.alarmony.feature.ui.group.GroupSound
+import com.slembers.alarmony.feature.ui.group.GroupToolBar
+import com.slembers.alarmony.feature.ui.group.GroupVolume
 import com.slembers.alarmony.network.service.GroupService
 import com.slembers.alarmony.viewModel.GroupViewModel
-import com.slembers.alarmony.viewModel.LoginViewModel
 
 @Preview
 @Composable
@@ -72,14 +67,14 @@ import com.slembers.alarmony.viewModel.LoginViewModel
 @ExperimentalGlideComposeApi
 fun GroupScreen(
     navController : NavHostController = rememberNavController(),
-    groupViewModel : GroupViewModel = viewModel(),
-    loginViewModel : LoginViewModel = viewModel()
+    groupViewModel : GroupViewModel = viewModel()
 ) {
 
     val title by groupViewModel.title.observeAsState("")
     val timePickerState by groupViewModel.alarmTime.observeAsState(
         TimePickerState(14,0,false)
     )
+    val groupmembers by groupViewModel.groupMember.observeAsState()
     val isWeeks = remember{ mutableStateMapOf(
         "월" to true,
         "화" to true,
@@ -118,7 +113,7 @@ fun GroupScreen(
             GroupBottomButtom(
                 text = "저장",
                 onClick = {
-                    GroupService.addGroupAlarm(loginViewModel.access.value!!)
+                    GroupService.addGroupAlarm()
                 }
             )
         },
@@ -146,7 +141,8 @@ fun GroupScreen(
                                 start = 20.dp,
                                 top = 10.dp,
                                 bottom = 0.dp,
-                                end = 0.dp)
+                                end = 0.dp
+                            ).focusable(false)
                         )
                     }
                 )
@@ -194,47 +190,13 @@ fun GroupScreen(
                         }
                     }
                 )
-                GroupCard(
-                    title = { GroupTitle(
-                        title = NavItem.GroupInvite.title,
-                        content = {
-                            Icon(
-                                painter = painterResource(id = R.drawable.arrow_forward),
-                                contentDescription = null,
-                                modifier = Modifier.padding(2.dp)
-                            )},
-                        onClick = { navController.navigate( NavItem.GroupInvite.route )}
-                    )},
-                    content = { GroupInvite(
-                        profiles = memberList)}
+                GroupInvite(
+                    navController = navController,
+                    members = groupmembers ?: listOf()
                 )
-                GroupCard(
-                    title = { GroupTitle(
-                        title = NavItem.Sound.title,
-                        onClick = { navController.navigate( NavItem.Sound.route) },
-                        content = {
-                            Row(
-                                modifier = Modifier.height(50.dp),
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Text(
-                                    text = soundName,
-                                    style = TextStyle(
-                                        color = Color.Gray,
-                                        fontSize = 15.sp,
-                                        fontFamily = FontFamily.Monospace,
-                                        fontWeight = FontWeight.Bold,
-                                        fontStyle = FontStyle.Normal
-                                    )
-                                )
-                                Icon(
-                                    painter = painterResource(id = R.drawable.arrow_forward),
-                                    contentDescription = null,
-                                    modifier = Modifier.padding(2.dp)
-                                )
-                            }
-                        }
-                    )}
+                GroupSound(
+                    navController = navController,
+                    sound = soundName,
                 )
                 GroupCard(
                     title = { GroupTitle(
@@ -298,30 +260,9 @@ fun GroupScreen(
                         }
                     )},
                 )
-                GroupCard(
-                    title = { GroupTitle(
-                        title = "볼륨",
-                        content = {
-                            Row(
-                                modifier = Modifier
-                                    .height(50.dp)
-                                    .padding(5.dp)
-                                    .weight(1f),
-                                verticalAlignment = Alignment.CenterVertically,
-                            ) {
-                                Slider(
-                                    value = soundVolume,
-                                    onValueChange = { groupViewModel.onChangeVolumn(it) },
-                                    valueRange = 0f..15f,
-                                    enabled = true,
-                                    colors = SliderDefaults.colors(
-                                        thumbColor = MaterialTheme.colorScheme.background,
-                                        activeTrackColor = MaterialTheme.colorScheme.primary
-                                    ),
-                                )
-                            }
-                        }
-                    )}
+                GroupVolume(
+                    volume = soundVolume,
+                    setVolume = { groupViewModel.onChangeVolumn(it)}
                 )
             }
         }

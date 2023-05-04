@@ -2,7 +2,8 @@ package com.slembers.alarmony.network.service
 
 import android.util.Log
 import com.slembers.alarmony.model.db.Group
-import com.slembers.alarmony.model.db.dto.MemberResponseDto
+import com.slembers.alarmony.model.db.dto.MemberDto
+import com.slembers.alarmony.model.db.dto.MemberListDto
 import com.slembers.alarmony.network.api.AlarmonyServer
 import retrofit2.Call
 import retrofit2.Callback
@@ -10,9 +11,7 @@ import retrofit2.Response
 
 object GroupService {
 
-    fun addGroupAlarm( token : String ) {
-
-        Log.d("addGroup intro", "[그룹생성] token : $token")
+    fun addGroupAlarm() {
 
         val group = AlarmonyServer.groupApi
         group.addGroupAlarm(
@@ -41,33 +40,33 @@ object GroupService {
         })
     }
 
-    fun searchMember(keyword : String, groupId : String = "") : List<MemberResponseDto> {
+    fun searchMember(
+        keyword : String,
+        groupId : String? = null,
+        memberList : (MemberListDto) -> Unit
+    ) {
 
         val group = AlarmonyServer.groupApi
-        var list : List<MemberResponseDto> = emptyList()
 
         group.searchGroup(
             groupId = groupId,
             keyword = keyword
-        ).enqueue(object:Callback<List<MemberResponseDto>> {
+        ).enqueue(object:Callback<MemberListDto> {
             override fun onResponse(
-                call: Call<List<MemberResponseDto>>,
-                response: Response<List<MemberResponseDto>>
+                call: Call<MemberListDto>,
+                response: Response<MemberListDto>
             ) {
-                if(response.isSuccessful) {
+                Log.i("response", "[그룹검색] ${response.code()}")
+                if(response.isSuccessful && response.body() != null) {
                     Log.d("success", "[그룹검색] 검색 성공...")
-                    list = response.body()!!
-                } else {
-                    Log.d("failed", "[그룹검색] 검색 실패..")
-                    list = emptyList()
+                    memberList(response.body()!!)
                 }
             }
 
-            override fun onFailure(call: Call<List<MemberResponseDto>>, t: Throwable) {
-                Log.d("disconnection", "[그룹검색] 연결되지 않았습니다.")
+            override fun onFailure(call: Call<MemberListDto>, t: Throwable) {
+                Log.d("disconnection", "[그룹검색] 연결되지 않았습니다. : ${t.message} : []")
             }
         })
 
-        return list
     }
 }
