@@ -58,8 +58,9 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
         "SELECT new com.slembers.alarmony.member.dto.MemberInfoDto(m.nickname, m.profileImgUrl) "
             + "FROM member m "
             + "LEFT OUTER JOIN member_alarm  ma ON m.id = ma.member.id AND (ma.alarm.id IS NULL OR ma.alarm.id = :groupId) "
-            + "WHERE (m.nickname LIKE CONCAT('%', :keyword, '%') OR m.email LIKE CONCAT('%', :keyword, '%')) "
+            + "WHERE m.id <> :memberId "
             + "AND ma.member.id IS NULL "
+            + "AND (m.nickname LIKE CONCAT('%', :keyword, '%') OR m.email LIKE CONCAT('%', :keyword, '%')) "
             + "ORDER BY "
             + "CASE WHEN m.nickname = :keyword THEN 0 "
             + "WHEN m.nickname LIKE CONCAT(:keyword, '%') THEN 1 "
@@ -67,6 +68,7 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
             + "WHEN m.nickname LIKE CONCAT('%', :keyword) THEN 3 "
             + "ELSE 4 END")
     List<MemberInfoDto> findMembersWithGroupAndTeamByGroupId(@Param("groupId") Long groupId,
-        @Param("keyword") String keyword);
+        @Param("keyword") String keyword,
+        @Param("memberId") Long memberId);
 
 }

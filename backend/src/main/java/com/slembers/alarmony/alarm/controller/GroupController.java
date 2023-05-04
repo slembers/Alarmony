@@ -48,8 +48,9 @@ public class GroupController {
         @RequestParam(value = "group-id", required = false) Long groupId,
         @RequestParam(value = "keyword", required = false) String keyword) {
 
+        String username = SecurityUtil.getCurrentUsername();
         List<MemberInfoDto> memberInfoList = groupService.getInviteableMemberInfoList(
-            groupId == null ? -1 : groupId, keyword);
+            groupId == null ? -1 : groupId, keyword, username);
 
         Map<String, Object> map = new HashMap<>();
         map.put("memberInfoList", memberInfoList);
