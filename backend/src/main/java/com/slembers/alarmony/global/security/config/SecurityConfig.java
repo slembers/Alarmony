@@ -15,14 +15,16 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.logout.LogoutFilter;
@@ -31,7 +33,7 @@ import org.springframework.security.web.authentication.logout.LogoutFilter;
 @RequiredArgsConstructor
 @Configuration
 @Slf4j
-public class SecurityConfig extends WebSecurityConfigurerAdapter {
+public class SecurityConfig  {
 
     private final PrincipalDetailsService principalDetailsService;
 
@@ -42,18 +44,20 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private final RedisUtil redisUtil;
 
 
+
     @Bean
     public BCryptPasswordEncoder bCryptPasswordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
-    @Override
-    public void configure(WebSecurity web) throws Exception {
-        web.ignoring().antMatchers("/members/sign-up", "/members/verify/**", "/members/login", "/members/refresh","/members/find-id","/members/find-pw");
+    @Bean
+    public WebSecurityCustomizer webSecurityCustomizer() throws Exception {
+        return (web) -> web.ignoring().antMatchers("/members/sign-up", "/members/verify/**", "/members/login", "/members/refresh", "/members/find-id", "/members/find-pw");
     }
 
-    @Override
-    protected void configure(HttpSecurity http) throws Exception {
+    @Bean
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        AuthenticationManager authenticationManager = http.getSharedObject(AuthenticationManager.class);
 
         http
                 .csrf().disable()
@@ -70,7 +74,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/members/test")
                 .access("hasRole('ROLE_USER') or hasRole('ROLE_MANAGER') or hasRole('ROLE_ADMIN')")
                 .and()
-                .addFilterBefore(customAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(customAuthenticationFilter(authenticationManager), UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(new JwtAuthorizationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(new JwtExceptionFilter(), UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(new JwtExceptionFilter(), JwtAuthorizationFilter.class)
@@ -78,8 +82,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .logout().logoutUrl("/logout").addLogoutHandler(customLogoutHandler).logoutSuccessHandler(((request, response, authentication) ->
                         SecurityContextHolder.clearContext()
                 ));
+        return http.build();
     }
-
     /**
      * 로그인 Filter 생성
      *
@@ -87,9 +91,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
      * @throws Exception 먼 Exception이지... afterPropertiesSet();일수도
      */
     @Bean
-    public CustomAuthenticationFilter customAuthenticationFilter() throws Exception {
+    public CustomAuthenticationFilter customAuthenticationFilter(AuthenticationManager authenticationManager) throws Exception {
 
-        CustomAuthenticationFilter customAuthenticationFilter = new CustomAuthenticationFilter(authenticationManager());
+
+        CustomAuthenticationFilter customAuthenticationFilter = new CustomAuthenticationFilter(authenticationManager);
+
         //로그인 url 설정
         customAuthenticationFilter.setFilterProcessesUrl("/members/login");
         // 로그인 성공 , 실패 핸들러 등록
@@ -135,14 +141,20 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     /**
      * AuthenticationManagerBuilder를 이용하여 AuthenticationProvider를 등록하는 코드입니다
      * AuthenticationManagerBuilder는 AuthenticationProvider를 생성하고 등록하여, 인증(Authentication)에 사용될 수 있는 AuthenticationManager를 만듭니다.
-     *
-     * @param authenticationManagerBuilder the {@link AuthenticationManagerBuilder} to use
+
      */
-    @Override
-    public void configure(AuthenticationManagerBuilder authenticationManagerBuilder) {
+    /*@Bean
+    public void filterChain(AuthenticationManagerBuilder authenticationManagerBuilder) {
         authenticationManagerBuilder.authenticationProvider(customAuthenticationProvider());
     }
 
+*/
+
+    @Bean
+    AuthenticationManager authenticationManager(
+            AuthenticationConfiguration authenticationConfiguration) throws Exception {
+        return authenticationConfiguration.getAuthenticationManager();
+    }
 
     @Bean
     public AccessDeniedHandler accessDeniedHandler() {

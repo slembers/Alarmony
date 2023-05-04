@@ -17,16 +17,17 @@ import java.io.IOException;
 @Slf4j
 public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
-    public CustomAuthenticationFilter(final AuthenticationManager authenticationManager) {
+   public CustomAuthenticationFilter(final AuthenticationManager authenticationManager) {
         super.setAuthenticationManager(authenticationManager);
     }
+
+    private AuthenticationManager authenticationManager;
 
     @Override
     public Authentication attemptAuthentication(@NotNull HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
 
         final UsernamePasswordAuthenticationToken authenticationToken;
         log.info("[AuthenticationFilter 진입]");
-
 
         final LoginDto loginDto;
         try {
