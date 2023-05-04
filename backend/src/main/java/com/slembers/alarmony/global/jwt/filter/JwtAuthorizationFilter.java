@@ -23,18 +23,14 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws ServletException, IOException {
 
         log.info("[JwtAuthorizationFilter(인가)] 진입");
-
         // 헤더에서 Access 토큰 받아오기
         String accessToken = jwtTokenProvider.resolveToken(request, "Authorization");
         log.info("[JwtAuthorizationFilter (인가)] 헤더에서 받아온 AccessToken :" + accessToken);
-
         jwtTokenProvider.validateToken(accessToken);
-
         // 토큰으로부터 유저 정보를 받아
         Authentication authentication = jwtTokenProvider.getAuthentication(accessToken);
         // SecurityContext 에 객체 저장
         SecurityContextHolder.getContext().setAuthentication(authentication);
-
         // 다음 Filter 실행
         chain.doFilter(request, response);
     }
