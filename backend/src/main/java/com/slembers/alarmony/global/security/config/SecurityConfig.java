@@ -1,14 +1,14 @@
-package com.slembers.alarmony.global.config;
+package com.slembers.alarmony.global.security.config;
 
-import com.slembers.alarmony.global.jwt.CustomAuthenticationProvider;
-import com.slembers.alarmony.global.jwt.filter.JwtAuthorizationFilter;
-import com.slembers.alarmony.global.jwt.JwtTokenProvider;
-import com.slembers.alarmony.global.jwt.auth.PrincipalDetailsService;
-import com.slembers.alarmony.global.jwt.filter.CustomAuthenticationFilter;
-import com.slembers.alarmony.global.jwt.handler.CustomLoginFailureHandler;
-import com.slembers.alarmony.global.jwt.handler.CustomLoginSuccessHandler;
-import com.slembers.alarmony.global.jwt.handler.CustomLogoutHandler;
-import com.slembers.alarmony.global.jwt.filter.JwtExceptionFilter;
+import com.slembers.alarmony.global.security.auth.CustomAuthenticationProvider;
+import com.slembers.alarmony.global.security.filter.JwtAuthorizationFilter;
+import com.slembers.alarmony.global.security.jwt.JwtTokenProvider;
+import com.slembers.alarmony.global.security.auth.PrincipalDetailsService;
+import com.slembers.alarmony.global.security.filter.CustomAuthenticationFilter;
+import com.slembers.alarmony.global.security.handler.CustomLoginFailureHandler;
+import com.slembers.alarmony.global.security.handler.CustomLoginSuccessHandler;
+import com.slembers.alarmony.global.security.handler.CustomLogoutHandler;
+import com.slembers.alarmony.global.security.filter.JwtExceptionFilter;
 import com.slembers.alarmony.global.redis.service.RedisUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -36,8 +36,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private final PrincipalDetailsService principalDetailsService;
 
     private final JwtTokenProvider jwtTokenProvider;
-
-    private final JwtExceptionFilter jwtExceptionFilter;
 
     private final CustomLogoutHandler customLogoutHandler;
 
@@ -74,9 +72,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .addFilterBefore(customAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(new JwtAuthorizationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class)
-                .addFilterBefore(jwtExceptionFilter, UsernamePasswordAuthenticationFilter.class)
-                .addFilterBefore(jwtExceptionFilter, JwtAuthorizationFilter.class)
-                .addFilterBefore(jwtExceptionFilter, LogoutFilter.class)
+                .addFilterBefore(new JwtExceptionFilter(), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(new JwtExceptionFilter(), JwtAuthorizationFilter.class)
+                .addFilterBefore(new JwtExceptionFilter(), LogoutFilter.class)
                 .logout().logoutUrl("/logout").addLogoutHandler(customLogoutHandler).logoutSuccessHandler(((request, response, authentication) ->
                         SecurityContextHolder.clearContext()
                 ));
@@ -101,7 +99,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
         return customAuthenticationFilter;
     }
-
 
     /**
      * 로그인 성공 핸들러
@@ -130,6 +127,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         return new CustomAuthenticationProvider(principalDetailsService, bCryptPasswordEncoder());
     }
 
+
+/*    @Bean
+    public JwtExceptionFilter jwtExceptionFilter(){
+        return new JwtExceptionFilter();
+    }*/
     /**
      * AuthenticationManagerBuilder를 이용하여 AuthenticationProvider를 등록하는 코드입니다
      * AuthenticationManagerBuilder는 AuthenticationProvider를 생성하고 등록하여, 인증(Authentication)에 사용될 수 있는 AuthenticationManager를 만듭니다.

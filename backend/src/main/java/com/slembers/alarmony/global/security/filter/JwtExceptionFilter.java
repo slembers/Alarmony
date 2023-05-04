@@ -1,4 +1,4 @@
-package com.slembers.alarmony.global.jwt.filter;
+package com.slembers.alarmony.global.security.filter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.slembers.alarmony.global.execption.CustomException;
@@ -22,7 +22,6 @@ import java.util.Map;
 /**
  * filter 처리중에 발생하는 에러 리턴
  */
-@Component
 @Slf4j
 public class JwtExceptionFilter extends OncePerRequestFilter {
 
@@ -33,6 +32,7 @@ public class JwtExceptionFilter extends OncePerRequestFilter {
             filterChain.doFilter(request, response);
         } catch (JwtException | CustomException | BadCredentialsException e) {
             log.info("[JwtExceptionFilter] setErrorResponse 호출");
+            log.info("에러 :" + e.getMessage());
             setErrorResponse(request, response, e);
         }
     }

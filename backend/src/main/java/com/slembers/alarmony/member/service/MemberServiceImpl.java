@@ -1,7 +1,7 @@
 package com.slembers.alarmony.member.service;
 
 import com.slembers.alarmony.global.execption.CustomException;
-import com.slembers.alarmony.global.jwt.JwtTokenProvider;
+import com.slembers.alarmony.global.security.jwt.JwtTokenProvider;
 import com.slembers.alarmony.global.redis.service.RedisUtil;
 import com.slembers.alarmony.member.dto.request.FindMemberIdDto;
 import com.slembers.alarmony.member.dto.request.FindPasswordDto;
@@ -18,7 +18,6 @@ import org.modelmapper.ModelMapper;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import javax.mail.MessagingException;
 import javax.transaction.Transactional;
 import java.util.HashMap;
 import java.util.Map;

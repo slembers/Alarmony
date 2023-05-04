@@ -1,4 +1,4 @@
-package com.slembers.alarmony.global.jwt.auth;
+package com.slembers.alarmony.global.security.auth;
 
 import com.slembers.alarmony.member.entity.Member;
 import org.springframework.security.core.GrantedAuthority;

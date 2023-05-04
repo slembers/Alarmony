@@ -1,4 +1,4 @@
-package com.slembers.alarmony.global.jwt.handler;
+package com.slembers.alarmony.global.security.handler;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
