@@ -91,15 +91,26 @@ fun FindId(navController: NavController) {
                         .fillMaxWidth()
                 )
 
+//                Button(
+//                    onClick = {
+//                    Log.d("확인", "아이디 찾기")
+//                }, modifier = Modifier
+////                        .fillMaxWidth()
+//                )
+//
+//                {
+//                     Text(text = "아이디 찾기")
+//                }
+
                 Button(
                     onClick = {
-                    Log.d("확인", "아이디 찾기")
-                }, modifier = Modifier
+                        Log.d("확인", "인증번호 보내기")
+                    }, modifier = Modifier
 //                        .fillMaxWidth()
                 )
 
                 {
-                     Text(text = "아이디 찾기")
+                    Text(text = "인증번호 보내기")
                 }
             }
         }
