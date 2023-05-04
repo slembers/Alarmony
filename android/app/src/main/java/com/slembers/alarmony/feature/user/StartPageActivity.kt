@@ -31,6 +31,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.TextField
 import androidx.compose.material.rememberScaffoldState
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.BlendMode.Companion.Screen
@@ -45,6 +46,8 @@ import androidx.navigation.NavController
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
+import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
+import com.slembers.alarmony.MainActivity.Companion.prefs
 import com.slembers.alarmony.R
 import com.slembers.alarmony.feature.common.NavItem
 
@@ -108,7 +111,11 @@ fun extra() {
 
 
 
+@OptIn(ExperimentalGlideComposeApi::class)
+//위 @OptIn(ExperimentalGlideComposeApi::class)이 회색으로 나오는 이유는
+//사요오디지 않아서가 아니라 실험적이고 불안정한 기능이기 때문이다.
 @Composable
+@ExperimentalMaterial3Api
 fun LoginScreen(navController: NavController) {
 
 
@@ -167,15 +174,20 @@ fun LoginScreen(navController: NavController) {
                           navController,
                           context
                       ) { resultText, accessToken, refreshToken ->
-
+                        //토스트 메시지와 sharedpreferce에 저장하도록!!!!
                           Toast.makeText(context, "${resultText}",Toast.LENGTH_SHORT).show()
+//                          Log.d("넘어온것들", "${accessToken}")
+//                          Log.d("넘어온것들", "${refreshToken}")
+//                          Log.d("넘어온것들", "${resultText}")
 
+                          prefs.setString("accessToken", accessToken)
+                          prefs.setString("refreshToken", refreshToken)
+                          val token = prefs.getString("accessToken", "기본값")
+                          Log.d("getstring확인", "${token}")
 
                           // 토큰 값을 이용하여 다른 작업을 수행할 수 있음
                       }
 //                아이디 비밀번호 초기화
-//                Toast.makeText(context, "왜 안나와",Toast.LENGTH_SHORT).show()
-
                 idState.value =""
                 passwordState.value=""
 
