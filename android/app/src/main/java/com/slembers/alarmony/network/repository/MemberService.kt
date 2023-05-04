@@ -62,7 +62,13 @@ object MemberService {
 
 
 
-    fun login(username: String, password:String, navController: NavController,context: Context ) {
+    fun login(
+        username: String,
+        password:String,
+        navController: NavController,
+        context: Context,
+        resultCallback: (resultText: String, accessToken: String?, refreshToken: String? ) -> Unit
+    ) {
         var resultText = ""
 
         try {
@@ -83,8 +89,11 @@ object MemberService {
                     if(loginResult!!.status == null) {
                         Log.d("response", "로그인 성공!")
                         Log.d("response", "${loginResult.accessToken}")
+                        //                        토큰값 저장해야함
                         navController.navigate(NavItem.AccountMtnc.route)
+
                         resultText = "로그인 성공"
+                        resultCallback(resultText, loginResult.accessToken, loginResult.refreshToken)
 //                        토큰을 저장하는 코드 삽입
 
                     } else if(loginResult!!.status!! == "401") {
@@ -93,15 +102,18 @@ object MemberService {
 //                        팝업으로 알려주기
 //                        유저아이디와 비밀번호 입력창 초기화
                         resultText = "비밀번호를 확인해주세요."
+                        resultCallback(resultText, loginResult.accessToken, loginResult.refreshToken)
 
                     } else if(loginResult!!.status!! == "403") {
                         Log.d("response","이메일 정보를 확인해 주세요.")
                         resultText = "이메일을 확인해주세요."
+                        resultCallback(resultText, loginResult.accessToken, loginResult.refreshToken)
 
                     } else if(loginResult!!.status!! == "404") {
-                        Log.d("response","회원이 존재하지 않음.")
+//                        Log.d("response","회원이 존재하지 않음.")
                         resultText = "회원이 존재하지 않습니다."
-
+                        resultCallback(resultText, loginResult.accessToken, loginResult.refreshToken)
+                        Log.d("response",resultText)
                     }
 
                     Log.d("test", "여기까지옴")

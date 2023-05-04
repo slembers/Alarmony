@@ -37,7 +37,8 @@ fun NavController(
         modifier = Modifier.fillMaxSize(),
         navController = navController,
 //        startDestination = NavItem.Group.route
-        startDestination = NavItem.Group.route
+        startDestination = NavItem.LoginScreen.route
+//        startDestination = NavItem.Group.route
     ) {
 
         // 그룹생성 페이지

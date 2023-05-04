@@ -160,9 +160,22 @@ fun LoginScreen(navController: NavController) {
         Button(
 //MutableState<String>와 String은 형식이 다르기에 String 값을 보내기 위해 .value를 붙여준다.
             onClick = {
+
                 Log.d("확인", "${idState.value}, ${passwordState.value} +로그인")
-                      login(idState.value, passwordState.value, navController, context)
+                      login(idState.value,
+                          passwordState.value,
+                          navController,
+                          context
+                      ) { resultText, accessToken, refreshToken ->
+
+                          Toast.makeText(context, "${resultText}",Toast.LENGTH_SHORT).show()
+
+
+                          // 토큰 값을 이용하여 다른 작업을 수행할 수 있음
+                      }
 //                아이디 비밀번호 초기화
+//                Toast.makeText(context, "왜 안나와",Toast.LENGTH_SHORT).show()
+
                 idState.value =""
                 passwordState.value=""
 

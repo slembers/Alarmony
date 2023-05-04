@@ -25,6 +25,7 @@ import com.slembers.alarmony.feature.common.CardBox
 import com.slembers.alarmony.feature.common.NavItem
 import com.slembers.alarmony.feature.common.ui.compose.GroupTitle
 import com.slembers.alarmony.feature.ui.group.GroupToolBar
+import com.slembers.alarmony.feature.ui.groupDetails.GroupDetailsBoard
 
 @ExperimentalMaterial3Api
 @ExperimentalGlideComposeApi
@@ -61,7 +62,7 @@ fun GroupDetailsScreen() {
                         enabled = true),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
-                GroupDetailsTitle(title = "장덕모임")
+//                GroupDetailsTitle(title = "장덕모임")
                 GroupDetailsBoard()
                 CardBox(
                     title = { GroupTitle(
