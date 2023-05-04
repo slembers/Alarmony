@@ -65,14 +65,19 @@ public class GroupServiceImpl implements GroupService {
      * @return 초대 가능한 멤버 목록
      */
     @Override
-    public List<MemberInfoDto> getInviteableMemberInfoList(Long groupId, String keyword) {
-        return memberRepository.findMembersWithGroupAndTeamByGroupId(groupId, keyword);
+    public List<MemberInfoDto> getInviteableMemberInfoList(Long groupId, String keyword,
+        String username) {
+
+        Member member = memberRepository.findByUsername(username)
+            .orElseThrow(() -> new CustomException(MemberErrorCode.MEMBER_NOT_FOUND));
+        return memberRepository.findMembersWithGroupAndTeamByGroupId(groupId, keyword,
+            member.getId());
     }
 
     /**
      * 그룹에서 호스트 멤버를 제외한다.
      *
-     * @param groupId  그룹 id
+     * @param groupId 그룹 id
      */
     @Transactional
     @Override
