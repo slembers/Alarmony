@@ -1,19 +1,23 @@
 package com.slembers.alarmony
 
+import android.Manifest
 import android.content.ContentValues
 import android.content.DialogInterface
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
 import android.util.Log
+import android.widget.Toast
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.core.content.ContextCompat
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.slembers.alarmony.feature.common.NavController
 import com.slembers.alarmony.util.PresharedUtil
@@ -71,4 +75,27 @@ class MainActivity : AppCompatActivity() {
         )
         resultLauncher.launch(intent)
     }
+
+    // 배터리 최적화 제외 권한 설정
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun requestBatteryOptimizationPermission() {
+        if (ContextCompat.checkSelfPermission(
+                this,
+                Manifest.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS
+            ) == PackageManager.PERMISSION_GRANTED
+        ) {
+            val intent = Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS)
+            intent.data = Uri.parse("package:" + this.applicationContext.packageName)
+            checkIntentAndStart(this, intent)
+        } else {
+            val intent = Intent(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS)
+            if (checkIntentAndStart(this, intent))
+                Toast.makeText(
+                    this,
+                    "Please enable battery optimizations switch",
+                    Toast.LENGTH_LONG
+                ).show()
+        }
+    }
+
 }
