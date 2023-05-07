@@ -74,6 +74,22 @@ class AlarmForegroundService : Service() {
         }
     }
 
+    private fun startAlarm(alarm: Alarm) {
+
+        CoroutineScope(Dispatchers.Main).launch {
+
+            val newIntent = Intent(applicationContext, AlarmActivity::class.java)
+            newIntent.putExtra(ALARM_DATA, alarm)
+            newIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            startActivity(newIntent)
+
+            delay(2000)
+
+            stopForeground(true)
+            stopSelf()
+        }
+
+    }
 
 }
 
