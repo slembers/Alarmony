@@ -2,6 +2,7 @@ package com.slembers.alarmony
 
 import android.Manifest
 import android.content.ContentValues
+import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -96,6 +97,15 @@ class MainActivity : AppCompatActivity() {
                     Toast.LENGTH_LONG
                 ).show()
         }
+    }
+
+    // 인텐트 확인
+    private fun checkIntentAndStart(context: Context, intent: Intent): Boolean {
+        intent.resolveActivity(context.packageManager)?.let {
+            context.startActivity(intent)
+            return true
+        }
+        return false
     }
 
 }
