@@ -61,6 +61,18 @@ class AlarmForegroundService : Service() {
         }
         return START_STICKY
     }
+    private fun refreshAlarms(alarms : LiveData<List<Alarm>>) { // 재부팅 시 알람 재세팅
+        CoroutineScope(Dispatchers.IO).launch {
+            CoroutineScope(Dispatchers.Main).launch {
+                for (alarm in alarms as List<Alarm>) {
+                    setAlarm(this@AlarmForegroundService, alarm)
+                }
+            }
+            delay(5000)
+            stopForeground(true)
+            stopSelf()
+        }
+    }
 
 
 }
