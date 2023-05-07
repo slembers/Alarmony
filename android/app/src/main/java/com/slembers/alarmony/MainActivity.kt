@@ -1,7 +1,12 @@
 package com.slembers.alarmony
 
+import android.content.ContentValues
+import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.compose.setContent
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.material3.ExperimentalMaterial3Api
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
@@ -24,4 +29,11 @@ class MainActivity : AppCompatActivity() {
             NavController()
         }
     }
+
+    // 액티비티간 데이터를 주고 받기 위함
+    @RequiresApi(Build.VERSION_CODES.M)
+    val resultLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            Log.d(ContentValues.TAG, "Request permission: " + result.resultCode)
+        }
 }
