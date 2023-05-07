@@ -37,6 +37,7 @@ class MainActivity : AppCompatActivity() {
         prefs = PresharedUtil(application)
         setContent {
             NavController()
+            requestAlertPermission() // 권한 실행
         }
     }
 
