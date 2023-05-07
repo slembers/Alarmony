@@ -1,12 +1,15 @@
 package com.slembers.alarmony
 
 import android.content.ContentValues
+import android.content.DialogInterface
 import android.os.Build
 import android.os.Bundle
+import android.provider.Settings
 import android.util.Log
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.material3.ExperimentalMaterial3Api
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
@@ -36,4 +39,23 @@ class MainActivity : AppCompatActivity() {
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             Log.d(ContentValues.TAG, "Request permission: " + result.resultCode)
         }
+
+    // 백그라운드 권한 설정
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun requestAlertPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            // check if we already  have permission to draw over other apps
+            if (!Settings.canDrawOverlays(this)) {
+                val alert = AlertDialog.Builder(this)
+                alert.setTitle("백그라운드에서 재생")
+                alert.setMessage("앱 기능이 제대로 작동할 수 있도록 앱이 백그라운드에서 실행되도록 해주십시오.")
+                alert.setPositiveButton("Ok") { _: DialogInterface?, _: Int ->
+                    requestDrawOverlay()
+                }
+                alert.setNegativeButton("Cancel") { dialog: DialogInterface, _: Int -> finish() }
+                alert.show()
+            }
+            requestBatteryOptimizationPermission()
+        }
+    }
 }
