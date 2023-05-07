@@ -211,7 +211,7 @@ fun MyListItem(item : Alarm, onItemClick: (String) -> Unit) {
                     .padding(start = 20.dp, end = 20.dp)
                     .fillMaxWidth()) {
                 Text(
-                    text = if (item.hour.toString().length == 1) {"0" + aTime.toString()} else {item.hour.toString()}
+                    text = if (aTime.toString().length == 1) {"0" + aTime.toString()} else {aTime.toString()}
                             + " : "
                             + if (item.minute.toString().length == 1) {"0" + item.minute.toString()} else {item.minute.toString()},
                     fontSize = 30.sp,
