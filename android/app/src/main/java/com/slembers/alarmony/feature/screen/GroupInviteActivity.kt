@@ -29,8 +29,6 @@ fun InviteScreen(
     navController : NavHostController = rememberNavController()
 ) {
 
-    var checkMembers : MutableList<Member> = remember { mutableStateListOf() }
-
     Scaffold(
         topBar = {
             GroupToolBar(
@@ -50,12 +48,8 @@ fun InviteScreen(
             Column(
                 modifier = Modifier.padding(innerPadding),
                 content = {
-                    CurrentInvite(
-                        checkMembers = checkMembers
-                    )
-                    SearchInviteMember(
-                        checkMembers = { checkMembers.add(it) }
-                    )
+                    CurrentInvite()
+                    SearchInviteMember()
                 }
             )
         }

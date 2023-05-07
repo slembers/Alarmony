@@ -75,8 +75,10 @@ import com.slembers.alarmony.feature.common.CardTitle
 import com.slembers.alarmony.model.db.Member
 import com.slembers.alarmony.model.db.SoundItem
 import com.slembers.alarmony.model.db.dto.MemberDto
+import com.slembers.alarmony.viewModel.GroupSearchViewModel
 import com.slembers.alarmony.viewModel.GroupViewModel
 import java.util.Locale
+import kotlin.streams.toList
 
 @Composable
 @ExperimentalMaterial3Api
@@ -424,10 +426,21 @@ fun soundIcon(
 @ExperimentalGlideComposeApi
 fun CurrentInvite(
     group: GroupViewModel = viewModel(),
-    checkMembers: MutableList<Member>
+    search: GroupSearchViewModel = viewModel(),
 ) {
 
     val members by group.members.observeAsState()
+    val checkedMembers by search.checkedMembers.observeAsState()
+
+    val currentMembers : List<Member> = members?.let {
+        it.stream().map { member ->
+            Member(
+                nickname = member.nickname,
+                profileImg = member.profileImg,
+                isNew = false
+            )
+        }.toList()
+    } as List<Member>
 
     CardBox(
         title = { CardTitle(title = "초대인원") },
@@ -443,13 +456,23 @@ fun CurrentInvite(
                     ),
                 userScrollEnabled = true
             ) {
-                items(items = checkMembers) { member ->
+
+                items(items = currentMembers) { member ->
                     GroupDefalutProfile(
                         profileImg = member.profileImg,
                         nickname = member.nickname,
-                        newMember = member.isNew
+                        newMember = true
                     )
                 }
+
+                items(items = checkedMembers ?: listOf()) { checked ->
+                    GroupDefalutProfile(
+                        profileImg = checked.profileImg,
+                        nickname = checked.nickname,
+                        newMember = false
+                    )
+                }
+
             }
         }
     )

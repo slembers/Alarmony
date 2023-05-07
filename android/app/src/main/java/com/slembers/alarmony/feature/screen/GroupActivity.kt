@@ -73,17 +73,7 @@ fun GroupScreen(
     val timePickerState by viewModel.alarmTime.observeAsState(
         TimePickerState(10,0,false)
     )
-    val isWeeks by viewModel.currentWeeks.observeAsState(
-        mapOf<String,Boolean>(
-            Pair(first = "월", second = true),
-            Pair(first = "화", second = true),
-            Pair(first = "수", second = true),
-            Pair(first = "목", second = true),
-            Pair(first = "금", second = true),
-            Pair(first = "토", second = true),
-            Pair(first = "월", second = true),
-        )
-    )
+    val isWeeks by viewModel.currentWeeks.observeAsState()
     val weeks = listOf("월","화","수","목","금","토","일")
     val members by viewModel.members.observeAsState(listOf<MemberDto>())
     val soundName by viewModel.sound.observeAsState("노래제목")
@@ -111,7 +101,7 @@ fun GroupScreen(
                             hour = timePickerState.hour,
                             minute = timePickerState.minute,
                             alarmDate = weeks.stream().map {
-                                isWeeks.getValue(it)
+                                isWeeks?.getValue(it) ?: false
                             }.toList(),
                             members = members?.stream()?.map {
                                 it.nickname
