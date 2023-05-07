@@ -1,6 +1,6 @@
 package com.slembers.alarmony.feature.alarm
 
-data class Alarm (
+data class AlarmData (
     val alarm_id : Long,
     val title : String,
     val hour : Int,

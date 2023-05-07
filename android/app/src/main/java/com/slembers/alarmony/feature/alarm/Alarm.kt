@@ -3,9 +3,11 @@ package com.slembers.alarmony.feature.alarm
 import android.os.Parcelable
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import androidx.room.TypeConverters
 import kotlinx.android.parcel.Parcelize
 
 @Parcelize
+@TypeConverters(DayConverters::class)
 @Entity(tableName = "alarms")
 data class Alarm(
     @PrimaryKey
