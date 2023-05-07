@@ -43,6 +43,7 @@ object GroupService {
     ) {
 
         val group = AlarmonyServer.groupApi
+        Log.i("response", "[그룹검색] --> $keyword")
 
         group.searchGroup(
             groupId = groupId,
