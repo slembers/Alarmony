@@ -1,5 +1,6 @@
 package com.slembers.alarmony.feature.screen
 
+import android.app.Application
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -33,6 +34,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.contentColorFor
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
@@ -42,11 +44,14 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.slembers.alarmony.R
 import com.slembers.alarmony.feature.alarm.Alarm
+import com.slembers.alarmony.feature.alarm.AlarmViewModel
+import com.slembers.alarmony.feature.alarm.AlarmViewModelFactory
 import com.slembers.alarmony.feature.alarm.aaa
 import com.slembers.alarmony.feature.alarm.notiSample
 import com.slembers.alarmony.feature.common.NavItem
@@ -56,6 +61,11 @@ import com.slembers.alarmony.feature.common.ui.theme.toColor
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AlarmListScreen(navController : NavHostController) {
+    val context = LocalContext.current
+    val mAlarmViewModel : AlarmViewModel = viewModel(
+        factory = AlarmViewModelFactory(context.applicationContext as Application)
+    )
+    val alarms = mAlarmViewModel.readAllData.observeAsState(listOf()).value
     Scaffold(
         topBar = {
             TopAppBar(
@@ -149,10 +159,9 @@ fun AlarmListScreen(navController : NavHostController) {
                         Toast.LENGTH_SHORT
                     ).show()
                 }
-                val itemArray = aaa
                 LazyColumn{
-                    items(itemArray.size) {model ->
-                        MyListItem(item = itemArray[model], onItemClick=onListItemClick)
+                    items(alarms.size) {model ->
+                        MyListItem(item = alarms[model], onItemClick=onListItemClick)
                     }
                 }
             }
