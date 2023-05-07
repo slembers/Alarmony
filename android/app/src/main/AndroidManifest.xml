@@ -2,12 +2,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
     <!-- 서버 연결 설정 -->
-    <uses-permission android:name="android.permission.INTERNET" />
-    <!-- 알람 권한 설정 -->
-    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS"/>
+    <uses-permission android:name="android.permission.INTERNET" /> <!-- 알람 권한 설정 -->
+    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
-
-    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
@@ -28,9 +26,20 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
+            android:name=".feature.alarm.AlarmActivity"
+            android:exported="false"
+            android:label="@string/title_activity_alarm"
+            android:theme="@style/Theme.AppCompat.NoActionBar" />
+
+        <service
+            android:name=".feature.alarm.AlarmForegroundService"
+            android:enabled="true"
+            android:exported="true" />
+
+        <activity
             android:name=".MainActivity"
-            android:theme="@style/Theme.AppCompat.NoActionBar"
-            android:exported="true">
+            android:exported="true"
+            android:theme="@style/Theme.AppCompat.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -44,6 +53,7 @@
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
+
         <receiver
             android:name=".feature.alarm.AlarmReceiver"
             android:enabled="true"

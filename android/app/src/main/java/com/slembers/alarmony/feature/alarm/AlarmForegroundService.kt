@@ -1,0 +1,67 @@
+package com.slembers.alarmony.feature.alarm
+
+import android.app.Application
+import android.app.Notification
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.app.Service
+import android.content.Context
+import android.content.Intent
+import android.graphics.Color
+import android.os.Build
+import android.os.IBinder
+import androidx.annotation.RequiresApi
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.core.app.NotificationCompat
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.google.android.ads.mediationtestsuite.viewmodels.ViewModelFactory
+import com.slembers.alarmony.MainActivity
+import com.slembers.alarmony.R
+import com.slembers.alarmony.util.Constants.ALARM_DATA
+import com.slembers.alarmony.util.Constants.OPEN_TYPE
+import com.slembers.alarmony.util.Constants.REFRESH
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+
+class AlarmForegroundService : Service() {
+    private lateinit var repository: AlarmRepository
+
+    override fun onBind(intent: Intent): IBinder? {
+        return null
+    }
+    override fun onStartCommand(intent: Intent, flags: Int, startId: Int) : Int {
+        val alarmDao = AlarmDatabase.getInstance(application).alarmDao()
+        repository = AlarmRepository(alarmDao)
+        val alarms = repository.readAllData
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
+            startForeground(
+                intent!!.getStringExtra(
+                    OPEN_TYPE
+                )!!
+            ) else
+            startForeground(
+                1,
+                Notification()
+            )
+
+        val alarm = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            intent.getParcelableExtra("alarm", Alarm::class.java)
+        } else {
+            intent.getParcelableExtra<Alarm>("alarm")
+        }
+
+        if (intent!!.getStringExtra(OPEN_TYPE) == REFRESH) {
+            refreshAlarms(alarms)
+        } else {
+            startAlarm(alarm!!)
+        }
+        return START_STICKY
+    }
+
+
+}
+

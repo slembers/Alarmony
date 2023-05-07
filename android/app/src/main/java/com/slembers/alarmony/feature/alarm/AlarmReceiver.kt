@@ -9,6 +9,7 @@ import android.icu.util.Calendar
 import android.os.Build
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.slembers.alarmony.util.Constants.BOOT_COMPLETED
+import com.slembers.alarmony.util.Constants.FIRE_ALARM
 import com.slembers.alarmony.util.Constants.OPEN_TYPE
 import com.slembers.alarmony.util.Constants.REFRESH
 import com.slembers.alarmony.util.Constants.alarm_id
@@ -25,6 +26,8 @@ class AlarmReceiver : BroadcastReceiver() {
             } else {
                 intent.getParcelableExtra<Alarm>("alarm")
             }
+            newIntent.putExtra(OPEN_TYPE, FIRE_ALARM)
+            newIntent.putExtra("alarm", alarm)
             val calendar: Calendar = Calendar.getInstance()
             var todayDayOfWeek: Int = calendar.get(Calendar.DAY_OF_WEEK) - 2    // 오늘 요일 구하기
             if (todayDayOfWeek == -1) todayDayOfWeek = 6
