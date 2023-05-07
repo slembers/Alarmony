@@ -49,6 +49,7 @@ import com.slembers.alarmony.R
 import com.slembers.alarmony.feature.alarm.Alarm
 import com.slembers.alarmony.feature.alarm.aaa
 import com.slembers.alarmony.feature.alarm.notiSample
+import com.slembers.alarmony.feature.common.NavItem
 import com.slembers.alarmony.feature.common.ui.theme.notosanskr
 import com.slembers.alarmony.feature.common.ui.theme.toColor
 
@@ -83,7 +84,7 @@ fun AlarmListScreen(navController : NavHostController) {
                 ),
                 actions = {
                     if (notiSample.isEmpty()) {
-                        IconButton(onClick = { navController.navigate("Notification") }) {
+                        IconButton(onClick = { navController.navigate(NavItem.NotiListScreen.route) }) {
                             Icon(
                                 imageVector = Icons.Outlined.Notifications,
                                 contentDescription = "Notification",
@@ -92,7 +93,7 @@ fun AlarmListScreen(navController : NavHostController) {
                             )
                         }
                     } else {
-                        IconButton(onClick = { navController.navigate("Notification") }) {
+                        IconButton(onClick = { navController.navigate(NavItem.NotiListScreen.route) }) {
                             Icon(
                                 imageVector = Icons.Outlined.NotificationsActive,
                                 contentDescription = "Notification_Active",
@@ -115,7 +116,7 @@ fun AlarmListScreen(navController : NavHostController) {
         floatingActionButtonPosition = FabPosition.Center,
         floatingActionButton = {
             FloatingActionButton(
-                onClick = { /* fab click handler */ },
+                onClick = { navController.navigate(NavItem.Group.route) },
                 shape = CircleShape,
                 containerColor = "#00B4D8".toColor(),
                 modifier = Modifier

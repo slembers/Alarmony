@@ -10,6 +10,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
+import com.slembers.alarmony.feature.alarm.NotiListScreen
 import com.slembers.alarmony.feature.group.GroupScreen
 import com.slembers.alarmony.feature.group.InviteScreen
 import com.slembers.alarmony.feature.group.SoundScreen
@@ -38,7 +39,7 @@ fun NavController(
         modifier = Modifier.fillMaxSize(),
         navController = navController,
 //        startDestination = NavItem.Group.route
-        startDestination = NavItem.Group.route
+        startDestination = NavItem.AlarmListScreen.route
     ) {
         // 알람 목록 조회 페이지
         composable( route = NavItem.AlarmListScreen.route) {
