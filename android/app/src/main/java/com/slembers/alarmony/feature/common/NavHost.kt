@@ -94,7 +94,7 @@ fun NavController2(
         modifier = Modifier.fillMaxSize(),
         navController = navController,
 //        startDestination = NavItem.Group.route
-        startDestination = NavItem.AccountMtnc.route
+        startDestination = NavItem.LoginScreen.route
 //        startDestination = NavItem.Group.route
     ) {
 
