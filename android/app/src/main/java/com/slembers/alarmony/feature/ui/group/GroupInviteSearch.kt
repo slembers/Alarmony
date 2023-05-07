@@ -60,14 +60,14 @@ import com.slembers.alarmony.viewModel.GroupViewModel
 @ExperimentalMaterial3Api
 @ExperimentalGlideComposeApi
 fun SearchInviteMember(
-    group : GroupViewModel = viewModel(),
-    checkMembers : (Member) -> Unit
+    group : GroupViewModel = viewModel()
 ) {
 
     var text by remember { mutableStateOf("") }
 //    var searchMembers : List<MemberDto> = remember { mutableStateListOf() }
     val searchViewModel : GroupSearchViewModel = viewModel()
     val searchMembers = searchViewModel.searchMembers.observeAsState()
+    val checkedMembers = searchViewModel.checkedMembers.observeAsState()
     val members by group.members.observeAsState()
 
     CardBox(
@@ -135,11 +135,18 @@ fun SearchInviteMember(
 
                 LazyColumn() {
                     items(searchMembers.value ?: mutableListOf()) { member ->
-                        SearchMember(
-                            member = member,
-                            isCheck = members!!.contains(member),
-                            onCheckedChange = checkMembers
-                        )
+                        // 현재 인원에 포함되면 안됨
+                        if(!members?.contains(member)!!)
+                            SearchMember(
+                                member = member,
+                                isCheck = checkedMembers.value?.contains(member) ?: false,
+                                onCheckedChange = {
+                                    if(checkedMembers.value?.contains(member) == true)
+                                        searchViewModel.removeCheckedMember(it)
+                                    else
+                                        searchViewModel.addCurrentMember(it)
+                                }
+                            )
                     }
                 }
             }
@@ -151,7 +158,7 @@ fun SearchInviteMember(
 fun SearchMember(
     member : MemberDto = MemberDto(nickname = "임시유저", profileImg = null),
     isCheck : Boolean = false,
-    onCheckedChange : (Member) -> Unit,
+    onCheckedChange : (MemberDto) -> Unit,
 ) {
 
     Row(
@@ -160,7 +167,7 @@ fun SearchMember(
         modifier = Modifier
             .padding(start = 2.dp, end = 20.dp, top = 3.dp, bottom = 1.dp)
             .fillMaxWidth()
-            .clickable { onCheckedChange(Member(member.nickname, member.profileImg)) }
+            .clickable { onCheckedChange(member) }
     )
     {
         if(member.profileImg != null ) {
@@ -185,7 +192,9 @@ fun SearchMember(
         )
         Checkbox(
             checked = isCheck,
-            onCheckedChange = {}
+            onCheckedChange = {
+                onCheckedChange(member)
+            }
         )
     }
 }
