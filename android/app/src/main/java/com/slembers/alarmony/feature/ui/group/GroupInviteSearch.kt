@@ -48,8 +48,10 @@ import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.slembers.alarmony.R
 import com.slembers.alarmony.feature.common.CardBox
 import com.slembers.alarmony.feature.common.CardTitle
+import com.slembers.alarmony.model.db.Member
 import com.slembers.alarmony.model.db.dto.MemberDto
 import com.slembers.alarmony.network.service.GroupService
+import com.slembers.alarmony.viewModel.GroupSearchViewModel
 import com.slembers.alarmony.viewModel.GroupViewModel
 
 
@@ -57,11 +59,16 @@ import com.slembers.alarmony.viewModel.GroupViewModel
 @Composable
 @ExperimentalMaterial3Api
 @ExperimentalGlideComposeApi
-fun SearchInviteMember(group : GroupViewModel = viewModel()) {
+fun SearchInviteMember(
+    group : GroupViewModel = viewModel(),
+    checkMembers : (Member) -> Unit
+) {
 
     var text by remember { mutableStateOf("") }
-    var searchMembers : List<MemberDto> = remember { mutableStateListOf() }
-    val members = group.members.observeAsState()
+//    var searchMembers : List<MemberDto> = remember { mutableStateListOf() }
+    val searchViewModel : GroupSearchViewModel = viewModel()
+    val searchMembers = searchViewModel.searchMembers.observeAsState()
+    val members by group.members.observeAsState()
 
     CardBox(
         title = { CardTitle(title = "검색") },
@@ -80,11 +87,9 @@ fun SearchInviteMember(group : GroupViewModel = viewModel()) {
                     value = text,
                     onValueChange = {
                         text = it
-                        GroupService.searchMember(
-                            keyword = text,
-                            memberList = {
-                                searchMembers = (it?.memberList ?: listOf<MemberDto>())
-                            })
+                        searchViewModel.searchApi(
+                            keyword = text
+                        )
                     },
                     singleLine = true,
                     textStyle = TextStyle(
@@ -129,12 +134,11 @@ fun SearchInviteMember(group : GroupViewModel = viewModel()) {
                 )
 
                 LazyColumn() {
-                    items(searchMembers) { member ->
+                    items(searchMembers.value ?: mutableListOf()) { member ->
                         SearchMember(
-                            member.nickname,
-                            member.profileImg,
-                            isCheck = members.value!!.contains(member),
-                            onCheckedChange = {}
+                            member = member,
+                            isCheck = members!!.contains(member),
+                            onCheckedChange = checkMembers
                         )
                     }
                 }
@@ -145,10 +149,9 @@ fun SearchInviteMember(group : GroupViewModel = viewModel()) {
 
 @Composable
 fun SearchMember(
-    nickname : String,
-    profiles : String? = null,
+    member : MemberDto = MemberDto(nickname = "임시유저", profileImg = null),
     isCheck : Boolean = false,
-    onCheckedChange : (Boolean) -> Unit,
+    onCheckedChange : (Member) -> Unit,
 ) {
 
     Row(
@@ -157,13 +160,13 @@ fun SearchMember(
         modifier = Modifier
             .padding(start = 2.dp, end = 20.dp, top = 3.dp, bottom = 1.dp)
             .fillMaxWidth()
-            .clickable { onCheckedChange(!isCheck) }
+            .clickable { onCheckedChange(Member(member.nickname, member.profileImg)) }
     )
     {
-        if(profiles != null ) {
+        if(member.profileImg != null ) {
             AsyncImage(
                 model = ImageRequest.Builder(LocalContext.current)
-                    .data(profiles)
+                    .data(member.profileImg)
                     .build(),
                 contentDescription = "ImageRequest example",
                 modifier = Modifier.size(65.dp)
@@ -176,13 +179,13 @@ fun SearchMember(
             )
         }
         Text(
-            text = nickname,
+            text = member.nickname,
             fontSize = 17.sp,
             modifier = Modifier.fillMaxWidth(1f)
         )
         Checkbox(
             checked = isCheck,
-            onCheckedChange = onCheckedChange
+            onCheckedChange = {}
         )
     }
 }

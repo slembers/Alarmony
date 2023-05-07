@@ -72,7 +72,9 @@ import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.slembers.alarmony.R
 import com.slembers.alarmony.feature.common.CardBox
 import com.slembers.alarmony.feature.common.CardTitle
+import com.slembers.alarmony.model.db.Member
 import com.slembers.alarmony.model.db.SoundItem
+import com.slembers.alarmony.model.db.dto.MemberDto
 import com.slembers.alarmony.viewModel.GroupViewModel
 import java.util.Locale
 
@@ -420,7 +422,10 @@ fun soundIcon(
 @Composable
 @ExperimentalMaterial3Api
 @ExperimentalGlideComposeApi
-fun CurrentInvite( group : GroupViewModel = viewModel()) {
+fun CurrentInvite(
+    group: GroupViewModel = viewModel(),
+    checkMembers: MutableList<Member>
+) {
 
     val members by group.members.observeAsState()
 
@@ -438,11 +443,11 @@ fun CurrentInvite( group : GroupViewModel = viewModel()) {
                     ),
                 userScrollEnabled = true
             ) {
-                items(items = members!!) {
+                items(items = checkMembers) { member ->
                     GroupDefalutProfile(
-                        profileImg = it.profileImg,
-                        nickname = it.nickname,
-                        newMember = true
+                        profileImg = member.profileImg,
+                        nickname = member.nickname,
+                        newMember = member.isNew
                     )
                 }
             }
