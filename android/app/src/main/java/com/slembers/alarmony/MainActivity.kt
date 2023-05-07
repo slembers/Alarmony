@@ -2,6 +2,8 @@ package com.slembers.alarmony
 
 import android.content.ContentValues
 import android.content.DialogInterface
+import android.content.Intent
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
@@ -57,5 +59,16 @@ class MainActivity : AppCompatActivity() {
             }
             requestBatteryOptimizationPermission()
         }
+    }
+
+    // 오버레이 권한 설정
+    @RequiresApi(Build.VERSION_CODES.M)
+    private fun requestDrawOverlay() {
+        // if not construct intent to request permission
+        val intent = Intent(
+            Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+            Uri.parse("package:" + applicationContext.packageName)
+        )
+        resultLauncher.launch(intent)
     }
 }
