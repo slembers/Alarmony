@@ -13,6 +13,7 @@ import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.slembers.alarmony.feature.group.GroupScreen
 import com.slembers.alarmony.feature.group.InviteScreen
 import com.slembers.alarmony.feature.group.SoundScreen
+import com.slembers.alarmony.feature.screen.AlarmListScreen
 import com.slembers.alarmony.feature.user.FindId
 import com.slembers.alarmony.feature.user.Findpswd
 import com.slembers.alarmony.feature.user.LoginScreen
@@ -39,7 +40,14 @@ fun NavController(
 //        startDestination = NavItem.Group.route
         startDestination = NavItem.Group.route
     ) {
-
+        // 알람 목록 조회 페이지
+        composable( route = NavItem.AlarmListScreen.route) {
+            AlarmListScreen(navController)
+        }
+        // 알림 목록 조회 페이지
+        composable( route = NavItem.NotiListScreen.route) {
+            NotiListScreen(navController)
+        }
         // 그룹생성 페이지
         composable( route = NavItem.Group.route ) {
             GroupScreen( navController = navController, groupModel )

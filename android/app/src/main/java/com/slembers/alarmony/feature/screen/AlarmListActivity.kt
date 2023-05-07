@@ -1,9 +1,6 @@
-package com.slembers.alarmony.feature.alarm
+package com.slembers.alarmony.feature.screen
 
-import android.os.Bundle
 import android.widget.Toast
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -20,7 +17,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.outlined.Notifications
 import androidx.compose.material.icons.outlined.NotificationsActive
 import androidx.compose.material.icons.outlined.Settings
@@ -44,37 +40,21 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.slembers.alarmony.R
+import com.slembers.alarmony.feature.alarm.Alarm
+import com.slembers.alarmony.feature.alarm.aaa
+import com.slembers.alarmony.feature.alarm.notiSample
 import com.slembers.alarmony.feature.common.ui.theme.notosanskr
 import com.slembers.alarmony.feature.common.ui.theme.toColor
 
-class AlarmActivity : ComponentActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContent {
-            val navController = rememberNavController()
-            NavHost(navController = navController, startDestination = "AlarmMain") {
-                composable(route = "AlarmMain") {
-                    AlarmMainScreen(navController = navController)
-                }
-                composable(route = "Notification") {
-                    NotificationScreen(navController = navController)
-                }
-            }
-        }
-    }
-}
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AlarmMainScreen(navController: NavController) {
+fun AlarmListScreen(navController : NavHostController) {
     Scaffold(
         topBar = {
             TopAppBar(
@@ -200,11 +180,27 @@ fun MyListItem(item : Alarm, onItemClick: (String) -> Unit) {
 
     {
         Column(verticalArrangement = Arrangement.Center) {
-
+            val aTime : Int
+            val ampm : String
+            if (item.hour >= 0 && item.hour < 12) {
+                ampm = "오전"
+                if (item.hour == 0) {
+                    aTime = 12
+                } else {
+                    aTime = item.hour
+                }
+            } else {
+                ampm = "오후"
+                if (item.hour > 12) {
+                    aTime = item.hour - 12
+                } else {
+                    aTime = item.hour
+                }
+            }
             Row(verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.padding(start = 25.dp, top = 5.dp, bottom = 0.dp)) {
                 Text(
-                    text = item.ampm,
+                    text = ampm,
                 )
             }
             Row(
@@ -214,7 +210,7 @@ fun MyListItem(item : Alarm, onItemClick: (String) -> Unit) {
                     .padding(start = 20.dp, end = 20.dp)
                     .fillMaxWidth()) {
                 Text(
-                    text = if (item.hour.toString().length == 1) {"0" + item.hour.toString()} else {item.hour.toString()}
+                    text = if (item.hour.toString().length == 1) {"0" + aTime.toString()} else {item.hour.toString()}
                             + " : "
                             + if (item.minute.toString().length == 1) {"0" + item.minute.toString()} else {item.minute.toString()},
                     fontSize = 30.sp,
@@ -231,47 +227,47 @@ fun MyListItem(item : Alarm, onItemClick: (String) -> Unit) {
                 modifier = Modifier.padding(start = 20.dp)
             ) {
                 val myDate = item.alarm_date
-                if ("월" in myDate && "화" in myDate && "수" in myDate && "목" in myDate && "금" in myDate && "토" !in myDate && "일" !in myDate) {
+                if (myDate[0] == true && myDate[1] == true && myDate[2] == true && myDate[3] == true && myDate[4] == true && myDate[5] == false && myDate[6] == false) {
                     Text(text = "주중", modifier = Modifier.padding(start = 5.dp))
                 }
-                else if ("월" !in myDate && "화" !in myDate && "수" !in myDate && "목" !in myDate && "금" !in myDate && "토" in myDate && "일" in myDate) {
+                else if (myDate[0] == false && myDate[1] == false && myDate[2] == false && myDate[3] == false && myDate[4] == false && myDate[5] == true && myDate[6] == true) {
                     Text(text = "주말", color= Color.Red, modifier = Modifier.padding(start = 5.dp))
                 }
-                else if ("월" in myDate && "화" in myDate && "수" in myDate && "목" in myDate && "금" in myDate && "토" in myDate && "일" in myDate) {
+                else if (myDate[0] == true && myDate[1] == true && myDate[2] == true && myDate[3] == true && myDate[4] == true && myDate[5] == true && myDate[6] == true) {
                     Text(text = "매일", color= Color.Black, modifier = Modifier.padding(start = 5.dp))
                 }
                 else {
-                    if ("월" in myDate) {
+                    if (myDate[0] == true) {
                         Text(text = "월")
                     } else {
                         Text(text = "월", color= Color.Black.copy(alpha = 0.2f))
                     }
-                    if ("화" in myDate) {
+                    if (myDate[1] == true) {
                         Text(text = " 화")
                     } else {
                         Text(text = " 화", color= Color.Black.copy(alpha = 0.2f))
                     }
-                    if ("수" in myDate) {
+                    if (myDate[2] == true) {
                         Text(text = " 수")
                     } else {
                         Text(text = " 수", color= Color.Black.copy(alpha = 0.2f))
                     }
-                    if ("목" in myDate) {
+                    if (myDate[3] == true) {
                         Text(text = " 목")
                     } else {
                         Text(text = " 목", color= Color.Black.copy(alpha = 0.2f))
                     }
-                    if ("금" in myDate) {
+                    if (myDate[4] == true) {
                         Text(text = " 금")
                     } else {
                         Text(text = " 금", color= Color.Black.copy(alpha = 0.2f))
                     }
-                    if ("토" in myDate) {
+                    if (myDate[5] == true) {
                         Text(text = " 토")
                     } else {
                         Text(text = " 토", color= Color.Black.copy(alpha = 0.2f))
                     }
-                    if ("일" in myDate) {
+                    if (myDate[6] == true) {
                         Text(text = " 일")
                     } else {
                         Text(text = " 일", color= Color.Black.copy(alpha = 0.2f))
