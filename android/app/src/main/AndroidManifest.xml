@@ -54,6 +54,11 @@
             </intent-filter>
         </service>
 
+        <service
+            android:name=".feature.alarm.AlarmForegroundService"
+            android:enabled="true"
+            android:exported="false" />
+
         <receiver
             android:name=".feature.alarm.AlarmReceiver"
             android:enabled="true"
