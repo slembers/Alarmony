@@ -15,7 +15,7 @@ import com.slembers.alarmony.util.Constants.alarm_id
 
 class AlarmReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
-        val newIntent = Intent(context, AlarmsForegroundService::class.java)
+        val newIntent = Intent(context, AlarmForegroundService::class.java)
 
         if (intent.action == BOOT_COMPLETED) {
             newIntent.putExtra(OPEN_TYPE, REFRESH)
