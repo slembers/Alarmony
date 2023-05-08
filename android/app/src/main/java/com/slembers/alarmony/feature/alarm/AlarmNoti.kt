@@ -5,6 +5,7 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
 import android.media.MediaPlayer
+import android.media.Ringtone
 import android.media.RingtoneManager
 import android.net.Uri
 import android.os.Build
@@ -17,15 +18,16 @@ object AlarmNoti {
     private var notification: Notification? = null
     private var notificationManager: NotificationManager? = null
     private var mBuilder: NotificationCompat.Builder? = null
+    private var ringtone: Ringtone? = null
 
-    fun runNotification(context: Context, body: String?, alarm: Alarm) {
+    fun runNotification(context: Context, alarm: Alarm) {
         NotificationID = alarm.alarm_id.toInt()
         notificationManager =
             context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         mBuilder = NotificationCompat.Builder(context.applicationContext, "notify_001")
 
         mBuilder!!.setSmallIcon(R.mipmap.ic_launcher)
-        mBuilder!!.setContentTitle(body)
+        mBuilder!!.setContentTitle(alarm.title)
         mBuilder!!.setAutoCancel(true)
         mBuilder!!.setOngoing(false)
         mBuilder!!.priority = Notification.PRIORITY_HIGH
@@ -33,8 +35,8 @@ object AlarmNoti {
 
         // 사운드
         val alarmBell: Uri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM)
-        val ringtone = RingtoneManager.getRingtone(context, alarmBell)
-        ringtone.play()
+        ringtone = RingtoneManager.getRingtone(context, alarmBell)
+        ringtone!!.play()
 
 //        var mp : MediaPlayer = MediaPlayer.create(context, Settings.System.DEFAULT_ALARM_ALERT_URI)
 //        mp.start();
@@ -63,5 +65,6 @@ object AlarmNoti {
 
     fun cancelNotification() {
         notificationManager!!.cancel(NotificationID)
+        ringtone!!.stop()
     }
 }
