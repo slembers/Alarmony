@@ -1,6 +1,7 @@
 package com.slembers.alarmony.member.controller;
 
 
+import com.slembers.alarmony.global.dto.MessageResponseDto;
 import com.slembers.alarmony.global.security.util.SecurityUtil;
 import com.slembers.alarmony.member.dto.request.*;
 import com.slembers.alarmony.member.dto.response.CheckDuplicateDto;
@@ -112,12 +113,9 @@ public class MemberController {
      * 아이디 찾기
      */
     @PostMapping("/find-id")
-    public ResponseEntity<Map<String, Object>> findId(@RequestBody FindMemberIdDto findMemberIdDto) throws MessagingException {
+    public ResponseEntity<MessageResponseDto> findId(@RequestBody FindMemberIdDto findMemberIdDto) throws MessagingException {
 
-        memberService.findMemberId(findMemberIdDto);
-        Map<String, Object> map = new HashMap<>();
-        map.put("message","아이디 찾기 이메일 전송 선공");
-        return new ResponseEntity<>(map, HttpStatus.OK);
+        return new ResponseEntity<>(memberService.findMemberId(findMemberIdDto), HttpStatus.OK);
     }
 
 
