@@ -140,4 +140,15 @@ public class MemberController {
         log.info(username+ " /info 진입");
         return new ResponseEntity<>(memberService.getMemberInfo(username), HttpStatus.OK);
     }
+
+
+    /**
+     * 회원 탈퇴  (비활성화)
+     */
+    @DeleteMapping()
+    public ResponseEntity<MessageResponseDto> deleteMember(){
+
+        return new ResponseEntity<>(memberService.deleteMember(SecurityUtil.getCurrentUsername()),HttpStatus.OK);
+
+    }
 }

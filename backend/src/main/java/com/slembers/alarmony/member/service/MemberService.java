@@ -62,4 +62,9 @@ public interface MemberService {
      */
 
     MemberResponseDto getMemberInfo(String username);
+
+    /**
+     *  회원 탈퇴
+     */
+    MessageResponseDto deleteMember(String username);
 }
