@@ -49,9 +49,9 @@ class AlarmForegroundService : Service() {
             )
 
         val alarm = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            intent.getParcelableExtra("alarm", Alarm::class.java)
+            intent.getParcelableExtra("alarm", Alarm::class.java) as Alarm
         } else {
-            intent.getParcelableExtra<Alarm>("alarm")
+            intent.getParcelableExtra<Alarm>("alarm") as Alarm
         }
 
         if (intent!!.getStringExtra(OPEN_TYPE) == REFRESH) {

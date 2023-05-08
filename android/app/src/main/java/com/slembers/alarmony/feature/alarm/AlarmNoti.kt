@@ -18,14 +18,14 @@ object AlarmNoti {
     private var notificationManager: NotificationManager? = null
     private var mBuilder: NotificationCompat.Builder? = null
 
-    fun runNotification(context: Context, body: String?, alarm: Alarm) {
+    fun runNotification(context: Context, alarm: Alarm) {
         NotificationID = alarm.alarm_id.toInt()
         notificationManager =
             context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         mBuilder = NotificationCompat.Builder(context.applicationContext, "notify_001")
 
         mBuilder!!.setSmallIcon(R.mipmap.ic_launcher)
-        mBuilder!!.setContentTitle(body)
+        mBuilder!!.setContentTitle(alarm.title)
         mBuilder!!.setAutoCancel(true)
         mBuilder!!.setOngoing(false)
         mBuilder!!.priority = Notification.PRIORITY_HIGH
