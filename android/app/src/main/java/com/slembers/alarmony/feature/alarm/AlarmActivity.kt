@@ -208,10 +208,10 @@ fun AlarmScreen(alarm : Alarm, alarmStartTime : Long) {
                 }
             }
             if (isClicked5.value) {
-                SnoozeNoti(5, isClicked5, context)
+                SnoozeNoti(5, isClicked5, context, alarm)
             }
             if (isClicked10.value) {
-                SnoozeNoti(10, isClicked10, context)
+                SnoozeNoti(10, isClicked10, context, alarm)
             }
         }
     )
@@ -274,9 +274,18 @@ fun DrawCircle(alarm : Alarm) {
                 setTypeface(typeface)
                 isAntiAlias = true
             }
+            val text3 = "${alarm.title}"
+            val paint3 = Paint().asFrameworkPaint().apply {
+                textAlign = android.graphics.Paint.Align.CENTER
+                textSize = 26.sp.toPx()
+                color = Color.Black.toArgb()
+                setTypeface(typeface)
+                isAntiAlias = true
+            }
             val y1 = center.y - ((paint1.descent() + paint1.ascent()) / 2)
             canvas.nativeCanvas.drawText(text, center.x, y1, paint1)
-            canvas.nativeCanvas.drawText(text2, center.x, center.y-120, paint2)
+            canvas.nativeCanvas.drawText(text2, center.x, center.y - 150, paint2)
+            canvas.nativeCanvas.drawText(text3, center.x, center.y + 250, paint3)
         }
     }
 }

@@ -38,7 +38,6 @@ fun setAlarm(context: Context, alarm: Alarm) {
     if (curTime > newTime) {    // 설정한 시간이, 현재 시간 보다 작다면 바로 울리기 때문에 다음날로 설정
         newTime += intervalDay
     }
-//    val newTime = System.currentTimeMillis() + 5000  // 테스트용 코드 (5초 뒤 알람 설정)
 
     val intent = Intent(context, AlarmReceiver::class.java)
     intent.putExtra("alarm", alarm)
@@ -51,23 +50,6 @@ fun setAlarm(context: Context, alarm: Alarm) {
         )
     val alarmManager = context.getSystemService(ALARM_SERVICE) as AlarmManager
     alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, newTime, intervalDay, alarmIntentRTC)
-//    when {
-//        Build.VERSION.SDK_INT >= Build.VERSION_CODES.M -> {
-//            alarmManager.setExactAndAllowWhilZIdle(
-//                AlarmManager.RTC_WAKEUP,
-//                newTime,
-//                alarmIntentRTC
-//            )
-//
-//        }
-//        else -> {
-//            alarmManager.setExact(
-//                AlarmManager.RTC_WAKEUP,
-//                newTime,
-//                alarmIntentRTC
-//            )
-//        }
-//    }
 
     val receiver = ComponentName(context, AlarmReceiver::class.java)
     context.packageManager.setComponentEnabledSetting(
@@ -87,4 +69,44 @@ fun cancelAlarm(context : Context, alarm : Alarm) {
     val intent = Intent(context, AlarmReceiver::class.java)
     val pendingIntent = PendingIntent.getBroadcast(context, alarm.alarm_id.toInt(), intent, PendingIntent.FLAG_MUTABLE)
     alarmManager.cancel(pendingIntent)
+}
+
+
+////////////////////// 테스트 코드입니다.
+fun setAlarmTest(context: Context, alarm: Alarm) {
+    val newTime = System.currentTimeMillis() + (8 * 1000)  // 테스트용 코드 (8초 뒤 알람 설정)
+    val intent = Intent(context, AlarmReceiver::class.java)
+    intent.putExtra("alarm", alarm)
+    val alarmIntentRTC: PendingIntent =
+        PendingIntent.getBroadcast(
+            context,
+            System.currentTimeMillis().toInt(),
+            intent,
+            PendingIntent.FLAG_MUTABLE
+        )
+    val alarmManager = context.getSystemService(ALARM_SERVICE) as AlarmManager
+    when {
+        Build.VERSION.SDK_INT >= Build.VERSION_CODES.M -> {
+            alarmManager.setExactAndAllowWhileIdle(
+                AlarmManager.RTC_WAKEUP,
+                newTime,
+                alarmIntentRTC
+            )
+
+        }
+        else -> {
+            alarmManager.setExact(
+                AlarmManager.RTC_WAKEUP,
+                newTime,
+                alarmIntentRTC
+            )
+        }
+    }
+
+    val receiver = ComponentName(context, AlarmReceiver::class.java)
+    context.packageManager.setComponentEnabledSetting(
+        receiver,
+        PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
+        PackageManager.DONT_KILL_APP
+    )
 }

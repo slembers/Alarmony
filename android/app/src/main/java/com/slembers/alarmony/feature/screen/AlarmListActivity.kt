@@ -56,6 +56,7 @@ import com.slembers.alarmony.feature.alarm.AlarmViewModelFactory
 import com.slembers.alarmony.feature.alarm.alarm1
 import com.slembers.alarmony.feature.alarm.notiSample
 import com.slembers.alarmony.feature.alarm.setAlarm
+import com.slembers.alarmony.feature.alarm.setAlarmTest
 import com.slembers.alarmony.feature.common.NavItem
 import com.slembers.alarmony.feature.common.ui.theme.notosanskr
 import com.slembers.alarmony.feature.common.ui.theme.toColor
@@ -161,9 +162,13 @@ fun AlarmListScreen(navController : NavHostController) {
                         Toast.LENGTH_SHORT
                     ).show()
                 }
-//                Button(onClick = ({setAlarm(context, alarm1)})) { // 테스트용 버튼
-//
-//                }
+                ////////////////// 테스트용 버튼
+                Button(onClick = {setAlarmTest(context, alarm1)
+                    Toast.makeText(context, "8초 뒤에 알람이 울립니다.", Toast.LENGTH_SHORT).show()}
+                ) {
+                    Text(text = "8초 뒤 울리는 테스트 알람")
+                }
+                //////////////////
                 LazyColumn{
                     items(alarms.size) {model ->
                         MyListItem(item = alarms[model], onItemClick=onListItemClick)
