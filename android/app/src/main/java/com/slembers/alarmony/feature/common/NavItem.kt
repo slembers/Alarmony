@@ -28,6 +28,18 @@ sealed class NavItem (
         image = Icons.Default.ArrowForwardIos
     )
 
+    object AlarmListScreen : NavItem(
+        route = "alarmListScreen",
+        title = "alarmony",
+        image = Icons.Default.Home
+    )
+
+    object NotiListScreen : NavItem(
+        route = "NotiListScreen",
+        title = "알림",
+        image = Icons.Default.ArrowForwardIos
+    )
+
     object MainScreen : NavItem("main_screen", "main_screen", Icons.Default.Home)
     object SettingScreen : NavItem("setting_screen", "setting_screen",Icons.Default.Home)
     object LoginScreen : NavItem("login_screen","login_screen" ,Icons.Default.Home)

@@ -25,6 +25,8 @@ import com.slembers.alarmony.feature.common.CardBox
 import com.slembers.alarmony.feature.common.NavItem
 import com.slembers.alarmony.feature.common.ui.compose.GroupTitle
 import com.slembers.alarmony.feature.ui.group.GroupToolBar
+import com.slembers.alarmony.feature.ui.groupDetails.GroupDetailsBoard
+import com.slembers.alarmony.feature.ui.groupDetails.GroupDetailsTitle
 
 @ExperimentalMaterial3Api
 @ExperimentalGlideComposeApi
