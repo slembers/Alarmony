@@ -36,7 +36,6 @@ public class AlarmRecordServiceImpl implements AlarmRecordService {
      */
     @Override
     public List<AlarmRecordDto> getTodayAlarmRecords(Long groupId) {
-
         return alarmRecordRepository.findTodayAlarmRecordsByAlarmId(groupId);
     }
 
@@ -53,22 +52,27 @@ public class AlarmRecordServiceImpl implements AlarmRecordService {
 
     /**
      * 알람 종료에 성공여부에 따라 기록한다.
+     *
      * @param alarmEndRecordDto 알람 종료 객체
      */
     @Override
     public void putAlarmRecord(AlarmEndRecordDto alarmEndRecordDto) {
         Member member = memberRepository.findByUsername(alarmEndRecordDto.getUsername())
-                .orElseThrow(() -> new CustomException(MemberErrorCode.MEMBER_NOT_FOUND));
+            .orElseThrow(() -> new CustomException(MemberErrorCode.MEMBER_NOT_FOUND));
 
-        AlarmRecord alarmRecord = alarmRecordRepository.findByMemberAndAlarm(member.getId(), alarmEndRecordDto.getAlarmId())
-                .orElseThrow(() -> new CustomException(AlarmRecordErrorCode.ALARM_RECORD_NOT_EXIST));
+        AlarmRecord alarmRecord = alarmRecordRepository.findByMemberAndAlarm(member.getId(),
+                alarmEndRecordDto.getAlarmId())
+            .orElseThrow(() -> new CustomException(AlarmRecordErrorCode.ALARM_RECORD_NOT_EXIST));
 
         Alarm alarm = alarmRepository.findById(alarmEndRecordDto.getAlarmId())
-                .orElseThrow(() -> new CustomException(AlarmErrorCode.ALARM_NOT_FOUND));
+            .orElseThrow(() -> new CustomException(AlarmErrorCode.ALARM_NOT_FOUND));
 
         try {
-            if(alarmEndRecordDto.isSuccess()) alarmRecord.recordSuccess(alarm.getTime(), alarmEndRecordDto.getDatetime());
-            else alarmRecord.recordFailed(alarm.getTime());
+            if (alarmEndRecordDto.isSuccess()) {
+                alarmRecord.recordSuccess(alarm.getTime(), alarmEndRecordDto.getDatetime());
+            } else {
+                alarmRecord.recordFailed(alarm.getTime());
+            }
             alarmRecordRepository.save(alarmRecord);
         } catch (Exception e) {
             throw new CustomException(AlarmRecordErrorCode.ALARM_RECORD_RECORD_ERROR);
