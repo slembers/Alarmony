@@ -21,6 +21,7 @@ import com.slembers.alarmony.feature.common.ui.compose.GroupCard
 import com.slembers.alarmony.feature.common.ui.compose.GroupDefalutProfile
 import com.slembers.alarmony.feature.common.ui.compose.GroupTitle
 import com.slembers.alarmony.model.db.dto.MemberDto
+import com.slembers.alarmony.network.service.MemberService
 
 @Composable
 @ExperimentalMaterial3Api
@@ -39,7 +40,11 @@ fun GroupInvite(
                     modifier = Modifier.padding(2.dp)
                 )
             },
-            onClick = { navController.navigate( NavItem.GroupInvite.route )}
+            onClick = {
+                MemberService.login()
+                navController.currentBackStackEntry?.savedStateHandle?.set("members",members.toSet())
+                navController.navigate( route = NavItem.GroupInvite.route )
+            }
         )
         },
         content = {

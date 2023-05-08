@@ -1,6 +1,10 @@
 package com.slembers.alarmony.feature.screen
 
+import android.os.Bundle
 import android.util.Log
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -68,20 +72,21 @@ fun GroupScreen(
     navController : NavHostController = rememberNavController(),
     viewModel : GroupViewModel = viewModel()
 ) {
-
     val title by viewModel.title.observeAsState("")
-    val timePickerState by viewModel.alarmTime.observeAsState(
-        TimePickerState(10,0,false)
-    )
+    val timePickerState by viewModel.alarmTime.observeAsState()
     val isWeeks by viewModel.currentWeeks.observeAsState()
     val weeks = listOf("월","화","수","목","금","토","일")
-    val members by viewModel.members.observeAsState(listOf<MemberDto>())
-    val soundName by viewModel.sound.observeAsState("노래제목")
-    val vibration by viewModel.vibrate.observeAsState(true)
-    val soundVolume by viewModel.volumn.observeAsState(7f)
+    val members by viewModel.members.observeAsState()
+    val soundName by viewModel.sound.observeAsState()
+    val vibration by viewModel.vibrate.observeAsState()
+    val soundVolume by viewModel.volumn.observeAsState()
 
     val scrollerState = rememberScrollState()
     val context = LocalContext.current
+
+    // 초대된 그룹원 확인
+    val checkedMember = navController.previousBackStackEntry?.savedStateHandle?.get<Set<MemberDto>>("checkedMember")
+    Log.d("checked","[그룹생성] 선택한 멤버 : ${checkedMember.toString()}")
 
     Scaffold(
         topBar = {
@@ -95,20 +100,21 @@ fun GroupScreen(
                 text = "저장",
                 onClick = {
                     var connection = false
+                    Log.i("viewmodel:ID","[그룹생성] groupActivity ID : $viewModel")
                     GroupService.addGroupAlarm(
                         Group(
                             title = title,
-                            hour = timePickerState.hour,
-                            minute = timePickerState.minute,
+                            hour = timePickerState?.hour ?: 10,
+                            minute = timePickerState?.minute ?: 0,
                             alarmDate = weeks.stream().map {
                                 isWeeks?.getValue(it) ?: false
                             }.toList(),
                             members = members?.stream()?.map {
                                 it.nickname
                             }?.toList(),
-                            soundName = soundName,
-                            soundVolume = soundVolume,
-                            vibrate = vibration
+                            soundName = soundName ?: "노래제목",
+                            soundVolume = soundVolume ?: 7f,
+                            vibrate = vibration ?: true
                         ),
                         connection = { connection = it}
                     )
@@ -138,7 +144,7 @@ fun GroupScreen(
                     title = { GroupTitle(title = "알람시간") },
                     content = {
                         TimeInput(
-                            state = timePickerState,
+                            state = timePickerState!!,
                             modifier = Modifier
                                 .padding(
                                     start = 20.dp,
@@ -268,7 +274,7 @@ fun GroupScreen(
                     )},
                 )
                 GroupVolume(
-                    volume = soundVolume,
+                    volume = soundVolume ?: 7f,
                     setVolume = { viewModel.onChangeVolume(it) }
                 )
             }

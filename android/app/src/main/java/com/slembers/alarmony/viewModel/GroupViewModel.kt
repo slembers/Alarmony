@@ -4,17 +4,13 @@ package com.slembers.alarmony.viewModel
 
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.TimePickerState
-import androidx.compose.material3.rememberTimePickerState
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateMapOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.slembers.alarmony.model.db.Member
 import com.slembers.alarmony.model.db.dto.MemberDto
+import javax.inject.Inject
 
 @ExperimentalMaterial3Api
 class GroupViewModel : ViewModel() {
@@ -27,8 +23,9 @@ class GroupViewModel : ViewModel() {
     private val _members = mutableStateListOf<MemberDto>()
     private val _currentMembers = MutableLiveData<MutableList<MemberDto>>()
     private val _sound = MutableLiveData("노래제목")
-    private val _vibrate = MutableLiveData(false)
+    private val _vibrate = MutableLiveData(true)
     private val _volumn = MutableLiveData(7f)
+
     init {
         val map = mapOf<String,Boolean>(
             Pair(first = "월", second = true),

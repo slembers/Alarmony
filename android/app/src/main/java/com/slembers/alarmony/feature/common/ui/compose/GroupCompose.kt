@@ -424,22 +424,17 @@ fun soundIcon(
 @ExperimentalMaterial3Api
 @ExperimentalGlideComposeApi
 fun CurrentInvite(
-    group: GroupViewModel = viewModel(),
+    members: Set<MemberDto> = setOf(),
     search: GroupSearchViewModel = viewModel(),
 ) {
 
-    val members by group.members.observeAsState()
-    val checkedMembers by search.checkedMembers.observeAsState()
 
-    val currentMembers : List<Member> = members?.let {
-        it.stream().map { member ->
-            Member(
-                nickname = member.nickname,
-                profileImg = member.profileImg,
-                isNew = false
-            )
-        }.toList()
-    } as List<Member>
+    Log.i("insert","[그룹초대] 데이터 삽입 중...")
+
+    val checkedMembers by search.checkedMembers.observeAsState()
+    val list = members.map { Member(nickname = it.nickname, profileImg = it.profileImg, isNew = false) }.toList()
+    Log.i("insert","[그룹초대] 데이터 삽입1 $list")
+    Log.i("insert","[그룹초대] 데이터 삽입2 ${checkedMembers}")
 
     CardBox(
         title = { CardTitle(title = "초대인원") },
@@ -456,11 +451,11 @@ fun CurrentInvite(
                 userScrollEnabled = true
             ) {
 
-                items(items = currentMembers) { member ->
+                items(items = list) { checked ->
                     GroupDefalutProfile(
-                        profileImg = member.profileImg,
-                        nickname = member.nickname,
-                        newMember = true
+                        profileImg = checked.profileImg,
+                        nickname = checked.nickname,
+                        newMember = checked.isNew
                     )
                 }
 
@@ -468,10 +463,9 @@ fun CurrentInvite(
                     GroupDefalutProfile(
                         profileImg = checked.profileImg,
                         nickname = checked.nickname,
-                        newMember = false
+                        newMember = checked.isNew
                     )
                 }
-
             }
         }
     )
