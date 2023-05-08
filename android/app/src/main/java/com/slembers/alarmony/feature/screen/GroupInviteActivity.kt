@@ -38,7 +38,7 @@ fun InviteScreen(
         topBar = {
             GroupToolBar(
                 title = NavItem.GroupInvite.title,
-                navcontroller = navController
+                navClick = { navController.popBackStack() }
             )
         },
         bottomBar = {

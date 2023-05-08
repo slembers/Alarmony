@@ -1,7 +1,12 @@
 package com.slembers.alarmony.feature.screen
 
+import android.app.Activity
 import android.app.Application
+import android.content.Intent
+import android.util.Log
 import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -34,6 +39,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.contentColorFor
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -45,9 +51,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavController
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
+import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.slembers.alarmony.R
 import com.slembers.alarmony.feature.alarm.Alarm
 import com.slembers.alarmony.feature.alarm.AlarmViewModel
@@ -57,6 +62,7 @@ import com.slembers.alarmony.feature.common.NavItem
 import com.slembers.alarmony.feature.common.ui.theme.notosanskr
 import com.slembers.alarmony.feature.common.ui.theme.toColor
 
+@ExperimentalGlideComposeApi
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AlarmListScreen(navController : NavHostController) {
@@ -65,6 +71,12 @@ fun AlarmListScreen(navController : NavHostController) {
         factory = AlarmViewModelFactory(context.applicationContext as Application)
     )
     val alarms = mAlarmViewModel.readAllData.observeAsState(listOf()).value
+    val launcher = rememberLauncherForActivityResult(
+        ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            Log.d("AlarmListScreen","[알람목록] Activity 이동성공")
+        }
+    }
     Scaffold(
         topBar = {
             TopAppBar(
@@ -125,7 +137,10 @@ fun AlarmListScreen(navController : NavHostController) {
         floatingActionButtonPosition = FabPosition.Center,
         floatingActionButton = {
             FloatingActionButton(
-                onClick = { navController.navigate(NavItem.Group.route) },
+                onClick = {
+                    val intent = Intent(context,GroupActivity::class.java)
+                    launcher.launch(intent)
+                },
                 shape = CircleShape,
                 containerColor = "#00B4D8".toColor(),
                 modifier = Modifier

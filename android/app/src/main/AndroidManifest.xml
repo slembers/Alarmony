@@ -72,6 +72,12 @@
                 <action android:name="android.intent.action.QUICKBOOT_POWERON" />
             </intent-filter>
         </receiver>
+
+        <activity
+            android:name=".feature.screen.GroupActivity"
+            android:exported="false"
+            android:label="@string/title_activity_alarm"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
     </application>
 
 </manifest>

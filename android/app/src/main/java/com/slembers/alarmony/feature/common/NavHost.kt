@@ -48,10 +48,6 @@ fun NavController(
         composable( route = NavItem.NotiListScreen.route) {
             NotiListScreen(navController)
         }
-        // 그룹생성 페이지
-        composable( route = NavItem.Group.route ) { GroupScreen(navController, group) }
-        composable( route = NavItem.Sound.route ) { SoundScreen( navController = navController ) }
-        composable( route = NavItem.GroupInvite.route ) { InviteScreen(navController, group) }
         // 로그인 페이지
         composable( route = NavItem.LoginScreen.route) {LoginScreen(navController = navController)}
         composable( route = NavItem.FindIdActivity.route) {FindId(navController = navController) }

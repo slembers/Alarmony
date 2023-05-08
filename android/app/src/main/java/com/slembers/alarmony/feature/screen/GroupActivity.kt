@@ -1,11 +1,18 @@
 package com.slembers.alarmony.feature.screen
 
+import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
+import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
+import androidx.activity.compose.setContent
+import androidx.activity.viewModels
+import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -34,6 +41,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.TimeInput
 import androidx.compose.material3.TimePickerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
@@ -44,10 +52,14 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
+import com.slembers.alarmony.MainActivity
 import com.slembers.alarmony.R
 import com.slembers.alarmony.feature.common.NavItem
 import com.slembers.alarmony.feature.common.ui.compose.GroupCard
@@ -64,6 +76,37 @@ import com.slembers.alarmony.network.service.GroupService
 import com.slembers.alarmony.viewModel.GroupViewModel
 import kotlin.streams.toList
 
+@ExperimentalMaterial3Api
+@ExperimentalGlideComposeApi
+class GroupActivity : AppCompatActivity() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContent {
+            val navController : NavHostController = rememberNavController()
+            val viewModel by viewModels<GroupViewModel>()
+            NavHost(
+                navController = navController,
+                startDestination = NavItem.Group.route
+            ) {
+                composable( route = NavItem.Group.route ) { GroupScreen(
+                    navController = navController, viewModel = viewModel) }
+                composable( route = NavItem.GroupInvite.route ) { InviteScreen(navController) }
+                composable( route = NavItem.Sound.route ) { SoundScreen(navController) }
+            }
+        }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        Log.d("GroupActivity","[그룹생성] Activity 시작")
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        Log.d("GroupActivity","[그룹생성] Activity 종료")
+    }
+}
+
 @Preview
 @Composable
 @ExperimentalMaterial3Api
@@ -72,7 +115,8 @@ fun GroupScreen(
     navController : NavHostController = rememberNavController(),
     viewModel : GroupViewModel = viewModel()
 ) {
-    val title by viewModel.title.observeAsState("")
+
+    val title by viewModel.title.observeAsState()
     val timePickerState by viewModel.alarmTime.observeAsState()
     val isWeeks by viewModel.currentWeeks.observeAsState()
     val weeks = listOf("월","화","수","목","금","토","일")
@@ -92,7 +136,7 @@ fun GroupScreen(
         topBar = {
             GroupToolBar(
                 title = NavItem.Group.title,
-                navcontroller = navController
+                navClick = { (context as Activity).finish() }
             )
          },
         bottomBar = {
@@ -103,7 +147,7 @@ fun GroupScreen(
                     Log.i("viewmodel:ID","[그룹생성] groupActivity ID : $viewModel")
                     GroupService.addGroupAlarm(
                         Group(
-                            title = title,
+                            title = title!!,
                             hour = timePickerState?.hour ?: 10,
                             minute = timePickerState?.minute ?: 0,
                             alarmDate = weeks.stream().map {
@@ -136,7 +180,7 @@ fun GroupScreen(
                 GroupCard(
                     title = { GroupTitle(title = "그룹제목") },
                     content = { GroupSubjet(
-                        title = title,
+                        title = title!!,
                         onChangeValue = { viewModel.onChangeTitle(it) })
                     }
                 )
