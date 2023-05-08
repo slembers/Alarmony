@@ -5,6 +5,7 @@ import com.slembers.alarmony.member.dto.request.FindPasswordDto;
 import com.slembers.alarmony.member.dto.request.ReissueTokenDto;
 import com.slembers.alarmony.member.dto.request.SignUpDto;
 import com.slembers.alarmony.member.dto.response.CheckDuplicateDto;
+import com.slembers.alarmony.member.dto.response.MemberResponseDto;
 import com.slembers.alarmony.member.dto.response.TokenResponseDto;
 
 import javax.mail.MessagingException;
@@ -54,4 +55,10 @@ public interface MemberService {
      */
 
     void findMemberPassword(FindPasswordDto findPasswordDto);
+
+    /**
+     * 회원 정보 조회하기
+     */
+
+    MemberResponseDto getMemberInfo(String username);
 }

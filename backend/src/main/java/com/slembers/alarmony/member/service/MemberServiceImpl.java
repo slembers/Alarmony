@@ -8,6 +8,7 @@ import com.slembers.alarmony.member.dto.request.FindPasswordDto;
 import com.slembers.alarmony.member.dto.request.ReissueTokenDto;
 import com.slembers.alarmony.member.dto.request.SignUpDto;
 import com.slembers.alarmony.member.dto.response.CheckDuplicateDto;
+import com.slembers.alarmony.member.dto.response.MemberResponseDto;
 import com.slembers.alarmony.member.dto.response.TokenResponseDto;
 import com.slembers.alarmony.member.entity.Member;
 import com.slembers.alarmony.member.exception.MemberErrorCode;
@@ -225,5 +226,18 @@ public class MemberServiceImpl implements MemberService {
         }
         return str.toString();
     }
+
+    /**
+     * 회원 정보 조회하기
+     */
+    @Override
+    public MemberResponseDto getMemberInfo(String username) {
+
+        Member member = memberRepository.findByUsername(username)
+                .orElseThrow(() -> new CustomException(MemberErrorCode.MEMBER_NOT_FOUND));
+
+        return modelMapper.map(member, MemberResponseDto.class);
+    }
+
 
 }
