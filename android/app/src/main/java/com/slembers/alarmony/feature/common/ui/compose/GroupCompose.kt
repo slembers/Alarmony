@@ -1,7 +1,6 @@
 package com.slembers.alarmony.feature.common.ui.compose
 
 import android.icu.text.SimpleDateFormat
-import android.media.MediaPlayer
 import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
@@ -64,7 +63,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
@@ -74,11 +72,8 @@ import com.slembers.alarmony.feature.common.CardBox
 import com.slembers.alarmony.feature.common.CardTitle
 import com.slembers.alarmony.model.db.Member
 import com.slembers.alarmony.model.db.SoundItem
-import com.slembers.alarmony.model.db.dto.MemberDto
 import com.slembers.alarmony.viewModel.GroupSearchViewModel
-import com.slembers.alarmony.viewModel.GroupViewModel
 import java.util.Locale
-import kotlin.streams.toList
 
 @Composable
 @ExperimentalMaterial3Api
@@ -424,17 +419,11 @@ fun soundIcon(
 @ExperimentalMaterial3Api
 @ExperimentalGlideComposeApi
 fun CurrentInvite(
-    members: Set<MemberDto> = setOf(),
-    search: GroupSearchViewModel = viewModel(),
+    search : GroupSearchViewModel = viewModel(),
+    currentMembers: MutableList<Member> = mutableListOf(),
 ) {
 
-
-    Log.i("insert","[그룹초대] 데이터 삽입 중...")
-
-    val checkedMembers by search.checkedMembers.observeAsState()
-    val list = members.map { Member(nickname = it.nickname, profileImg = it.profileImg, isNew = false) }.toList()
-    Log.i("insert","[그룹초대] 데이터 삽입1 $list")
-    Log.i("insert","[그룹초대] 데이터 삽입2 ${checkedMembers}")
+    val checkMembers = search.checkedMembers.observeAsState()
 
     CardBox(
         title = { CardTitle(title = "초대인원") },
@@ -451,7 +440,7 @@ fun CurrentInvite(
                 userScrollEnabled = true
             ) {
 
-                items(items = list) { checked ->
+                items(items = currentMembers) { checked ->
                     GroupDefalutProfile(
                         profileImg = checked.profileImg,
                         nickname = checked.nickname,
@@ -459,7 +448,7 @@ fun CurrentInvite(
                     )
                 }
 
-                items(items = checkedMembers ?: listOf()) { checked ->
+                items(items = checkMembers.value ?: listOf()) { checked ->
                     GroupDefalutProfile(
                         profileImg = checked.profileImg,
                         nickname = checked.nickname,

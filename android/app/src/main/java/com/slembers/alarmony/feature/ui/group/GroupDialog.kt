@@ -37,13 +37,10 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
-import com.slembers.alarmony.feature.common.NavItem
 import com.slembers.alarmony.feature.common.ui.theme.toColor
 import com.slembers.alarmony.model.db.Member
-import com.slembers.alarmony.model.db.dto.MemberDto
 import com.slembers.alarmony.viewModel.GroupSearchViewModel
 import com.slembers.alarmony.viewModel.GroupViewModel
-import kotlin.streams.toList
 
 
 @ExperimentalGlideComposeApi
@@ -51,16 +48,13 @@ import kotlin.streams.toList
 @Composable
 @ExperimentalMaterial3Api
 fun GroupDialog(
-    isClicked : MutableState<Boolean> = mutableStateOf(false),
+    isClosed : MutableState<Boolean> = mutableStateOf(false),
     navController : NavHostController = rememberNavController(),
     group : GroupViewModel = viewModel(),
-    search: GroupSearchViewModel = viewModel()
+    search : GroupSearchViewModel = viewModel()
 ) {
 
-    val checkedMembers = search.checkedMembers.observeAsState()
-    val isExist : List<Member> = group.members.value?.map {
-        Member(it.nickname, it.profileImg, false)
-    }?.toList() ?: listOf()
+    val checkMembers = search.checkedMembers.observeAsState()
     val openDialog = remember { mutableStateOf(true)  }
 
     if (openDialog.value) {
@@ -69,7 +63,7 @@ fun GroupDialog(
             modifier = Modifier.width(320.dp),
             onDismissRequest = {
                 openDialog.value = false
-                isClicked.value = false
+                isClosed.value = false
             },
             title = {
                 Column() {
@@ -97,7 +91,7 @@ fun GroupDialog(
                         .fillMaxWidth()
                 ) {
                     Button(
-                        onClick = { isClicked.value = false },
+                        onClick = { isClosed.value = false },
                         colors = ButtonDefaults.buttonColors(containerColor = "#C93636".toColor())
                     ) {
                         Icon(
@@ -111,14 +105,10 @@ fun GroupDialog(
                     Button(
                         onClick = {
                             openDialog.value = false
-                            checkedMembers.value?.map {
-                                if(!isExist.contains(it))
-                                    group.addMember(
-                                        MemberDto(nickname = it.nickname, profileImg = it.profileImg)
-                                )
+                            checkMembers.value?.map {
+                                group.addMember(Member(it.nickname,it.profileImg,false))
                             }
                             Log.i("saved","[그룹초대] ${group.members}")
-                            search.clearCheckedMember()
                             navController.popBackStack()
                           },
                         colors = ButtonDefaults.buttonColors(containerColor = "#31AF91".toColor()),

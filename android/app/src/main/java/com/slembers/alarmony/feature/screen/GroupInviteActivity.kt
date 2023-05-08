@@ -5,6 +5,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -19,6 +21,7 @@ import com.slembers.alarmony.feature.ui.group.GroupBottomButtom
 import com.slembers.alarmony.feature.ui.group.GroupDialog
 import com.slembers.alarmony.feature.ui.group.GroupToolBar
 import com.slembers.alarmony.feature.ui.group.SearchInviteMember
+import com.slembers.alarmony.model.db.Member
 import com.slembers.alarmony.model.db.dto.MemberDto
 import com.slembers.alarmony.viewModel.GroupViewModel
 
@@ -28,10 +31,10 @@ import com.slembers.alarmony.viewModel.GroupViewModel
 @ExperimentalGlideComposeApi
 fun InviteScreen(
     navController : NavHostController = rememberNavController(),
-    group : GroupViewModel = viewModel()
+    viewModel : GroupViewModel = viewModel()
 ) {
 
-    val currentMembers = remember { navController.previousBackStackEntry?.savedStateHandle?.get<Set<MemberDto>>("members") }
+    val currentMembers = viewModel.members.observeAsState()
     val isClicked = remember { mutableStateOf(false)  }
 
     Scaffold(
@@ -51,15 +54,15 @@ fun InviteScreen(
             Column(
                 modifier = Modifier.padding(innerPadding),
                 content = {
-                    CurrentInvite(currentMembers ?: setOf())
-                    SearchInviteMember(currentMembers ?: setOf())
+                    CurrentInvite(currentMembers = currentMembers.value ?: mutableListOf())
+                    SearchInviteMember(currentMembers = currentMembers.value ?: mutableListOf())
                 }
             )
             if(isClicked.value) {
                 GroupDialog(
-                    isClicked = isClicked,
+                    isClosed = isClicked,
                     navController = navController,
-                    group = group
+                    group = viewModel
                 )
             }
         }

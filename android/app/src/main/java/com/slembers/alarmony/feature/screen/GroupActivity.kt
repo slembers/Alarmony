@@ -69,6 +69,7 @@ import com.slembers.alarmony.feature.ui.group.GroupBottomButtom
 import com.slembers.alarmony.feature.ui.group.GroupInvite
 import com.slembers.alarmony.feature.ui.group.GroupSound
 import com.slembers.alarmony.feature.ui.group.GroupToolBar
+import com.slembers.alarmony.feature.ui.group.GroupTypeButton
 import com.slembers.alarmony.feature.ui.group.GroupVolume
 import com.slembers.alarmony.model.db.Group
 import com.slembers.alarmony.model.db.dto.MemberDto
@@ -90,7 +91,8 @@ class GroupActivity : AppCompatActivity() {
             ) {
                 composable( route = NavItem.Group.route ) { GroupScreen(
                     navController = navController, viewModel = viewModel) }
-                composable( route = NavItem.GroupInvite.route ) { InviteScreen(navController) }
+                composable( route = NavItem.GroupInvite.route ) { InviteScreen(
+                    navController = navController, viewModel = viewModel) }
                 composable( route = NavItem.Sound.route ) { SoundScreen(navController) }
             }
         }
@@ -144,18 +146,14 @@ fun GroupScreen(
                 text = "저장",
                 onClick = {
                     var connection = false
-                    Log.i("viewmodel:ID","[그룹생성] groupActivity ID : $viewModel")
+                    Log.d("viewmodel:ID","[그룹생성] groupActivity ID : $viewModel")
                     GroupService.addGroupAlarm(
                         Group(
                             title = title!!,
                             hour = timePickerState?.hour ?: 10,
                             minute = timePickerState?.minute ?: 0,
-                            alarmDate = weeks.stream().map {
-                                isWeeks?.getValue(it) ?: false
-                            }.toList(),
-                            members = members?.stream()?.map {
-                                it.nickname
-                            }?.toList(),
+                            alarmDate = weeks.stream().map { isWeeks?.getValue(it) ?: false }.toList(),
+                            members = members?.stream()?.map { it.nickname }?.toList(),
                             soundName = soundName ?: "노래제목",
                             soundVolume = soundVolume ?: 7f,
                             vibrate = vibration ?: true
@@ -249,73 +247,15 @@ fun GroupScreen(
                 )
                 GroupInvite(
                     navController = navController,
-                    members = members ?: listOf()
+                    members = members ?: mutableListOf()
                 )
                 GroupSound(
                     navController = navController,
                     sound = soundName,
                 )
-                GroupCard(
-                    title = { GroupTitle(
-                        title = "타입",
-                        content = {
-                            Row(
-                                modifier = Modifier
-                                    .height(50.dp)
-                                    .padding(5.dp),
-                                verticalAlignment = Alignment.CenterVertically,
-                            ) {
-                                BoxWithConstraints(
-                                    modifier = Modifier.fillMaxHeight(),
-                                    contentAlignment = Alignment.Center,
-                                ) {
-                                    Box(
-                                        modifier = Modifier
-                                            .padding(2.dp)
-                                            .size(this.maxHeight)
-                                            .align(Alignment.Center)
-                                            .clip(CircleShape)
-                                            .background(MaterialTheme.colorScheme.primary)
-                                    ) {
-                                        Image(
-                                            modifier = Modifier.align(Alignment.Center),
-                                            painter = painterResource(id = R.drawable.baseline_music_note_24) ,
-                                            contentDescription = null)
-                                    }
-                                }
-
-                                BoxWithConstraints(
-                                    modifier = Modifier.fillMaxHeight(),
-                                    contentAlignment = Alignment.Center,
-                                ) {
-                                    Box(
-                                        modifier = Modifier
-                                            .padding(2.dp)
-                                            .size(this.maxHeight)
-                                            .align(Alignment.Center)
-                                            .clip(CircleShape)
-                                            .background(
-                                                if (vibration == true)
-                                                    MaterialTheme.colorScheme.primary
-                                                else
-                                                    MaterialTheme.colorScheme.background
-                                            )
-                                            .clickable {
-                                                vibration?.let {
-                                                    viewModel.onChangeVibrate(!it)
-                                                    Log.i("vibration", "vibration value : $it")
-                                                }
-                                            }
-                                    ) {
-                                        Image(
-                                            modifier = Modifier.align(Alignment.Center),
-                                            painter = painterResource(id = R.drawable.baseline_vibration_24) ,
-                                            contentDescription = null)
-                                    }
-                                }
-                            }
-                        }
-                    )},
+                GroupTypeButton(
+                    isVibrate = vibration ?: true,
+                    viewModel = viewModel
                 )
                 GroupVolume(
                     volume = soundVolume ?: 7f,

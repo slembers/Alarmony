@@ -40,14 +40,4 @@ class GroupSearchViewModel(
         _CheckedMember.postValue(_members)
     }
 
-    fun addAllCurrentMember(members: Set<Member>) {
-        _members.addAll(members)
-        _CheckedMember.postValue(_members)
-    }
-
-    fun clearCheckedMember() {
-        _members.clear()
-        _CheckedMember.value = _members
-    }
-
 }

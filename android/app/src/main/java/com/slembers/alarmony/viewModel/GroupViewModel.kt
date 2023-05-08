@@ -9,6 +9,7 @@ import androidx.compose.runtime.mutableStateMapOf
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.slembers.alarmony.model.db.Member
 import com.slembers.alarmony.model.db.dto.MemberDto
 import javax.inject.Inject
 
@@ -20,8 +21,8 @@ class GroupViewModel : ViewModel() {
         TimePickerState(10,0,false))
     private val _alarmWeeks = mutableStateMapOf<String, Boolean>()
     private val _currentWeeks = MutableLiveData<MutableMap<String,Boolean>>()
-    private val _members = mutableStateListOf<MemberDto>()
-    private val _currentMembers = MutableLiveData<MutableList<MemberDto>>()
+    private val _members = mutableStateListOf<Member>()
+    private val _currentMembers = MutableLiveData<MutableList<Member>>()
     private val _sound = MutableLiveData("노래제목")
     private val _vibrate = MutableLiveData(true)
     private val _volumn = MutableLiveData(7f)
@@ -44,7 +45,7 @@ class GroupViewModel : ViewModel() {
     val title : LiveData<String> = _title
     val alarmTime : LiveData<TimePickerState> = _alarmTime
     val currentWeeks : LiveData<MutableMap<String,Boolean>> = _currentWeeks
-    val members : LiveData<MutableList<MemberDto>> = _currentMembers
+    val members : LiveData<MutableList<Member>> = _currentMembers
     val sound : LiveData<String> = _sound
     val vibrate : LiveData<Boolean> = _vibrate
     val volumn : LiveData<Float> = _volumn
@@ -53,12 +54,12 @@ class GroupViewModel : ViewModel() {
         _title.postValue(title)
     }
 
-    fun addMember(member : MemberDto) {
+    fun addMember(member : Member) {
         _members.add(member)
         _currentMembers.postValue(_members)
     }
 
-    fun removeMember(member : MemberDto) {
+    fun removeMember(member : Member) {
         _members.remove(member)
         _currentMembers.postValue(_members)
     }

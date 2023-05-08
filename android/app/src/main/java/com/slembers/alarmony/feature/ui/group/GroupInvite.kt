@@ -20,6 +20,7 @@ import com.slembers.alarmony.feature.common.NavItem
 import com.slembers.alarmony.feature.common.ui.compose.GroupCard
 import com.slembers.alarmony.feature.common.ui.compose.GroupDefalutProfile
 import com.slembers.alarmony.feature.common.ui.compose.GroupTitle
+import com.slembers.alarmony.model.db.Member
 import com.slembers.alarmony.model.db.dto.MemberDto
 import com.slembers.alarmony.network.service.MemberService
 
@@ -28,7 +29,7 @@ import com.slembers.alarmony.network.service.MemberService
 @ExperimentalGlideComposeApi
 fun GroupInvite(
     navController : NavHostController,
-    members : List<MemberDto> = listOf()
+    members : MutableList<Member> = mutableListOf()
 ) {
     GroupCard(
         title = { GroupTitle(
@@ -42,7 +43,6 @@ fun GroupInvite(
             },
             onClick = {
                 MemberService.login()
-                navController.currentBackStackEntry?.savedStateHandle?.set("members",members.toSet())
                 navController.navigate( route = NavItem.GroupInvite.route )
             }
         )

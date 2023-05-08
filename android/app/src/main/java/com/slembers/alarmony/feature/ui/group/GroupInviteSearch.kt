@@ -58,14 +58,13 @@ import com.slembers.alarmony.viewModel.GroupViewModel
 @ExperimentalMaterial3Api
 @ExperimentalGlideComposeApi
 fun SearchInviteMember(
-    members: Set<MemberDto> = setOf(),
-    search: GroupSearchViewModel = viewModel()
+    currentMembers: MutableList<Member> = mutableListOf()
 ) {
 
     var text by remember { mutableStateOf("") }
-//    var searchMembers : List<MemberDto> = remember { mutableStateListOf() }
+    val search: GroupSearchViewModel = viewModel()
     val searchMembers = search.searchMembers.observeAsState()
-    val checkedMembers = search.checkedMembers.observeAsState()
+    val checkMembers = search.checkedMembers.observeAsState()
 
     CardBox(
         title = { CardTitle(title = "검색") },
@@ -84,9 +83,7 @@ fun SearchInviteMember(
                     value = text,
                     onValueChange = {
                         text = it
-                        search.searchApi(
-                            keyword = text
-                        )
+                        search.searchApi(keyword = text)
                     },
                     singleLine = true,
                     textStyle = TextStyle(
@@ -132,18 +129,18 @@ fun SearchInviteMember(
 
                 LazyColumn() {
                     items(searchMembers.value ?: mutableListOf()) {
+                        val member = Member(
+                            nickname = it.nickname,
+                            profileImg = it.profileImg,
+                            isNew = true
+                        )
                         // 현재 인원에 포함되면 안됨
-                        if(!members.contains(it)) {
-                            val member = Member(
-                                nickname = it.nickname,
-                                profileImg = it.profileImg,
-                                isNew = true
-                            )
+                        if(!currentMembers.contains(member)) {
                             SearchMember(
                                 member = it,
-                                isCheck = checkedMembers.value?.contains(member) ?: false,
+                                isCheck = checkMembers.value!!.contains(member),
                                 onCheckedChange = {
-                                    if (checkedMembers.value?.contains(member) == true)
+                                    if (checkMembers.value!!.contains(member))
                                         search.removeCheckedMember(member)
                                     else
                                         search.addCurrentMember(member)
