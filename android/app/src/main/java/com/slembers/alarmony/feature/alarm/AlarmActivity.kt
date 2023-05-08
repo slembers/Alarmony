@@ -65,6 +65,9 @@ class AlarmActivity : ComponentActivity() {
     lateinit var wakeLock: PowerManager.WakeLock
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        var alarmStartTime = System.currentTimeMillis()
+        val originStartTime = intent.getLongExtra("startTime", 0L) // 스누즈했다면 intent로 원래 시작 시간 가져옴
+        if (originStartTime != 0L) {alarmStartTime = originStartTime}
 
         val alarm = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             intent.getParcelableExtra("alarm", Alarm::class.java) as Alarm
@@ -111,7 +114,7 @@ class AlarmActivity : ComponentActivity() {
         }
 
         setContent {
-            AlarmScreen(alarm)
+            AlarmScreen(alarm, alarmStartTime)
         }
     }
     override fun onDestroy() {
@@ -122,8 +125,7 @@ class AlarmActivity : ComponentActivity() {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AlarmScreen(alarm : Alarm) {
-    val alarmStartTime = System.currentTimeMillis()
+fun AlarmScreen(alarm : Alarm, alarmStartTime : Long) {
     val context = LocalContext.current as Activity
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -296,5 +298,5 @@ fun DefaultView() {
         15,
         true
     )
-    AlarmScreen(alarm = alarm)
+    AlarmScreen(alarm = alarm, alarmStartTime = 0L)
 }
