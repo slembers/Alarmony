@@ -1,5 +1,6 @@
 package com.slembers.alarmony.member.service;
 
+import com.slembers.alarmony.global.dto.MessageResponseDto;
 import com.slembers.alarmony.global.execption.CustomException;
 import com.slembers.alarmony.global.security.jwt.JwtTokenProvider;
 import com.slembers.alarmony.global.redis.service.RedisUtil;
@@ -169,7 +170,7 @@ public class MemberServiceImpl implements MemberService {
      */
 
     @Override
-    public void findMemberId(FindMemberIdDto findMemberIdDto) {
+    public MessageResponseDto findMemberId(FindMemberIdDto findMemberIdDto) {
 
         Member member = memberRepository.findMemberByEmail(findMemberIdDto.getEmail())
                 .orElseThrow(() -> new CustomException(MemberErrorCode.EMAIL_NOT_FOUND));
@@ -179,6 +180,7 @@ public class MemberServiceImpl implements MemberService {
 
         emailVerifyService.sendTemplateEmail("알라모니 아이디 찾기", findMemberIdDto.getEmail(), "FindId", values);
 
+        return new MessageResponseDto(findMemberIdDto.getEmail()+"로 아이디 찾기 안내 메일을 전송하였습니다.");
     }
 
     /**

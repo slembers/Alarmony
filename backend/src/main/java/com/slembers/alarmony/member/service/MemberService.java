@@ -1,5 +1,6 @@
 package com.slembers.alarmony.member.service;
 
+import com.slembers.alarmony.global.dto.MessageResponseDto;
 import com.slembers.alarmony.member.dto.request.FindMemberIdDto;
 import com.slembers.alarmony.member.dto.request.FindPasswordDto;
 import com.slembers.alarmony.member.dto.request.ReissueTokenDto;
@@ -48,7 +49,7 @@ public interface MemberService {
      * 아이디 찾기
      */
 
-    void findMemberId (FindMemberIdDto findMemberIdDto) throws MessagingException;
+    MessageResponseDto findMemberId (FindMemberIdDto findMemberIdDto) throws MessagingException;
 
     /**
      * 비밀 번호 찾기
