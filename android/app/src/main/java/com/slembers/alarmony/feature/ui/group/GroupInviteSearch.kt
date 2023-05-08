@@ -24,6 +24,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -40,24 +41,34 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.slembers.alarmony.R
 import com.slembers.alarmony.feature.common.CardBox
 import com.slembers.alarmony.feature.common.CardTitle
+import com.slembers.alarmony.model.db.Member
 import com.slembers.alarmony.model.db.dto.MemberDto
 import com.slembers.alarmony.network.service.GroupService
+import com.slembers.alarmony.viewModel.GroupSearchViewModel
+import com.slembers.alarmony.viewModel.GroupViewModel
 
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 @ExperimentalMaterial3Api
 @ExperimentalGlideComposeApi
-fun SearchInviteMember() {
+fun SearchInviteMember(
+    group : GroupViewModel = viewModel()
+) {
 
     var text by remember { mutableStateOf("") }
-    var members : List<MemberDto> = remember { mutableStateListOf() }
+//    var searchMembers : List<MemberDto> = remember { mutableStateListOf() }
+    val searchViewModel : GroupSearchViewModel = viewModel()
+    val searchMembers = searchViewModel.searchMembers.observeAsState()
+    val checkedMembers = searchViewModel.checkedMembers.observeAsState()
+    val members by group.members.observeAsState()
 
     CardBox(
         title = { CardTitle(title = "검색") },
@@ -76,9 +87,8 @@ fun SearchInviteMember() {
                     value = text,
                     onValueChange = {
                         text = it
-                        GroupService.searchMember(
-                            keyword = it,
-                            memberList = {members = it.memberList}
+                        searchViewModel.searchApi(
+                            keyword = text
                         )
                     },
                     singleLine = true,
@@ -124,11 +134,19 @@ fun SearchInviteMember() {
                 )
 
                 LazyColumn() {
-                    items(members) { member ->
-                        SearchMember(
-                            member.nickname,
-                            member.profileImg
-                        )
+                    items(searchMembers.value ?: mutableListOf()) { member ->
+                        // 현재 인원에 포함되면 안됨
+                        if(!members?.contains(member)!!)
+                            SearchMember(
+                                member = member,
+                                isCheck = checkedMembers.value?.contains(member) ?: false,
+                                onCheckedChange = {
+                                    if(checkedMembers.value?.contains(member) == true)
+                                        searchViewModel.removeCheckedMember(it)
+                                    else
+                                        searchViewModel.addCurrentMember(it)
+                                }
+                            )
                     }
                 }
             }
@@ -138,11 +156,10 @@ fun SearchInviteMember() {
 
 @Composable
 fun SearchMember(
-    nickname : String,
-    profiles : String? = null
+    member : MemberDto = MemberDto(nickname = "임시유저", profileImg = null),
+    isCheck : Boolean = false,
+    onCheckedChange : (MemberDto) -> Unit,
 ) {
-
-    var isClicked by remember { mutableStateOf(false)  }
 
     Row(
         verticalAlignment = Alignment.CenterVertically,
@@ -150,13 +167,13 @@ fun SearchMember(
         modifier = Modifier
             .padding(start = 2.dp, end = 20.dp, top = 3.dp, bottom = 1.dp)
             .fillMaxWidth()
-            .clickable { isClicked = !isClicked }
+            .clickable { onCheckedChange(member) }
     )
     {
-        if(profiles != null ) {
+        if(member.profileImg != null ) {
             AsyncImage(
                 model = ImageRequest.Builder(LocalContext.current)
-                    .data(profiles)
+                    .data(member.profileImg)
                     .build(),
                 contentDescription = "ImageRequest example",
                 modifier = Modifier.size(65.dp)
@@ -169,13 +186,15 @@ fun SearchMember(
             )
         }
         Text(
-            text = nickname,
+            text = member.nickname,
             fontSize = 17.sp,
             modifier = Modifier.fillMaxWidth(1f)
         )
         Checkbox(
-            checked = isClicked,
-            onCheckedChange = { isClicked = it }
+            checked = isCheck,
+            onCheckedChange = {
+                onCheckedChange(member)
+            }
         )
     }
 }

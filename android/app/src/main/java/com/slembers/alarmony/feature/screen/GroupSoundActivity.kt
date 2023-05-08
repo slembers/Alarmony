@@ -1,4 +1,4 @@
-package com.slembers.alarmony.feature.group
+package com.slembers.alarmony.feature.screen
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -37,7 +37,7 @@ fun SoundScreen(navController : NavHostController = rememberNavController()) {
         topBar = {
             GroupToolBar(
                 title = NavItem.Sound.title,
-                navEvent = navController
+                navcontroller = navController
             )
         },
         bottomBar = {

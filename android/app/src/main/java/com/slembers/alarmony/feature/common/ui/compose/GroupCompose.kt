@@ -1,6 +1,7 @@
 package com.slembers.alarmony.feature.common.ui.compose
 
 import android.icu.text.SimpleDateFormat
+import android.media.MediaPlayer
 import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
@@ -12,14 +13,12 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -27,16 +26,11 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.BasicTextField
-import androidx.compose.material.Checkbox
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.SnackbarHostState
@@ -47,25 +41,18 @@ import androidx.compose.material3.TimePickerState
 import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
-import androidx.compose.ui.input.key.Key
-import androidx.compose.ui.input.key.KeyEvent
-import androidx.compose.ui.input.key.KeyEventType
-import androidx.compose.ui.input.key.key
-import androidx.compose.ui.input.key.onKeyEvent
-import androidx.compose.ui.input.key.type
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -77,17 +64,21 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.slembers.alarmony.R
-import com.slembers.alarmony.data.MemberData
 import com.slembers.alarmony.feature.common.CardBox
 import com.slembers.alarmony.feature.common.CardTitle
+import com.slembers.alarmony.model.db.Member
 import com.slembers.alarmony.model.db.SoundItem
 import com.slembers.alarmony.model.db.dto.MemberDto
-import com.slembers.alarmony.network.service.GroupService
+import com.slembers.alarmony.viewModel.GroupSearchViewModel
+import com.slembers.alarmony.viewModel.GroupViewModel
 import java.util.Locale
+import kotlin.streams.toList
 
 @Composable
 @ExperimentalMaterial3Api
@@ -377,8 +368,10 @@ fun SoundChooseGrid(
                 soundIcon(
                     image = it.soundImage,
                     soundname = it.soundName,
-                    onClick = checkbox.equals(it.soundName),
-                    checkBox = { checkbox = it }
+                    isCheck = checkbox.equals(it.soundName),
+                    onClick = {
+                        checkbox = it.soundName
+                    }
                 )
             }
         })
@@ -388,9 +381,13 @@ fun SoundChooseGrid(
 fun soundIcon(
     image : Painter? = painterResource(id = R.drawable.main_app_image_foreground),
     soundname : String,
-    onClick : Boolean = false,
-    checkBox : ((String) -> Unit) =  {}
+    isCheck : Boolean = false,
+    onClick : () -> Unit,
 ) {
+
+    val context = LocalContext.current
+    val mediaPlayer = MediaPlayer.create(context, R.raw.rinne_holy_war)
+
     BoxWithConstraints(
         modifier = Modifier
             .padding(4.dp)
@@ -403,13 +400,13 @@ fun soundIcon(
             )
             .clip(MaterialTheme.shapes.medium)
             .background(
-                if (!onClick)
+                if (!isCheck)
                     MaterialTheme.colorScheme.background
                 else
                     MaterialTheme.colorScheme.primary
             )
             .fillMaxWidth()
-            .clickable { checkBox(soundname) },
+            .clickable(onClick = onClick),
         content = {
             Image(
                 modifier = Modifier
@@ -427,7 +424,24 @@ fun soundIcon(
 @Composable
 @ExperimentalMaterial3Api
 @ExperimentalGlideComposeApi
-fun CurrentInvite() {
+fun CurrentInvite(
+    group: GroupViewModel = viewModel(),
+    search: GroupSearchViewModel = viewModel(),
+) {
+
+    val members by group.members.observeAsState()
+    val checkedMembers by search.checkedMembers.observeAsState()
+
+    val currentMembers : List<Member> = members?.let {
+        it.stream().map { member ->
+            Member(
+                nickname = member.nickname,
+                profileImg = member.profileImg,
+                isNew = false
+            )
+        }.toList()
+    } as List<Member>
+
     CardBox(
         title = { CardTitle(title = "초대인원") },
         content = {
@@ -442,13 +456,23 @@ fun CurrentInvite() {
                     ),
                 userScrollEnabled = true
             ) {
-                items( count = 8 ) {
+
+                items(items = currentMembers) { member ->
                     GroupDefalutProfile(
-                        image = painterResource(id = R.drawable.account_circle),
-                        nickname = "ssafy01",
+                        profileImg = member.profileImg,
+                        nickname = member.nickname,
                         newMember = true
                     )
                 }
+
+                items(items = checkedMembers ?: listOf()) { checked ->
+                    GroupDefalutProfile(
+                        profileImg = checked.profileImg,
+                        nickname = checked.nickname,
+                        newMember = false
+                    )
+                }
+
             }
         }
     )
@@ -458,7 +482,7 @@ fun CurrentInvite() {
 @ExperimentalMaterial3Api
 @ExperimentalGlideComposeApi
 fun GroupDefalutProfile(
-    image : Painter = painterResource(id = R.drawable.baseline_account_circle_24),
+    profileImg : String? = null,
     nickname : String = "nothing",
     newMember : Boolean = true
 ) {
@@ -481,12 +505,22 @@ fun GroupDefalutProfile(
                     .weight(1f)
                     .padding(0.dp),
                 content = {
-                    Image(
-                        modifier = Modifier
-                            .matchParentSize()
-                            .align(Alignment.Center),
-                        painter = image,
-                        contentDescription = null)
+                    if(profileImg == null) {
+                        Image(
+                            modifier = Modifier
+                                .matchParentSize()
+                                .align(Alignment.Center),
+                            painter = painterResource(id = R.drawable.account_circle),
+                            contentDescription = null)
+                    } else {
+                        AsyncImage(
+                            modifier = Modifier
+                                .matchParentSize()
+                                .align(Alignment.Center),
+                            model = ImageRequest.Builder(LocalContext.current)
+                                .data(profileImg),
+                            contentDescription = nickname)
+                    }
                     if(newMember) {
                         Box(
                             modifier = Modifier
