@@ -11,6 +11,7 @@ import com.slembers.alarmony.member.dto.request.SignUpDto;
 import com.slembers.alarmony.member.dto.response.CheckDuplicateDto;
 import com.slembers.alarmony.member.dto.response.MemberResponseDto;
 import com.slembers.alarmony.member.dto.response.TokenResponseDto;
+import com.slembers.alarmony.member.entity.AuthorityEnum;
 import com.slembers.alarmony.member.entity.Member;
 import com.slembers.alarmony.member.exception.MemberErrorCode;
 import com.slembers.alarmony.member.repository.MemberRepository;
@@ -235,11 +236,30 @@ public class MemberServiceImpl implements MemberService {
     @Override
     public MemberResponseDto getMemberInfo(String username) {
 
+
         Member member = memberRepository.findByUsername(username)
                 .orElseThrow(() -> new CustomException(MemberErrorCode.MEMBER_NOT_FOUND));
 
         return modelMapper.map(member, MemberResponseDto.class);
     }
 
+    /**
+     * 회원 탈퇴
+     */
+    @Override
+    @Transactional
+    public MessageResponseDto deleteMember(String username){
+
+
+        Member member = memberRepository.findByUsername(username)
+                .orElseThrow(() -> new CustomException(MemberErrorCode.MEMBER_NOT_FOUND));
+
+        //권한 비활성화로 변경
+        member.modifyAuthority(AuthorityEnum.ROLE_WITHDRAWAL);
+
+        memberRepository.save(member);
+
+        return new MessageResponseDto("회원 탈퇴 완료");
+    }
 
 }
