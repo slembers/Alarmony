@@ -57,9 +57,7 @@ object MemberService {
         }
     }
 
-    fun findpswd(username:String, email: String ) {
 
-    }
 
 
 //    email을 보내고 이후의 동작은 추후에 확인

@@ -8,4 +8,5 @@ data class FindPasswordRequest(
     @SerializedName("email") val email: String?,
 
 
-)
+    )
+

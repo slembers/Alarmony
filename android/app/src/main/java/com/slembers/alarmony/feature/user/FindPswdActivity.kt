@@ -27,6 +27,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.slembers.alarmony.R
+import com.slembers.alarmony.network.repository.MemberService.findPswd
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 
@@ -104,8 +105,9 @@ fun Findpswd(navController: NavController) {
                 Button(
                     onClick = {
                         Log.d("확인", "비밀번호 찾기")
+                        findPswd(email.value, ID.value)
+
                     }, modifier = Modifier
-//                        .fillMaxWidth()
                 )
 
                 {

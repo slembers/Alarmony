@@ -1,5 +1,6 @@
 package com.slembers.alarmony.model.db.dto
 
+
 import com.google.gson.annotations.SerializedName
 
 data class FindPasswordResponseDto (
@@ -9,4 +10,5 @@ data class FindPasswordResponseDto (
     @SerializedName("code") val code: String?,
     @SerializedName("message") val message: String?,
 
-)
+
+    )
