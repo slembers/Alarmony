@@ -42,23 +42,24 @@ fun setAlarm(context: Context, alarm: Alarm) {
             PendingIntent.FLAG_MUTABLE
         )
     val alarmManager = context.getSystemService(ALARM_SERVICE) as AlarmManager
-    when {
-        Build.VERSION.SDK_INT >= Build.VERSION_CODES.M -> {
-            alarmManager.setExactAndAllowWhileIdle(
-                AlarmManager.RTC_WAKEUP,
-                newTime,
-                alarmIntentRTC
-            )
-
-        }
-        else -> {
-            alarmManager.setExact(
-                AlarmManager.RTC_WAKEUP,
-                newTime,
-                alarmIntentRTC
-            )
-        }
-    }
+    alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, newTime, intervalDay, alarmIntentRTC)
+//    when {
+//        Build.VERSION.SDK_INT >= Build.VERSION_CODES.M -> {
+//            alarmManager.setExactAndAllowWhilZIdle(
+//                AlarmManager.RTC_WAKEUP,
+//                newTime,
+//                alarmIntentRTC
+//            )
+//
+//        }
+//        else -> {
+//            alarmManager.setExact(
+//                AlarmManager.RTC_WAKEUP,
+//                newTime,
+//                alarmIntentRTC
+//            )
+//        }
+//    }
 
     val receiver = ComponentName(context, AlarmReceiver::class.java)
     context.packageManager.setComponentEnabledSetting(
