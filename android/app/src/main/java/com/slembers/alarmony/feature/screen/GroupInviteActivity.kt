@@ -1,4 +1,4 @@
-package com.slembers.alarmony.feature.group
+package com.slembers.alarmony.feature.screen
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
@@ -23,16 +23,13 @@ import com.slembers.alarmony.viewModel.GroupViewModel
 @Composable
 @ExperimentalMaterial3Api
 @ExperimentalGlideComposeApi
-fun InviteScreen(
-    navController : NavHostController = rememberNavController(),
-    viewModel : GroupViewModel = viewModel()
-) {
+fun InviteScreen(navController : NavHostController = rememberNavController()) {
 
     Scaffold(
         topBar = {
             GroupToolBar(
                 title = NavItem.GroupInvite.title,
-                navEvent = navController
+                navcontroller = navController
             )
         },
         bottomBar = {

@@ -29,7 +29,7 @@ import com.slembers.alarmony.feature.common.ui.compose.GroupTitle
 @ExperimentalGlideComposeApi
 fun GroupSound(
     navController : NavController,
-    sound : String
+    sound : String?
 ) {
     GroupCard(
         title = { GroupTitle(
@@ -41,7 +41,7 @@ fun GroupSound(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = sound,
+                        text = sound ?: "노래제목",
                         style = TextStyle(
                             color = Color.Gray,
                             fontSize = 15.sp,

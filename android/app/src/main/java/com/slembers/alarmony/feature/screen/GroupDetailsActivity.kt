@@ -28,17 +28,6 @@ import com.slembers.alarmony.feature.ui.group.GroupToolBar
 import com.slembers.alarmony.feature.ui.groupDetails.GroupDetailsBoard
 import com.slembers.alarmony.feature.ui.groupDetails.GroupDetailsTitle
 
-@ExperimentalMaterial3Api
-@ExperimentalGlideComposeApi
-class GroupDetailsActivity : AppCompatActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContent {
-            GroupDetailsScreen()
-        }
-    }
-}
-
 @Preview
 @Composable
 @ExperimentalMaterial3Api
