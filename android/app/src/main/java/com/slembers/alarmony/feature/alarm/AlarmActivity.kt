@@ -1,5 +1,6 @@
 package com.slembers.alarmony.feature.alarm
 
+import android.app.Activity
 import android.app.KeyguardManager
 import android.content.Context
 import android.graphics.Typeface
@@ -43,6 +44,7 @@ import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -121,6 +123,8 @@ class AlarmActivity : ComponentActivity() {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AlarmScreen(alarm : Alarm) {
+    val alarmStartTime = System.currentTimeMillis()
+    val context = LocalContext.current as Activity
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         containerColor = "#66D5ED".toColor(),
@@ -169,7 +173,10 @@ fun AlarmScreen(alarm : Alarm) {
 
                     Button(
                         onClick = {
+                            val alarmEndTime = System.currentTimeMillis()
+                            val alarmRemainTime = alarmEndTime - alarmStartTime // 알람 끄기 까지 걸린 시간
                             cancelNotification()
+                            context.finish()
                             // 정지 누르면 끝 시간 api
                         },
                         shape = CircleShape,
@@ -222,14 +229,14 @@ fun DrawCircle(alarm : Alarm) {
     ) {
         val outerRadius = size.width / 2
         drawCircle(
-            color = "#EDEDED".toColor(),
+            color = "#EDEDED".toColor().copy(alpha = 0.9f),
             radius = outerRadius,
             center = center,
             style = Stroke(width = 20.dp.toPx())
         )
 
-        drawCircleWithInnerCircle(center, outerRadius / 1.04f, "#F3F3F3".toColor())
-        drawCircleWithInnerCircle(center, outerRadius / 1.2f, Color.White)
+        drawCircleWithInnerCircle(center, outerRadius / 1.04f, "#F3F3F3".toColor().copy(alpha = 0.9f))
+        drawCircleWithInnerCircle(center, outerRadius / 1.2f, Color.White.copy(alpha = 0.9f))
 
         drawIntoCanvas { canvas ->
             val text = "${hour}:${minute}"
