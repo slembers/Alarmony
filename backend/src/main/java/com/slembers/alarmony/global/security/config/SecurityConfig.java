@@ -16,7 +16,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -51,7 +50,7 @@ public class SecurityConfig  {
     }
 
     @Bean
-    public WebSecurityCustomizer webSecurityCustomizer() throws Exception {
+    public WebSecurityCustomizer webSecurityCustomizer()  {
         return (web) -> web.ignoring().antMatchers("/members/sign-up", "/members/verify/**", "/members/login", "/members/refresh", "/members/find-id", "/members/find-pw");
     }
 
@@ -71,7 +70,7 @@ public class SecurityConfig  {
                 )
                 .and()
                 .authorizeRequests()
-                .antMatchers("/members/test")
+                .antMatchers("/members/test" )
                 .access("hasRole('ROLE_USER') or hasRole('ROLE_MANAGER') or hasRole('ROLE_ADMIN')")
                 .and()
                 .addFilterBefore(customAuthenticationFilter(authenticationManager), UsernamePasswordAuthenticationFilter.class)
@@ -91,7 +90,7 @@ public class SecurityConfig  {
      * @throws Exception 먼 Exception이지... afterPropertiesSet();일수도
      */
     @Bean
-    public CustomAuthenticationFilter customAuthenticationFilter(AuthenticationManager authenticationManager) throws Exception {
+    public CustomAuthenticationFilter customAuthenticationFilter(AuthenticationManager authenticationManager) {
 
 
         CustomAuthenticationFilter customAuthenticationFilter = new CustomAuthenticationFilter(authenticationManager);
@@ -133,22 +132,6 @@ public class SecurityConfig  {
         return new CustomAuthenticationProvider(principalDetailsService, bCryptPasswordEncoder());
     }
 
-
-/*    @Bean
-    public JwtExceptionFilter jwtExceptionFilter(){
-        return new JwtExceptionFilter();
-    }*/
-    /**
-     * AuthenticationManagerBuilder를 이용하여 AuthenticationProvider를 등록하는 코드입니다
-     * AuthenticationManagerBuilder는 AuthenticationProvider를 생성하고 등록하여, 인증(Authentication)에 사용될 수 있는 AuthenticationManager를 만듭니다.
-
-     */
-    /*@Bean
-    public void filterChain(AuthenticationManagerBuilder authenticationManagerBuilder) {
-        authenticationManagerBuilder.authenticationProvider(customAuthenticationProvider());
-    }
-
-*/
 
     @Bean
     AuthenticationManager authenticationManager(
