@@ -18,6 +18,8 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.mail.MessagingException;
 import javax.validation.Valid;
+import java.util.HashMap;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/members")
@@ -110,10 +112,12 @@ public class MemberController {
      * 아이디 찾기
      */
     @PostMapping("/find-id")
-    public ResponseEntity<String> findId(@RequestBody FindMemberIdDto findMemberIdDto) throws MessagingException {
+    public ResponseEntity<Map<String, Object>> findId(@RequestBody FindMemberIdDto findMemberIdDto) throws MessagingException {
 
         memberService.findMemberId(findMemberIdDto);
-        return new ResponseEntity<>("아이디 찾기 이메일 전송 선공", HttpStatus.OK);
+        Map<String, Object> map = new HashMap<>();
+        map.put("message","아이디 찾기 이메일 전송 선공");
+        return new ResponseEntity<>(map, HttpStatus.OK);
     }
 
 
