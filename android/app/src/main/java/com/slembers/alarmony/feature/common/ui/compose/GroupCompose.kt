@@ -386,7 +386,6 @@ fun soundIcon(
 ) {
 
     val context = LocalContext.current
-    val mediaPlayer = MediaPlayer.create(context, R.raw.rinne_holy_war)
 
     BoxWithConstraints(
         modifier = Modifier
