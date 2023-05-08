@@ -10,9 +10,7 @@ import com.slembers.alarmony.alarm.exception.AlarmRecordErrorCode;
 import com.slembers.alarmony.alarm.repository.AlarmRecordRepository;
 import com.slembers.alarmony.alarm.repository.AlarmRepository;
 import com.slembers.alarmony.global.execption.CustomException;
-import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import com.slembers.alarmony.member.entity.Member;
 import com.slembers.alarmony.member.exception.MemberErrorCode;
@@ -50,12 +48,7 @@ public class AlarmRecordServiceImpl implements AlarmRecordService {
      */
     @Override
     public List<MemberRankingDto> getAlarmRanking(Long groupId) {
-        List<MemberRankingDto> alarmRanking = alarmRecordRepository.findMemberRankingsByAlarmId(
-            groupId);
-        return alarmRanking.stream()
-            .sorted(Comparator.comparing(MemberRankingDto::getWakeUpAvg,
-                Comparator.nullsLast(Float::compareTo)))
-            .collect(Collectors.toList());
+        return alarmRecordRepository.findMemberRankingsByAlarmId(groupId);
     }
 
     /**

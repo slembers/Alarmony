@@ -51,11 +51,13 @@ public interface AlarmRecordRepository extends JpaRepository<AlarmRecord, Long> 
      * @param groupId
      * @return
      */
-    @Query("SELECT new com.slembers.alarmony.alarm.dto.MemberRankingDto(m.nickname, m.profileImgUrl, CAST(ar.totalWakeUpTime / ar.totalCount AS float)) "
-        + "FROM member_alarm AS ma "
-        + "INNER JOIN member AS m ON ma.member.id = m.id "
-        + "INNER JOIN alarm_record AS ar ON ma.id = ar.memberAlarm.id "
-        + "WHERE ma.alarm.id = :groupId")
+    @Query(
+        "SELECT new com.slembers.alarmony.alarm.dto.MemberRankingDto(m.nickname, m.profileImgUrl, CAST(ar.totalWakeUpTime / ar.totalCount AS float)) "
+            + "FROM member_alarm AS ma "
+            + "INNER JOIN member AS m ON ma.member.id = m.id "
+            + "INNER JOIN alarm_record AS ar ON ma.id = ar.memberAlarm.id "
+            + "WHERE ma.alarm.id = :groupId "
+            + "ORDER BY CAST(ar.totalWakeUpTime / ar.totalCount AS float) NULLS LAST ")
     List<MemberRankingDto> findMemberRankingsByAlarmId(Long groupId);
 
 }
