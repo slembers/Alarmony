@@ -65,15 +65,13 @@ class AlarmActivity : ComponentActivity() {
     lateinit var wakeLock: PowerManager.WakeLock
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        var alarmStartTime = System.currentTimeMillis()
-        val originStartTime = intent.getLongExtra("startTime", 0L) // 스누즈했다면 intent로 원래 시작 시간 가져옴
-        if (originStartTime != 0L) {alarmStartTime = originStartTime}
 
         val alarm = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             intent.getParcelableExtra("alarm", Alarm::class.java) as Alarm
         } else {
             intent.getParcelableExtra<Alarm>("alarm") as Alarm
         }
+        var alarmStartTime = calAlarm(alarm)
 
         runNotification(this, alarm)
 
