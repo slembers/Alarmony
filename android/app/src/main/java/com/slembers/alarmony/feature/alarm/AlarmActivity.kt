@@ -33,6 +33,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -118,6 +120,8 @@ class AlarmActivity : ComponentActivity() {
 @Composable
 fun AlarmScreen(alarm : Alarm, alarmStartTime : Long) {
     val context = LocalContext.current as Activity
+    val isClicked5 = remember { mutableStateOf(false)  }
+    val isClicked10 = remember { mutableStateOf(false)  }
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         containerColor = "#66D5ED".toColor(),
@@ -149,7 +153,7 @@ fun AlarmScreen(alarm : Alarm, alarmStartTime : Long) {
                     modifier = Modifier.padding(bottom = 20.dp)
                 ) {
                     Button(
-                        onClick = { /*TODO*/ },
+                        onClick = { isClicked5.value = true },
                         shape = CircleShape,
                         modifier = Modifier
                             .padding(5.dp)
@@ -187,7 +191,7 @@ fun AlarmScreen(alarm : Alarm, alarmStartTime : Long) {
                         )
                     }
                     Button(
-                        onClick = { /*TODO*/ },
+                        onClick = { isClicked10.value = true },
                         shape = CircleShape,
                         modifier = Modifier
                             .padding(5.dp)
@@ -202,6 +206,12 @@ fun AlarmScreen(alarm : Alarm, alarmStartTime : Long) {
                         )
                     }
                 }
+            }
+            if (isClicked5.value) {
+                SnoozeNoti(5, isClicked5, context)
+            }
+            if (isClicked10.value) {
+                SnoozeNoti(10, isClicked10, context)
             }
         }
     )

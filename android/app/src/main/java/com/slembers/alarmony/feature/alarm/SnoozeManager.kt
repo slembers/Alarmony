@@ -1,6 +1,6 @@
 package com.slembers.alarmony.feature.alarm
 
-import androidx.compose.foundation.layout.Arrangement
+import android.app.Activity
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -34,13 +34,13 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.slembers.alarmony.feature.alarm.AlarmNoti.cancelNotification
 import com.slembers.alarmony.feature.common.ui.theme.toColor
 
 @Composable
-fun SnoozeNoti(item : Noti, isClicked : MutableState<Boolean>) {
+fun SnoozeNoti(snoozeType : Int, isClicked : MutableState<Boolean>, context : Activity) {
     val openDialog = remember { mutableStateOf(true)  }
     var text = remember { mutableStateOf("") }
-
     if (openDialog.value) {
         AlertDialog(
             shape = RoundedCornerShape(20.dp),
@@ -86,6 +86,8 @@ fun SnoozeNoti(item : Noti, isClicked : MutableState<Boolean>) {
                 Button(
                     onClick = {
                         openDialog.value = false
+                        cancelNotification()
+                        context.finish()
                     },
                     colors = ButtonDefaults.buttonColors(containerColor = "#31AF91".toColor()),
                 ) {
@@ -100,4 +102,8 @@ fun SnoozeNoti(item : Noti, isClicked : MutableState<Boolean>) {
             }
         )
     }
+}
+
+fun setSnoozeAlarm() {
+
 }
