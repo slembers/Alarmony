@@ -75,14 +75,7 @@ class AlarmActivity : ComponentActivity() {
             intent.getParcelableExtra<Alarm>("alarm") as Alarm
         }
 
-//        val alarmData = intent.getParcelableExtra<AlarmData>(ALARM_DATA) as AlarmData
-//        alarm_title.text = alarmData.name
         runNotification(this, alarm)
-//        closeBtn.setOnClickListener {
-//            cancelNotification()
-//            finish()
-//
-//        }
 
         wakeLock =
             (getSystemService(Context.POWER_SERVICE) as PowerManager).run {

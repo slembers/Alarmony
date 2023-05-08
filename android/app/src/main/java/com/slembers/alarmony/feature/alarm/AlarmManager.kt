@@ -28,6 +28,7 @@ fun setAlarm(context: Context, alarm: Alarm) {
     if (curTime > newTime) {    // 설정한 시간이, 현재 시간 보다 작다면 바로 울리기 때문에 다음날로 설정
         newTime += intervalDay
     }
+//    val newTime = System.currentTimeMillis() + 5000  // 테스트용 코드 (5초 뒤 알람 설정)
 
     val intent = Intent(context, AlarmReceiver::class.java)
     intent.putExtra("alarm", alarm)
@@ -39,7 +40,6 @@ fun setAlarm(context: Context, alarm: Alarm) {
             PendingIntent.FLAG_MUTABLE
         )
     val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-
     when {
         Build.VERSION.SDK_INT >= Build.VERSION_CODES.M -> {
             alarmManager.setExactAndAllowWhileIdle(

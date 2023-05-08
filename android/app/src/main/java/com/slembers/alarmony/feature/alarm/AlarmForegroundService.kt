@@ -79,7 +79,7 @@ class AlarmForegroundService : Service() {
         CoroutineScope(Dispatchers.Main).launch {
 
             val newIntent = Intent(applicationContext, AlarmActivity::class.java)
-            newIntent.putExtra(ALARM_DATA, alarm)
+            newIntent.putExtra("alarm", alarm)
             newIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             startActivity(newIntent)
 
