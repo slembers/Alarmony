@@ -138,10 +138,6 @@ public class AlarmServiceImpl implements AlarmService {
         Member member = memberRepository.findByUsername(username)
             .orElseThrow(() -> new CustomException(MemberErrorCode.MEMBER_NOT_FOUND));
 
-        if (message == null) {
-            throw new CustomException(AlarmRecordErrorCode.ALARM_RECORD_MESSAGE_WRONG);
-        }
-
         // 멤버 정보와 알람 아이디를 바탕으로 알람 레코드를 가져온다.
         AlarmRecord alarmRecord = alarmRecordRepository.findByMemberAndAlarm(member.getId(),
                 alarmId)
