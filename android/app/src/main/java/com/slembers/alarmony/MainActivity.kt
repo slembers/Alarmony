@@ -33,11 +33,11 @@ class MainActivity : AppCompatActivity() {
     companion object {
         lateinit var prefs : PresharedUtil
     }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 //      SharedPreferences 클래스는 앱에 있는 다른 Class보다 먼저 생성되어야함
         prefs = PresharedUtil(application)
+//        prefs.reset()
 
         val auto_login = prefs.getBoolean("auto_login", false)
         Log.d("test!", "${auto_login}")
@@ -45,10 +45,11 @@ class MainActivity : AppCompatActivity() {
             /**/
             Log.d("test", "${auto_login}")
             autoLogin(
-                prefs.getString("id", ""),
+                prefs.getString("username", ""),
                 prefs.getString("password", ""),
             ) { resultText, accessToken, refreshToken ->
                 Log.d("자동 로그인", "자동로그인 체크중")
+                Log.d("자동 로그인", "${ prefs.getString("username", "")}")
                 prefs.setString("accessToken", accessToken)
                 prefs.setString("refreshToken", refreshToken)
                 val token = prefs.getString("accessToken", "기본값")

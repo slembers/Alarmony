@@ -4,10 +4,12 @@ import android.content.Context
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.core.os.bundleOf
 import androidx.navigation.NavController
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.google.gson.Gson
 import com.slembers.alarmony.MainActivity
+import com.slembers.alarmony.R
 import com.slembers.alarmony.feature.common.NavItem
 import com.slembers.alarmony.feature.ui.common.showDialog
 import com.slembers.alarmony.model.db.FindIdRequest
@@ -27,31 +29,30 @@ import retrofit2.Response
 object MemberService {
     val memberApi = AlarmonyServer.memberApi
 
-    fun singup(username: String, password: String, nickname: String, email: String) {
+    fun singup(
+        request : SignupRequest,
+        isSuccess : (Boolean) -> Unit = {}
+    ) {
         try {
             Log.d("가입", "signup ==> 회원가입시도")
-            memberApi.signup(
-                SignupRequest(
-                    username = username,
-                    password = password,
-                    nickname =nickname,
-                    email = email
-                )
-            ).enqueue(object : Callback<SignupResponseDto> {
+            memberApi.signup( request ).enqueue(object : Callback<SignupResponseDto> {
                 override fun onResponse(call: Call<SignupResponseDto>, response: Response<SignupResponseDto>) {
                     Log.d("response","response")
-//                    code
                     Log.d("response","${response.code()}")
                     if(response.isSuccessful) {
                         Log.d("success", "회원가입 성공")
+//                         부모 객체에 "성공"이라는 string을 건네줘야한다. 즉 회원가입이 성공했음을 알려야한다. 어떻게??
+                        isSuccess(true)
+                        val bundle = bundleOf("result" to "성공")
                     } else {
                         Log.d("Failed", "회원가입 실패")
+                        isSuccess(false)
                     }
                 }
 
                 override fun onFailure(call: Call<SignupResponseDto>, t: Throwable) {
-
                     Log.d("disconnection", "회원가입 실패하였습니다..")
+                    isSuccess(false)
                 }
             })
         } catch ( e : Exception ) {
@@ -91,18 +92,21 @@ object MemberService {
                     var loginResult = response.body();
                     Log.d("response1","${response}")
                     Log.d("response","${response.body()}")
-
-
                     Log.i("response", "${loginResult}")
                     Log.i("accessToken", "${loginResult?.accessToken}")
+                    Log.i("accessToken", "${loginResult?.refreshToken}")
 //로그인이 성공했을 경우 로직
                     if(loginResult!!.status == null) {
                         Log.d("response", "로그인 성공!")
                         Log.d("response", "${loginResult.accessToken}")
 //                        임시방편
-                        MainActivity.prefs.setBoolean("auto_login", true)
-                        navController.navigate(NavItem.AlarmListScreen.route)
 
+                        MainActivity.prefs.setBoolean("auto_login", true)
+                        MainActivity.prefs.setString("accessToken", loginResult?.accessToken)
+                        MainActivity.prefs.setString("refreshToken", loginResult?.refreshToken)
+                        MainActivity.prefs.setString("username", username)
+                        MainActivity.prefs.setString("password", password)
+                        navController.navigate(NavItem.AlarmListScreen.route)
 
                         resultText = "로그인 성공"
                         resultCallback(resultText, loginResult.accessToken, loginResult.refreshToken)

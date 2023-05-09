@@ -29,21 +29,24 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.focus.FocusState
 import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavController
 import androidx.navigation.ui.NavigationUI.navigateUp
+import com.slembers.alarmony.model.db.SignupRequest
 
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
 fun SignupScreen(navController: NavController) {
 //    이번엔 state가 아니라 String형식으로 저장해보기
-    var ID  = remember { mutableStateOf("") }
-    var password = remember { mutableStateOf("") }
-    var passwordConfirm = remember { mutableStateOf("") }
-    var nickname = remember { mutableStateOf("") }
-    var email = remember { mutableStateOf("") }
+    var ID  by remember { mutableStateOf("") }
+    var password by remember { mutableStateOf("") }
+    var passwordConfirm by remember { mutableStateOf("") }
+    var nickname by remember { mutableStateOf("") }
+    var email by remember { mutableStateOf("") }
     var passwordVisibility1 by remember { mutableStateOf(false) }
     var passwordVisibility2 by remember { mutableStateOf(false) }
+    val context = LocalContext.current
 
 
 
@@ -67,8 +70,8 @@ fun SignupScreen(navController: NavController) {
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 TextField(
-                    value = ID.value,
-                    onValueChange = { ID.value = it },
+                    value = ID,
+                    onValueChange = { ID = it },
                     label = { Text(text = "아이디") },
 //                    keyboardOptions = KeyboardOptions.Default.copy(
                     keyboardOptions = KeyboardOptions(
@@ -86,8 +89,8 @@ fun SignupScreen(navController: NavController) {
 
                 TextField(
 
-                    value = password.value,
-                    onValueChange = { password.value = it },
+                    value = password,
+                    onValueChange = { password = it },
                     label = { Text(text = "비밀번호") },
                     keyboardOptions = KeyboardOptions(
                         keyboardType = KeyboardType.Email,
@@ -107,8 +110,8 @@ fun SignupScreen(navController: NavController) {
                     }
                 )
                 TextField(
-                    value = passwordConfirm.value,
-                    onValueChange = { passwordConfirm.value = it },
+                    value = passwordConfirm,
+                    onValueChange = { passwordConfirm = it },
                     label = { Text(text = "비밀번호 재입력") },
                     keyboardOptions = KeyboardOptions(
                         keyboardType = KeyboardType.Email,
@@ -131,8 +134,8 @@ fun SignupScreen(navController: NavController) {
                     )
 
                 TextField(
-                    value = email.value,
-                    onValueChange = {email.value = it},
+                    value = email,
+                    onValueChange = {email = it},
                     label = {Text(text = "이메일")},
                     keyboardOptions = KeyboardOptions(
                         keyboardType = KeyboardType.Email,
@@ -149,8 +152,8 @@ fun SignupScreen(navController: NavController) {
 
                 )
                 TextField(
-                    value = nickname.value,
-                    onValueChange = {nickname.value = it},
+                    value = nickname,
+                    onValueChange = {nickname = it},
                     keyboardOptions = KeyboardOptions(
                         keyboardType = KeyboardType.Email,
                         imeAction = ImeAction.Done
@@ -166,10 +169,21 @@ fun SignupScreen(navController: NavController) {
                 Button(
                     onClick = {
                         // TODO: 회원가입 로직 구현
+                        var result = false
                         // 회원가입이 완료되면 Snackbar 띄우기
                         Log.d("회원", "회원가입버튼누름")
-                        singup(ID.value, password.value, nickname.value, email.value)
+                        singup( SignupRequest(
+                                username = ID,
+                                password = password,
+                                nickname = nickname,
+                                email = email
+                            ), isSuccess = {result = it})
+                        Log.d("test","${result}")
+                        if(result) {
 
+                        } else {
+
+                        }
                     },
                     modifier = Modifier.fillMaxWidth()
                 ) {
