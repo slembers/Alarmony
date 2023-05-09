@@ -21,7 +21,10 @@ public enum MemberErrorCode implements ErrorCode {
 
     NICKNAME_DUPLICATED(HttpStatus.OK, "중복되는 닉네임 입니다."),
 
-    MEMBER_REGISTRATION_TOKEN_WRONG(HttpStatus.BAD_REQUEST, "기기 등록 토큰이 잘못되었습니다.");
+    MEMBER_REGISTRATION_TOKEN_WRONG(HttpStatus.BAD_REQUEST, "기기 등록 토큰이 잘못되었습니다."),
+
+
+    AMAZONS3_ERROR(HttpStatus.INTERNAL_SERVER_ERROR,"[Amazaon S3] 이미지 업로드에 실패하였습니다.");
 
 
     private final HttpStatus httpStatus;
