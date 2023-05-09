@@ -98,7 +98,7 @@ fun AccountMtnc(navController: NavController) {
         ) {
 
             Button(
-                onClick = { NavItem.ProfileActivity.route},
+                onClick = { navController.navigate(NavItem.ProfileActivity.route)},
                 modifier = Modifier
                     .width(240.dp)
                     .padding(10.dp)

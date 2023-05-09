@@ -81,34 +81,12 @@ fun FindId(navController: NavController) {
                     modifier = Modifier
                         .fillMaxWidth()
                     )
-                TextField(
 
-                    value = certnum.value,
-                    onValueChange = {certnum.value = it},
-                    keyboardOptions = KeyboardOptions(
-                        keyboardType = KeyboardType.Email,
-                        imeAction = ImeAction.Done
-                    ),
-                    label = {Text(text = "인증번호")},
-                    modifier = Modifier
-                        .fillMaxWidth()
-                )
-
-//                Button(
-//                    onClick = {
-//                    Log.d("확인", "아이디 찾기")
-//                }, modifier = Modifier
-////                        .fillMaxWidth()
-//                )
-//
-//                {
-//                     Text(text = "아이디 찾기")
-//                }
 
                 Button(
                     onClick = {
                         Log.d("확인", "인증번호 보내기")
-                        findId(email.value, context)
+                        findId(email.value, context, navController)
                     }, modifier = Modifier
 //                        .fillMaxWidth()
                 )

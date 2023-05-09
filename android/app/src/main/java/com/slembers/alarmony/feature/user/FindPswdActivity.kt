@@ -106,7 +106,7 @@ fun Findpswd(navController: NavController) {
                 Button(
                     onClick = {
                         Log.d("확인", "비밀번호 찾기")
-                        findPswd(email.value, ID.value, context)
+                        findPswd(email.value, ID.value, context,navController)
 
                     }, modifier = Modifier
                 )
