@@ -9,6 +9,7 @@ import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.google.gson.Gson
 import com.slembers.alarmony.MainActivity
 import com.slembers.alarmony.feature.common.NavItem
+import com.slembers.alarmony.feature.ui.common.showDialog
 import com.slembers.alarmony.model.db.FindIdRequest
 import com.slembers.alarmony.model.db.FindPasswordRequest
 import com.slembers.alarmony.model.db.LoginRequest
@@ -227,7 +228,7 @@ object MemberService {
     }
 
 
-    fun findId(email: String) {
+    fun findId(email: String, context:Context) {
         try {
             Log.d("test","아이디 찾기 위해 이메일 보냄")
             memberApi.findId(
@@ -245,6 +246,7 @@ object MemberService {
 //                    retrofit에서 제공하는 response의 isSuccessful값이 true라면 아래 실행
                     if (response.isSuccessful) {
                         Log.d("response","아이디 찾기위한 이메일 전송 성공")
+                        showDialog("알림", "이메일을 보냈어요!", context)
 //                  response.body()는 Retrofit에서 HTTP 응답을 처리할 때 사용하는 메서드 중 하나입니다.
 //                  이 메서드는 HTTP 응답을 받은 후, HTTP 응답 바디를 T 타입의 객체로 파싱하여 반환합니다.
 //                  반환된 객체는 사용자가 원하는 타입으로 변환하여 사용할 수 있습니다.
@@ -252,11 +254,13 @@ object MemberService {
 
                     } else {
                         Log.d("response","아이디 찾기위한 이메일 전송 실패")
+                        showDialog("알림", "올바른 이메일을 입력해주세요!", context)
 
                     }
                 }
                 //서버 요청이 자체가 실패한 경우 아래 onFailure가 실행된다.
                 override fun onFailure(call: Call<FindIdResponseDto>, t: Throwable, ) {
+                    showDialog("알림", "뭔가 잘못됐나봐요", context)
                     Log.d("response", "서버 요청이 실패")
                     Log.d("response", "${t}")
 
@@ -267,6 +271,7 @@ object MemberService {
 //          try에서 예외가 발생하면 호춯된다.
         } catch ( e: Exception ) {
             Log.d("response", "예외발생")
+            showDialog("알림", "뭔가 잘못됐나봐요", context)
         }
     }
 
@@ -288,18 +293,22 @@ object MemberService {
                 override fun onResponse(call: Call<FindPasswordResponseDto>, response: Response<FindPasswordResponseDto>) {
                     if(response.isSuccessful) {
                         Log.d("response", "비밀번호찾기 신호 성공")
+                        showDialog("알림", "임시비밀번호를 전송했어요!", context)
                     } else {
                         Log.d("response", "비밀번호찾기 신호 실패")
+                        showDialog("알림", "올바른 정보를 입력해 주세요...", context)
 
                     }
                 }
 
                 override fun onFailure(call: Call<FindPasswordResponseDto>, t: Throwable) {
                     Log.d("fail", "비밀번호찾기 실패")
+                    showDialog("알림", "뭔가 잘못됐나봐요", context)
                 }
             })
         } catch ( e : Exception ) {
             Log.d("fail", "비밀먼호 찾기 예외 발생")
+            showDialog("알림", "뭔가 잘못됐나봐요", context)
             println(e.message)
         }
 

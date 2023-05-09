@@ -1,12 +1,16 @@
 package com.slembers.alarmony.feature.ui.common
 
+
+import android.content.Context
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContentProviderCompat.requireContext
 
-fun showDialog(context) {
-    val builder = AlertDialog.Builder(requireContext(context))
-    builder.setMessage("This is an AlertDialog")
+fun showDialog(title:String, text: String, context: Context) {
+    val builder = AlertDialog.Builder(context)
+    builder
+        .setTitle("${title}")
+        .setMessage("${text}")
         .setPositiveButton("OK") { dialog, which -> }
-        .setNegativeButton("Cancel") { dialog, which -> }
+//        .setNegativeButton("Cancel") { dialog, which -> }
         .show()
 }

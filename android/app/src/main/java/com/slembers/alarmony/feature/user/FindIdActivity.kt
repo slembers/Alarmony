@@ -34,7 +34,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.slembers.alarmony.R
-import com.slembers.alarmony.feature.ui.common.ShowAlertDialog
 import com.slembers.alarmony.network.repository.MemberService.findId
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
