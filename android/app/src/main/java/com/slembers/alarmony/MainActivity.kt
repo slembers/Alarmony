@@ -29,8 +29,10 @@ class MainActivity : AppCompatActivity() {
 //      SharedPreferences 클래스는 앱에 있는 다른 Class보다 먼저 생성되어야함
         prefs = PresharedUtil(application)
         val auto_login = prefs.getBoolean("auto_login", false)
+        Log.d("test!", "${auto_login}")
         if (auto_login == true) {
             /**/
+            Log.d("test", "${auto_login}")
             autoLogin(prefs.getString("id", ""),
                 prefs.getString("password", ""),
             ) { resultText, accessToken, refreshToken ->

@@ -5,7 +5,9 @@ import android.util.Log
 import android.widget.Toast
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.navigation.NavController
+import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.google.gson.Gson
+import com.slembers.alarmony.MainActivity
 import com.slembers.alarmony.feature.common.NavItem
 import com.slembers.alarmony.model.db.FindIdRequest
 import com.slembers.alarmony.model.db.FindPasswordRequest
@@ -97,6 +99,7 @@ object MemberService {
 
 
 
+    @OptIn(ExperimentalGlideComposeApi::class)
     @ExperimentalMaterial3Api
     fun login(
         username: String,
@@ -128,8 +131,12 @@ object MemberService {
                     if(loginResult!!.status == null) {
                         Log.d("response", "로그인 성공!")
                         Log.d("response", "${loginResult.accessToken}")
-                        //                        토큰값 저장해야함
+//                        임시방편
+                        MainActivity.prefs.setBoolean("auto_login", true)
+
+
                         navController.navigate(NavItem.AccountMtnc.route)
+
 
                         resultText = "로그인 성공"
                         resultCallback(resultText, loginResult.accessToken, loginResult.refreshToken)

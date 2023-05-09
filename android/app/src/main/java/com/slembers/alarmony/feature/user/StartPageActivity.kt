@@ -146,27 +146,27 @@ fun LoginScreen(navController: NavController) {
         )
 //아래는 자동로그인 체크박스
 
-        Row(modifier = Modifier.padding(0.dp)) {
-            // Checkbox Composable을 사용하여 체크박스 UI를 생성
-            Checkbox(
-                checked = checkedState.value,
-                onCheckedChange = {
-                    checkedState.value = it
-                    if (it) {
-//                        prefs.setString("autoLogin", "true")
-//                        prefs.setBoolean("auto_login", true)
-                      Log.d("체크박스", "자동 로그인 온")
-                      Log.d("체크박스", "${prefs.getBoolean("auto_login", false)}")
-                    } else {
-//                        prefs.setBoolean("auto_login", false)
-                        Log.d("체크박스", "자동 로그인 오프")
-                        Log.d("체크박스", "${prefs.getBoolean("auto_login", false)}")
-
-                    }
-                }
-            )
-            Text(text = "자동 로그인 ")
-        }
+//        Row(modifier = Modifier.padding(0.dp)) {
+//            // Checkbox Composable을 사용하여 체크박스 UI를 생성
+//            Checkbox(
+//                checked = checkedState.value,
+//                onCheckedChange = {
+//                    checkedState.value = it
+//                    if (it) {
+////                        prefs.setString("autoLogin", "true")
+////                        prefs.setBoolean("auto_login", true)
+//                      Log.d("체크박스", "자동 로그인 온")
+//                      Log.d("체크박스", "${prefs.getBoolean("auto_login", false)}")
+//                    } else {
+////                        prefs.setBoolean("auto_login", false)
+//                        Log.d("체크박스", "자동 로그인 오프")
+//                        Log.d("체크박스", "${prefs.getBoolean("auto_login", false)}")
+//
+//                    }
+//                }
+//            )
+//            Text(text = "자동 로그인 ")
+//        }
 
 
 
@@ -192,7 +192,7 @@ fun LoginScreen(navController: NavController) {
                           prefs.setString("refreshToken", refreshToken)
                           prefs.setString("id",idState.value )
                           prefs.setString("password",passwordState.value )
-                          prefs.setBoolean("auto_login", checkedState.value)
+//                          prefs.setBoolean("auto_login", checkedState.value)
                           val token = prefs.getString("accessToken", "기본값")
                           Log.d("getstring확인", "${token}")
 
