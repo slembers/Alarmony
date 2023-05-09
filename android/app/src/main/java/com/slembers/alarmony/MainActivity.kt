@@ -65,6 +65,11 @@ class MainActivity : AppCompatActivity() {
 
             }
 //            자동로그인이 되지 않으면 정상적으로 Composable LoginScreen()이 라우팅 되는 Navcontroller를 set해준다.
+        } else {
+            setContent {
+                NavController()
+                requestAlertPermission() // 권한 실행
+            }
         }
     }
 
