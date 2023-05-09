@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -67,7 +68,7 @@ public class GroupController {
     @PostMapping("/{group-id}/members")
     public ResponseEntity<String> inviteMemberToGroup(
         @PathVariable(name = "group-id") Long groupId,
-        InviteMemberToGroupRequestDto inviteMemberToGroupRequestDto) {
+        @RequestBody InviteMemberToGroupRequestDto inviteMemberToGroupRequestDto) {
 
         String username = SecurityUtil.getCurrentUsername();
 
@@ -76,8 +77,9 @@ public class GroupController {
             .nicknames(inviteMemberToGroupRequestDto.getMembers())
             .sender(username)
             .build();
-        alertService.inviteMemberToGroup(dto);
-        return new ResponseEntity<>("멤버에게 그룹 초대를 요청했습니다.", HttpStatus.OK);
+        int cnt = alertService.inviteMemberToGroup(dto);
+        return new ResponseEntity<>(String.format("%d/%d 멤버에게 그룹 초대를 요청했습니다.",
+            cnt, inviteMemberToGroupRequestDto.getMembers().size()), HttpStatus.OK);
     }
 
     /**
