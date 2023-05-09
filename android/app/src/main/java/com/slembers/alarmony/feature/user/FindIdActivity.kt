@@ -25,6 +25,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusEvent
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -33,6 +34,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.slembers.alarmony.R
+import com.slembers.alarmony.network.repository.MemberService.findId
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
@@ -40,7 +42,7 @@ fun FindId(navController: NavController) {
 
     var email = remember { mutableStateOf("") }
     var certnum = remember { mutableStateOf("") }
-
+    val context = LocalContext.current
 
 
     Scaffold(
@@ -66,6 +68,7 @@ fun FindId(navController: NavController) {
                 mascott(drawing = R.drawable.mascot_foreground)
                 logo(drawing = R.drawable.alarmony)
 
+
                 TextField(
 
                     value = email.value,
@@ -78,28 +81,18 @@ fun FindId(navController: NavController) {
                     modifier = Modifier
                         .fillMaxWidth()
                     )
-                TextField(
 
-                    value = certnum.value,
-                    onValueChange = {certnum.value = it},
-                    keyboardOptions = KeyboardOptions(
-                        keyboardType = KeyboardType.Email,
-                        imeAction = ImeAction.Done
-                    ),
-                    label = {Text(text = "인증번호")},
-                    modifier = Modifier
-                        .fillMaxWidth()
-                )
 
                 Button(
                     onClick = {
-                    Log.d("확인", "아이디 찾기")
-                }, modifier = Modifier
+                        Log.d("확인", "인증번호 보내기")
+                        findId(email.value, context, navController)
+                    }, modifier = Modifier
 //                        .fillMaxWidth()
                 )
 
                 {
-                     Text(text = "아이디 찾기")
+                    Text(text = "인증번호 보내기")
                 }
             }
         }

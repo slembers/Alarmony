@@ -3,22 +3,27 @@ package com.slembers.alarmony.member.controller;
 
 import com.slembers.alarmony.global.dto.MessageResponseDto;
 import com.slembers.alarmony.global.security.util.SecurityUtil;
+import com.slembers.alarmony.member.dto.ChangePasswordDto;
+import com.slembers.alarmony.member.dto.MemberInfoDto;
 import com.slembers.alarmony.member.dto.request.*;
 import com.slembers.alarmony.member.dto.response.CheckDuplicateDto;
 import com.slembers.alarmony.member.dto.response.MemberResponseDto;
 import com.slembers.alarmony.member.dto.response.TokenResponseDto;
 import com.slembers.alarmony.member.service.EmailVerifyService;
 import com.slembers.alarmony.member.service.MemberService;
+import com.slembers.alarmony.report.dto.ModifiedMemberInfoDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.User;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.mail.MessagingException;
 import javax.validation.Valid;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -30,6 +35,8 @@ public class MemberController {
 
     private final MemberService memberService;
     private final EmailVerifyService emailVerifyService;
+
+    private final BCryptPasswordEncoder passwordEncoder;
 
     /**
      * 회원가입
@@ -143,7 +150,7 @@ public class MemberController {
 
 
     /**
-     * 회원 탈퇴  (비활성화)
+     * 회원 탈퇴 (비활성화)
      */
     @DeleteMapping()
     public ResponseEntity<MessageResponseDto> deleteMember(){
@@ -151,4 +158,28 @@ public class MemberController {
         return new ResponseEntity<>(memberService.deleteMember(SecurityUtil.getCurrentUsername()),HttpStatus.OK);
 
     }
+
+    /**
+     * 회원 정보 수정
+     */
+    @PatchMapping()
+    public ResponseEntity<MemberInfoDto> modifyMemberInfo(@ModelAttribute ModifiedMemberInfoDto modifiedMemberInfoDto) throws IOException {
+
+        log.info(modifiedMemberInfoDto.getNickname());
+        return new ResponseEntity<>(memberService.modifyMemberInfo(SecurityUtil.getCurrentUsername(), modifiedMemberInfoDto) , HttpStatus.OK);
+    }
+
+
+    /**
+     * 비밀번호 변경
+     */
+
+    @PatchMapping("/change-pwd")
+    public ResponseEntity<MessageResponseDto> changePassword(@RequestBody @Valid ChangePasswordDto changePasswordDto){
+
+        return new ResponseEntity<>(memberService.changePassword(SecurityUtil.getCurrentUsername(), changePasswordDto),HttpStatus.OK);
+
+
+    }
+
 }

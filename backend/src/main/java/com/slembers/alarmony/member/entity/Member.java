@@ -1,6 +1,7 @@
 package com.slembers.alarmony.member.entity;
 
 import java.util.Objects;
+
 import lombok.Getter;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -45,6 +46,9 @@ public class Member {
     @Column(name = "profile_img_url", length = 1000)
     private String profileImgUrl;
 
+    @Column(name = "profile_key", length = 1000)
+    private String profileKey;
+
     @Column(name = "registration_token")
     private String registrationToken;
 
@@ -52,14 +56,27 @@ public class Member {
         this.authority = authority;
     }
 
-    public void encodePassword(PasswordEncoder passwordEncoder){
-        this.password = passwordEncoder.encode(this.password);
-
+    public void changeProfileImg(String profileImgUrl){
+        this.profileImgUrl = profileImgUrl;
     }
 
-    public void changePassword(String password){
+    public void changeProfileKey(String profileKey){
+        this.profileKey = profileKey ;
+    }
+
+
+    public void changeNickname(String nickname) {
+        this.nickname = nickname;
+    }
+
+    public void encodePassword(PasswordEncoder passwordEncoder) {
+        this.password = passwordEncoder.encode(this.password);
+    }
+
+    public void changePassword(String password) {
         this.password = password;
     }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

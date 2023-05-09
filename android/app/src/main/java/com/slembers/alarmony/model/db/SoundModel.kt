@@ -1,30 +1,14 @@
 package com.slembers.alarmony.model.db
 
+import android.media.MediaPlayer
 import androidx.compose.ui.graphics.painter.Painter
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-
-interface SoundModelInterface {
-    var items : ArrayList<SoundItem>?
-}
-
-class SoundModel(private val soundItems : MutableLiveData<ArrayList<SoundItem>>) : ViewModel() , SoundModelInterface {
-
-    override var items : ArrayList<SoundItem>? = soundItems.value
-
-    fun addSoundList(item : SoundItem) {
-        soundItems.value?.add(item)
-    }
-}
 
 data class SoundItem(
-    private val image : Painter? = null,
-    private val name : String = "nothing"
+    private val image: Painter? = null,
+    private val name: String = "nothing",
+    private val mp3Content: MediaPlayer? = null
 ) {
     var soundImage = image
     var soundName = name
-
-    fun onChangeImage(image : Painter?) {
-        soundImage = image
-    }
+    var soundMp3Content = mp3Content
 }

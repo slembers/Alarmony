@@ -60,8 +60,9 @@ public class GroupServiceImpl implements GroupService {
     /**
      * 초대 가능한 멤버 리스트를 반환합니다.
      *
-     * @param groupId 그룹 id
-     * @param keyword 검색할 키워드
+     * @param groupId  그룹 id
+     * @param keyword  검색할 키워드
+     * @param username 제외할 멤버의 유저네임
      * @return 초대 가능한 멤버 목록
      */
     @Override
@@ -83,6 +84,7 @@ public class GroupServiceImpl implements GroupService {
     @Override
     public void removeHostMember(Long groupId) {
         if (memberAlarmRepository.countByAlarmId(groupId) != 1) {
+            log.error("그룹장은 그룹에 멤버가 존재하지 않아야 탈퇴할 수 있음");
             throw new CustomException(AlarmErrorCode.MEMBER_IN_GROUP);
         }
 
