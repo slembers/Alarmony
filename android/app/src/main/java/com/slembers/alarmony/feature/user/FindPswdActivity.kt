@@ -21,6 +21,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
@@ -34,7 +35,7 @@ import com.slembers.alarmony.network.repository.MemberService.findPswd
 @Composable
 fun Findpswd(navController: NavController) {
 
-
+    val context = LocalContext.current
     var email = remember { mutableStateOf("") }
     var ID = remember { mutableStateOf("") }
     var certnum = remember { mutableStateOf("") }
@@ -105,7 +106,7 @@ fun Findpswd(navController: NavController) {
                 Button(
                     onClick = {
                         Log.d("확인", "비밀번호 찾기")
-                        findPswd(email.value, ID.value)
+                        findPswd(email.value, ID.value, context)
 
                     }, modifier = Modifier
                 )

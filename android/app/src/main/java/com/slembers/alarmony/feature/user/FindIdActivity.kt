@@ -25,6 +25,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusEvent
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -33,6 +34,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.slembers.alarmony.R
+import com.slembers.alarmony.feature.ui.common.ShowAlertDialog
 import com.slembers.alarmony.network.repository.MemberService.findId
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
@@ -41,7 +43,7 @@ fun FindId(navController: NavController) {
 
     var email = remember { mutableStateOf("") }
     var certnum = remember { mutableStateOf("") }
-
+    val context = LocalContext.current
 
 
     Scaffold(
@@ -66,6 +68,7 @@ fun FindId(navController: NavController) {
 
                 mascott(drawing = R.drawable.mascot_foreground)
                 logo(drawing = R.drawable.alarmony)
+
 
                 TextField(
 
@@ -106,7 +109,7 @@ fun FindId(navController: NavController) {
                 Button(
                     onClick = {
                         Log.d("확인", "인증번호 보내기")
-                        findId(email.value)
+                        findId(email.value, context)
                     }, modifier = Modifier
 //                        .fillMaxWidth()
                 )

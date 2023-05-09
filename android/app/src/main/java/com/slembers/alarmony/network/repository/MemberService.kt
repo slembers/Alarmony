@@ -275,6 +275,7 @@ object MemberService {
     fun findPswd(
         email: String,
         username: String,
+        context: Context
     ) {
         try {
             memberApi.findPassword(
