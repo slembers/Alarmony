@@ -102,7 +102,7 @@ fun LoginScreen(navController: NavController) {
     val idState = remember { mutableStateOf("") }
     val passwordState = remember { mutableStateOf("") }
     if (prefs.getBoolean("auto_login", false) == true) {
-        navController.navigate(NavItem.AlarmListScreen.route)
+        navController.navigate(NavItem.AccountMtnc.route)
 
     }
 

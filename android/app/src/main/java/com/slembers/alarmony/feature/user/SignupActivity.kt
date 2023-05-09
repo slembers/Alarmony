@@ -2,6 +2,7 @@ package com.slembers.alarmony.feature.user
 
 import android.annotation.SuppressLint
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
@@ -32,14 +33,17 @@ import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavController
 import androidx.navigation.ui.NavigationUI.navigateUp
+import com.slembers.alarmony.feature.common.NavItem
+import com.slembers.alarmony.feature.ui.common.ShowAlertDialog
 import com.slembers.alarmony.model.db.SignupRequest
+import kotlinx.coroutines.runBlocking
 
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
 fun SignupScreen(navController: NavController) {
 //    이번엔 state가 아니라 String형식으로 저장해보기
-    var ID  by remember { mutableStateOf("") }
+    var username  by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var passwordConfirm by remember { mutableStateOf("") }
     var nickname by remember { mutableStateOf("") }
@@ -70,8 +74,8 @@ fun SignupScreen(navController: NavController) {
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 TextField(
-                    value = ID,
-                    onValueChange = { ID = it },
+                    value = username,
+                    onValueChange = { username = it },
                     label = { Text(text = "아이디") },
 //                    keyboardOptions = KeyboardOptions.Default.copy(
                     keyboardOptions = KeyboardOptions(
@@ -172,18 +176,43 @@ fun SignupScreen(navController: NavController) {
                         var result = false
                         // 회원가입이 완료되면 Snackbar 띄우기
                         Log.d("회원", "회원가입버튼누름")
-                        singup( SignupRequest(
-                                username = ID,
+
+                            singup(SignupRequest(
+                                username = username,
                                 password = password,
                                 nickname = nickname,
                                 email = email
-                            ), isSuccess = {result = it})
-                        Log.d("test","${result}")
-                        if(result) {
+                            )) { isSuccess ->
+                                result = isSuccess
+                                Log.d("test", "${result}")
 
-                        } else {
+                                if (result == true) {
+                                    Log.d("response", "${result}")
+//                            ShowAlertDialog(
+//                                true,
+//                                "알림",
+//                                "회원가입에 성공했습니다.",
+//                                context,
+//                                {}
+//                            )
+                                    Toast.makeText(
+                                        context,
+                                        "회원가입 완료! 이메일을 확인해주세요.",
+                                        Toast.LENGTH_LONG
+                                    ).show()
+                                    navController.navigate(NavItem.LoginScreen.route)
 
-                        }
+                                } else {
+                                    Log.d("response", "${result}")
+                                    Toast.makeText(
+                                        context,
+                                        "회원가입 실패...",
+                                        Toast.LENGTH_LONG
+                                    ).show()
+                                }
+                            }
+
+//                        ShowAlertDialog(true, "알림", "회원가입이 성공", {})
                     },
                     modifier = Modifier.fillMaxWidth()
                 ) {

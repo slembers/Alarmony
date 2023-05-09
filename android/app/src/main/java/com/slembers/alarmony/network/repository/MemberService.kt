@@ -40,10 +40,10 @@ object MemberService {
                     Log.d("response","response")
                     Log.d("response","${response.code()}")
                     if(response.isSuccessful) {
-                        Log.d("success", "회원가입 성공")
+                        Log.d("success", "회원가입 성공!!!")
 //                         부모 객체에 "성공"이라는 string을 건네줘야한다. 즉 회원가입이 성공했음을 알려야한다. 어떻게??
                         isSuccess(true)
-                        val bundle = bundleOf("result" to "성공")
+                        Log.d("success", "${isSuccess}")
                     } else {
                         Log.d("Failed", "회원가입 실패")
                         isSuccess(false)
@@ -106,7 +106,7 @@ object MemberService {
                         MainActivity.prefs.setString("refreshToken", loginResult?.refreshToken)
                         MainActivity.prefs.setString("username", username)
                         MainActivity.prefs.setString("password", password)
-                        navController.navigate(NavItem.AlarmListScreen.route)
+                        navController.navigate(NavItem.AccountMtnc.route)
 
                         resultText = "로그인 성공"
                         resultCallback(resultText, loginResult.accessToken, loginResult.refreshToken)
