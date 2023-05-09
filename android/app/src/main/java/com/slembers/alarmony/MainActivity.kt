@@ -1,7 +1,7 @@
 package com.slembers.alarmony
 
+//import com.slembers.alarmony.feature.common.NavController2
 import android.Manifest
-import android.app.Activity
 import android.content.ContentValues
 import android.content.Context
 import android.content.DialogInterface
@@ -22,8 +22,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.core.content.ContextCompat
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.slembers.alarmony.feature.common.NavController
-//import com.slembers.alarmony.feature.common.NavController2
-import com.slembers.alarmony.network.repository.MemberService.autoLogin
 import com.slembers.alarmony.util.PresharedUtil
 
 @ExperimentalMaterial3Api
@@ -33,39 +31,17 @@ class MainActivity : AppCompatActivity() {
     companion object {
         lateinit var prefs : PresharedUtil
     }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+//      SharedPreferences 클래스는 앱에 있는 다른 Class보다 먼저 생성되어야함
         prefs = PresharedUtil(application)
-//        정보 초기화시 해당 코드 주석 해제하고 시도 후 다시 주석처리하고 실행
-//        prefs.reset()
 
-        val auto_login = prefs.getBoolean("auto_login", false)
-        Log.d("test!", "${auto_login}")
-        if (auto_login == true) {
-            /**/
-            Log.d("test", "${auto_login}")
-            autoLogin(
-                prefs.getString("username", ""),
-                prefs.getString("password", ""),
-            ) { resultText, accessToken, refreshToken ->
-                Log.d("자동 로그인", "자동로그인 체크중")
-                Log.d("자동 로그인", "${ prefs.getString("username", "")}")
-                prefs.setString("accessToken", accessToken)
-                prefs.setString("refreshToken", refreshToken)
-                val token = prefs.getString("accessToken", "기본값")
-                Log.d("getstring확인", "${token}")
-                setContent {
-                    NavController()
-                    requestAlertPermission() // 권한 실행
-                }
-
-            }
-        } else {
-            setContent {
-                NavController()
-                requestAlertPermission() // 권한 실행
-            }
+        setContent {
+            NavController()
+            requestAlertPermission() // 권한 실행
         }
+
     }
 
 

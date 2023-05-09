@@ -6,6 +6,9 @@ import android.widget.Toast
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.core.os.bundleOf
 import androidx.navigation.NavController
+import androidx.navigation.NavHost
+import androidx.navigation.NavHostController
+import coil.util.CoilUtils.result
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.google.gson.Gson
 import com.slembers.alarmony.MainActivity
@@ -73,13 +76,9 @@ object MemberService {
     fun login(
         username: String,
         password:String,
-        navController: NavController,
-        context: Context,
-//        아래는 login을 import한 composable함수에서 데이터를 사용하기 위해 callback함수로 건네주는 데이터들
-        resultCallback: (resultText: String, accessToken: String?, refreshToken: String? ) -> Unit
+        navController : NavController,
+        context: Context
     ) {
-        var resultText = ""
-
         try {
             Log.d("Start", "login --> 로그인 시도")
             memberApi.login(
@@ -89,69 +88,54 @@ object MemberService {
                 )
             ).enqueue(object : Callback<LoginResponseDto> {
                 override fun onResponse(call: Call<LoginResponseDto>, response: Response<LoginResponseDto>) {
-                    var loginResult = response.body();
-                    Log.d("response1","${response}")
-                    Log.d("response","${response.body()}")
-                    Log.i("response", "${loginResult}")
-                    Log.i("accessToken", "${loginResult?.accessToken}")
-                    Log.i("accessToken", "${loginResult?.refreshToken}")
-//로그인이 성공했을 경우 로직
-                    if(loginResult!!.status == null) {
-                        Log.d("response", "로그인 성공!")
-                        Log.d("response", "${loginResult.accessToken}")
-//                        임시방편
 
-                        MainActivity.prefs.setBoolean("auto_login", true)
-                        MainActivity.prefs.setString("accessToken", loginResult?.accessToken)
-                        MainActivity.prefs.setString("refreshToken", loginResult?.refreshToken)
-                        MainActivity.prefs.setString("username", username)
-                        MainActivity.prefs.setString("password", password)
-                        navController.navigate(NavItem.AccountMtnc.route)
+                    Log.d("response","[로그인] code : ${response.code()}")
+                    Log.d("response","[로그인] 결과 : ${response.body()}")
+                    var loginResult = response.body()
 
-                        resultText = "로그인 성공"
-                        resultCallback(resultText, loginResult.accessToken, loginResult.refreshToken)
-//                        토큰을 저장하는 코드 삽입
+                    if(response.isSuccessful && response.body() != null) {
 
-                    } else if(loginResult!!.status!! == "401") {
+                        //로그인이 성공했을 경우 로직
+                        if(loginResult!!.status == null) {
 
-                        Log.d("response","비밀번호가 일치하지 않는다.")
-//                        팝업으로 알려주기
-//                        유저아이디와 비밀번호 입력창 초기화
-                        resultText = "비밀번호를 확인해주세요."
-                        resultCallback(resultText, loginResult.accessToken, loginResult.refreshToken)
+                            Log.d("response", "[로그인] 성공!")
+                            Log.d("response","[로그인] access토큰 : ${loginResult?.accessToken}")
+                            Log.d("response","[로그인] refresh토큰 : ${loginResult?.refreshToken}")
+                            MainActivity.prefs.setString("accessToken", loginResult?.accessToken)
+                            MainActivity.prefs.setString("refreshToken", loginResult?.refreshToken)
+                            Toast.makeText(context, "정상적으로 로그인에 성공하였습니다.",Toast.LENGTH_SHORT).show()
+                            navController.navigate(NavItem.AlarmListScreen.route)
 
-                    } else if(loginResult!!.status!! == "403") {
-                        Log.d("response","이메일 정보를 확인해 주세요.")
-                        resultText = "이메일을 확인해주세요."
-                        resultCallback(resultText, loginResult.accessToken, loginResult.refreshToken)
-
-                    } else if(loginResult.status!! == "404") {
-                        Log.d("response","회원이 존재하지 않음.")
-                        resultText = "회원이 존재하지 않습니다."
-                        resultCallback(resultText, loginResult.accessToken, loginResult.refreshToken)
-                        Log.d("response",resultText)
+                        } else if(loginResult!!.status!! == "401") {
+                            Log.d("response","[로그인] 비밀번호가 일치하지 않는다.")
+                            Toast.makeText(context, "비밀번호가 일치하지 않는다.",Toast.LENGTH_SHORT).show()
+                        } else if(loginResult!!.status!! == "403") {
+                            Log.d("response","[로그인] 이메일 정보를 확인해 주세요.")
+                            Toast.makeText(context, "이메일을 확인해주세요.",Toast.LENGTH_SHORT).show()
+                        } else if(loginResult.status!! == "404") {
+                            Log.d("response","[로그인] 회원이 존재하지 않음.")
+                            Toast.makeText(context, "회원이 존재하지 않습니다.",Toast.LENGTH_SHORT).show()
+                        }
+                    } else {
+                        Log.d("response","[로그인] access토큰 : ${loginResult?.accessToken}")
+                        Log.d("response","[로그인] refresh토큰 : ${loginResult?.refreshToken}")
+                        Log.d("response","[로그인] 로그인에 실패하였습니다.")
+                        Toast.makeText(context, "로그인 정보가 정확하지 않습니다.",Toast.LENGTH_SHORT).show()
                     }
-
-                    Log.d("test", "여기까지옴")
-
-
-
 
                 }
 
-
                 override fun onFailure(call: Call<LoginResponseDto>, t: Throwable) {
-                    Log.i("", "로그인 실패하였습니다..")
-//                    토스트는 어차피 화면단에 보이는 거니까 로직만 서비스에 보내고 토스트는 액티비티에서 띄우기
-                    Toast.makeText(context,"로그인에 실패했어요...", Toast.LENGTH_SHORT).show()
+                    Log.i("response", "[로그인] 에러가 발생하여 실패하였습니다..")
+                    Log.i("response", "문제 원인 : $t")
+                    Toast.makeText(context, "에러가 발생하였습니다.",Toast.LENGTH_SHORT).show()
                 }
             })
 
         } catch ( e : Exception ) {
             println(e.message)
-            Toast.makeText(context,"로그인에 실패했어요...", Toast.LENGTH_SHORT).show()
-
         }
+
         Log.d("Exit", "login <-- 로그인 종료")
     }
 
