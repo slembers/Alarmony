@@ -19,9 +19,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -39,13 +36,11 @@ import androidx.compose.material3.TimeInput
 import androidx.compose.material3.TimePickerState
 import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -71,7 +66,6 @@ import com.slembers.alarmony.R
 import com.slembers.alarmony.feature.common.CardBox
 import com.slembers.alarmony.feature.common.CardTitle
 import com.slembers.alarmony.model.db.Member
-import com.slembers.alarmony.model.db.SoundItem
 import com.slembers.alarmony.viewModel.GroupSearchViewModel
 import java.util.Locale
 
@@ -341,78 +335,6 @@ fun GroupDefalutProfile(
             fontSize = 10.sp
         )
     }
-}
-
-
-@Composable
-@ExperimentalMaterial3Api
-fun SoundChooseGrid(
-    modifier: Modifier = Modifier.width(320.dp),
-    itemList: List<SoundItem> = (1..10).map {
-        SoundItem(
-            painterResource(id = R.drawable.main_app_image_foreground),
-            "sound$it") }.toList()
-) {
-    var checkbox by remember { mutableStateOf(itemList[0].soundName) }
-
-    LazyVerticalGrid(
-        modifier = modifier,
-        columns = GridCells.Adaptive(minSize = 100.dp),
-        content = {
-            items(itemList) {
-                soundIcon(
-                    image = it.soundImage,
-                    soundname = it.soundName,
-                    isCheck = checkbox.equals(it.soundName),
-                    onClick = {
-                        checkbox = it.soundName
-                    }
-                )
-            }
-        })
-}
-
-@Composable
-fun soundIcon(
-    image : Painter? = painterResource(id = R.drawable.main_app_image_foreground),
-    soundname : String,
-    isCheck : Boolean = false,
-    onClick : () -> Unit,
-) {
-
-    val context = LocalContext.current
-
-    BoxWithConstraints(
-        modifier = Modifier
-            .padding(4.dp)
-            .size(100.dp)
-            .shadow(
-                elevation = 5.dp,
-                ambientColor = Color.Black,
-                spotColor = Color.Black,
-                shape = RoundedCornerShape(20.dp)
-            )
-            .clip(MaterialTheme.shapes.medium)
-            .background(
-                if (!isCheck)
-                    MaterialTheme.colorScheme.background
-                else
-                    MaterialTheme.colorScheme.primary
-            )
-            .fillMaxWidth()
-            .clickable(onClick = onClick),
-        content = {
-            Image(
-                modifier = Modifier
-                    .size(
-                        width = this.maxWidth,
-                        height = this.maxHeight
-                    )
-                    .padding(5.dp),
-                painter = image!!,
-                contentDescription = soundname)
-        }
-    )
 }
 
 @Composable

@@ -18,7 +18,7 @@ sealed class NavItem (
 
     object Sound : NavItem(
         route = "sound",
-        title = "알람소리",
+        title = "알람음 선택",
         image = Icons.Default.ArrowForwardIos
     )
 
