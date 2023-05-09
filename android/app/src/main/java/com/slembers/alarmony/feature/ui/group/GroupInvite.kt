@@ -21,8 +21,6 @@ import com.slembers.alarmony.feature.common.ui.compose.GroupCard
 import com.slembers.alarmony.feature.common.ui.compose.GroupDefalutProfile
 import com.slembers.alarmony.feature.common.ui.compose.GroupTitle
 import com.slembers.alarmony.model.db.Member
-import com.slembers.alarmony.model.db.dto.MemberDto
-import com.slembers.alarmony.network.service.MemberService
 
 @Composable
 @ExperimentalMaterial3Api
