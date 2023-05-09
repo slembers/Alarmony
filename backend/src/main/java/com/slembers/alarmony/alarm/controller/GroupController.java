@@ -47,7 +47,7 @@ public class GroupController {
     @GetMapping("/inviteable-members")
     public ResponseEntity<Map<String, Object>> getInviteableMembers(
         @RequestParam(value = "group-id", required = false) Long groupId,
-        @RequestParam(value = "keyword", required = false) String keyword) {
+        @RequestParam(value = "keyword") String keyword) {
 
         String username = SecurityUtil.getCurrentUsername();
         List<MemberInfoDto> memberInfoList = groupService.getInviteableMemberInfoList(
