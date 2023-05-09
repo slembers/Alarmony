@@ -1,5 +1,6 @@
 package com.slembers.alarmony.feature.alarm
 
+import android.app.Application
 import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -10,7 +11,6 @@ import android.net.Uri
 import android.os.Build
 import androidx.core.app.NotificationCompat
 import com.slembers.alarmony.R
-import com.slembers.alarmony.feature.alarm.AlarmDto
 
 object AlarmNoti {
     private var NotificationID = 1005
@@ -19,7 +19,7 @@ object AlarmNoti {
     private var mBuilder: NotificationCompat.Builder? = null
     private var ringtone: Ringtone? = null
 
-    fun runNotification(context: Context, alarmDto: AlarmDto) {
+    fun runNotification(context: Application, alarmDto: AlarmDto) {
         NotificationID = alarmDto.alarm_id.toInt()
         notificationManager =
             context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
@@ -27,7 +27,7 @@ object AlarmNoti {
 
         mBuilder!!.setSmallIcon(R.mipmap.ic_launcher)
         mBuilder!!.setContentTitle(alarmDto.title)
-        mBuilder!!.setAutoCancel(true)
+        mBuilder!!.setAutoCancel(false)
         mBuilder!!.setOngoing(false)
         mBuilder!!.priority = Notification.PRIORITY_HIGH
         mBuilder!!.setOnlyAlertOnce(true)

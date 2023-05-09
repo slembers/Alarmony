@@ -1,7 +1,7 @@
 package com.slembers.alarmony
 
-//import com.slembers.alarmony.feature.common.NavController2
 import android.Manifest
+import android.app.Activity
 import android.content.ContentValues
 import android.content.Context
 import android.content.DialogInterface
@@ -43,9 +43,7 @@ class MainActivity : AppCompatActivity() {
             NavController()
             requestAlertPermission() // 권한 실행
         }
-
     }
-
 
     // 액티비티간 데이터를 주고 받기 위함
     @RequiresApi(Build.VERSION_CODES.M)

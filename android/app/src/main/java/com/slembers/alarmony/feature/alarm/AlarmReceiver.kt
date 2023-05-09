@@ -10,38 +10,41 @@ import com.slembers.alarmony.util.Constants.BOOT_COMPLETED
 import com.slembers.alarmony.util.Constants.FIRE_ALARM
 import com.slembers.alarmony.util.Constants.OPEN_TYPE
 import com.slembers.alarmony.util.Constants.REFRESH
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
 class AlarmReceiver : BroadcastReceiver() {
+    lateinit var repository: AlarmRepository
     override fun onReceive(context: Context, intent: Intent) {
         val newIntent = Intent(context, AlarmForegroundService::class.java)
-
         if (intent.action == BOOT_COMPLETED) {
             newIntent.putExtra(OPEN_TYPE, REFRESH)
         } else {
-            intent.setExtrasClassLoader(AlarmDto::class.java.classLoader) // 클래스 로더 설정
-            val alarmDto : AlarmDto? = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                intent.getParcelableExtra("alarm", AlarmDto::class.java) as AlarmDto
-            } else {
-                intent.getParcelableExtra<AlarmDto>("alarm")
-            }
-            Log.d("Alarm", alarmDto.toString())
-            if (alarmDto == null) return
-            newIntent.putExtra(OPEN_TYPE, FIRE_ALARM)
-            newIntent.putExtra("alarm", alarmDto)
-            val isSnooze = intent.getBooleanExtra("isSnooze", false)
-            if (!isSnooze) { // 스누즈가 아닐 경우
-                val calendar: Calendar = Calendar.getInstance()
-                var todayDayOfWeek: Int = calendar.get(Calendar.DAY_OF_WEEK) - 2    // 오늘 요일 구하기
-                if (todayDayOfWeek == -1) todayDayOfWeek = 6
-                if (alarmDto!!.alarm_date[todayDayOfWeek] == false) return // 오늘이 울리는 요일이 아니면 리턴
-            }
+            val alarmId = intent.getLongExtra("alarmId", -1L)
+            if (alarmId == -1L) return
+            val alarmDao = AlarmDatabase.getInstance(context).alarmDao()
 
-            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-                context.startForegroundService(newIntent)
-            } else {
-                context.startService(newIntent)
+            CoroutineScope(Dispatchers.IO).launch {
+                val alarm = alarmDao.getAlarmById(alarmId)
+                val alarmDto = AlarmDto.toDto(alarm!!)
+                if (alarmDto == null) return@launch
+                newIntent.putExtra(OPEN_TYPE, FIRE_ALARM)
+                newIntent.putExtra("alarmId", alarmDto.alarm_id)
+                val isSnooze = intent.getBooleanExtra("isSnooze", false)
+                if (!isSnooze) { // 스누즈가 아닐 경우
+                    val calendar: Calendar = Calendar.getInstance()
+                    var todayDayOfWeek: Int = calendar.get(Calendar.DAY_OF_WEEK) - 2    // 오늘 요일 구하기
+                    if (todayDayOfWeek == -1) todayDayOfWeek = 6
+                    if (alarmDto!!.alarm_date[todayDayOfWeek] == false) return@launch // 오늘이 울리는 요일이 아니면 리턴
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                        context.startForegroundService(newIntent)
+                    } else {
+                        context.startService(newIntent)
+                    }
+                }
             }
         }
     }
-
 }

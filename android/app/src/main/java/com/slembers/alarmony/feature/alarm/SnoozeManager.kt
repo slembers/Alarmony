@@ -38,7 +38,6 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.slembers.alarmony.feature.alarm.AlarmNoti.cancelNotification
-import com.slembers.alarmony.feature.alarm.AlarmDto
 import com.slembers.alarmony.feature.common.ui.theme.toColor
 
 @Composable
@@ -110,7 +109,7 @@ fun setSnoozeAlarm(context: Context, alarmDto: AlarmDto, snoozeType: Int) {
             System.currentTimeMillis() + (10 * 60 * 1000) // 스누즈 10분
         }
     val intent = Intent(context, AlarmReceiver::class.java)
-    intent.putExtra("alarm", alarmDto)
+    intent.putExtra("alarmId", alarmDto.alarm_id)
     intent.putExtra("isSnooze", true)
     val myPendingIntent : Int = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
         PendingIntent.FLAG_MUTABLE

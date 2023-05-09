@@ -8,6 +8,7 @@ import android.icu.util.Calendar
 import android.os.Build
 import android.os.Bundle
 import android.os.PowerManager
+import android.util.Log
 import android.view.WindowManager
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -50,26 +51,29 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.slembers.alarmony.feature.alarm.AlarmNoti.cancelNotification
 import com.slembers.alarmony.feature.alarm.AlarmNoti.runNotification
-import com.slembers.alarmony.feature.alarm.AlarmDto
 import com.slembers.alarmony.feature.common.ui.theme.toColor
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
 class AlarmActivity : ComponentActivity() {
-
+    lateinit var repository: AlarmRepository
     lateinit var wakeLock: PowerManager.WakeLock
+    lateinit var alarmDto: AlarmDto
     override fun onCreate(savedInstanceState: Bundle?) {
+
         super.onCreate(savedInstanceState)
-        intent.setExtrasClassLoader(AlarmDto::class.java.classLoader)
-        val alarmDto = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            intent.getParcelableExtra("alarm", AlarmDto::class.java) as AlarmDto
-        } else {
-            intent.getParcelableExtra<AlarmDto>("alarm") as AlarmDto
+        val alarmId = intent.getLongExtra("alarmId", -1L)
+        Log.d("ForeA1", alarmId.toString())
+        val alarmDao = AlarmDatabase.getInstance(this).alarmDao()
+        CoroutineScope(Dispatchers.IO).launch {
+            repository = AlarmRepository(alarmDao)
+            val alarm = repository.findAlarm(alarmId)
+            alarmDto = AlarmDto.toDto(alarm!!)
+            runNotification(application, alarmDto!!)
         }
-        var alarmStartTime = calAlarm(alarmDto)
-
-        runNotification(this, alarmDto)
-
         wakeLock =
             (getSystemService(Context.POWER_SERVICE) as PowerManager).run {
                 newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "MyApp::MyWakelockTag").apply {
@@ -100,8 +104,12 @@ class AlarmActivity : ComponentActivity() {
         }
 
         setContent {
-            AlarmScreen(alarmDto, alarmStartTime)
+            AlarmScreen(alarmDto!!)
         }
+    }
+
+    override fun onBackPressed() {
+        // super.onBackPressed() 뒤로 가기 막기
     }
     override fun onDestroy() {
         wakeLock.release()
@@ -111,10 +119,11 @@ class AlarmActivity : ComponentActivity() {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AlarmScreen(alarmDto : AlarmDto, alarmStartTime : Long) {
+fun AlarmScreen(alarmDto : AlarmDto) {
     val context = LocalContext.current as Activity
     val isClicked5 = remember { mutableStateOf(false)  }
     val isClicked10 = remember { mutableStateOf(false)  }
+    val alarmStartTime = calAlarm(alarmDto)
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         containerColor = "#66D5ED".toColor(),
@@ -301,5 +310,5 @@ fun DefaultView() {
         15,
         true,
     )
-    AlarmScreen(alarmDto = alarmDto, alarmStartTime = 0L)
+    AlarmScreen(alarmDto = alarmDto)
 }

@@ -10,12 +10,37 @@ import android.content.pm.PackageManager
 import android.icu.util.Calendar
 import android.os.Build
 import android.util.Log
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 
-fun saveAlarm(mAlarmViewModel: AlarmViewModel, alarmDto: AlarmDto, context: Context) {
+fun saveAlarm(alarmDto: AlarmDto, context: Context) {
+    lateinit var repository: AlarmRepository
+    val alarmDao = AlarmDatabase.getInstance(context).alarmDao()
+    repository = AlarmRepository(alarmDao)
     val alarm : Alarm = Alarm.toEntity(alarmDto)
-    mAlarmViewModel.addAlarm(alarm)
-    setAlarm(context, alarmDto)
+    CoroutineScope(Dispatchers.IO).launch {
+        repository.addAlarm(alarm)
+    }
+    setTestAlarm(context, alarmDto)
+}
+fun deleteAlarm(alarmId: Long, context: Context) {
+    lateinit var repository: AlarmRepository
+    val alarmDao = AlarmDatabase.getInstance(context).alarmDao()
+    repository = AlarmRepository(alarmDao)
+    val alarm = repository.findAlarm(alarmId)
+    CoroutineScope(Dispatchers.IO).launch {
+        if (alarm != null) {
+            repository.deleteAlarm(alarm)
+        }
+    }
+}
+fun cancelAlarm(alarmId: Long, context: Context) {
+    val alarmManager = context.getSystemService(ALARM_SERVICE) as AlarmManager
+    val intent = Intent(context, AlarmReceiver::class.java)
+    val pendingIntent = PendingIntent.getBroadcast(context, alarmId.toInt(), intent, PendingIntent.FLAG_MUTABLE)
+    alarmManager.cancel(pendingIntent)
 }
 fun calAlarm(alarmDto: AlarmDto) : Long {
     val calendar: Calendar = Calendar.getInstance()
@@ -26,6 +51,7 @@ fun calAlarm(alarmDto: AlarmDto) : Long {
     val alarmTime = calendar.timeInMillis
     return alarmTime
 }
+
 fun setAlarm(context: Context, alarmDto: AlarmDto) {
     val calendar: Calendar = Calendar.getInstance()
     val intervalDay : Long = 24*60*60*1000 // 24시간
@@ -40,7 +66,7 @@ fun setAlarm(context: Context, alarmDto: AlarmDto) {
         newTime += intervalDay
     }
     val intent = Intent(context, AlarmReceiver::class.java)
-    intent.putExtra("alarm", alarmDto)
+    intent.putExtra("alarmId", alarmDto.alarm_id)
     val myPendingIntent : Int = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
         PendingIntent.FLAG_MUTABLE
     } else {
@@ -64,31 +90,25 @@ fun setAlarm(context: Context, alarmDto: AlarmDto) {
     )
 }
 
-fun deleteAlarm(mAlarmViewModel: AlarmViewModel, alarmDto: AlarmDto, context: Context) {
+////////////////////// 테스트 코드입니다 ////////////////////
+
+fun saveTestAlarm(alarmDto: AlarmDto, context: Context) {
+    Log.d("save", alarmDto.toString())
+    lateinit var repository: AlarmRepository
     val alarmDao = AlarmDatabase.getInstance(context).alarmDao()
-    val repository = AlarmRepository(alarmDao)
-    val alarm =  repository.findAlarm(alarmDto.alarm_id)
-    if (alarm != null) {
-        mAlarmViewModel.deleteAlarm(alarm)
-        cancelAlarm(context, alarmDto)
+    repository = AlarmRepository(alarmDao)
+    val alarm : Alarm = Alarm.toEntity(alarmDto)
+    CoroutineScope(Dispatchers.IO).launch {
+        repository.addAlarm(alarm)
     }
+    setTestAlarm(context, alarmDto)
 }
 
-fun cancelAlarm(context : Context, alarmDto : AlarmDto) {
-    val alarmManager = context.getSystemService(ALARM_SERVICE) as AlarmManager
-    val intent = Intent(context, AlarmReceiver::class.java)
-    val pendingIntent = PendingIntent.getBroadcast(context, alarmDto.alarm_id.toInt(), intent, PendingIntent.FLAG_MUTABLE)
-    alarmManager.cancel(pendingIntent)
-}
-
-////////////////////// 테스트 코드입니다.
-
-fun setAlarmTest(context: Context, alarmDto: AlarmDto) {
+fun setTestAlarm(context: Context, alarmDto: AlarmDto) {
     val newTime = System.currentTimeMillis() + (8 * 1000)  // 테스트용 코드 (8초 뒤 알람 설정)
     val intent = Intent(context, AlarmReceiver::class.java).apply {
-        putExtra("alarm", alarmDto)
+        putExtra("alarmId", alarmDto.alarm_id)
     }
-    Log.d("sendAlarm", alarmDto.toString())
     val myPendingIntent : Int = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
         PendingIntent.FLAG_MUTABLE
     } else {
@@ -97,7 +117,7 @@ fun setAlarmTest(context: Context, alarmDto: AlarmDto) {
     val alarmIntentRTC: PendingIntent =
         PendingIntent.getBroadcast(
             context,
-            System.currentTimeMillis().toInt(),
+            alarmDto.alarm_id.toInt(),
             intent,
             myPendingIntent
         )
