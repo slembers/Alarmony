@@ -1,14 +1,17 @@
 package com.slembers.alarmony.member.service;
 
+import com.slembers.alarmony.global.dto.MessageResponseDto;
 import com.slembers.alarmony.global.execption.CustomException;
-import com.slembers.alarmony.global.jwt.JwtTokenProvider;
+import com.slembers.alarmony.global.security.jwt.JwtTokenProvider;
 import com.slembers.alarmony.global.redis.service.RedisUtil;
 import com.slembers.alarmony.member.dto.request.FindMemberIdDto;
 import com.slembers.alarmony.member.dto.request.FindPasswordDto;
 import com.slembers.alarmony.member.dto.request.ReissueTokenDto;
 import com.slembers.alarmony.member.dto.request.SignUpDto;
 import com.slembers.alarmony.member.dto.response.CheckDuplicateDto;
+import com.slembers.alarmony.member.dto.response.MemberResponseDto;
 import com.slembers.alarmony.member.dto.response.TokenResponseDto;
+import com.slembers.alarmony.member.entity.AuthorityEnum;
 import com.slembers.alarmony.member.entity.Member;
 import com.slembers.alarmony.member.exception.MemberErrorCode;
 import com.slembers.alarmony.member.repository.MemberRepository;
@@ -18,7 +21,6 @@ import org.modelmapper.ModelMapper;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import javax.mail.MessagingException;
 import javax.transaction.Transactional;
 import java.util.HashMap;
 import java.util.Map;
@@ -169,7 +171,7 @@ public class MemberServiceImpl implements MemberService {
      */
 
     @Override
-    public void findMemberId(FindMemberIdDto findMemberIdDto) {
+    public MessageResponseDto findMemberId(FindMemberIdDto findMemberIdDto) {
 
         Member member = memberRepository.findMemberByEmail(findMemberIdDto.getEmail())
                 .orElseThrow(() -> new CustomException(MemberErrorCode.EMAIL_NOT_FOUND));
@@ -179,6 +181,7 @@ public class MemberServiceImpl implements MemberService {
 
         emailVerifyService.sendTemplateEmail("알라모니 아이디 찾기", findMemberIdDto.getEmail(), "FindId", values);
 
+        return new MessageResponseDto(findMemberIdDto.getEmail()+"로 아이디 찾기 안내 메일을 전송하였습니다.");
     }
 
     /**
@@ -225,6 +228,38 @@ public class MemberServiceImpl implements MemberService {
             str.append(charSet[idx]);
         }
         return str.toString();
+    }
+
+    /**
+     * 회원 정보 조회하기
+     */
+    @Override
+    public MemberResponseDto getMemberInfo(String username) {
+
+
+        Member member = memberRepository.findByUsername(username)
+                .orElseThrow(() -> new CustomException(MemberErrorCode.MEMBER_NOT_FOUND));
+
+        return modelMapper.map(member, MemberResponseDto.class);
+    }
+
+    /**
+     * 회원 탈퇴
+     */
+    @Override
+    @Transactional
+    public MessageResponseDto deleteMember(String username){
+
+
+        Member member = memberRepository.findByUsername(username)
+                .orElseThrow(() -> new CustomException(MemberErrorCode.MEMBER_NOT_FOUND));
+
+        //권한 비활성화로 변경
+        member.modifyAuthority(AuthorityEnum.ROLE_WITHDRAWAL);
+
+        memberRepository.save(member);
+
+        return new MessageResponseDto("회원 탈퇴 완료");
     }
 
 }

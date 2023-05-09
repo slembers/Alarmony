@@ -5,14 +5,18 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.lifecycle.viewmodel.viewModelFactory
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
-import com.slembers.alarmony.feature.group.GroupScreen
-import com.slembers.alarmony.feature.group.InviteScreen
-import com.slembers.alarmony.feature.group.SoundScreen
+import com.slembers.alarmony.feature.alarm.NotiListScreen
+import com.slembers.alarmony.feature.screen.AlarmListScreen
+import com.slembers.alarmony.feature.screen.GroupScreen
+import com.slembers.alarmony.feature.screen.InviteScreen
+import com.slembers.alarmony.feature.screen.SoundScreen
+import com.slembers.alarmony.feature.user.AccountMtnc
 import com.slembers.alarmony.feature.user.FindId
 import com.slembers.alarmony.feature.user.Findpswd
 import com.slembers.alarmony.feature.user.LoginScreen
@@ -21,7 +25,7 @@ import com.slembers.alarmony.feature.user.SignupScreen
 import com.slembers.alarmony.feature.user.AccountMtnc
 import com.slembers.alarmony.feature.user.Routes
 import com.slembers.alarmony.viewModel.GroupViewModel
-import com.slembers.alarmony.viewModel.LoginViewModel
+
 
 
 @Composable
@@ -38,16 +42,15 @@ fun NavController(
         navController = navController,
 //        startDestination = NavItem.Group.route
         startDestination = NavItem.LoginScreen.route
-//        startDestination = NavItem.Group.route
     ) {
-
-        // 그룹생성 페이지
-        composable( route = NavItem.Group.route ) {
-            GroupScreen( navController = navController, groupModel )
+        // 알람 목록 조회 페이지
+        composable( route = NavItem.AlarmListScreen.route) {
+            AlarmListScreen(navController)
         }
-        composable( route = NavItem.Sound.route ) { SoundScreen(navController) }
-        composable( route = NavItem.GroupInvite.route ) { navBackStackEntry ->
-            InviteScreen(navController) }
+        // 알림 목록 조회 페이지
+        composable( route = NavItem.NotiListScreen.route) {
+            NotiListScreen(navController)
+        }
         // 로그인 페이지
         composable( route = NavItem.LoginScreen.route) {LoginScreen(navController = navController)}
         composable( route = NavItem.FindIdActivity.route) {FindId(navController = navController) }
@@ -74,9 +77,6 @@ fun NavController(
 
 
     }
-
-
-
 }
 
 

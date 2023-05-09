@@ -97,12 +97,14 @@ public class AlertServiceImpl implements AlertService {
             // 푸쉬 알림을 보냈으니, 알림 테이블에도 추가해야 한다
 
         } catch (Exception e) {
+            log.error(e.getMessage());
             throw new CustomException(AlertErrorCode.ALERT_INVITE_SEND_ERROR);
         }
 
         try {
             alertRepository.save(alert);
         } catch (Exception e) {
+            log.error(e.getMessage());
             throw new CustomException(AlertErrorCode.ALERT_SERVER_ERROR);
         }
     }
@@ -117,6 +119,7 @@ public class AlertServiceImpl implements AlertService {
         try {
             sendMessageTo(member.getRegistrationToken(), "test", "This is Test Message");
         } catch (Exception e) {
+            log.error(e.getMessage());
             throw new CustomException(AlertErrorCode.ALERT_SERVER_ERROR);
         }
     }
@@ -135,6 +138,7 @@ public class AlertServiceImpl implements AlertService {
             List<AlertDto> alertDtos = alertRepository.findMemberAlertDtos(member);
             return AlertListResponseDto.builder().alerts(alertDtos).build();
         } catch (Exception e) {
+            log.error(e.getMessage());
             throw new CustomException(AlertErrorCode.ALERT_NOT_FOUND);
         }
     }
@@ -151,6 +155,7 @@ public class AlertServiceImpl implements AlertService {
         try {
             alertRepository.delete(alert);
         } catch (Exception e) {
+            log.error(e.getMessage());
             throw new CustomException(AlertErrorCode.ALERT_DELETE_ERROR);
         }
     }
@@ -175,6 +180,7 @@ public class AlertServiceImpl implements AlertService {
                 .build();
             memberAlarmRepository.save(memberAlarm);
         } catch (Exception e) {
+            log.error(e.getMessage());
             throw new CustomException(MemberAlarmErrorCode.MEMBER_ALARM_INPUT_ERROR);
         }
 
@@ -188,6 +194,7 @@ public class AlertServiceImpl implements AlertService {
                 .build();
             alarmRecordRepository.save(alarmRecord);
         } catch (Exception e) {
+            log.error(e.getMessage());
             // 알림-기록 추가에 실패하면 알람-멤버도 지워야 한다.
             memberAlarmRepository.delete(memberAlarm);
             throw new CustomException(AlarmRecordErrorCode.ALARM_RECORD_INPUT_ERRER);
@@ -203,6 +210,7 @@ public class AlertServiceImpl implements AlertService {
         try {
             alertRepository.delete(alert);
         } catch (Exception e) {
+            log.error(e.getMessage());
             throw new CustomException(AlertErrorCode.ALERT_DELETE_ERROR);
         }
 
@@ -232,6 +240,7 @@ public class AlertServiceImpl implements AlertService {
         try {
             alertRepository.delete(alert);
         } catch (Exception e) {
+            log.error(e.getMessage());
             throw new CustomException(AlertErrorCode.ALERT_DELETE_ERROR);
         }
         return AlarmInviteResponseDto.builder().message(alert.getAlarm().getTitle() + "의 그룹 초대를 거절했습니다.").build();
@@ -260,6 +269,7 @@ public class AlertServiceImpl implements AlertService {
             // 결과 출력
             log.info("전달 알림: " + response);
         } catch (Exception e) {
+            log.error(e.getMessage());
             throw new CustomException(AlertErrorCode.ALERT_INVITE_SEND_ERROR);
         }
 
@@ -267,6 +277,7 @@ public class AlertServiceImpl implements AlertService {
         try {
             alertRepository.save(alert);
         } catch (Exception e) {
+            log.error(e.getMessage());
             throw new CustomException(AlertErrorCode.ALERT_SERVER_ERROR);
         }
     }
@@ -292,6 +303,7 @@ public class AlertServiceImpl implements AlertService {
             // 결과 출력
             log.info("Successfully sent message: " + response);
         } catch (Exception e) {
+            log.error(e.getMessage());
             throw new CustomException(AlertErrorCode.ALERT_SERVER_ERROR);
         }
     }
@@ -310,6 +322,7 @@ public class AlertServiceImpl implements AlertService {
         Member member = memberRepository.findByNickname(nickname)
             .orElseThrow(() -> new CustomException(MemberErrorCode.MEMBER_NOT_FOUND));
         if (!memberAlarmRepository.existsByMemberAndAlarm(member, alarm)) {
+            log.error("멤버 알람 정보가 존재하지 않음");
             throw new CustomException(MemberAlarmErrorCode.MEMBER_ALARM_NOT_FOUND);
         }
         sendAlarmTo(member.getRegistrationToken(), alarm.getTitle());
@@ -335,6 +348,7 @@ public class AlertServiceImpl implements AlertService {
             // 결과 출력
             log.info("Successfully sent message: " + response);
         } catch (Exception e) {
+            log.error(e.getMessage());
             throw new CustomException(AlertErrorCode.ALERT_SERVER_ERROR);
         }
     }

@@ -133,7 +133,7 @@ object MemberService {
                         Log.d("response", "${loginResult.accessToken}")
 //                        임시방편
                         MainActivity.prefs.setBoolean("auto_login", true)
-                        navController.navigate(NavItem.AccountMtnc.route)
+                        navController.navigate(NavItem.AlarmListScreen.route)
 
 
                         resultText = "로그인 성공"

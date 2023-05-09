@@ -72,7 +72,6 @@ public class EmailVerifyServiceImpl implements EmailVerifyService {
      * @param to           받는 사람
      * @param templateName 이메일 템플릿
      * @param values       이메일에 들어가는 값
-     * @throws MessagingException
      */
     @Async
     public void sendTemplateEmail(String title, String to, String templateName, Map<String, String> values) {
@@ -122,6 +121,7 @@ public class EmailVerifyServiceImpl implements EmailVerifyService {
      * @param email    이메일
      **/
     @Override
+    @Async
     public void sendVerificationMail(String username, String email) {
 
         UUID uuid = UUID.randomUUID();

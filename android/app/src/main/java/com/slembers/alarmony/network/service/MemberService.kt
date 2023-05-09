@@ -1,4 +1,3 @@
-@file:OptIn(ExperimentalMaterial3Api::class, ExperimentalGlideComposeApi::class)
 
 package com.slembers.alarmony.network.service
 
@@ -9,7 +8,6 @@ import com.slembers.alarmony.MainActivity
 import com.slembers.alarmony.model.db.LoginRequest
 import com.slembers.alarmony.model.db.dto.LoginResponseDto
 import com.slembers.alarmony.network.api.AlarmonyServer
-import com.slembers.alarmony.viewModel.LoginViewModel
 import okio.IOException
 import retrofit2.Call
 import retrofit2.Callback

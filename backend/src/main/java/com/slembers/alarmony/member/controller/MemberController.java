@@ -1,9 +1,11 @@
 package com.slembers.alarmony.member.controller;
 
 
-import com.slembers.alarmony.global.jwt.SecurityUtil;
+import com.slembers.alarmony.global.dto.MessageResponseDto;
+import com.slembers.alarmony.global.security.util.SecurityUtil;
 import com.slembers.alarmony.member.dto.request.*;
 import com.slembers.alarmony.member.dto.response.CheckDuplicateDto;
+import com.slembers.alarmony.member.dto.response.MemberResponseDto;
 import com.slembers.alarmony.member.dto.response.TokenResponseDto;
 import com.slembers.alarmony.member.service.EmailVerifyService;
 import com.slembers.alarmony.member.service.MemberService;
@@ -17,6 +19,8 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.mail.MessagingException;
 import javax.validation.Valid;
+import java.util.HashMap;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/members")
@@ -35,7 +39,7 @@ public class MemberController {
     public ResponseEntity<String> signUp(@Valid @RequestBody SignUpDto signUpDto) {
 
         memberService.signUp(signUpDto);
-        return new ResponseEntity<>(signUpDto.getNickname()+"님의 회원 가입을 완료했습니다. 이메일 인증을 확인해주세요", HttpStatus.CREATED);
+        return new ResponseEntity<>(signUpDto.getNickname() + "님의 회원 가입을 완료했습니다. 이메일 인증을 확인해주세요", HttpStatus.CREATED);
 
     }
 
@@ -109,10 +113,9 @@ public class MemberController {
      * 아이디 찾기
      */
     @PostMapping("/find-id")
-    public ResponseEntity<String> findId (@RequestBody FindMemberIdDto findMemberIdDto) throws MessagingException {
+    public ResponseEntity<MessageResponseDto> findId(@RequestBody FindMemberIdDto findMemberIdDto) throws MessagingException {
 
-        memberService.findMemberId(findMemberIdDto);
-        return new ResponseEntity<>("아이디 찾기 이메일 전송 선공", HttpStatus.OK);
+        return new ResponseEntity<>(memberService.findMemberId(findMemberIdDto), HttpStatus.OK);
     }
 
 
@@ -120,9 +123,32 @@ public class MemberController {
      * 비밀번호 찾기
      */
     @PostMapping("/find-pw")
-    public ResponseEntity<String> findPassword (@RequestBody FindPasswordDto findPasswordDto) {
+    public ResponseEntity<String> findPassword(@RequestBody FindPasswordDto findPasswordDto) {
 
         memberService.findMemberPassword(findPasswordDto);
-        return new ResponseEntity<>("임시 비밀번호 발급",HttpStatus.OK);
+        return new ResponseEntity<>("임시 비밀번호 발급", HttpStatus.OK);
+    }
+
+    /**
+     * 회원 정보 조회하기
+     */
+
+    @GetMapping("/info")
+    public ResponseEntity<MemberResponseDto> getMemberInfo() {
+
+        String username = SecurityUtil.getCurrentUsername();
+        log.info(username+ " /info 진입");
+        return new ResponseEntity<>(memberService.getMemberInfo(username), HttpStatus.OK);
+    }
+
+
+    /**
+     * 회원 탈퇴  (비활성화)
+     */
+    @DeleteMapping()
+    public ResponseEntity<MessageResponseDto> deleteMember(){
+
+        return new ResponseEntity<>(memberService.deleteMember(SecurityUtil.getCurrentUsername()),HttpStatus.OK);
+
     }
 }

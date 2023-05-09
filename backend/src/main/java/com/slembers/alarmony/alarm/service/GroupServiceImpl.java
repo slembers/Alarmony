@@ -83,6 +83,7 @@ public class GroupServiceImpl implements GroupService {
     @Override
     public void removeHostMember(Long groupId) {
         if (memberAlarmRepository.countByAlarmId(groupId) != 1) {
+            log.error("그룹장은 그룹에 멤버가 존재하지 않아야 탈퇴할 수 있음");
             throw new CustomException(AlarmErrorCode.MEMBER_IN_GROUP);
         }
 

@@ -1,7 +1,19 @@
 package com.slembers.alarmony.model.db
 
 import com.google.gson.annotations.SerializedName
-class Member(
-    private val nickname : String,
-    private val profile_img : String
-)
+data class Member(
+    val nickname : String,
+    val profileImg : String?,
+    val isNew : Boolean = true
+) {
+    override fun equals(other: Any?): Boolean {
+        return if(other is Member) {
+            this.nickname == (other as Member).nickname
+        } else
+            return false
+    }
+
+    override fun hashCode(): Int {
+        return this.nickname.hashCode()
+    }
+}
