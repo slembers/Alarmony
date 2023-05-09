@@ -69,11 +69,6 @@ class StartPageActivity : AppCompatActivity() {
 //                LoginScreen()
 //                Navigation()
 
-
-
-
-
-
             }
         }
     }

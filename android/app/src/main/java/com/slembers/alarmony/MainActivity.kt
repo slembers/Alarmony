@@ -1,7 +1,7 @@
 package com.slembers.alarmony
 
+//import com.slembers.alarmony.feature.common.NavController2
 import android.Manifest
-import android.app.Activity
 import android.content.ContentValues
 import android.content.Context
 import android.content.DialogInterface
@@ -22,8 +22,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.core.content.ContextCompat
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.slembers.alarmony.feature.common.NavController
-//import com.slembers.alarmony.feature.common.NavController2
-import com.slembers.alarmony.network.repository.MemberService.autoLogin
 import com.slembers.alarmony.util.PresharedUtil
 
 @ExperimentalMaterial3Api

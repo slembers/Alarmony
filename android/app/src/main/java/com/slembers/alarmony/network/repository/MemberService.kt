@@ -4,6 +4,7 @@ import android.content.Context
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.core.os.bundleOf
 import androidx.navigation.NavController
 import androidx.navigation.NavHost
 import androidx.navigation.NavHostController
@@ -11,7 +12,9 @@ import coil.util.CoilUtils.result
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.google.gson.Gson
 import com.slembers.alarmony.MainActivity
+import com.slembers.alarmony.R
 import com.slembers.alarmony.feature.common.NavItem
+import com.slembers.alarmony.feature.ui.common.showDialog
 import com.slembers.alarmony.model.db.FindIdRequest
 import com.slembers.alarmony.model.db.FindPasswordRequest
 import com.slembers.alarmony.model.db.LoginRequest
@@ -29,31 +32,30 @@ import retrofit2.Response
 object MemberService {
     val memberApi = AlarmonyServer.memberApi
 
-    fun singup(username: String, password: String, nickname: String, email: String) {
+    fun singup(
+        request : SignupRequest,
+        isSuccess : (Boolean) -> Unit = {}
+    ) {
         try {
             Log.d("가입", "signup ==> 회원가입시도")
-            memberApi.signup(
-                SignupRequest(
-                    username = username,
-                    password = password,
-                    nickname =nickname,
-                    email = email
-                )
-            ).enqueue(object : Callback<SignupResponseDto> {
+            memberApi.signup( request ).enqueue(object : Callback<SignupResponseDto> {
                 override fun onResponse(call: Call<SignupResponseDto>, response: Response<SignupResponseDto>) {
                     Log.d("response","response")
-//                    code
                     Log.d("response","${response.code()}")
                     if(response.isSuccessful) {
-                        Log.d("success", "회원가입 성공")
+                        Log.d("success", "회원가입 성공!!!")
+//                         부모 객체에 "성공"이라는 string을 건네줘야한다. 즉 회원가입이 성공했음을 알려야한다. 어떻게??
+                        isSuccess(true)
+                        Log.d("success", "${isSuccess}")
                     } else {
                         Log.d("Failed", "회원가입 실패")
+                        isSuccess(false)
                     }
                 }
 
                 override fun onFailure(call: Call<SignupResponseDto>, t: Throwable) {
-
                     Log.d("disconnection", "회원가입 실패하였습니다..")
+                    isSuccess(false)
                 }
             })
         } catch ( e : Exception ) {
@@ -141,6 +143,7 @@ object MemberService {
     fun autoLogin(
         username: String,
         password:String,
+
 //        아래는 login을 import한 composable함수에서 데이터를 사용하기 위해 callback함수로 건네주는 데이터들
         resultCallback: (resultText: String, accessToken: String?, refreshToken: String? ) -> Unit
     ) {
@@ -214,7 +217,7 @@ object MemberService {
     }
 
 
-    fun findId(email: String) {
+    fun findId(email: String, context:Context,navController: NavController,) {
         try {
             Log.d("test","아이디 찾기 위해 이메일 보냄")
             memberApi.findId(
@@ -232,6 +235,7 @@ object MemberService {
 //                    retrofit에서 제공하는 response의 isSuccessful값이 true라면 아래 실행
                     if (response.isSuccessful) {
                         Log.d("response","아이디 찾기위한 이메일 전송 성공")
+                        showDialog("알림", "이메일을 보냈어요!", context, navController)
 //                  response.body()는 Retrofit에서 HTTP 응답을 처리할 때 사용하는 메서드 중 하나입니다.
 //                  이 메서드는 HTTP 응답을 받은 후, HTTP 응답 바디를 T 타입의 객체로 파싱하여 반환합니다.
 //                  반환된 객체는 사용자가 원하는 타입으로 변환하여 사용할 수 있습니다.
@@ -239,11 +243,14 @@ object MemberService {
 
                     } else {
                         Log.d("response","아이디 찾기위한 이메일 전송 실패")
+                        showDialog("알림", "올바른 이메일을 입력해주세요!", context, navController)
+
 
                     }
                 }
                 //서버 요청이 자체가 실패한 경우 아래 onFailure가 실행된다.
                 override fun onFailure(call: Call<FindIdResponseDto>, t: Throwable, ) {
+                    showDialog("알림", "뭔가 잘못됐나봐요", context, navController)
                     Log.d("response", "서버 요청이 실패")
                     Log.d("response", "${t}")
 
@@ -254,6 +261,7 @@ object MemberService {
 //          try에서 예외가 발생하면 호춯된다.
         } catch ( e: Exception ) {
             Log.d("response", "예외발생")
+            showDialog("알림", "뭔가 잘못됐나봐요", context, navController)
         }
     }
 
@@ -262,6 +270,8 @@ object MemberService {
     fun findPswd(
         email: String,
         username: String,
+        context: Context,
+    navController: NavController
     ) {
         try {
             memberApi.findPassword(
@@ -274,18 +284,22 @@ object MemberService {
                 override fun onResponse(call: Call<FindPasswordResponseDto>, response: Response<FindPasswordResponseDto>) {
                     if(response.isSuccessful) {
                         Log.d("response", "비밀번호찾기 신호 성공")
+                        showDialog("알림", "임시비밀번호를 전송했어요!", context, navController)
                     } else {
                         Log.d("response", "비밀번호찾기 신호 실패")
+                        showDialog("알림", "올바른 정보를 입력해 주세요...", context, navController)
 
                     }
                 }
 
                 override fun onFailure(call: Call<FindPasswordResponseDto>, t: Throwable) {
                     Log.d("fail", "비밀번호찾기 실패")
+                    showDialog("알림", "뭔가 잘못됐나봐요", context, navController)
                 }
             })
         } catch ( e : Exception ) {
             Log.d("fail", "비밀먼호 찾기 예외 발생")
+            showDialog("알림", "뭔가 잘못됐나봐요", context, navController)
             println(e.message)
         }
 
