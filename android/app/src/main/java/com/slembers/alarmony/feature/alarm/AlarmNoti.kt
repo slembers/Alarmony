@@ -4,14 +4,13 @@ import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
-import android.media.MediaPlayer
 import android.media.Ringtone
 import android.media.RingtoneManager
 import android.net.Uri
 import android.os.Build
-import android.provider.Settings
 import androidx.core.app.NotificationCompat
 import com.slembers.alarmony.R
+import com.slembers.alarmony.feature.alarm.AlarmDto
 
 object AlarmNoti {
     private var NotificationID = 1005
@@ -20,14 +19,14 @@ object AlarmNoti {
     private var mBuilder: NotificationCompat.Builder? = null
     private var ringtone: Ringtone? = null
 
-    fun runNotification(context: Context, alarm: Alarm) {
-        NotificationID = alarm.alarm_id.toInt()
+    fun runNotification(context: Context, alarmDto: AlarmDto) {
+        NotificationID = alarmDto.alarm_id.toInt()
         notificationManager =
             context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         mBuilder = NotificationCompat.Builder(context.applicationContext, "notify_001")
 
         mBuilder!!.setSmallIcon(R.mipmap.ic_launcher)
-        mBuilder!!.setContentTitle(alarm.title)
+        mBuilder!!.setContentTitle(alarmDto.title)
         mBuilder!!.setAutoCancel(true)
         mBuilder!!.setOngoing(false)
         mBuilder!!.priority = Notification.PRIORITY_HIGH

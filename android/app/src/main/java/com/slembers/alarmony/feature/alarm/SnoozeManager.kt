@@ -8,30 +8,20 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.AlertDialog
 import androidx.compose.material.TextField
 import androidx.compose.material.TextFieldDefaults
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Check
-import androidx.compose.material.icons.outlined.Close
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Divider
-import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
@@ -39,22 +29,20 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.slembers.alarmony.feature.alarm.AlarmNoti.cancelNotification
+import com.slembers.alarmony.feature.alarm.AlarmDto
 import com.slembers.alarmony.feature.common.ui.theme.toColor
 
 @Composable
-fun SnoozeNoti(snoozeType : Int, isClicked : MutableState<Boolean>, context : Activity, alarm : Alarm) {
+fun SnoozeNoti(snoozeType : Int, isClicked : MutableState<Boolean>, context : Activity, alarmDto : AlarmDto) {
     val openDialog = remember { mutableStateOf(true)  }
     val newContext = context as Context
     var text = remember { mutableStateOf("") }
@@ -101,7 +89,7 @@ fun SnoozeNoti(snoozeType : Int, isClicked : MutableState<Boolean>, context : Ac
                         onClick = {
                             openDialog.value = false
                             cancelNotification()
-                            setSnoozeAlarm(newContext, alarm, snoozeType)
+                            setSnoozeAlarm(newContext, alarmDto, snoozeType)
                             context.finish()
                         },
                         colors = ButtonDefaults.buttonColors(containerColor = "#31AF91".toColor()),
@@ -114,7 +102,7 @@ fun SnoozeNoti(snoozeType : Int, isClicked : MutableState<Boolean>, context : Ac
     }
 }
 
-fun setSnoozeAlarm(context: Context, alarm: Alarm, snoozeType: Int) {
+fun setSnoozeAlarm(context: Context, alarmDto: AlarmDto, snoozeType: Int) {
     val newTime =
         if (snoozeType == 5) {
             System.currentTimeMillis() + (5 * 60 * 1000) // 스누즈 5분
@@ -122,14 +110,19 @@ fun setSnoozeAlarm(context: Context, alarm: Alarm, snoozeType: Int) {
             System.currentTimeMillis() + (10 * 60 * 1000) // 스누즈 10분
         }
     val intent = Intent(context, AlarmReceiver::class.java)
-    intent.putExtra("alarm", alarm)
+    intent.putExtra("alarm", alarmDto)
     intent.putExtra("isSnooze", true)
+    val myPendingIntent : Int = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+        PendingIntent.FLAG_MUTABLE
+    } else {
+        PendingIntent.FLAG_UPDATE_CURRENT
+    }
     val alarmIntentRTC: PendingIntent =
         PendingIntent.getBroadcast(
             context,
             System.currentTimeMillis().toInt(),
             intent,
-            PendingIntent.FLAG_MUTABLE
+            myPendingIntent
         )
     val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
     when {

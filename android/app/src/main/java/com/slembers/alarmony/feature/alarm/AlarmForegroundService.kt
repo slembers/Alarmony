@@ -1,6 +1,5 @@
 package com.slembers.alarmony.feature.alarm
 
-import android.app.Application
 import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -11,15 +10,10 @@ import android.graphics.Color
 import android.os.Build
 import android.os.IBinder
 import androidx.annotation.RequiresApi
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.core.app.NotificationCompat
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.viewmodel.compose.viewModel
-import com.google.android.ads.mediationtestsuite.viewmodels.ViewModelFactory
-import com.slembers.alarmony.MainActivity
 import com.slembers.alarmony.R
-import com.slembers.alarmony.util.Constants.ALARM_DATA
+import com.slembers.alarmony.feature.alarm.AlarmDto
 import com.slembers.alarmony.util.Constants.OPEN_TYPE
 import com.slembers.alarmony.util.Constants.REFRESH
 import kotlinx.coroutines.CoroutineScope
@@ -47,17 +41,17 @@ class AlarmForegroundService : Service() {
                 1,
                 Notification()
             )
-
-        val alarm = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            intent.getParcelableExtra("alarm", Alarm::class.java) as Alarm
+        intent.setExtrasClassLoader(AlarmDto::class.java.classLoader)
+        val alarmDto = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            intent.getParcelableExtra("alarm", AlarmDto::class.java) as AlarmDto
         } else {
-            intent.getParcelableExtra<Alarm>("alarm") as Alarm
+            intent.getParcelableExtra<AlarmDto>("alarm") as AlarmDto
         }
 
         if (intent!!.getStringExtra(OPEN_TYPE) == REFRESH) {
             refreshAlarms(alarms)
         } else {
-            startAlarm(alarm!!)
+            startAlarm(alarmDto!!)
         }
         return START_STICKY
     }
@@ -65,7 +59,8 @@ class AlarmForegroundService : Service() {
         CoroutineScope(Dispatchers.IO).launch {
             CoroutineScope(Dispatchers.Main).launch {
                 for (alarm in alarms as List<Alarm>) {
-                    setAlarm(this@AlarmForegroundService, alarm)
+                    val alarmDto = AlarmDto.toDto(alarm)
+                    setAlarm(this@AlarmForegroundService, alarmDto)
                 }
             }
             delay(5000)
@@ -74,12 +69,12 @@ class AlarmForegroundService : Service() {
         }
     }
 
-    private fun startAlarm(alarm: Alarm) {
+    private fun startAlarm(alarmDto: AlarmDto) {
 
         CoroutineScope(Dispatchers.Main).launch {
 
             val newIntent = Intent(applicationContext, AlarmActivity::class.java)
-            newIntent.putExtra("alarm", alarm)
+            newIntent.putExtra("alarm", alarmDto)
             newIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             startActivity(newIntent)
 
