@@ -1,9 +1,7 @@
 package com.slembers.alarmony.alarm.dto;
 
 import lombok.Getter;
-
 import java.util.List;
-import java.util.Set;
 
 @Getter
 public class CreateAlarmDto {
@@ -15,8 +13,6 @@ public class CreateAlarmDto {
     private int minute;
 
     private List<Boolean> alarmDate;
-
-    private Set<String> members;
 
     private String soundName;
 
