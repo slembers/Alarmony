@@ -57,6 +57,7 @@ public class AlarmServiceImpl implements AlarmService {
             // 리스트를 객체에 담아서 전송한다.
             return AlarmListResponseDto.builder().alarms(alarms).build();
         } catch (Exception e) {
+            log.error(e.getMessage());
             throw new CustomException(AlarmErrorCode.ALARM_GET_ERROR);
         }
     }
@@ -86,6 +87,7 @@ public class AlarmServiceImpl implements AlarmService {
                     .build();
             alarmRepository.save(alarm);
         } catch (Exception e) {
+            log.error(e.getMessage());
             throw new CustomException(AlarmErrorCode.ALARM_CREATE_ERROR);
         }
 
@@ -98,6 +100,7 @@ public class AlarmServiceImpl implements AlarmService {
                     .build();
             memberAlarmRepository.save(memberAlarm);
         } catch (Exception e) {
+            log.error(e.getMessage());
             // 알람-멤버에 추가하는 도중 에러가 생긴다면 알람도 지워야 한다.
             alarmRepository.delete(alarm);
             throw new CustomException(MemberAlarmErrorCode.MEMBER_ALARM_INPUT_ERROR);
@@ -114,6 +117,7 @@ public class AlarmServiceImpl implements AlarmService {
                     .build();
             alarmRecordRepository.save(alarmRecord);
         } catch (Exception e) {
+            log.error(e.getMessage());
             // 알림-기록 추가에 실패하면 알람과 알람-멤버도 지워야 한다.
             memberAlarmRepository.delete(memberAlarm);
             alarmRepository.delete(alarm);
@@ -150,6 +154,7 @@ public class AlarmServiceImpl implements AlarmService {
             alarmRecord.changeMessage(message);
             alarmRecordRepository.save(alarmRecord);
         } catch (Exception e) {
+            log.error(e.getMessage());
             throw new CustomException(MemberAlarmErrorCode.MEMBER_ALARM_INPUT_ERROR);
         }
     }
@@ -172,6 +177,7 @@ public class AlarmServiceImpl implements AlarmService {
             // 알람 객체를 바로 리턴한다.
             return new AlarmDto(alarm.getId(), alarm.getTitle(), localTime.getHour(), localTime.getMinute(), alarm.getAlarmDate());
         } catch (Exception e) {
+            log.error(e.getMessage());
             throw new CustomException(AlarmErrorCode.ALARM_GET_ERROR);
         }
     }
