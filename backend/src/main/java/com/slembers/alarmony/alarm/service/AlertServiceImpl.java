@@ -25,7 +25,6 @@ import com.slembers.alarmony.member.repository.MemberRepository;
 import java.util.List;
 
 import java.util.Optional;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -106,20 +105,6 @@ public class AlertServiceImpl implements AlertService {
         }
     }
 
-    /**
-     * 알림 테스트 전송 메소드
-     */
-    @Override
-    public void testPushAlert(String username) {
-        Member member = memberRepository.findByUsername(username)
-            .orElseThrow(() -> new CustomException(MemberErrorCode.MEMBER_NOT_FOUND));
-        try {
-            sendMessageTo(member.getRegistrationToken(), "test", "This is Test Message");
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            throw new CustomException(AlertErrorCode.ALERT_SERVER_ERROR);
-        }
-    }
 
     /**
      * 특정 유저의 알림 목록 가져오기
@@ -273,32 +258,6 @@ public class AlertServiceImpl implements AlertService {
         // 푸쉬 알림을 보냈으니, 알림 테이블에도 추가해야 한다
         try {
             alertRepository.save(alert);
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            throw new CustomException(AlertErrorCode.ALERT_SERVER_ERROR);
-        }
-    }
-
-    /**
-     * @param targetToken 목표 기기 토큰
-     * @param title       제목
-     * @param body        내용
-     */
-    public void sendMessageTo(String targetToken, String title, String body) {
-        try {
-            // 메시지 설정
-            Message message = Message.builder()
-                .setNotification(Notification.builder()
-                    .setTitle("Alarmony")
-                    .setBody("일해라 박성완")
-                    .build())
-                .setToken(targetToken)
-                .build();
-
-            // 웹 API 토큰을 가져와서 보냄
-            String response = FirebaseMessaging.getInstance().send(message);
-            // 결과 출력
-            log.info("Successfully sent message: " + response);
         } catch (Exception e) {
             log.error(e.getMessage());
             throw new CustomException(AlertErrorCode.ALERT_SERVER_ERROR);

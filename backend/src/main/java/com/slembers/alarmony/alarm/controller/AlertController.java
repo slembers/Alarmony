@@ -62,15 +62,4 @@ public class AlertController {
         }
     }
 
-    /**
-     * 메시지 전송 테스트 메소드
-     *
-     * @return 성공 메시지
-     */
-    @PostMapping("/test")
-    public ResponseEntity<String> testPushAlert() {
-        String username = SecurityUtil.getCurrentUsername();
-        alertService.testPushAlert(username);
-        return new ResponseEntity<>("메시지 전송 성공", HttpStatus.OK);
-    }
 }
