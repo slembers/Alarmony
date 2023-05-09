@@ -133,8 +133,6 @@ object MemberService {
                         Log.d("response", "${loginResult.accessToken}")
 //                        임시방편
                         MainActivity.prefs.setBoolean("auto_login", true)
-
-
                         navController.navigate(NavItem.AccountMtnc.route)
 
 
@@ -213,7 +211,6 @@ object MemberService {
                         Log.d("response", "로그인 성공!")
                         Log.d("response", "${loginResult.accessToken}")
                         //                        토큰값 저장해야함
-
 
                         resultText = "로그인 성공"
                         resultCallback(resultText, loginResult.accessToken, loginResult.refreshToken)

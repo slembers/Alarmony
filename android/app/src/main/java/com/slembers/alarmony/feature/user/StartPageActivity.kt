@@ -100,15 +100,16 @@ class StartPageActivity : AppCompatActivity() {
 @Composable
 @ExperimentalMaterial3Api
 fun LoginScreen(navController: NavController) {
-    val checkedState = remember { mutableStateOf(false) }
-
-
+//    val checkedState = remember { mutableStateOf(false) }
     val context = LocalContext.current
     val scaffoldState = rememberScaffoldState()
-
     // 아이디와 비밀번호에 대한 상태를 저장할 mutableState 변수 선언
     val idState = remember { mutableStateOf("") }
     val passwordState = remember { mutableStateOf("") }
+    if (prefs.getBoolean("auto_login", false) == true) {
+        navController.navigate(NavItem.AccountMtnc.route)
+
+    }
 
     Column(
         verticalArrangement = Arrangement.Center,

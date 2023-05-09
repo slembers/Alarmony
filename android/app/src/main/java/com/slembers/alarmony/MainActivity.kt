@@ -9,7 +9,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.ui.platform.LocalContext
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.slembers.alarmony.feature.common.NavController
-import com.slembers.alarmony.feature.common.NavController2
+//import com.slembers.alarmony.feature.common.NavController2
 import com.slembers.alarmony.network.repository.MemberService.autoLogin
 import com.slembers.alarmony.util.PresharedUtil
 
@@ -28,6 +28,8 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 //      SharedPreferences 클래스는 앱에 있는 다른 Class보다 먼저 생성되어야함
         prefs = PresharedUtil(application)
+//        prefs.reset()
+
         val auto_login = prefs.getBoolean("auto_login", false)
         Log.d("test!", "${auto_login}")
         if (auto_login == true) {
@@ -47,7 +49,7 @@ class MainActivity : AppCompatActivity() {
 //                로그인 화면이 아닌 바로 메인 화면 activity가 실행되게끔 만들어야 한다.
 //                Navcontroller2를 만들어서 해버리자
                 setContent {
-                    NavController2()
+                    NavController()
                 }
 
             }

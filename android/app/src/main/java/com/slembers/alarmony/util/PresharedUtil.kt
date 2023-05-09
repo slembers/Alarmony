@@ -25,4 +25,8 @@ class PresharedUtil(context : Context) {
         return prefs.getBoolean(key, value)
     }
 
+    fun reset() {
+        prefs.edit().clear().apply()
+    }
+
 }
