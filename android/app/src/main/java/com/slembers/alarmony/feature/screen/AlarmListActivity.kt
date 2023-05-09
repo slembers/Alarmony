@@ -127,7 +127,7 @@ fun AlarmListScreen(navController : NavHostController) {
                             )
                         }
                     }
-                    IconButton(onClick = { /*TODO*/ }) {
+                    IconButton(onClick = { navController.navigate(NavItem.AccountMtnc.route) }) {
                         Icon(
                             imageVector = Icons.Outlined.Settings,
                             contentDescription = "Setting",

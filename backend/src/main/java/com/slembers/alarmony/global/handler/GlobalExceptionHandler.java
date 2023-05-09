@@ -2,6 +2,8 @@ package com.slembers.alarmony.global.handler;
 
 import com.slembers.alarmony.global.execption.CustomException;
 import com.slembers.alarmony.global.util.ErrorResponse;
+import java.util.HashMap;
+import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -22,6 +24,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         log.error("handleCustomException throw CustomException : {}", e.getErrorCode());
         return ErrorResponse.toResponseEntity(e.getErrorCode());
     }
+
     //얘 뭐냐
     @ExceptionHandler(value = {AccessDeniedException.class})
     public ResponseEntity<String> handleAccessDeniedException(AccessDeniedException e) {
@@ -29,13 +32,13 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>("회원 가입 성공", HttpStatus.CREATED);
     }
 
-
-
     @Override
-    protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
-        return new ResponseEntity<>(ex.getBindingResult().getAllErrors().get(0).getDefaultMessage(), HttpStatus.OK);
+    protected ResponseEntity<Object> handleMethodArgumentNotValid(
+        MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatus status,
+        WebRequest request) {
+        Map<String, String> map = new HashMap<>();
+        map.put("message", ex.getBindingResult().getAllErrors().get(0).getDefaultMessage());
+        return new ResponseEntity<>(map, HttpStatus.BAD_REQUEST);
     }
-
-
 
 }

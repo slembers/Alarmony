@@ -16,9 +16,10 @@ public interface AlarmRecordRepository extends JpaRepository<AlarmRecord, Long> 
 
     /**
      * 멤버 아이디와 알람 아이디를 넘기면 해당 알람 기록 튜플을 찾아서 반환한다.
-     * @param memberId
-     * @param alarmId
-     * @return
+     *
+     * @param memberId 멤버 아이디
+     * @param alarmId  알람 아이디
+     * @return 알람 기록 튜플
      */
     @Query(value = "select * from alarm_record ar join member_alarm ma on ar.member_alarm_id = ma.member_alarm_id " +
             "where ma.member_id = :memberId and ma.alarm_id = :alarmId", nativeQuery = true)
@@ -48,14 +49,16 @@ public interface AlarmRecordRepository extends JpaRepository<AlarmRecord, Long> 
     /**
      * 알람 랭킹 기록을 얻어온다.
      *
-     * @param groupId
-     * @return
+     * @param groupId 그룹 아이디
+     * @return 알람 랭킹 기록
      */
-    @Query("SELECT new com.slembers.alarmony.alarm.dto.MemberRankingDto(m.nickname, m.profileImgUrl, CAST(ar.totalWakeUpTime / ar.totalCount AS float)) "
-        + "FROM member_alarm AS ma "
-        + "INNER JOIN member AS m ON ma.member.id = m.id "
-        + "INNER JOIN alarm_record AS ar ON ma.id = ar.memberAlarm.id "
-        + "WHERE ma.alarm.id = :groupId")
+    @Query(
+        "SELECT new com.slembers.alarmony.alarm.dto.MemberRankingDto(m.nickname, m.profileImgUrl, CAST(ar.totalWakeUpTime / ar.totalCount AS float)) "
+            + "FROM member_alarm AS ma "
+            + "INNER JOIN member AS m ON ma.member.id = m.id "
+            + "INNER JOIN alarm_record AS ar ON ma.id = ar.memberAlarm.id "
+            + "WHERE ma.alarm.id = :groupId "
+            + "ORDER BY CAST(ar.totalWakeUpTime / ar.totalCount AS float) NULLS LAST ")
     List<MemberRankingDto> findMemberRankingsByAlarmId(Long groupId);
 
 }

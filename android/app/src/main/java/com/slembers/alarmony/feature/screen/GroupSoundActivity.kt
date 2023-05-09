@@ -1,37 +1,31 @@
 package com.slembers.alarmony.feature.screen
 
+
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
-import com.slembers.alarmony.R
-import com.slembers.alarmony.feature.common.CardBox
-import com.slembers.alarmony.feature.common.CardTitle
 import com.slembers.alarmony.feature.common.NavItem
-import com.slembers.alarmony.feature.common.ui.compose.SoundChooseGrid
+import com.slembers.alarmony.feature.common.ui.view.SoundChooseGridView
 import com.slembers.alarmony.feature.ui.group.GroupBottomButtom
 import com.slembers.alarmony.feature.ui.group.GroupToolBar
 import com.slembers.alarmony.model.db.SoundItem
+import com.slembers.alarmony.util.groupSoundInfos
 
 @Preview
 @Composable
 @ExperimentalMaterial3Api
 @ExperimentalGlideComposeApi
 fun SoundScreen(navController : NavHostController = rememberNavController()) {
-
-    val soundList : List<SoundItem> = (1..20).map {
-        SoundItem(
-            painterResource(id = R.drawable.main_app_image_foreground),
-            "sound$it") }.toList()
+    val soundItems : List<SoundItem> = groupSoundInfos()
 
     Scaffold(
         topBar = {
@@ -43,18 +37,15 @@ fun SoundScreen(navController : NavHostController = rememberNavController()) {
         bottomBar = {
             GroupBottomButtom(text = "저장" )
         },
-        content = { innerPadding ->
+        content = {
+                innerPadding ->
             Column( modifier = Modifier
                 .padding(innerPadding)
-                .fillMaxSize() )
+                .fillMaxSize(),
+                horizontalAlignment = Alignment.CenterHorizontally
+            )
             {
-                CardBox(
-                    title = { CardTitle(title = "사용가능한 알람") },
-                    content = { SoundChooseGrid(
-                        modifier = Modifier.fillMaxWidth(),
-                        itemList = soundList
-                    ) }
-                )
+                SoundChooseGridView(soundItems = soundItems)
             }
         }
     )

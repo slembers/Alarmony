@@ -41,10 +41,7 @@ fun GroupInvite(
                     modifier = Modifier.padding(2.dp)
                 )
             },
-            onClick = {
-                MemberService.login()
-                navController.navigate( route = NavItem.GroupInvite.route )
-            }
+            onClick = { navController.navigate( route = NavItem.GroupInvite.route ) }
         )
         },
         content = {

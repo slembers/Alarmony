@@ -22,6 +22,8 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.core.content.ContextCompat
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.slembers.alarmony.feature.common.NavController
+//import com.slembers.alarmony.feature.common.NavController2
+import com.slembers.alarmony.network.repository.MemberService.autoLogin
 import com.slembers.alarmony.util.PresharedUtil
 
 @ExperimentalMaterial3Api
@@ -36,11 +38,14 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 //      SharedPreferences 클래스는 앱에 있는 다른 Class보다 먼저 생성되어야함
         prefs = PresharedUtil(application)
+
         setContent {
             NavController()
             requestAlertPermission() // 권한 실행
         }
+
     }
+
 
     // 액티비티간 데이터를 주고 받기 위함
     @RequiresApi(Build.VERSION_CODES.M)

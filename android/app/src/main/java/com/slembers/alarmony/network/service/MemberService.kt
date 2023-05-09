@@ -22,7 +22,7 @@ object MemberService {
         val memberApi = AlarmonyServer.memberApi
 
         Log.d("Start", "login --> 로그인 시도")
-        memberApi.login(
+        val call = memberApi.login(
             LoginRequest(
                 username = "test00001",
                 password = "1q2w3e4r!@"
