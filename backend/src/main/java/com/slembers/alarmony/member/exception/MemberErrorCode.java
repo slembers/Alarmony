@@ -15,8 +15,9 @@ public enum MemberErrorCode implements ErrorCode {
 
     MEMBER_NOT_ALLOW(HttpStatus.UNAUTHORIZED,"가입 인증이 완료되지 않았습니다. 이메일을 확인해 주세요"),
 
-
+    PASSWORD_NOT_VALID (HttpStatus.UNPROCESSABLE_ENTITY,"기존 비밀번호를 다시 확인해주세요"),
     INPUT_NOT_VALID(HttpStatus.UNAUTHORIZED, "아이디와 비밀번호를 정확하게 입력해주세요"),
+    CHANGE_PASSWORD_NOT_SAME(HttpStatus.UNPROCESSABLE_ENTITY,"변경하고자 하는 비밀번호가 서로 일치하지 않습니다."),
 
 
     NICKNAME_DUPLICATED(HttpStatus.OK, "중복되는 닉네임 입니다."),

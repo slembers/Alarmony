@@ -3,6 +3,7 @@ package com.slembers.alarmony.member.controller;
 
 import com.slembers.alarmony.global.dto.MessageResponseDto;
 import com.slembers.alarmony.global.security.util.SecurityUtil;
+import com.slembers.alarmony.member.dto.ChangePasswordDto;
 import com.slembers.alarmony.member.dto.MemberInfoDto;
 import com.slembers.alarmony.member.dto.request.*;
 import com.slembers.alarmony.member.dto.response.CheckDuplicateDto;
@@ -17,6 +18,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.User;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.mail.MessagingException;
@@ -33,6 +35,8 @@ public class MemberController {
 
     private final MemberService memberService;
     private final EmailVerifyService emailVerifyService;
+
+    private final BCryptPasswordEncoder passwordEncoder;
 
     /**
      * 회원가입
@@ -164,4 +168,18 @@ public class MemberController {
         log.info(modifiedMemberInfoDto.getNickname());
         return new ResponseEntity<>(memberService.modifyMemberInfo(SecurityUtil.getCurrentUsername(), modifiedMemberInfoDto) , HttpStatus.OK);
     }
+
+
+    /**
+     * 비밀번호 변경
+     */
+
+    @PatchMapping("/change-pwd")
+    public ResponseEntity<MessageResponseDto> changePassword(@RequestBody @Valid ChangePasswordDto changePasswordDto){
+
+        return new ResponseEntity<>(memberService.changePassword(SecurityUtil.getCurrentUsername(), changePasswordDto),HttpStatus.OK);
+
+
+    }
+
 }
