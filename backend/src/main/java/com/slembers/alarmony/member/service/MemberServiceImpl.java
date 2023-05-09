@@ -1,9 +1,11 @@
 package com.slembers.alarmony.member.service;
 
+import com.slembers.alarmony.global.amazons3.AmazonS3Util;
 import com.slembers.alarmony.global.dto.MessageResponseDto;
 import com.slembers.alarmony.global.execption.CustomException;
 import com.slembers.alarmony.global.security.jwt.JwtTokenProvider;
 import com.slembers.alarmony.global.redis.service.RedisUtil;
+import com.slembers.alarmony.member.dto.MemberInfoDto;
 import com.slembers.alarmony.member.dto.request.FindMemberIdDto;
 import com.slembers.alarmony.member.dto.request.FindPasswordDto;
 import com.slembers.alarmony.member.dto.request.ReissueTokenDto;
@@ -15,6 +17,7 @@ import com.slembers.alarmony.member.entity.AuthorityEnum;
 import com.slembers.alarmony.member.entity.Member;
 import com.slembers.alarmony.member.exception.MemberErrorCode;
 import com.slembers.alarmony.member.repository.MemberRepository;
+import com.slembers.alarmony.report.dto.ModifiedMemberInfoDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -22,8 +25,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -41,6 +46,8 @@ public class MemberServiceImpl implements MemberService {
     private final JwtTokenProvider jwtTokenProvider;
 
     private final RedisUtil redisUtil;
+
+    private final AmazonS3Util amazonS3Util;
 
     /**
      * 회원가입
@@ -260,6 +267,50 @@ public class MemberServiceImpl implements MemberService {
         memberRepository.save(member);
 
         return new MessageResponseDto("회원 탈퇴 완료");
+    }
+
+    /**
+     * 회원 정보 수정
+     */
+
+    @Transactional
+    public MemberInfoDto modifyMemberInfo(String username , ModifiedMemberInfoDto modifiedMemberInfoDto)  {
+
+        Member member = memberRepository.findByUsername(username)
+                .orElseThrow(() -> new CustomException(MemberErrorCode.MEMBER_NOT_FOUND));
+
+        String key ="";
+        String url = "";
+
+        //변경할 프로필 사진을 제대로 받아온 경우에만 실행
+        if(modifiedMemberInfoDto.getImgProfileFile()!=null){
+
+            try {
+                key = amazonS3Util.upload(modifiedMemberInfoDto.getImgProfileFile(),"member");
+            }catch (IOException e){
+                log.error("S3에 이미지 저장 실패");
+                throw  new CustomException(MemberErrorCode.AMAZONS3_ERROR);
+            }
+            //s3에 업로드하여 이미지에 대한 key값을 받아온다.
+            url = amazonS3Util.getFileUrl(key);
+
+            //이미지 프로필 키가 널이 아닐경우에만 s3에서 기존 프로필 이미지를 삭제시킨다.
+            if(member.getProfileKey()!=null){
+              amazonS3Util.delete(member.getProfileKey());
+            }
+
+            member.changeProfileImg(url);
+            member.changeProfileKey(key);
+
+
+        }
+
+        member.changeNickname(modifiedMemberInfoDto.getNickname());
+        memberRepository.save(member);
+        return new MemberInfoDto(modifiedMemberInfoDto.getNickname(),url);
+
+
+
     }
 
 }
