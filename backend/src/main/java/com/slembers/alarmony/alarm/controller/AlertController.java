@@ -7,6 +7,7 @@ import com.slembers.alarmony.alarm.exception.AlertErrorCode;
 import com.slembers.alarmony.alarm.service.AlertService;
 import com.slembers.alarmony.global.execption.CustomException;
 import com.slembers.alarmony.global.security.util.SecurityUtil;
+import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -46,16 +47,19 @@ public class AlertController {
 
     /**
      * 그룹 초대에 대해 수락/거절 응답을 한다.
-     * @param alertId 알림 아이디
+     *
+     * @param alertId                  알림 아이디
      * @param responseInviteRequestDto 응답 객체 true : 수락, false : 거절
      * @return 응답 메시지
      */
     @PostMapping("/{alert-id}/response")
-    public ResponseEntity<AlarmInviteResponseDto> responseInvite(@PathVariable("alert-id") Long alertId, @RequestBody ResponseInviteRequestDto responseInviteRequestDto) {
+    public ResponseEntity<AlarmInviteResponseDto> responseInvite(
+        @PathVariable("alert-id") Long alertId,
+        @Valid @RequestBody ResponseInviteRequestDto responseInviteRequestDto) {
 
-        if (responseInviteRequestDto == null || responseInviteRequestDto.getAccept() == null)
+        if (responseInviteRequestDto == null || responseInviteRequestDto.getAccept() == null) {
             throw new CustomException(AlertErrorCode.ALERT_BAD_REQUEST);
-        else if (Boolean.TRUE.equals(responseInviteRequestDto.getAccept())) {
+        } else if (Boolean.TRUE.equals(responseInviteRequestDto.getAccept())) {
             return new ResponseEntity<>(alertService.acceptInvite(alertId), HttpStatus.OK);
         } else {
             return new ResponseEntity<>(alertService.refuseInvite(alertId), HttpStatus.OK);

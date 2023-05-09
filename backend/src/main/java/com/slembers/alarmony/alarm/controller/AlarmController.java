@@ -11,6 +11,7 @@ import com.slembers.alarmony.alarm.service.AlarmService;
 import com.slembers.alarmony.global.security.util.SecurityUtil;
 import java.util.HashMap;
 import java.util.Map;
+import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -44,7 +45,7 @@ public class AlarmController {
      */
     @PostMapping
     public ResponseEntity<Map<String, Object>> createAlarm(
-        @RequestBody CreateAlarmDto createAlarmDto) {
+        @Valid @RequestBody CreateAlarmDto createAlarmDto) {
         String username = SecurityUtil.getCurrentUsername();
         Long alarmId = alarmService.createAlarm(username, createAlarmDto);
 
@@ -63,7 +64,7 @@ public class AlarmController {
     @PutMapping("/{alarm-id}/message")
     public ResponseEntity<String> putAlarmMessage(
         @PathVariable("alarm-id") Long alarmId,
-        @RequestBody PutAlarmMessageRequestDto putAlarmMessageRequestDto) {
+        @Valid @RequestBody PutAlarmMessageRequestDto putAlarmMessageRequestDto) {
 
         String username = SecurityUtil.getCurrentUsername();
 
@@ -91,7 +92,7 @@ public class AlarmController {
      */
     @PutMapping("/{alarm-id}/record")
     public ResponseEntity<String> putAlarmRecord(@PathVariable("alarm-id") Long alarmId,
-        @RequestBody PutAlarmRecordTimeRequestDto putAlarmRecordTimeRequestDto) {
+        @Valid @RequestBody PutAlarmRecordTimeRequestDto putAlarmRecordTimeRequestDto) {
         String username = SecurityUtil.getCurrentUsername();
         alarmRecordService.putAlarmRecord(AlarmEndRecordDto.builder()
             .alarmId(alarmId)

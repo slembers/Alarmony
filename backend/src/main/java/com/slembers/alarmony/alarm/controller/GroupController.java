@@ -14,6 +14,7 @@ import com.slembers.alarmony.member.dto.MemberInfoDto;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -47,7 +48,7 @@ public class GroupController {
     @GetMapping("/inviteable-members")
     public ResponseEntity<Map<String, Object>> getInviteableMembers(
         @RequestParam(value = "group-id", required = false) Long groupId,
-        @RequestParam(value = "keyword", required = false) String keyword) {
+        @RequestParam(value = "keyword") String keyword) {
 
         String username = SecurityUtil.getCurrentUsername();
         List<MemberInfoDto> memberInfoList = groupService.getInviteableMemberInfoList(
@@ -68,7 +69,7 @@ public class GroupController {
     @PostMapping("/{group-id}/members")
     public ResponseEntity<String> inviteMemberToGroup(
         @PathVariable(name = "group-id") Long groupId,
-        @RequestBody InviteMemberToGroupRequestDto inviteMemberToGroupRequestDto) {
+        @Valid @RequestBody InviteMemberToGroupRequestDto inviteMemberToGroupRequestDto) {
 
         String username = SecurityUtil.getCurrentUsername();
 
