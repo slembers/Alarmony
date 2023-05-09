@@ -84,11 +84,6 @@ class StartPageActivity : AppCompatActivity() {
 //                LoginScreen()
 //                Navigation()
 
-
-
-
-
-
             }
         }
     }
@@ -107,7 +102,7 @@ fun LoginScreen(navController: NavController) {
     val idState = remember { mutableStateOf("") }
     val passwordState = remember { mutableStateOf("") }
     if (prefs.getBoolean("auto_login", false) == true) {
-        navController.navigate(NavItem.AlarmListScreen.route)
+        navController.navigate(NavItem.AccountMtnc.route)
 
     }
 
@@ -189,13 +184,13 @@ fun LoginScreen(navController: NavController) {
 //                          Log.d("넘어온것들", "${refreshToken}")
 //                          Log.d("넘어온것들", "${resultText}")
 
-                          prefs.setString("accessToken", accessToken)
-                          prefs.setString("refreshToken", refreshToken)
-                          prefs.setString("id",idState.value )
-                          prefs.setString("password",passwordState.value )
+//                          prefs.setString("accessToken", accessToken)
+//                          prefs.setString("refreshToken", refreshToken)
+//                          prefs.setString("id",idState.value )
+//                          prefs.setString("password",passwordState.value )
 //                          prefs.setBoolean("auto_login", checkedState.value)
-                          val token = prefs.getString("accessToken", "기본값")
-                          Log.d("getstring확인", "${token}")
+//                          val token = prefs.getString("accessToken", "기본값")
+//                          Log.d("getstring확인", "${token}")
 
                           // 토큰 값을 이용하여 다른 작업을 수행할 수 있음
                       }

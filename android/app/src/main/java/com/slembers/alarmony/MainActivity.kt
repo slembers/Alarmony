@@ -33,11 +33,11 @@ class MainActivity : AppCompatActivity() {
     companion object {
         lateinit var prefs : PresharedUtil
     }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-//      SharedPreferences 클래스는 앱에 있는 다른 Class보다 먼저 생성되어야함
         prefs = PresharedUtil(application)
+//        정보 초기화시 해당 코드 주석 해제하고 시도 후 다시 주석처리하고 실행
+//        prefs.reset()
 
         val auto_login = prefs.getBoolean("auto_login", false)
         Log.d("test!", "${auto_login}")
@@ -45,26 +45,21 @@ class MainActivity : AppCompatActivity() {
             /**/
             Log.d("test", "${auto_login}")
             autoLogin(
-                prefs.getString("id", ""),
+                prefs.getString("username", ""),
                 prefs.getString("password", ""),
             ) { resultText, accessToken, refreshToken ->
                 Log.d("자동 로그인", "자동로그인 체크중")
+                Log.d("자동 로그인", "${ prefs.getString("username", "")}")
                 prefs.setString("accessToken", accessToken)
                 prefs.setString("refreshToken", refreshToken)
                 val token = prefs.getString("accessToken", "기본값")
                 Log.d("getstring확인", "${token}")
-//이제 여기서 navigation이든 intent등 활용해서 화면을 전환해야한다.
-//                하지만 Mainactivity라서 navigaiton은 사용할 수 없다????
-//                setcontent부분에 로그인 화면이 아니라 메인 화면으로 가게끔 만들어야 한다.
-//                로그인 화면이 아닌 바로 메인 화면 activity가 실행되게끔 만들어야 한다.
-//                Navcontroller2를 만들어서 해버리자
                 setContent {
                     NavController()
                     requestAlertPermission() // 권한 실행
                 }
 
             }
-//            자동로그인이 되지 않으면 정상적으로 Composable LoginScreen()이 라우팅 되는 Navcontroller를 set해준다.
         } else {
             setContent {
                 NavController()
