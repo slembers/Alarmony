@@ -66,6 +66,7 @@ public class AlarmServiceImpl implements AlarmService {
      * 신규 알람을 생성한다.
      * @param username 현재 로그인 아이디
      * @param createAlarmDto 알람 생성 정보
+     * @return 알람 아이디
      */
     @Override
     public Long createAlarm(String username, CreateAlarmDto createAlarmDto) {
