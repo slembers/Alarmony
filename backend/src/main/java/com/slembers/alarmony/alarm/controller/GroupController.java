@@ -68,7 +68,7 @@ public class GroupController {
     @PostMapping("/{group-id}/members")
     public ResponseEntity<String> inviteMemberToGroup(
         @PathVariable(name = "group-id") Long groupId,
-        @RequestBody InviteMemberToGroupRequestDto inviteMemberToGroupRequestDto) {
+        @Valid @RequestBody InviteMemberToGroupRequestDto inviteMemberToGroupRequestDto) {
 
         String username = SecurityUtil.getCurrentUsername();
 

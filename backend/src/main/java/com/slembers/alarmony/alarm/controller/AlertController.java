@@ -51,7 +51,9 @@ public class AlertController {
      * @return 응답 메시지
      */
     @PostMapping("/{alert-id}/response")
-    public ResponseEntity<AlarmInviteResponseDto> responseInvite(@PathVariable("alert-id") Long alertId, @RequestBody ResponseInviteRequestDto responseInviteRequestDto) {
+    public ResponseEntity<AlarmInviteResponseDto> responseInvite(
+        @PathVariable("alert-id") Long alertId,
+        @Valid @RequestBody ResponseInviteRequestDto responseInviteRequestDto) {
 
         if (responseInviteRequestDto == null || responseInviteRequestDto.getAccept() == null)
             throw new CustomException(AlertErrorCode.ALERT_BAD_REQUEST);
