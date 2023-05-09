@@ -31,10 +31,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.TextField
 import androidx.compose.material.rememberScaffoldState
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.BlendMode.Companion.Screen
-
+import androidx.compose.material.Checkbox
 
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
@@ -45,6 +46,8 @@ import androidx.navigation.NavController
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
+import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
+import com.slembers.alarmony.MainActivity.Companion.prefs
 import com.slembers.alarmony.R
 import com.slembers.alarmony.feature.common.NavItem
 
@@ -91,33 +94,22 @@ class StartPageActivity : AppCompatActivity() {
     }
 }
 
-
-
-@Preview
+@OptIn(ExperimentalGlideComposeApi::class)
+//위 @OptIn(ExperimentalGlideComposeApi::class)이 회색으로 나오는 이유는
+//사용되지 않아서가 아니라 실험적이고 불안정한 기능이기 때문이다.
 @Composable
-
-//fun extra(navController: NavController) {
-fun extra() {
-
-
-
-
-}
-
-
-
-
-
-@Composable
+@ExperimentalMaterial3Api
 fun LoginScreen(navController: NavController) {
-
-
+//    val checkedState = remember { mutableStateOf(false) }
     val context = LocalContext.current
     val scaffoldState = rememberScaffoldState()
-
     // 아이디와 비밀번호에 대한 상태를 저장할 mutableState 변수 선언
     val idState = remember { mutableStateOf("") }
     val passwordState = remember { mutableStateOf("") }
+    if (prefs.getBoolean("auto_login", false) == true) {
+        navController.navigate(NavItem.AlarmListScreen.route)
+
+    }
 
     Column(
         verticalArrangement = Arrangement.Center,
@@ -153,6 +145,30 @@ fun LoginScreen(navController: NavController) {
                 .fillMaxWidth()
                 .clip(RoundedCornerShape(20.dp))
         )
+//아래는 자동로그인 체크박스
+
+//        Row(modifier = Modifier.padding(0.dp)) {
+//            // Checkbox Composable을 사용하여 체크박스 UI를 생성
+//            Checkbox(
+//                checked = checkedState.value,
+//                onCheckedChange = {
+//                    checkedState.value = it
+//                    if (it) {
+////                        prefs.setString("autoLogin", "true")
+////                        prefs.setBoolean("auto_login", true)
+//                      Log.d("체크박스", "자동 로그인 온")
+//                      Log.d("체크박스", "${prefs.getBoolean("auto_login", false)}")
+//                    } else {
+////                        prefs.setBoolean("auto_login", false)
+//                        Log.d("체크박스", "자동 로그인 오프")
+//                        Log.d("체크박스", "${prefs.getBoolean("auto_login", false)}")
+//
+//                    }
+//                }
+//            )
+//            Text(text = "자동 로그인 ")
+//        }
+
 
 
 //        아래는 로그인을 위한 통신로직을 RetrofitClient에서 가져와서 수행
@@ -160,8 +176,29 @@ fun LoginScreen(navController: NavController) {
         Button(
 //MutableState<String>와 String은 형식이 다르기에 String 값을 보내기 위해 .value를 붙여준다.
             onClick = {
+
                 Log.d("확인", "${idState.value}, ${passwordState.value} +로그인")
-                      login(idState.value, passwordState.value, navController, context)
+                      login(idState.value,
+                          passwordState.value,
+                          navController,
+                          context
+                      ) { resultText, accessToken, refreshToken ->
+                        //토스트 메시지와 sharedpreferce에 저장하도록!!!!
+                          Toast.makeText(context, "${resultText}",Toast.LENGTH_SHORT).show()
+//                          Log.d("넘어온것들", "${accessToken}")
+//                          Log.d("넘어온것들", "${refreshToken}")
+//                          Log.d("넘어온것들", "${resultText}")
+
+                          prefs.setString("accessToken", accessToken)
+                          prefs.setString("refreshToken", refreshToken)
+                          prefs.setString("id",idState.value )
+                          prefs.setString("password",passwordState.value )
+//                          prefs.setBoolean("auto_login", checkedState.value)
+                          val token = prefs.getString("accessToken", "기본값")
+                          Log.d("getstring확인", "${token}")
+
+                          // 토큰 값을 이용하여 다른 작업을 수행할 수 있음
+                      }
 //                아이디 비밀번호 초기화
                 idState.value =""
                 passwordState.value=""

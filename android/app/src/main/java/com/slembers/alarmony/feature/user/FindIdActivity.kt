@@ -33,6 +33,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.slembers.alarmony.R
+import com.slembers.alarmony.network.repository.MemberService.findId
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
@@ -91,15 +92,27 @@ fun FindId(navController: NavController) {
                         .fillMaxWidth()
                 )
 
+//                Button(
+//                    onClick = {
+//                    Log.d("확인", "아이디 찾기")
+//                }, modifier = Modifier
+////                        .fillMaxWidth()
+//                )
+//
+//                {
+//                     Text(text = "아이디 찾기")
+//                }
+
                 Button(
                     onClick = {
-                    Log.d("확인", "아이디 찾기")
-                }, modifier = Modifier
+                        Log.d("확인", "인증번호 보내기")
+                        findId(email.value)
+                    }, modifier = Modifier
 //                        .fillMaxWidth()
                 )
 
                 {
-                     Text(text = "아이디 찾기")
+                    Text(text = "인증번호 보내기")
                 }
             }
         }
