@@ -16,7 +16,8 @@ public interface AlarmService {
 
     /**
      * 신규 알람을 생성한다.
-     * @param username 현재 로그인 아이디
+     *
+     * @param username       현재 로그인 아이디
      * @param createAlarmDto 알람 생성 정보
      */
     Long createAlarm(String username, CreateAlarmDto createAlarmDto);
