@@ -21,6 +21,7 @@ object GroupService {
             group = group
         ).enqueue(object: Callback<Unit> {
             override fun onResponse(call: Call<Unit>, response: Response<Unit>) {
+                Log.i("response","response : ${response.body()}")
                 if(response.isSuccessful) {
                     Log.d("success", "[그룹생성] 정상적으로 저장되었습니다.")
                     connection(true)

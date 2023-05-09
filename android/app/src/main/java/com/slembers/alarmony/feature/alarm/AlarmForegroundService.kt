@@ -49,9 +49,9 @@ class AlarmForegroundService : Service() {
             )
 
         val alarm = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            intent.getParcelableExtra("alarm", Alarm::class.java)
+            intent.getParcelableExtra("alarm", Alarm::class.java) as Alarm
         } else {
-            intent.getParcelableExtra<Alarm>("alarm")
+            intent.getParcelableExtra<Alarm>("alarm") as Alarm
         }
 
         if (intent!!.getStringExtra(OPEN_TYPE) == REFRESH) {
@@ -79,7 +79,7 @@ class AlarmForegroundService : Service() {
         CoroutineScope(Dispatchers.Main).launch {
 
             val newIntent = Intent(applicationContext, AlarmActivity::class.java)
-            newIntent.putExtra(ALARM_DATA, alarm)
+            newIntent.putExtra("alarm", alarm)
             newIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             startActivity(newIntent)
 

@@ -1,7 +1,18 @@
 package com.slembers.alarmony.feature.screen
 
+import android.app.Activity
+import android.content.Intent
+import android.os.Bundle
 import android.util.Log
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
+import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
+import androidx.activity.compose.setContent
+import androidx.activity.viewModels
+import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -30,6 +41,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.TimeInput
 import androidx.compose.material3.TimePickerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
@@ -40,10 +52,14 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
+import com.slembers.alarmony.MainActivity
 import com.slembers.alarmony.R
 import com.slembers.alarmony.feature.common.NavItem
 import com.slembers.alarmony.feature.common.ui.compose.GroupCard
@@ -53,12 +69,45 @@ import com.slembers.alarmony.feature.ui.group.GroupBottomButtom
 import com.slembers.alarmony.feature.ui.group.GroupInvite
 import com.slembers.alarmony.feature.ui.group.GroupSound
 import com.slembers.alarmony.feature.ui.group.GroupToolBar
+import com.slembers.alarmony.feature.ui.group.GroupTypeButton
 import com.slembers.alarmony.feature.ui.group.GroupVolume
 import com.slembers.alarmony.model.db.Group
 import com.slembers.alarmony.model.db.dto.MemberDto
 import com.slembers.alarmony.network.service.GroupService
 import com.slembers.alarmony.viewModel.GroupViewModel
 import kotlin.streams.toList
+
+@ExperimentalMaterial3Api
+@ExperimentalGlideComposeApi
+class GroupActivity : AppCompatActivity() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContent {
+            val navController : NavHostController = rememberNavController()
+            val viewModel by viewModels<GroupViewModel>()
+            NavHost(
+                navController = navController,
+                startDestination = NavItem.Group.route
+            ) {
+                composable( route = NavItem.Group.route ) { GroupScreen(
+                    navController = navController, viewModel = viewModel) }
+                composable( route = NavItem.GroupInvite.route ) { InviteScreen(
+                    navController = navController, viewModel = viewModel) }
+                composable( route = NavItem.Sound.route ) { SoundScreen(navController) }
+            }
+        }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        Log.d("GroupActivity","[그룹생성] Activity 시작")
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        Log.d("GroupActivity","[그룹생성] Activity 종료")
+    }
+}
 
 @Preview
 @Composable
@@ -69,25 +118,27 @@ fun GroupScreen(
     viewModel : GroupViewModel = viewModel()
 ) {
 
-    val title by viewModel.title.observeAsState("")
-    val timePickerState by viewModel.alarmTime.observeAsState(
-        TimePickerState(10,0,false)
-    )
+    val title by viewModel.title.observeAsState()
+    val timePickerState by viewModel.alarmTime.observeAsState()
     val isWeeks by viewModel.currentWeeks.observeAsState()
     val weeks = listOf("월","화","수","목","금","토","일")
-    val members by viewModel.members.observeAsState(listOf<MemberDto>())
-    val soundName by viewModel.sound.observeAsState("노래제목")
-    val vibration by viewModel.vibrate.observeAsState(true)
-    val soundVolume by viewModel.volumn.observeAsState(7f)
+    val members by viewModel.members.observeAsState()
+    val soundName by viewModel.sound.observeAsState()
+    val vibration by viewModel.vibrate.observeAsState()
+    val soundVolume by viewModel.volumn.observeAsState()
 
     val scrollerState = rememberScrollState()
     val context = LocalContext.current
+
+    // 초대된 그룹원 확인
+    val checkedMember = navController.previousBackStackEntry?.savedStateHandle?.get<Set<MemberDto>>("checkedMember")
+    Log.d("checked","[그룹생성] 선택한 멤버 : ${checkedMember.toString()}")
 
     Scaffold(
         topBar = {
             GroupToolBar(
                 title = NavItem.Group.title,
-                navcontroller = navController
+                navClick = { (context as Activity).finish() }
             )
          },
         bottomBar = {
@@ -95,20 +146,17 @@ fun GroupScreen(
                 text = "저장",
                 onClick = {
                     var connection = false
+                    Log.d("viewmodel:ID","[그룹생성] groupActivity ID : $viewModel")
                     GroupService.addGroupAlarm(
                         Group(
-                            title = title,
-                            hour = timePickerState.hour,
-                            minute = timePickerState.minute,
-                            alarmDate = weeks.stream().map {
-                                isWeeks?.getValue(it) ?: false
-                            }.toList(),
-                            members = members?.stream()?.map {
-                                it.nickname
-                            }?.toList(),
-                            soundName = soundName,
-                            soundVolume = soundVolume,
-                            vibrate = vibration
+                            title = title!!,
+                            hour = timePickerState?.hour ?: 10,
+                            minute = timePickerState?.minute ?: 0,
+                            alarmDate = weeks.stream().map { isWeeks?.getValue(it) ?: false }.toList(),
+                            members = members?.stream()?.map { it.nickname }?.toList(),
+                            soundName = soundName ?: "노래제목",
+                            soundVolume = soundVolume ?: 7f,
+                            vibrate = vibration ?: true
                         ),
                         connection = { connection = it}
                     )
@@ -130,7 +178,7 @@ fun GroupScreen(
                 GroupCard(
                     title = { GroupTitle(title = "그룹제목") },
                     content = { GroupSubjet(
-                        title = title,
+                        title = title!!,
                         onChangeValue = { viewModel.onChangeTitle(it) })
                     }
                 )
@@ -138,7 +186,7 @@ fun GroupScreen(
                     title = { GroupTitle(title = "알람시간") },
                     content = {
                         TimeInput(
-                            state = timePickerState,
+                            state = timePickerState!!,
                             modifier = Modifier
                                 .padding(
                                     start = 20.dp,
@@ -199,76 +247,18 @@ fun GroupScreen(
                 )
                 GroupInvite(
                     navController = navController,
-                    members = members ?: listOf()
+                    members = members ?: mutableListOf()
                 )
                 GroupSound(
                     navController = navController,
                     sound = soundName,
                 )
-                GroupCard(
-                    title = { GroupTitle(
-                        title = "타입",
-                        content = {
-                            Row(
-                                modifier = Modifier
-                                    .height(50.dp)
-                                    .padding(5.dp),
-                                verticalAlignment = Alignment.CenterVertically,
-                            ) {
-                                BoxWithConstraints(
-                                    modifier = Modifier.fillMaxHeight(),
-                                    contentAlignment = Alignment.Center,
-                                ) {
-                                    Box(
-                                        modifier = Modifier
-                                            .padding(2.dp)
-                                            .size(this.maxHeight)
-                                            .align(Alignment.Center)
-                                            .clip(CircleShape)
-                                            .background(MaterialTheme.colorScheme.primary)
-                                    ) {
-                                        Image(
-                                            modifier = Modifier.align(Alignment.Center),
-                                            painter = painterResource(id = R.drawable.baseline_music_note_24) ,
-                                            contentDescription = null)
-                                    }
-                                }
-
-                                BoxWithConstraints(
-                                    modifier = Modifier.fillMaxHeight(),
-                                    contentAlignment = Alignment.Center,
-                                ) {
-                                    Box(
-                                        modifier = Modifier
-                                            .padding(2.dp)
-                                            .size(this.maxHeight)
-                                            .align(Alignment.Center)
-                                            .clip(CircleShape)
-                                            .background(
-                                                if (vibration == true)
-                                                    MaterialTheme.colorScheme.primary
-                                                else
-                                                    MaterialTheme.colorScheme.background
-                                            )
-                                            .clickable {
-                                                vibration?.let {
-                                                    viewModel.onChangeVibrate(!it)
-                                                    Log.i("vibration", "vibration value : $it")
-                                                }
-                                            }
-                                    ) {
-                                        Image(
-                                            modifier = Modifier.align(Alignment.Center),
-                                            painter = painterResource(id = R.drawable.baseline_vibration_24) ,
-                                            contentDescription = null)
-                                    }
-                                }
-                            }
-                        }
-                    )},
+                GroupTypeButton(
+                    isVibrate = vibration ?: true,
+                    viewModel = viewModel
                 )
                 GroupVolume(
-                    volume = soundVolume,
+                    volume = soundVolume ?: 7f,
                     setVolume = { viewModel.onChangeVolume(it) }
                 )
             }

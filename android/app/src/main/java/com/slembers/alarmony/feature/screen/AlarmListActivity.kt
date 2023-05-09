@@ -1,7 +1,12 @@
 package com.slembers.alarmony.feature.screen
 
+import android.app.Activity
 import android.app.Application
+import android.content.Intent
+import android.util.Log
 import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -21,6 +26,7 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.outlined.Notifications
 import androidx.compose.material.icons.outlined.NotificationsActive
 import androidx.compose.material.icons.outlined.Settings
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -34,6 +40,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.contentColorFor
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -45,18 +52,21 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavController
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
+import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.slembers.alarmony.R
 import com.slembers.alarmony.feature.alarm.Alarm
 import com.slembers.alarmony.feature.alarm.AlarmViewModel
 import com.slembers.alarmony.feature.alarm.AlarmViewModelFactory
+import com.slembers.alarmony.feature.alarm.alarm1
 import com.slembers.alarmony.feature.alarm.notiSample
+import com.slembers.alarmony.feature.alarm.setAlarm
+import com.slembers.alarmony.feature.alarm.setAlarmTest
 import com.slembers.alarmony.feature.common.NavItem
 import com.slembers.alarmony.feature.common.ui.theme.notosanskr
 import com.slembers.alarmony.feature.common.ui.theme.toColor
 
+@ExperimentalGlideComposeApi
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AlarmListScreen(navController : NavHostController) {
@@ -65,6 +75,12 @@ fun AlarmListScreen(navController : NavHostController) {
         factory = AlarmViewModelFactory(context.applicationContext as Application)
     )
     val alarms = mAlarmViewModel.readAllData.observeAsState(listOf()).value
+    val launcher = rememberLauncherForActivityResult(
+        ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            Log.d("AlarmListScreen","[알람목록] Activity 이동성공")
+        }
+    }
     Scaffold(
         topBar = {
             TopAppBar(
@@ -125,7 +141,10 @@ fun AlarmListScreen(navController : NavHostController) {
         floatingActionButtonPosition = FabPosition.Center,
         floatingActionButton = {
             FloatingActionButton(
-                onClick = { navController.navigate(NavItem.Group.route) },
+                onClick = {
+                    val intent = Intent(context,GroupActivity::class.java)
+                    launcher.launch(intent)
+                },
                 shape = CircleShape,
                 containerColor = "#00B4D8".toColor(),
                 modifier = Modifier
@@ -158,6 +177,13 @@ fun AlarmListScreen(navController : NavHostController) {
                         Toast.LENGTH_SHORT
                     ).show()
                 }
+                ////////////////// 테스트용 버튼
+                Button(onClick = {setAlarmTest(context, alarm1)
+                    Toast.makeText(context, "8초 뒤에 알람이 울립니다.", Toast.LENGTH_SHORT).show()}
+                ) {
+                    Text(text = "8초 뒤 울리는 테스트 알람")
+                }
+                //////////////////
                 LazyColumn{
                     items(alarms.size) {model ->
                         MyListItem(item = alarms[model], onItemClick=onListItemClick)

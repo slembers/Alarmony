@@ -37,7 +37,7 @@ fun SoundScreen(navController : NavHostController = rememberNavController()) {
         topBar = {
             GroupToolBar(
                 title = NavItem.Sound.title,
-                navcontroller = navController
+                navClick = { navController.popBackStack() }
             )
         },
         bottomBar = {
