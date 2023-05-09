@@ -5,6 +5,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.lifecycle.viewmodel.viewModelFactory
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -31,6 +32,8 @@ fun NavController(
     navController : NavHostController = rememberNavController()
 ) {
 
+    val group : GroupViewModel = viewModel()
+
     NavHost(
         modifier = Modifier.fillMaxSize(),
         navController = navController,
@@ -45,13 +48,6 @@ fun NavController(
         composable( route = NavItem.NotiListScreen.route) {
             NotiListScreen(navController)
         }
-        // 그룹생성 페이지
-        composable( route = NavItem.Group.route ) { GroupScreen(
-            navController ,
-            viewModel(modelClass = GroupViewModel::class.java)
-        )}
-        composable( route = NavItem.Sound.route ) { SoundScreen( navController = navController ) }
-        composable( route = NavItem.GroupInvite.route ) { InviteScreen(navController)}
         // 로그인 페이지
         composable( route = NavItem.LoginScreen.route) {LoginScreen(navController = navController)}
         composable( route = NavItem.FindIdActivity.route) {FindId(navController = navController) }
@@ -60,22 +56,21 @@ fun NavController(
         composable(NavItem.FindIdActivity.route) {
             FindId(navController = navController)
 
-        }
-        composable(NavItem.FindPswdActivity.route) {
-            Findpswd(navController = navController)
+            }
+            composable(NavItem.FindPswdActivity.route) {
+                Findpswd(navController = navController)
+
+            }
+            composable(NavItem.ProfileActivity.route) {
+                ProfileSetting(navController = navController)
+
+            }
+
+            composable(NavItem.AccountMtnc.route) {
+                AccountMtnc(navController = navController)
+
+            }
+
 
         }
-        composable(NavItem.ProfileActivity.route) {
-            ProfileSetting(navController = navController)
-
-        }
-
-        composable(NavItem.AccountMtnc.route) {
-            AccountMtnc(navController = navController)
-
-        }
-
-
-
-    }
 }

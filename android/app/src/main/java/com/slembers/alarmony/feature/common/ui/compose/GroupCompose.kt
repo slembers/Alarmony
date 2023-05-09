@@ -1,7 +1,6 @@
 package com.slembers.alarmony.feature.common.ui.compose
 
 import android.icu.text.SimpleDateFormat
-import android.media.MediaPlayer
 import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
@@ -64,7 +63,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
@@ -74,11 +72,8 @@ import com.slembers.alarmony.feature.common.CardBox
 import com.slembers.alarmony.feature.common.CardTitle
 import com.slembers.alarmony.model.db.Member
 import com.slembers.alarmony.model.db.SoundItem
-import com.slembers.alarmony.model.db.dto.MemberDto
 import com.slembers.alarmony.viewModel.GroupSearchViewModel
-import com.slembers.alarmony.viewModel.GroupViewModel
 import java.util.Locale
-import kotlin.streams.toList
 
 @Composable
 @ExperimentalMaterial3Api
@@ -424,22 +419,11 @@ fun soundIcon(
 @ExperimentalMaterial3Api
 @ExperimentalGlideComposeApi
 fun CurrentInvite(
-    group: GroupViewModel = viewModel(),
-    search: GroupSearchViewModel = viewModel(),
+    search : GroupSearchViewModel = viewModel(),
+    currentMembers: MutableList<Member> = mutableListOf(),
 ) {
 
-    val members by group.members.observeAsState()
-    val checkedMembers by search.checkedMembers.observeAsState()
-
-    val currentMembers : List<Member> = members?.let {
-        it.stream().map { member ->
-            Member(
-                nickname = member.nickname,
-                profileImg = member.profileImg,
-                isNew = false
-            )
-        }.toList()
-    } as List<Member>
+    val checkMembers = search.checkedMembers.observeAsState()
 
     CardBox(
         title = { CardTitle(title = "초대인원") },
@@ -456,22 +440,21 @@ fun CurrentInvite(
                 userScrollEnabled = true
             ) {
 
-                items(items = currentMembers) { member ->
-                    GroupDefalutProfile(
-                        profileImg = member.profileImg,
-                        nickname = member.nickname,
-                        newMember = true
-                    )
-                }
-
-                items(items = checkedMembers ?: listOf()) { checked ->
+                items(items = currentMembers) { checked ->
                     GroupDefalutProfile(
                         profileImg = checked.profileImg,
                         nickname = checked.nickname,
-                        newMember = false
+                        newMember = checked.isNew
                     )
                 }
 
+                items(items = checkMembers.value ?: listOf()) { checked ->
+                    GroupDefalutProfile(
+                        profileImg = checked.profileImg,
+                        nickname = checked.nickname,
+                        newMember = checked.isNew
+                    )
+                }
             }
         }
     )

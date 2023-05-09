@@ -25,7 +25,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -50,7 +49,6 @@ import com.slembers.alarmony.feature.common.CardBox
 import com.slembers.alarmony.feature.common.CardTitle
 import com.slembers.alarmony.model.db.Member
 import com.slembers.alarmony.model.db.dto.MemberDto
-import com.slembers.alarmony.network.service.GroupService
 import com.slembers.alarmony.viewModel.GroupSearchViewModel
 import com.slembers.alarmony.viewModel.GroupViewModel
 
@@ -60,15 +58,13 @@ import com.slembers.alarmony.viewModel.GroupViewModel
 @ExperimentalMaterial3Api
 @ExperimentalGlideComposeApi
 fun SearchInviteMember(
-    group : GroupViewModel = viewModel()
+    currentMembers: MutableList<Member> = mutableListOf()
 ) {
 
     var text by remember { mutableStateOf("") }
-//    var searchMembers : List<MemberDto> = remember { mutableStateListOf() }
-    val searchViewModel : GroupSearchViewModel = viewModel()
-    val searchMembers = searchViewModel.searchMembers.observeAsState()
-    val checkedMembers = searchViewModel.checkedMembers.observeAsState()
-    val members by group.members.observeAsState()
+    val search: GroupSearchViewModel = viewModel()
+    val searchMembers = search.searchMembers.observeAsState()
+    val checkMembers = search.checkedMembers.observeAsState()
 
     CardBox(
         title = { CardTitle(title = "검색") },
@@ -87,9 +83,7 @@ fun SearchInviteMember(
                     value = text,
                     onValueChange = {
                         text = it
-                        searchViewModel.searchApi(
-                            keyword = text
-                        )
+                        search.searchApi(keyword = text)
                     },
                     singleLine = true,
                     textStyle = TextStyle(
@@ -134,19 +128,25 @@ fun SearchInviteMember(
                 )
 
                 LazyColumn() {
-                    items(searchMembers.value ?: mutableListOf()) { member ->
+                    items(searchMembers.value ?: mutableListOf()) {
+                        val member = Member(
+                            nickname = it.nickname,
+                            profileImg = it.profileImg,
+                            isNew = true
+                        )
                         // 현재 인원에 포함되면 안됨
-                        if(!members?.contains(member)!!)
+                        if(!currentMembers.contains(member)) {
                             SearchMember(
-                                member = member,
-                                isCheck = checkedMembers.value?.contains(member) ?: false,
+                                member = it,
+                                isCheck = checkMembers.value!!.contains(member),
                                 onCheckedChange = {
-                                    if(checkedMembers.value?.contains(member) == true)
-                                        searchViewModel.removeCheckedMember(it)
+                                    if (checkMembers.value!!.contains(member))
+                                        search.removeCheckedMember(member)
                                     else
-                                        searchViewModel.addCurrentMember(it)
+                                        search.addCurrentMember(member)
                                 }
                             )
+                        }
                     }
                 }
             }
