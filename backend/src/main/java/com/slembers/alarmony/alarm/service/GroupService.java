@@ -26,6 +26,7 @@ public interface GroupService {
      *
      * @param groupId 그룹 id
      * @param keyword 검색할 키워드
+     * @param username 제외할 멤버의 유저네임
      * @return 초대 가능한 멤버 목록
      */
     List<MemberInfoDto> getInviteableMemberInfoList(Long groupId, String keyword, String username);
