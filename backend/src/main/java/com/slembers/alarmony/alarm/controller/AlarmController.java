@@ -42,8 +42,11 @@ public class AlarmController {
     @PostMapping
     public ResponseEntity<String> createAlarm(@RequestBody CreateAlarmDto createAlarmDto) {
         String username = SecurityUtil.getCurrentUsername();
-        alarmService.createAlarm(username, createAlarmDto);
-        return new ResponseEntity<>("알람이 생성되고 초대가 전송되었습니다.", HttpStatus.OK);
+        Long alarmId = alarmService.createAlarm(username, createAlarmDto);
+
+        Map<String, Object> map = new HashMap<>();
+        map.put("groupId", alarmId);
+        return new ResponseEntity<>(map, HttpStatus.OK);
     }
 
     /**

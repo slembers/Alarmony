@@ -68,7 +68,7 @@ public class AlarmServiceImpl implements AlarmService {
      * @param createAlarmDto 알람 생성 정보
      */
     @Override
-    public void createAlarm(String username, CreateAlarmDto createAlarmDto) {
+    public Long createAlarm(String username, CreateAlarmDto createAlarmDto) {
         Member groupLeader = memberRepository.findByUsername(username)
                 .orElseThrow(() -> new CustomException(MemberErrorCode.MEMBER_NOT_FOUND));
 
@@ -124,12 +124,7 @@ public class AlarmServiceImpl implements AlarmService {
             throw new CustomException(AlarmRecordErrorCode.ALARM_RECORD_INPUT_ERRER);
         }
 
-        // 멤버들에게 초대를 보낸다.
-        alertService.inviteMemberToGroup(InviteMemberSetToGroupDto.builder()
-                .groupId(alarm.getId())
-                .nicknames(createAlarmDto.getMembers())
-                .sender(groupLeader.getUsername())
-                .build());
+        return alarm.getId();
     }
 
     /**

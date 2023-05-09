@@ -19,7 +19,7 @@ public interface AlarmService {
      * @param username 현재 로그인 아이디
      * @param createAlarmDto 알람 생성 정보
      */
-    void createAlarm(String username, CreateAlarmDto createAlarmDto);
+    Long createAlarm(String username, CreateAlarmDto createAlarmDto);
 
     /**
      * 특정 알람아이디를 주면, 알람 기록을 찾아서 메시지를 기록해둔다.
