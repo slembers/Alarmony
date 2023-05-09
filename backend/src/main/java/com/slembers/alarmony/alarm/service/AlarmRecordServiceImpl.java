@@ -78,6 +78,7 @@ public class AlarmRecordServiceImpl implements AlarmRecordService {
             else alarmRecord.recordFailed(alarm.getTime());
             alarmRecordRepository.save(alarmRecord);
         } catch (Exception e) {
+            log.error(e.getMessage());
             throw new CustomException(AlarmRecordErrorCode.ALARM_RECORD_RECORD_ERROR);
         }
     }
