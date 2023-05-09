@@ -47,13 +47,7 @@ public class AlertServiceImpl implements AlertService {
      * @param inviteMemberSetToGroupDto 그룹 초대에 필요한 dto
      */
     @Override
-    public void inviteMemberToGroup(InviteMemberSetToGroupDto inviteMemberSetToGroupDto) {
-
-        List<Member> validMemberList = inviteMemberSetToGroupDto.getNicknames().stream()
-            .map(memberRepository::findByNickname)
-            .filter(Optional::isPresent)
-            .map(Optional::get)
-            .collect(Collectors.toList());
+    public int inviteMemberToGroup(InviteMemberSetToGroupDto inviteMemberSetToGroupDto) {
 
         Member sender = memberRepository.findByUsername(inviteMemberSetToGroupDto.getSender())
             .orElseThrow(() -> new CustomException(MemberErrorCode.MEMBER_NOT_FOUND));
@@ -61,15 +55,25 @@ public class AlertServiceImpl implements AlertService {
         Alarm alarm = alarmRepository.findById(inviteMemberSetToGroupDto.getGroupId())
             .orElseThrow(() -> new CustomException(AlarmErrorCode.ALARM_NOT_FOUND));
 
-        validMemberList.stream()
-            .map(receiver -> Alert.builder()
-                .type(AlertTypeEnum.INVITE)
-                .content(String.format("'%s' 그룹 초대입니다.'", alarm.getTitle()))
-                .sender(sender)
-                .receiver(receiver)
-                .alarm(alarm)
-                .build())
-            .forEach(this::sendInviteAlert);
+        return inviteMemberSetToGroupDto.getNicknames().stream()
+            .map(memberRepository::findByNickname)
+            .flatMap(Optional::stream)
+            .filter(member -> !memberAlarmRepository.existsByMemberAndAlarm(member, alarm))
+            .map(receiver -> createInviteAlert(receiver, sender, alarm))
+            .filter(this::sendInviteAlert)
+            .mapToInt(result -> 1)
+            .sum();
+    }
+
+    private Alert createInviteAlert(Member receiver, Member sender, Alarm alarm) {
+        String content = String.format("'%s' 그룹 초대입니다.'", alarm.getTitle());
+        return Alert.builder()
+            .type(AlertTypeEnum.INVITE)
+            .content(content)
+            .sender(sender)
+            .receiver(receiver)
+            .alarm(alarm)
+            .build();
     }
 
     /**
@@ -77,8 +81,7 @@ public class AlertServiceImpl implements AlertService {
      *
      * @param alert 알림 객체
      */
-    @Override
-    public void sendInviteAlert(Alert alert) {
+    private boolean sendInviteAlert(Alert alert) {
         try {
             String targetMobile = alert.getReceiver().getRegistrationToken();
             // 메시지 설정
@@ -93,19 +96,13 @@ public class AlertServiceImpl implements AlertService {
             String response = FirebaseMessaging.getInstance().send(message);
             // 결과 출력
             log.info("초대 메시지 전송 완료: " + response);
-
             // 푸쉬 알림을 보냈으니, 알림 테이블에도 추가해야 한다
-
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            throw new CustomException(AlertErrorCode.ALERT_INVITE_SEND_ERROR);
-        }
-
-        try {
             alertRepository.save(alert);
+
+            return true;
         } catch (Exception e) {
             log.error(e.getMessage());
-            throw new CustomException(AlertErrorCode.ALERT_SERVER_ERROR);
+            return false;
         }
     }
 
