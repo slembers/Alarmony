@@ -1,5 +1,8 @@
 package com.slembers.alarmony.feature.screen
 
+import android.os.Bundle
+import androidx.activity.compose.setContent
+import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -24,6 +27,7 @@ import com.slembers.alarmony.feature.common.ui.compose.GroupTitle
 import com.slembers.alarmony.feature.ui.group.GroupToolBar
 import com.slembers.alarmony.feature.ui.groupDetails.GroupDetailsBoard
 import com.slembers.alarmony.feature.ui.groupDetails.GroupDetailsTitle
+import com.slembers.alarmony.feature.ui.groupDetails.GroupDetailsBoard
 
 @Preview
 @Composable

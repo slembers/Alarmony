@@ -37,6 +37,7 @@ import androidx.compose.ui.graphics.Color
 
 import androidx.compose.ui.text.style.TextAlign
 import androidx.navigation.NavController
+import com.slembers.alarmony.feature.common.NavItem
 import com.slembers.alarmony.feature.common.ui.theme.toColor
 
 //import androidx.compose.ui.graphics.Color
@@ -97,7 +98,7 @@ fun AccountMtnc(navController: NavController) {
         ) {
 
             Button(
-                onClick = {/* 계정설정 창으로 가는 로직*/},
+                onClick = { NavItem.ProfileActivity.route},
                 modifier = Modifier
                     .width(240.dp)
                     .padding(10.dp)
@@ -115,7 +116,7 @@ fun AccountMtnc(navController: NavController) {
 
             }
             Button(
-                onClick = {/* 계정설정 창으로 가는 로직*/},
+                onClick = {/* 태마설정변경*/},
                 modifier = Modifier
                     .width(240.dp)
                     .padding(10.dp)
@@ -133,7 +134,7 @@ fun AccountMtnc(navController: NavController) {
 
             }
             Button(
-                onClick = {/* 계정설정 창으로 가는 로직*/},
+                onClick = {/* 어플리케이션 정보 페이지*/},
                 modifier = Modifier
                     .width(240.dp)
                     .padding(10.dp)
@@ -151,7 +152,7 @@ fun AccountMtnc(navController: NavController) {
 
             }
             Button(
-                onClick = {/* 계정설정 창으로 가는 로직*/},
+                onClick = {/* 푸쉬알림 설정 변경*/},
                 modifier = Modifier
                     .width(240.dp)
                     .padding(10.dp)
