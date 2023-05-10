@@ -2,7 +2,6 @@ package com.slembers.alarmony.network.service
 
 import android.util.Log
 import com.slembers.alarmony.model.db.Group
-import com.slembers.alarmony.model.db.dto.MemberDto
 import com.slembers.alarmony.model.db.dto.MemberListDto
 import com.slembers.alarmony.network.api.AlarmonyServer
 import retrofit2.Call
@@ -15,8 +14,8 @@ object GroupService {
         group: Group,
         connection: (Boolean) -> Unit
     ) {
+        val groupApi = AlarmonyServer().groupApi
 
-        val groupApi = AlarmonyServer.groupApi
         groupApi.addGroupAlarm(
             group = group
         ).enqueue(object: Callback<Unit> {
@@ -43,7 +42,7 @@ object GroupService {
         memberList : (MemberListDto?) -> Unit
     ) {
 
-        val group = AlarmonyServer.groupApi
+        val group = AlarmonyServer().groupApi
         Log.i("response", "[그룹검색] --> $keyword")
 
         group.searchGroup(
