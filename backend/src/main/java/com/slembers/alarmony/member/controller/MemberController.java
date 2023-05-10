@@ -16,16 +16,12 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.mail.MessagingException;
 import javax.validation.Valid;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
+
 
 @RestController
 @RequestMapping("/members")
@@ -36,12 +32,10 @@ public class MemberController {
     private final MemberService memberService;
     private final EmailVerifyService emailVerifyService;
 
-    private final BCryptPasswordEncoder passwordEncoder;
 
     /**
      * 회원가입
      */
-
     @PostMapping("/sign-up")
     public ResponseEntity<MessageResponseDto> signUp(@Valid @RequestBody SignUpDto signUpDto) {
 
@@ -78,7 +72,7 @@ public class MemberController {
 
 
     /**
-     * 인증 이메일 확인
+     * 회원 가입 인증 이메일 확인
      */
     @GetMapping("/verify/{key}")
     public ResponseEntity<String> getVerify(@PathVariable String key) {
@@ -89,12 +83,12 @@ public class MemberController {
     }
 
 
+    /**
+     * test용 API
+     */
     @GetMapping("/test")
-    public void test(@AuthenticationPrincipal User user) {
-        user.getAuthorities();
-        log.info("test진입");
-        log.info("test 진입함@@@@@@@@@@@@@@@@@@@@@" + SecurityUtil.getCurrentUsername()); //
-
+    public void test() {
+        log.info("[test 진입함]" + SecurityUtil.getCurrentUsername());
     }
 
     /**
@@ -109,9 +103,11 @@ public class MemberController {
 
     @PutMapping("/regist-token")
     public ResponseEntity<String> putRegistrationToken(@RequestBody PutRegistrationTokenRequestDto registrationTokenRequestDto) {
+
         String username = SecurityUtil.getCurrentUsername();
         memberService.putRegistrationToken(username, registrationTokenRequestDto.getRegistrationToken());
         return new ResponseEntity<>("등록토큰 변경에 성공했습니다.", HttpStatus.OK);
+
     }
 
 
@@ -122,6 +118,7 @@ public class MemberController {
     public ResponseEntity<MessageResponseDto> findId(@RequestBody FindMemberIdDto findMemberIdDto) throws MessagingException {
 
         return new ResponseEntity<>(memberService.findMemberId(findMemberIdDto), HttpStatus.OK);
+
     }
 
 
@@ -129,22 +126,20 @@ public class MemberController {
      * 비밀번호 찾기
      */
     @PostMapping("/find-pw")
-    public ResponseEntity<String> findPassword(@RequestBody FindPasswordDto findPasswordDto) {
+    public ResponseEntity<MessageResponseDto> findPassword(@RequestBody FindPasswordDto findPasswordDto) {
 
-        memberService.findMemberPassword(findPasswordDto);
-        return new ResponseEntity<>("임시 비밀번호 발급", HttpStatus.OK);
+        return new ResponseEntity<>(memberService.findMemberPassword(findPasswordDto), HttpStatus.OK);
+
     }
 
     /**
      * 회원 정보 조회하기
      */
-
     @GetMapping("/info")
     public ResponseEntity<MemberResponseDto> getMemberInfo() {
 
-        String username = SecurityUtil.getCurrentUsername();
-        log.info(username+ " /info 진입");
-        return new ResponseEntity<>(memberService.getMemberInfo(username), HttpStatus.OK);
+        return new ResponseEntity<>(memberService.getMemberInfo(SecurityUtil.getCurrentUsername()), HttpStatus.OK);
+
     }
 
 
@@ -152,9 +147,9 @@ public class MemberController {
      * 회원 탈퇴 (비활성화)
      */
     @DeleteMapping()
-    public ResponseEntity<MessageResponseDto> deleteMember(){
+    public ResponseEntity<MessageResponseDto> deleteMember() {
 
-        return new ResponseEntity<>(memberService.deleteMember(SecurityUtil.getCurrentUsername()),HttpStatus.OK);
+        return new ResponseEntity<>(memberService.deleteMember(SecurityUtil.getCurrentUsername()), HttpStatus.OK);
 
     }
 
@@ -165,20 +160,18 @@ public class MemberController {
     public ResponseEntity<MemberInfoDto> modifyMemberInfo(@ModelAttribute ModifiedMemberInfoDto modifiedMemberInfoDto) throws IOException {
 
         log.info(modifiedMemberInfoDto.getNickname());
-        return new ResponseEntity<>(memberService.modifyMemberInfo(SecurityUtil.getCurrentUsername(), modifiedMemberInfoDto) , HttpStatus.OK);
+        return new ResponseEntity<>(memberService.modifyMemberInfo(SecurityUtil.getCurrentUsername(), modifiedMemberInfoDto), HttpStatus.OK);
+
     }
 
 
     /**
      * 비밀번호 변경
      */
-
     @PatchMapping("/change-pwd")
-    public ResponseEntity<MessageResponseDto> changePassword(@RequestBody @Valid ChangePasswordDto changePasswordDto){
+    public ResponseEntity<MessageResponseDto> changePassword(@RequestBody @Valid ChangePasswordDto changePasswordDto) {
 
-        return new ResponseEntity<>(memberService.changePassword(SecurityUtil.getCurrentUsername(), changePasswordDto),HttpStatus.OK);
-
+        return new ResponseEntity<>(memberService.changePassword(SecurityUtil.getCurrentUsername(), changePasswordDto), HttpStatus.OK);
 
     }
-
 }

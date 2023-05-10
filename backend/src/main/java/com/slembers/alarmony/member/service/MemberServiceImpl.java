@@ -202,7 +202,7 @@ public class MemberServiceImpl implements MemberService {
      */
     @Transactional
     @Override
-    public void findMemberPassword(FindPasswordDto findPasswordDto) {
+    public MessageResponseDto findMemberPassword(FindPasswordDto findPasswordDto) {
 
         Member member = memberRepository.findMemberByUsernameAndEmail(findPasswordDto.getUsername(), findPasswordDto.getEmail())
                 .orElseThrow(() -> new CustomException(MemberErrorCode.MEMBER_NOT_FOUND));
@@ -222,6 +222,8 @@ public class MemberServiceImpl implements MemberService {
         member.encodePassword(passwordEncoder);
 
         memberRepository.save(member);
+
+        return new MessageResponseDto("m200","임시 비밀번호 발급 완료");
 
     }
 

@@ -59,7 +59,7 @@ public interface MemberService {
      * 비밀 번호 찾기
      */
 
-    void findMemberPassword(FindPasswordDto findPasswordDto);
+    MessageResponseDto findMemberPassword(FindPasswordDto findPasswordDto);
 
     /**
      * 회원 정보 조회하기
