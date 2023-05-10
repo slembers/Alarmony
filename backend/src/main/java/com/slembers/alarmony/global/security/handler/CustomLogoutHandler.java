@@ -107,7 +107,7 @@ public class CustomLogoutHandler implements LogoutHandler {
         try {
             mapper.writeValue(response.getOutputStream(), body);
         }catch (IOException e){
-            log.error("[로그아웃] 네트워크에러로 response에 값 담을때 문제 발생 ");
+            log.error("[로그아웃-네트워크 에러] response에 값 담을때 문제 발생 ");
         }
         response.setStatus(HttpServletResponse.SC_OK);
 
