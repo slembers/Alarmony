@@ -30,23 +30,29 @@ object GroupService {
         vibrate : Boolean? = true
     ) : Long? {
         val groupApi = AlarmonyServer().groupApi
-        val response = groupApi.addGroupAlarm(Group(
-            title = title!!,
-            hour = hour,
-            minute = minute,
-            alarmDate = alarmDate,
-            soundName = soundName!!,
-            soundVolume = soundVolume!!,
-            vibrate = vibrate!!
-        )).body()
-        Log.d("response","[그룹생성] response : $responseGroup")
-        val message = groupApi.addMembers(
-            response?.groupId,
-            hashMapOf("members" to (members ?: listOf()))
-        )
-        Log.d("response","[그룹생성] response : $message")
+        try {
+            val response = groupApi.addGroupAlarm(Group(
+                title = title!!,
+                hour = hour,
+                minute = minute,
+                alarmDate = alarmDate,
+                soundName = soundName!!,
+                soundVolume = soundVolume!!,
+                vibrate = vibrate!!
+            )).body()
+            Log.d("response","[그룹생성] response : $response")
+//            val message = groupApi.addMembers(
+//                response?.groupId,
+//                hashMapOf("members" to (members ?: listOf()))
+//            )
+//            Log.d("response","[그룹생성] response : $message")
 
-        return response?.groupId
+            return response?.groupId
+        } catch ( e : Exception ) {
+            Log.d("exception","저장 진생 중 에러 발행")
+            Log.d("exception","에러 원인 : ${e.printStackTrace()}")
+        }
+        return -1
 //        groupApi.addGroupAlarm(
 //            group = Group(
 //                title = title!!,

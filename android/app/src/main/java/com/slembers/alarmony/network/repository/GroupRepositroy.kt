@@ -15,6 +15,7 @@ import retrofit2.http.Query
 
 interface GroupRepositroy {
 
+    @POST("alarms")
     suspend fun addGroupAlarm(
         @Body group : Group
     ) : Response<GroupDto>
@@ -29,6 +30,6 @@ interface GroupRepositroy {
     suspend fun addMembers(
         @Path("groupId", encoded = true) groupId : Long?,
         @Body members : HashMap<String, List<String>>
-    ) : Response<MessageDto>
+    ) : Response<String>
 
 }
