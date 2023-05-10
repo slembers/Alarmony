@@ -57,11 +57,9 @@ public class CustomLogoutHandler implements LogoutHandler {
 
             //엑세스 토큰 블랙 리스트에 저장 ->  남은 유효시간을 구해서 redis에 저장
             redisUtil.setDataExpireWithSecond(BLACKLIST_HEADER + accessToken, "", jwtTokenProvider.getAccessTokenExpirationTime(accessToken));
-            try {
+
                 setResponseMessage(request, response);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
+
         } else if (realRefreshToken.equals(refreshToken)) {
 
             //로그아웃시킨다.
@@ -75,11 +73,9 @@ public class CustomLogoutHandler implements LogoutHandler {
             log.info("남은 access_token 시간" + jwtTokenProvider.getAccessTokenExpirationTime(accessToken));
             redisUtil.setDataExpireWithSecond(BLACKLIST_HEADER + accessToken, "", jwtTokenProvider.getAccessTokenExpirationTime(accessToken));
 
-            try {
+
                 setResponseMessage(request, response);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
+
 
         } else if (!Objects.isNull(realRefreshToken) && !realRefreshToken.equals(refreshToken)) {
             //로그아웃을 시킬지 말지  -> 보안상 문제가 있는 경우이다.
@@ -99,7 +95,7 @@ public class CustomLogoutHandler implements LogoutHandler {
         // 유효성 체크
     }
 
-    private void setResponseMessage(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    private void setResponseMessage(HttpServletRequest request, HttpServletResponse response)  {
 
         final Map<String, Object> body = new HashMap<>();
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
@@ -111,8 +107,7 @@ public class CustomLogoutHandler implements LogoutHandler {
         try {
             mapper.writeValue(response.getOutputStream(), body);
         }catch (IOException e){
-            log.error("[로그아웃] response에 값 담을때 에러 발생 ");
-            throw new IOException();
+            log.error("[로그아웃] 네트워크에러로 response에 값 담을때 문제 발생 ");
         }
         response.setStatus(HttpServletResponse.SC_OK);
 
