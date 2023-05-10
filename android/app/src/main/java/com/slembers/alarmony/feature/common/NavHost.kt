@@ -81,13 +81,14 @@ fun NavController(
 
         composable(
             route = "${NavItem.GroupDetails.route}/{alarmId}",
-            arguments = listOf(navArgument("alarmId") {
-                type = NavType.StringType
-            })
+            arguments = listOf(
+                navArgument("alarmId") {
+                    type = NavType.LongType
+                }
+            )
         ) { entry ->
-            val alarmId = entry.arguments?.getString("alarmId")
-            Log.d("GroupDetails","[알람 상세] $alarmId")
-            GroupDetailsScreen(navController, alarmId )
+            val alarmId = entry.arguments?.getLong("alarmId")
+            GroupDetailsScreen(navController, alarmId)
         }
 
     }
