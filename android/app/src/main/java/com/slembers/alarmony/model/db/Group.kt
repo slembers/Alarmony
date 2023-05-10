@@ -7,7 +7,6 @@ data class Group(
     val hour : Int = 10,
     val minute : Int = 0,
     val alarmDate : List<Boolean>,
-    val members : List<String>?,
     val soundName : String,
     val soundVolume : Float = 7f,
     val vibrate : Boolean = false
