@@ -65,7 +65,7 @@ public class AlertServiceImpl implements AlertService {
     }
 
     private Alert createInviteAlert(Member receiver, Member sender, Alarm alarm) {
-        String content = String.format("'%s' 그룹 초대입니다.'", alarm.getTitle());
+        String content = String.format("'%s' 그룹 초대입니다.", alarm.getTitle());
         return Alert.builder()
             .type(AlertTypeEnum.INVITE)
             .content(content)

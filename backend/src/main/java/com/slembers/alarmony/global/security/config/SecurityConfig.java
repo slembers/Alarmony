@@ -51,7 +51,7 @@ public class SecurityConfig  {
 
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer()  {
-        return (web) -> web.ignoring().antMatchers("/members/sign-up", "/members/verify/**", "/members/login", "/members/refresh", "/members/find-id", "/members/find-pw");
+        return (web) -> web.ignoring().antMatchers("/members/sign-up", "/members/verify/**", "/members/login", "/members/refresh", "/members/find-id", "/members/find-pw","/members/check-id","/members/check-email","/members/check-nickname");
     }
 
     @Bean
@@ -78,7 +78,7 @@ public class SecurityConfig  {
                 .addFilterBefore(new JwtExceptionFilter(), UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(new JwtExceptionFilter(), JwtAuthorizationFilter.class)
                 .addFilterBefore(new JwtExceptionFilter(), LogoutFilter.class)
-                .logout().logoutUrl("/logout").addLogoutHandler(customLogoutHandler).logoutSuccessHandler(((request, response, authentication) ->
+                .logout().logoutUrl("/members/logout").addLogoutHandler(customLogoutHandler).logoutSuccessHandler(((request, response, authentication) ->
                         SecurityContextHolder.clearContext()
                 ));
         return http.build();

@@ -13,12 +13,12 @@ import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
-object AlarmonyServer {
+class AlarmonyServer {
 
-    val gson = GsonBuilder().serializeNulls().create()
+    val gson = GsonBuilder().setLenient().create()
 
-//    private const val BASE_URL = "http://192.168.0.102:5000/api/"
-    private const val BASE_URL = "https://k8c205.p.ssafy.io/api/"
+//    private val BASE_URL = "http://192.168.0.102:5000/api/"
+    private val BASE_URL = "https://k8c205.p.ssafy.io/api/"
 
     private fun okHttpClient(interceptor : Appinterceptor): OkHttpClient {
         return OkHttpClient.Builder()
@@ -31,7 +31,7 @@ object AlarmonyServer {
 
     private val retrofit : Retrofit = Retrofit.Builder()
         .baseUrl(BASE_URL)
-        .addConverterFactory(GsonConverterFactory.create())
+        .addConverterFactory(GsonConverterFactory.create(gson))
         .client(okHttpClient(Appinterceptor()))
         .build()
 
@@ -40,10 +40,10 @@ object AlarmonyServer {
 
     @OptIn(ExperimentalMaterial3Api::class, ExperimentalGlideComposeApi::class)
     class Appinterceptor : Interceptor {
-        val accessToken = MainActivity.prefs.getString("accessToken","")
         override fun intercept(chain: Interceptor.Chain): Response = with(chain) {
+            val accessToken : String? = MainActivity.prefs.getString("accessToken","")
             val newRequest = request().newBuilder()
-                .addHeader("Authorization", "Bearer " + accessToken)
+                .addHeader("Authorization", "Bearer $accessToken")
                 .build()
             proceed(newRequest)
         }
