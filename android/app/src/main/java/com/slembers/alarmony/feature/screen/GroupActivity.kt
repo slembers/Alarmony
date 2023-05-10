@@ -1,6 +1,7 @@
 package com.slembers.alarmony.feature.screen
 
 import android.app.Activity
+import android.app.Application
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -61,6 +62,11 @@ import androidx.navigation.compose.rememberNavController
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.slembers.alarmony.MainActivity
 import com.slembers.alarmony.R
+import com.slembers.alarmony.feature.alarm.Alarm
+import com.slembers.alarmony.feature.alarm.AlarmDto
+import com.slembers.alarmony.feature.alarm.AlarmViewModel
+import com.slembers.alarmony.feature.alarm.AlarmViewModelFactory
+import com.slembers.alarmony.feature.alarm.saveAlarm
 import com.slembers.alarmony.feature.common.NavItem
 import com.slembers.alarmony.feature.common.ui.compose.GroupCard
 import com.slembers.alarmony.feature.common.ui.compose.GroupSubjet
@@ -75,6 +81,12 @@ import com.slembers.alarmony.model.db.Group
 import com.slembers.alarmony.model.db.dto.MemberDto
 import com.slembers.alarmony.network.service.GroupService
 import com.slembers.alarmony.viewModel.GroupViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import kotlin.streams.toList
 
 @ExperimentalMaterial3Api
@@ -146,22 +158,46 @@ fun GroupScreen(
                 text = "저장",
                 onClick = {
                     Log.d("viewmodel:ID","[그룹생성] groupActivity ID : $viewModel")
-
-                    GroupService.addGroupAlarm(
-                        title = title,
-                        hour = timePickerState?.hour ?: 7,
-                        minute = timePickerState?.hour ?: 0,
-                        alarmDate = weeks.map {
-                            isWeeks?.getValue(it) ?: false
-                        }.toList(),
-                        members = members?.map { it.nickname }?.toList(),
-                        soundName = soundName,
-                        soundVolume = soundVolume,
-                        vibrate = vibration,
-                        context = context,
-                        navController = navController
-                    )
-                }
+                    CoroutineScope(Dispatchers.Main).launch {
+                        val groupId = GroupService.addGroupAlarm(
+                            title = title,
+                            hour = timePickerState?.hour ?: 7,
+                            minute = timePickerState?.hour ?: 0,
+                            alarmDate = weeks.map {
+                                isWeeks?.getValue(it) ?: false
+                            }.toList(),
+                            members = members?.map { it.nickname }?.toList(),
+                            soundName = soundName,
+                            soundVolume = soundVolume,
+                            vibrate = vibration
+                        )
+                        if(groupId != null && groupId > 0) {
+                            Log.d("response", "[그룹생성] response : $groupId")
+                            suspend fun save() = coroutineScope {
+                                async {
+                                    saveAlarm(
+                                        AlarmDto.toDto(
+                                            Alarm(
+                                                alarm_id = groupId,
+                                                title = title!!,
+                                                hour = timePickerState?.hour!!,
+                                                minute = timePickerState?.minute!!,
+                                                alarm_date = weeks.map {
+                                                    isWeeks?.getValue(it) ?: false
+                                                }.toList(),
+                                                sound_name = soundName!!,
+                                                sound_volumn = soundVolume?.toInt()!!,
+                                                vibrate = vibration!!
+                                            )
+                                        ), context
+                                    )
+                                }
+                            }.await()
+                            save()
+                            if (groupId > 0) (context as Activity).finish()
+                        }
+                    }
+               }
             )
         },
         content = { innerPadding ->

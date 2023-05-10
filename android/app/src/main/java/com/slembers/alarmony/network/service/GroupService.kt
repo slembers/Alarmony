@@ -12,13 +12,14 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
 object GroupService {
 
-    fun addGroupAlarm(
+    suspend fun addGroupAlarm(
         title : String?,
         hour : Int,
         minute : Int,
@@ -26,28 +27,26 @@ object GroupService {
         members : List<String>?,
         soundName : String? = "자장가",
         soundVolume : Float? = 7f,
-        vibrate : Boolean? = true,
-        context: Context,
-        navController: NavHostController
-    ) {
+        vibrate : Boolean? = true
+    ) : Long? {
         val groupApi = AlarmonyServer().groupApi
-        CoroutineScope(Dispatchers.IO).async {
-            val responseGroup = groupApi.addGroupAlarm(Group(
-                title = title!!,
-                hour = hour,
-                minute = minute,
-                alarmDate = alarmDate,
-                soundName = soundName!!,
-                soundVolume = soundVolume!!,
-                vibrate = vibrate!!
-            ))
-            Log.d("response","[그룹생성] response : $responseGroup")
-            val message = groupApi.addMembers(
-                responseGroup.groupId,
-                hashMapOf("members" to (members ?: listOf()))
-            )
-            Log.d("response","[그룹생성] response : $message")
-        }
+        val response = groupApi.addGroupAlarm(Group(
+            title = title!!,
+            hour = hour,
+            minute = minute,
+            alarmDate = alarmDate,
+            soundName = soundName!!,
+            soundVolume = soundVolume!!,
+            vibrate = vibrate!!
+        )).body()
+        Log.d("response","[그룹생성] response : $responseGroup")
+        val message = groupApi.addMembers(
+            response?.groupId,
+            hashMapOf("members" to (members ?: listOf()))
+        )
+        Log.d("response","[그룹생성] response : $message")
+
+        return response?.groupId
 //        groupApi.addGroupAlarm(
 //            group = Group(
 //                title = title!!,
