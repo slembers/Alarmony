@@ -21,7 +21,7 @@ public interface MemberService {
     /**
      * 회원 가입
      */
-    void signUp(SignUpDto signUpDto);
+    MessageResponseDto signUp(SignUpDto signUpDto);
 
 
     /**
