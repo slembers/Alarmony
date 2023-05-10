@@ -4,5 +4,5 @@ import com.google.gson.annotations.SerializedName
 
 data class CheckEmailResponseDto(
 
-    @SerializedName("isDulicated") val isDulicated: Boolean
+    @SerializedName("duplicated") val duplicated: Boolean
 )

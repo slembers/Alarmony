@@ -55,6 +55,7 @@ interface MemberRepository {
     @GET("auth/logout")
     fun logOut(
 
+
     ) :Call<Unit>
 
     @DELETE("member")
