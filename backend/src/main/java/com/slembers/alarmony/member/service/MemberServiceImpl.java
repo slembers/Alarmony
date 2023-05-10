@@ -57,7 +57,7 @@ public class MemberServiceImpl implements MemberService {
      */
     @Transactional
     @Override
-    public void signUp(SignUpDto signUpDto) {
+    public MessageResponseDto signUp(SignUpDto signUpDto) {
 
         checkDuplicatedField(signUpDto);
 
@@ -69,6 +69,8 @@ public class MemberServiceImpl implements MemberService {
         emailVerifyService.sendVerificationMail(member.getUsername(), member.getEmail());
 
         memberRepository.save(member);
+
+        return new MessageResponseDto("m201",signUpDto.getUsername() +"의 회원가입이 완료되었습니다. 이메일 인증을 완료해주세요");
 
     }
 
@@ -120,10 +122,13 @@ public class MemberServiceImpl implements MemberService {
      */
 
     private void checkDuplicatedField(SignUpDto signUpDto) {
-
+        log.info("중복체크");
         //아이디 중복 체크
-        if (checkForDuplicateId(signUpDto.getUsername()).isDuplicated())
+        if (checkForDuplicateId(signUpDto.getUsername()).isDuplicated()){
+            log.error("아이디 중복");
             throw new CustomException(MemberErrorCode.ID_DUPLICATED);
+        }
+
         //닉네임 중복 체크
         if (checkForDuplicateNickname(signUpDto.getNickname()).isDuplicated())
             throw new CustomException(MemberErrorCode.NICKNAME_DUPLICATED);
@@ -189,7 +194,7 @@ public class MemberServiceImpl implements MemberService {
 
         emailVerifyService.sendTemplateEmail("알라모니 아이디 찾기", findMemberIdDto.getEmail(), "FindId", values);
 
-        return new MessageResponseDto(findMemberIdDto.getEmail() + "로 아이디 찾기 안내 메일을 전송하였습니다.");
+        return new MessageResponseDto("m200",findMemberIdDto.getEmail() + "로 아이디 찾기 안내 메일을 전송하였습니다.");
     }
 
     /**
@@ -267,7 +272,7 @@ public class MemberServiceImpl implements MemberService {
 
         memberRepository.save(member);
 
-        return new MessageResponseDto("회원 탈퇴 완료");
+        return new MessageResponseDto("m200","회원 탈퇴 완료");
     }
 
     /**
@@ -339,7 +344,6 @@ public class MemberServiceImpl implements MemberService {
 
         memberRepository.save(member);
 
-
-        return new MessageResponseDto("비밀번호 변경을 완료하였습니다.");
+        return new MessageResponseDto("m200","비밀번호 변경을 완료하였습니다.");
     }
 }

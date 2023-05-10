@@ -56,12 +56,13 @@ import androidx.navigation.NavHostController
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.slembers.alarmony.R
 import com.slembers.alarmony.feature.alarm.Alarm
+import com.slembers.alarmony.feature.alarm.AlarmDto
 import com.slembers.alarmony.feature.alarm.AlarmViewModel
 import com.slembers.alarmony.feature.alarm.AlarmViewModelFactory
 import com.slembers.alarmony.feature.alarm.alarm1
 import com.slembers.alarmony.feature.alarm.notiSample
-import com.slembers.alarmony.feature.alarm.setAlarm
-import com.slembers.alarmony.feature.alarm.setAlarmTest
+import com.slembers.alarmony.feature.alarm.saveTestAlarm
+import com.slembers.alarmony.feature.alarm.setTestAlarm
 import com.slembers.alarmony.feature.common.NavItem
 import com.slembers.alarmony.feature.common.ui.theme.notosanskr
 import com.slembers.alarmony.feature.common.ui.theme.toColor
@@ -178,7 +179,17 @@ fun AlarmListScreen(navController : NavHostController) {
                     ).show()
                 }
                 ////////////////// 테스트용 버튼
-                Button(onClick = {setAlarmTest(context, alarm1)
+                Button(onClick = { val alarm999 = AlarmDto(
+                    999L,
+                    "장덕모임",
+                    8,
+                    45,
+                    listOf(true, true, true, true, true, true, true),
+                    "자장가",
+                    15,
+                    true
+                )
+                    saveTestAlarm(alarm999, context)
                     Toast.makeText(context, "8초 뒤에 알람이 울립니다.", Toast.LENGTH_SHORT).show()}
                 ) {
                     Text(text = "8초 뒤 울리는 테스트 알람")

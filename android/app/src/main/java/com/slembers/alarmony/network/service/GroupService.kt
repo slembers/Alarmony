@@ -30,7 +30,7 @@ object GroupService {
         context: Context,
         navController: NavHostController
     ) {
-        val groupApi = AlarmonyServer.groupApi
+        val groupApi = AlarmonyServer().groupApi
         CoroutineScope(Dispatchers.IO).async {
             val responseGroup = groupApi.addGroupAlarm(Group(
                 title = title!!,
@@ -97,7 +97,7 @@ object GroupService {
         memberList : (MemberListDto?) -> Unit
     ) {
 
-        val group = AlarmonyServer.groupApi
+        val group = AlarmonyServer().groupApi
         Log.i("response", "[그룹검색] --> $keyword")
 
         group.searchGroup(
@@ -120,5 +120,4 @@ object GroupService {
             }
         })
     }
-
 }
