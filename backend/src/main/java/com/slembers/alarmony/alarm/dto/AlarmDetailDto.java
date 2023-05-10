@@ -10,7 +10,7 @@ import java.util.List;
 
 @Builder(builderMethodName = "alarmToAlarmDetailBuilder", access = AccessLevel.PRIVATE)
 public class AlarmDetailDto {
-    @JsonProperty(value = "alarm_id")
+    @JsonProperty(value = "alarmId")
     private Long alarmId;
 
     @JsonProperty(value = "title")
@@ -22,13 +22,13 @@ public class AlarmDetailDto {
     @JsonProperty(value = "minute")
     private int minute;
 
-    @JsonProperty(value = "alarm_date")
+    @JsonProperty(value = "alarmDate")
     private List<Boolean> alarmDate;
 
-    @JsonProperty(value = "sound_name")
+    @JsonProperty(value = "soundName")
     private String soundName;
 
-    @JsonProperty(value = "sound_volume")
+    @JsonProperty(value = "soundVolume")
     private int soundVolume;
 
     @JsonProperty(value = "vibrate")
