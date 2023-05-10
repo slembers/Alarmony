@@ -4,9 +4,7 @@ import android.content.Context
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.core.os.bundleOf
 import androidx.navigation.NavController
-import androidx.navigation.NavHost
 import androidx.navigation.NavHostController
 import coil.util.CoilUtils.result
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
@@ -27,6 +25,12 @@ import com.slembers.alarmony.network.api.AlarmonyServer
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import android.content.Intent
+import com.google.android.ads.mediationtestsuite.activities.HomeActivity
+import com.slembers.alarmony.feature.screen.GroupActivity
+import com.slembers.alarmony.model.db.dto.CheckEmailResponseDto
+import com.slembers.alarmony.model.db.dto.CheckIdResponseDto
+import com.slembers.alarmony.model.db.dto.CheckNicnameResponseDto
 
 
 object MemberService {
@@ -303,6 +307,144 @@ object MemberService {
             println(e.message)
         }
 
+    }
+
+    @OptIn(ExperimentalGlideComposeApi::class)
+    @ExperimentalMaterial3Api
+    fun logOut(context:Context, navController: NavController) {
+        try{
+            memberApi.logOut().enqueue(object: Callback<Unit> {
+                override fun onResponse(call: Call<Unit>, response: Response<Unit>) {
+                    if(response.isSuccessful) {
+                        Log.d("response", "로그아웃")
+                        Log.d("response", "${response.body()}")
+                        Log.d("response", "${response.code()}")
+                        showDialog("알림", "로그아웃되었어요!", context, navController)
+                        navController.navigate(NavItem.LoginScreen.route)
+                        MainActivity.prefs.reset()
+
+                    } else {
+                        Log.d("response", "로그아웃")
+                        Log.d("response", "${response.body()}")
+                        Log.d("response", "${response}")
+                        Log.d("response", "${response.code()}")
+                        showDialog("알림", "로그아웃실패...", context, navController)
+//                        navController.navigate(NavItem.LoginScreen.route)
+//                        MainActivity.prefs.reset()
+                    }
+                }
+                override fun onFailure(call: Call<Unit>, t: Throwable) {
+                    Log.d("fail", "비밀번호찾기 실패")
+                    showDialog("알림", "뭔가 잘못됐나봐요", context, navController)
+                }
+            })
+
+        } catch(e: Exception) {
+            Log.d("fail", "로그아웃 예외 발생")
+            showDialog("알림", "뭔가 잘못됐나봐요", context, navController)
+
+        }
+
+
+
+
+
+
+
+//        fun signOut(context:Context, navController: NavController)
+    }
+
+    fun checkId(username:String) {
+        try{
+            memberApi.checkId(
+
+                username = username
+            ).enqueue(object: Callback<CheckIdResponseDto> {
+                override fun onResponse(
+                    call: Call<CheckIdResponseDto>,
+                    response: Response<CheckIdResponseDto>
+                ) {
+                    if(response.isSuccessful) {
+                        Log.d("response", "아이디체크")
+                        Log.d("response", "${username}")
+                        Log.d("response", "${response.body()}")
+
+                    } else {
+                        Log.d("response", "아이디체크 실패")
+
+                    }
+                }
+
+                override fun onFailure(call: Call<CheckIdResponseDto>, t: Throwable) {
+                    Log.d("fail", "실패")
+                }
+            })
+        } catch (e: Exception) {
+            Log.d("fail","실패2")
+
+        }
+    }
+
+    fun checkEmail(email:String) {
+        try{
+            memberApi.checkEmail(
+
+                email = email
+            ).enqueue(object: Callback<CheckEmailResponseDto> {
+                override fun onResponse(
+                    call: Call<CheckEmailResponseDto>,
+                    response: Response<CheckEmailResponseDto>
+                ) {
+                    if(response.isSuccessful) {
+                        Log.d("response", "이메일체크")
+                        Log.d("response", "${email}")
+                        Log.d("response", "${response.body()}")
+
+                    } else {
+                        Log.d("response", "이메일 실패")
+
+                    }
+                }
+
+                override fun onFailure(call: Call<CheckEmailResponseDto>, t: Throwable) {
+                    Log.d("fail", "실패")
+                }
+            })
+        } catch (e: Exception) {
+            Log.d("fail","실패2")
+
+        }
+    }
+
+    fun checkNickname(nickname:String) {
+        try{
+            memberApi.checkNickname(
+
+                nickname = nickname
+            ).enqueue(object: Callback<CheckNicnameResponseDto> {
+                override fun onResponse(
+                    call: Call<CheckNicnameResponseDto>,
+                    response: Response<CheckNicnameResponseDto>
+                ) {
+                    if(response.isSuccessful) {
+                        Log.d("response", "닉네임체크")
+                        Log.d("response", "${nickname}")
+                        Log.d("response", "${response.body()}")
+
+                    } else {
+                        Log.d("response", "닉네임 실패")
+
+                    }
+                }
+
+                override fun onFailure(call: Call<CheckNicnameResponseDto>, t: Throwable) {
+                    Log.d("fail", "실패")
+                }
+            })
+        } catch (e: Exception) {
+            Log.d("fail","실패2")
+
+        }
     }
 }
 

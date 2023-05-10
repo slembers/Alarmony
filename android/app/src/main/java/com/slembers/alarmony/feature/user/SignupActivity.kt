@@ -36,6 +36,9 @@ import androidx.navigation.ui.NavigationUI.navigateUp
 import com.slembers.alarmony.feature.common.NavItem
 import com.slembers.alarmony.feature.ui.common.ShowAlertDialog
 import com.slembers.alarmony.model.db.SignupRequest
+import com.slembers.alarmony.network.repository.MemberService.checkEmail
+import com.slembers.alarmony.network.repository.MemberService.checkId
+import com.slembers.alarmony.network.repository.MemberService.checkNickname
 import kotlinx.coroutines.runBlocking
 
 
@@ -75,7 +78,13 @@ fun SignupScreen(navController: NavController) {
             ) {
                 TextField(
                     value = username,
-                    onValueChange = { username = it },
+                    onValueChange = {
+                        username = it
+                        checkId(it)
+                                    },
+//                    onValueChange가 될때마다 로그인 중복체크 함수checkID(username)가 작동되도록 수정
+
+
                     label = { Text(text = "아이디") },
 //                    keyboardOptions = KeyboardOptions.Default.copy(
                     keyboardOptions = KeyboardOptions(
@@ -94,7 +103,10 @@ fun SignupScreen(navController: NavController) {
                 TextField(
 
                     value = password,
-                    onValueChange = { password = it },
+                    onValueChange = {
+                        password = it
+
+                                    },
                     label = { Text(text = "비밀번호") },
                     keyboardOptions = KeyboardOptions(
                         keyboardType = KeyboardType.Email,
@@ -139,7 +151,9 @@ fun SignupScreen(navController: NavController) {
 
                 TextField(
                     value = email,
-                    onValueChange = {email = it},
+                    onValueChange = {email = it
+                        checkEmail(it)
+                                    },
                     label = {Text(text = "이메일")},
                     keyboardOptions = KeyboardOptions(
                         keyboardType = KeyboardType.Email,
@@ -157,7 +171,9 @@ fun SignupScreen(navController: NavController) {
                 )
                 TextField(
                     value = nickname,
-                    onValueChange = {nickname = it},
+                    onValueChange = {nickname = it
+                        checkNickname(it)
+                    },
                     keyboardOptions = KeyboardOptions(
                         keyboardType = KeyboardType.Email,
                         imeAction = ImeAction.Done
