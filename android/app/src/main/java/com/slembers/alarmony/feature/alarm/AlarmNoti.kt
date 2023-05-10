@@ -54,7 +54,7 @@ object AlarmNoti {
         ringtone!!.play()
 
         // 사운드 ( 볼륨 범위 0.0f ~ 1.0f )
-        var mp : MediaPlayer = MediaPlayer.create(context, Settings.System.DEFAULT_ALARM_ALERT_URI)
+//        var mp : MediaPlayer = MediaPlayer.create(context, Settings.System.DEFAULT_ALARM_ALERT_URI)
 //        val audioAttributes =
 //            AudioAttributes.Builder().setUsage(AudioAttributes.USAGE_ALARM).build()
 //        mp.setAudioAttributes(audioAttributes)
