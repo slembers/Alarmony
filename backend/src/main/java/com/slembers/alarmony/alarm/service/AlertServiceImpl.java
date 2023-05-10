@@ -25,7 +25,6 @@ import com.slembers.alarmony.member.repository.MemberRepository;
 import java.util.List;
 
 import java.util.Optional;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -47,13 +46,7 @@ public class AlertServiceImpl implements AlertService {
      * @param inviteMemberSetToGroupDto 그룹 초대에 필요한 dto
      */
     @Override
-    public void inviteMemberToGroup(InviteMemberSetToGroupDto inviteMemberSetToGroupDto) {
-
-        List<Member> validMemberList = inviteMemberSetToGroupDto.getNicknames().stream()
-            .map(memberRepository::findByNickname)
-            .filter(Optional::isPresent)
-            .map(Optional::get)
-            .collect(Collectors.toList());
+    public int inviteMemberToGroup(InviteMemberSetToGroupDto inviteMemberSetToGroupDto) {
 
         Member sender = memberRepository.findByUsername(inviteMemberSetToGroupDto.getSender())
             .orElseThrow(() -> new CustomException(MemberErrorCode.MEMBER_NOT_FOUND));
@@ -61,15 +54,25 @@ public class AlertServiceImpl implements AlertService {
         Alarm alarm = alarmRepository.findById(inviteMemberSetToGroupDto.getGroupId())
             .orElseThrow(() -> new CustomException(AlarmErrorCode.ALARM_NOT_FOUND));
 
-        validMemberList.stream()
-            .map(receiver -> Alert.builder()
-                .type(AlertTypeEnum.INVITE)
-                .content(String.format("'%s' 그룹 초대입니다.'", alarm.getTitle()))
-                .sender(sender)
-                .receiver(receiver)
-                .alarm(alarm)
-                .build())
-            .forEach(this::sendInviteAlert);
+        return inviteMemberSetToGroupDto.getNicknames().stream()
+            .map(memberRepository::findByNickname)
+            .flatMap(Optional::stream)
+            .filter(member -> !memberAlarmRepository.existsByMemberAndAlarm(member, alarm))
+            .map(receiver -> createInviteAlert(receiver, sender, alarm))
+            .filter(this::sendInviteAlert)
+            .mapToInt(result -> 1)
+            .sum();
+    }
+
+    private Alert createInviteAlert(Member receiver, Member sender, Alarm alarm) {
+        String content = String.format("'%s' 그룹 초대입니다.", alarm.getTitle());
+        return Alert.builder()
+            .type(AlertTypeEnum.INVITE)
+            .content(content)
+            .sender(sender)
+            .receiver(receiver)
+            .alarm(alarm)
+            .build();
     }
 
     /**
@@ -77,8 +80,7 @@ public class AlertServiceImpl implements AlertService {
      *
      * @param alert 알림 객체
      */
-    @Override
-    public void sendInviteAlert(Alert alert) {
+    private boolean sendInviteAlert(Alert alert) {
         try {
             String targetMobile = alert.getReceiver().getRegistrationToken();
             // 메시지 설정
@@ -93,36 +95,16 @@ public class AlertServiceImpl implements AlertService {
             String response = FirebaseMessaging.getInstance().send(message);
             // 결과 출력
             log.info("초대 메시지 전송 완료: " + response);
-
             // 푸쉬 알림을 보냈으니, 알림 테이블에도 추가해야 한다
-
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            throw new CustomException(AlertErrorCode.ALERT_INVITE_SEND_ERROR);
-        }
-
-        try {
             alertRepository.save(alert);
+
+            return true;
         } catch (Exception e) {
             log.error(e.getMessage());
-            throw new CustomException(AlertErrorCode.ALERT_SERVER_ERROR);
+            return false;
         }
     }
 
-    /**
-     * 알림 테스트 전송 메소드
-     */
-    @Override
-    public void testPushAlert(String username) {
-        Member member = memberRepository.findByUsername(username)
-            .orElseThrow(() -> new CustomException(MemberErrorCode.MEMBER_NOT_FOUND));
-        try {
-            sendMessageTo(member.getRegistrationToken(), "test", "This is Test Message");
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            throw new CustomException(AlertErrorCode.ALERT_SERVER_ERROR);
-        }
-    }
 
     /**
      * 특정 유저의 알림 목록 가져오기
@@ -276,32 +258,6 @@ public class AlertServiceImpl implements AlertService {
         // 푸쉬 알림을 보냈으니, 알림 테이블에도 추가해야 한다
         try {
             alertRepository.save(alert);
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            throw new CustomException(AlertErrorCode.ALERT_SERVER_ERROR);
-        }
-    }
-
-    /**
-     * @param targetToken 목표 기기 토큰
-     * @param title       제목
-     * @param body        내용
-     */
-    public void sendMessageTo(String targetToken, String title, String body) {
-        try {
-            // 메시지 설정
-            Message message = Message.builder()
-                .setNotification(Notification.builder()
-                    .setTitle("Alarmony")
-                    .setBody("일해라 박성완")
-                    .build())
-                .setToken(targetToken)
-                .build();
-
-            // 웹 API 토큰을 가져와서 보냄
-            String response = FirebaseMessaging.getInstance().send(message);
-            // 결과 출력
-            log.info("Successfully sent message: " + response);
         } catch (Exception e) {
             log.error(e.getMessage());
             throw new CustomException(AlertErrorCode.ALERT_SERVER_ERROR);

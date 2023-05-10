@@ -1,16 +1,6 @@
 package com.slembers.alarmony.feature.alarm
 
-data class AlarmData (
-    val alarm_id : Long,
-    val title : String,
-    val hour : Int,
-    val minute : Int,
-    val alarm_date : List<Boolean>,
-    val sound_name : String,
-    val sound_volumn : Int,
-    val vibrate : Boolean
-)
-val alarm1 = Alarm(
+val alarm1 = AlarmDto(
     0,
     "장덕모임",
     8,
@@ -21,7 +11,7 @@ val alarm1 = Alarm(
     true
 )
 
-val alarm2 = Alarm(
+val alarm2 = AlarmDto(
     1,
     "수완모임",
     18,
@@ -32,7 +22,7 @@ val alarm2 = Alarm(
     true
 )
 
-val alarm3 = Alarm(
+val alarm3 = AlarmDto(
     2,
     "신창모임",
     21,
@@ -43,7 +33,7 @@ val alarm3 = Alarm(
     false
 )
 
-val alarm4 = Alarm(
+val alarm4 = AlarmDto(
     3,
     "미라클 모닝",
     6,

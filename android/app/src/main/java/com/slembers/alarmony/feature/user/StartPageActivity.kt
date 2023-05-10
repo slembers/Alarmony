@@ -1,15 +1,16 @@
 package com.slembers.alarmony.feature.user
 
 
+//import com.slembers.alarmony.feature.user.Navigation
+
+
+//통신api
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
-
-
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.Image
-
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -17,46 +18,30 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Button
 import androidx.compose.material.Text
 import androidx.compose.material.TextButton
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.Alignment
-
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.TextField
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.BlendMode.Companion.Screen
-import androidx.compose.material.Checkbox
-
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.unit.dp
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import androidx.navigation.NavOptions
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.rememberNavController
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
-import com.slembers.alarmony.MainActivity.Companion.prefs
 import com.slembers.alarmony.R
 import com.slembers.alarmony.feature.common.NavItem
-
-//import com.slembers.alarmony.feature.user.Navigation
-
-
-//통신api
 import com.slembers.alarmony.network.repository.MemberService.login
-
 
 
 enum class Routes() {
@@ -84,11 +69,6 @@ class StartPageActivity : AppCompatActivity() {
 //                LoginScreen()
 //                Navigation()
 
-
-
-
-
-
             }
         }
     }
@@ -106,10 +86,8 @@ fun LoginScreen(navController: NavController) {
     // 아이디와 비밀번호에 대한 상태를 저장할 mutableState 변수 선언
     val idState = remember { mutableStateOf("") }
     val passwordState = remember { mutableStateOf("") }
-    if (prefs.getBoolean("auto_login", false) == true) {
-        navController.navigate(NavItem.AlarmListScreen.route)
-
-    }
+    var isSuccess = false
+    var msg = ""
 
     Column(
         verticalArrangement = Arrangement.Center,
@@ -176,35 +154,13 @@ fun LoginScreen(navController: NavController) {
         Button(
 //MutableState<String>와 String은 형식이 다르기에 String 값을 보내기 위해 .value를 붙여준다.
             onClick = {
-
                 Log.d("확인", "${idState.value}, ${passwordState.value} +로그인")
-                      login(idState.value,
-                          passwordState.value,
-                          navController,
-                          context
-                      ) { resultText, accessToken, refreshToken ->
-                        //토스트 메시지와 sharedpreferce에 저장하도록!!!!
-                          Toast.makeText(context, "${resultText}",Toast.LENGTH_SHORT).show()
-//                          Log.d("넘어온것들", "${accessToken}")
-//                          Log.d("넘어온것들", "${refreshToken}")
-//                          Log.d("넘어온것들", "${resultText}")
-
-                          prefs.setString("accessToken", accessToken)
-                          prefs.setString("refreshToken", refreshToken)
-                          prefs.setString("id",idState.value )
-                          prefs.setString("password",passwordState.value )
-//                          prefs.setBoolean("auto_login", checkedState.value)
-                          val token = prefs.getString("accessToken", "기본값")
-                          Log.d("getstring확인", "${token}")
-
-                          // 토큰 값을 이용하여 다른 작업을 수행할 수 있음
-                      }
-//                아이디 비밀번호 초기화
-                idState.value =""
-                passwordState.value=""
-
-
-
+                login(
+                    username = idState.value,
+                    password = passwordState.value,
+                    navController = navController,
+                    context = context
+                )
             },
             modifier = Modifier
                 .padding(vertical = 8.dp)

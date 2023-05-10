@@ -1,5 +1,6 @@
 package com.slembers.alarmony.feature.common
 
+import android.util.Log
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
@@ -11,6 +12,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
+import com.slembers.alarmony.MainActivity
 import com.slembers.alarmony.feature.alarm.NotiListScreen
 import com.slembers.alarmony.feature.screen.AlarmListScreen
 import com.slembers.alarmony.feature.screen.GroupScreen
@@ -34,14 +36,14 @@ import com.slembers.alarmony.viewModel.GroupViewModel
 fun NavController(
     navController : NavHostController = rememberNavController()
 ) {
-
-    val groupModel : GroupViewModel = viewModel()
-
+    val accessToken = MainActivity.prefs.getString("accessToken","")
+    Log.d("token","[로그인] $accessToken !!")
+    val startDestinate = if(accessToken.isNotBlank()) NavItem.AlarmListScreen.route else NavItem.LoginScreen.route
     NavHost(
         modifier = Modifier.fillMaxSize(),
         navController = navController,
 //        startDestination = NavItem.Group.route
-        startDestination = NavItem.LoginScreen.route
+        startDestination = startDestinate
     ) {
         // 알람 목록 조회 페이지
         composable( route = NavItem.AlarmListScreen.route) {
