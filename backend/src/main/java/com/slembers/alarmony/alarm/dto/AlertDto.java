@@ -5,10 +5,10 @@ import com.slembers.alarmony.alarm.entity.AlertTypeEnum;
 
 public class AlertDto {
 
-    @JsonProperty(value = "alert_id")
+    @JsonProperty(value = "alertId")
     private Long id;
 
-    @JsonProperty(value = "profile_img")
+    @JsonProperty(value = "profileImg")
     private String profileImg;
 
     @JsonProperty(value = "content")

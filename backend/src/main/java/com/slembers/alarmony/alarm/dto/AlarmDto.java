@@ -9,7 +9,7 @@ import java.util.List;
 @NoArgsConstructor
 public class AlarmDto {
 
-    @JsonProperty(value = "alarm_id")
+    @JsonProperty(value = "alarmId")
     private Long alarmId;
 
     @JsonProperty(value = "title")
@@ -21,7 +21,7 @@ public class AlarmDto {
     @JsonProperty(value = "minute")
     private int minute;
 
-    @JsonProperty(value = "alarm_date")
+    @JsonProperty(value = "alarmDate")
     private List<Boolean> alarmDate;
 
     /**
