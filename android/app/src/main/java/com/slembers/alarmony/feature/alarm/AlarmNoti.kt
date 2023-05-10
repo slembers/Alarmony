@@ -5,12 +5,14 @@ import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
+import android.media.AudioAttributes
 import android.media.Ringtone
 import android.media.RingtoneManager
-import android.net.Uri
 import android.os.Build
 import androidx.core.app.NotificationCompat
+import androidx.test.core.app.ApplicationProvider.getApplicationContext
 import com.slembers.alarmony.R
+
 
 object AlarmNoti {
     private var NotificationID = 1005
@@ -32,11 +34,16 @@ object AlarmNoti {
         mBuilder!!.priority = Notification.PRIORITY_HIGH
         mBuilder!!.setOnlyAlertOnce(true)
 
-        // 사운드
-        val alarmBell: Uri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM)
-        ringtone = RingtoneManager.getRingtone(context, alarmBell)
+        // 무음모드 강제 소리 켜기
+        val uri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM)
+        ringtone = RingtoneManager.getRingtone(context, uri)
+        val audioAttributes =
+            AudioAttributes.Builder().setUsage(AudioAttributes.USAGE_ALARM).build()
+
+        ringtone!!.setAudioAttributes(audioAttributes)
         ringtone!!.play()
 
+        // 사운드
 //        var mp : MediaPlayer = MediaPlayer.create(context, Settings.System.DEFAULT_ALARM_ALERT_URI)
 //        mp.start();
 
