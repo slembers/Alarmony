@@ -2,8 +2,9 @@ plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
     id 'kotlin-android'
-    id 'kotlin-android-extensions'
+    id 'org.jetbrains.kotlin.plugin.serialization' version '1.8.21'
     id 'kotlin-kapt'
+    id 'kotlin-parcelize'
 }
 
 android {
@@ -27,6 +28,7 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+
         }
     }
     compileOptions {
@@ -48,9 +50,7 @@ android {
             excludes += '/META-INF/{AL2.0,LGPL2.1}'
         }
     }
-    androidExtensions {
-        experimental = true
-    }
+
 }
 
 dependencies {
@@ -146,5 +146,8 @@ dependencies {
 
     // 코틀린을 쓰는 경우
     implementation 'androidx.work:work-runtime-ktx:2.7.1'
+
+    implementation 'org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.0'
+
 }
 apply plugin: 'com.google.gms.google-services'

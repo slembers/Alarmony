@@ -8,14 +8,13 @@ import android.icu.util.Calendar
 import android.os.Build
 import android.os.Bundle
 import android.os.PowerManager
+import android.util.Log
 import android.view.WindowManager
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -45,38 +44,36 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.graphics.toArgb
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import coil.compose.AsyncImagePainter.State.Empty.painter
-import coil.compose.rememberImagePainter
-import com.slembers.alarmony.R
 import com.slembers.alarmony.feature.alarm.AlarmNoti.cancelNotification
 import com.slembers.alarmony.feature.alarm.AlarmNoti.runNotification
-import com.slembers.alarmony.feature.alarm.ui.theme.AlarmonyTheme
 import com.slembers.alarmony.feature.common.ui.theme.toColor
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
 class AlarmActivity : ComponentActivity() {
-
+    lateinit var repository: AlarmRepository
     lateinit var wakeLock: PowerManager.WakeLock
+    lateinit var alarmDto: AlarmDto
     override fun onCreate(savedInstanceState: Bundle?) {
+
         super.onCreate(savedInstanceState)
-
-        val alarm = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            intent.getParcelableExtra("alarm", Alarm::class.java) as Alarm
-        } else {
-            intent.getParcelableExtra<Alarm>("alarm") as Alarm
+        val alarmId = intent.getLongExtra("alarmId", -1L)
+        Log.d("ForeA1", alarmId.toString())
+        val alarmDao = AlarmDatabase.getInstance(this).alarmDao()
+        CoroutineScope(Dispatchers.IO).launch {
+            repository = AlarmRepository(alarmDao)
+            val alarm = repository.findAlarm(alarmId)
+            alarmDto = AlarmDto.toDto(alarm!!)
+            runNotification(application, alarmDto!!)
         }
-        var alarmStartTime = calAlarm(alarm)
-
-        runNotification(this, alarm)
-
         wakeLock =
             (getSystemService(Context.POWER_SERVICE) as PowerManager).run {
                 newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "MyApp::MyWakelockTag").apply {
@@ -107,8 +104,12 @@ class AlarmActivity : ComponentActivity() {
         }
 
         setContent {
-            AlarmScreen(alarm, alarmStartTime)
+            AlarmScreen(alarmDto!!)
         }
+    }
+
+    override fun onBackPressed() {
+        // super.onBackPressed() 뒤로 가기 막기
     }
     override fun onDestroy() {
         wakeLock.release()
@@ -118,10 +119,11 @@ class AlarmActivity : ComponentActivity() {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AlarmScreen(alarm : Alarm, alarmStartTime : Long) {
+fun AlarmScreen(alarmDto : AlarmDto) {
     val context = LocalContext.current as Activity
     val isClicked5 = remember { mutableStateOf(false)  }
     val isClicked10 = remember { mutableStateOf(false)  }
+    val alarmStartTime = calAlarm(alarmDto)
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         containerColor = "#66D5ED".toColor(),
@@ -145,7 +147,7 @@ fun AlarmScreen(alarm : Alarm, alarmStartTime : Long) {
                 verticalArrangement = Arrangement.Bottom,
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
-                DrawCircle(alarm)
+                DrawCircle(alarmDto)
                 Spacer(modifier = Modifier.height(100.dp))
                 Row(
                     horizontalArrangement = Arrangement.Center,
@@ -208,24 +210,24 @@ fun AlarmScreen(alarm : Alarm, alarmStartTime : Long) {
                 }
             }
             if (isClicked5.value) {
-                SnoozeNoti(5, isClicked5, context, alarm)
+                SnoozeNoti(5, isClicked5, context, alarmDto)
             }
             if (isClicked10.value) {
-                SnoozeNoti(10, isClicked10, context, alarm)
+                SnoozeNoti(10, isClicked10, context, alarmDto)
             }
         }
     )
 }
 
 @Composable
-fun DrawCircle(alarm : Alarm) {
-    val hour = if (alarm.hour.toString().length == 1) { "0" + alarm.hour.toString() }
+fun DrawCircle(alarmDto : AlarmDto) {
+    val hour = if (alarmDto.hour.toString().length == 1) { "0" + alarmDto.hour.toString() }
     else {
-        alarm.hour.toString()
+        alarmDto.hour.toString()
     }
-    val minute = if (alarm.minute.toString().length == 1) { "0" + alarm.minute.toString() }
+    val minute = if (alarmDto.minute.toString().length == 1) { "0" + alarmDto.minute.toString() }
     else {
-        alarm.minute.toString()
+        alarmDto.minute.toString()
     }
     Canvas(
         modifier = Modifier.size(300.dp)
@@ -274,7 +276,7 @@ fun DrawCircle(alarm : Alarm) {
                 setTypeface(typeface)
                 isAntiAlias = true
             }
-            val text3 = "${alarm.title}"
+            val text3 = "${alarmDto.title}"
             val paint3 = Paint().asFrameworkPaint().apply {
                 textAlign = android.graphics.Paint.Align.CENTER
                 textSize = 26.sp.toPx()
@@ -298,15 +300,15 @@ fun DrawScope.drawCircleWithInnerCircle(center: Offset, innerRadius: Float, inne
 @Preview
 @Composable
 fun DefaultView() {
-    val alarm = Alarm(
-        0,
+    val alarmDto = AlarmDto(
+        0L,
         "장덕모임",
         8,
         45,
         listOf(true, true, true, false, false, true, true),
         "자장가",
         15,
-        true
+        true,
     )
-    AlarmScreen(alarm = alarm, alarmStartTime = 0L)
+    AlarmScreen(alarmDto = alarmDto)
 }
