@@ -145,25 +145,22 @@ fun GroupScreen(
             GroupBottomButtom(
                 text = "저장",
                 onClick = {
-                    var connection = false
                     Log.d("viewmodel:ID","[그룹생성] groupActivity ID : $viewModel")
+
                     GroupService.addGroupAlarm(
-                        Group(
-                            title = title!!,
-                            hour = timePickerState?.hour ?: 10,
-                            minute = timePickerState?.minute ?: 0,
-                            alarmDate = weeks.stream().map { isWeeks?.getValue(it) ?: false }.toList(),
-                            members = members?.stream()?.map { it.nickname }?.toList(),
-                            soundName = soundName ?: "노래제목",
-                            soundVolume = soundVolume ?: 7f,
-                            vibrate = vibration ?: true
-                        ),
-                        connection = { connection = it}
+                        title = title,
+                        hour = timePickerState?.hour ?: 7,
+                        minute = timePickerState?.hour ?: 0,
+                        alarmDate = weeks.map {
+                            isWeeks?.getValue(it) ?: false
+                        }.toList(),
+                        members = members?.map { it.nickname }?.toList(),
+                        soundName = soundName,
+                        soundVolume = soundVolume,
+                        vibrate = vibration,
+                        context = context,
+                        navController = navController
                     )
-                    if(connection)
-                        Toast.makeText(context,"정상적으로 저장하였습니다.",Toast.LENGTH_SHORT).show()
-                    else
-                        Toast.makeText(context,"저장에 실패하였습니다.",Toast.LENGTH_SHORT).show()
                 }
             )
         },
