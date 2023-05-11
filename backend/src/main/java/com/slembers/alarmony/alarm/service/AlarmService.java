@@ -3,6 +3,7 @@ package com.slembers.alarmony.alarm.service;
 import com.slembers.alarmony.alarm.dto.AlarmDto;
 import com.slembers.alarmony.alarm.dto.CreateAlarmDto;
 import com.slembers.alarmony.alarm.dto.response.AlarmListResponseDto;
+import com.slembers.alarmony.alarm.entity.Alarm;
 
 public interface AlarmService {
 
@@ -37,4 +38,12 @@ public interface AlarmService {
      * @return 알람 정보
      */
     AlarmDto getAlarmInfo(Long alarmId);
+
+
+    /**
+     * 알람 아이디로 알람 객체를 찾아온다.
+     * @param alarmID 알람 아이디
+     * @return 알람 객체
+     */
+    Alarm findAlarmByAlarmId(Long alarmID);
 }
