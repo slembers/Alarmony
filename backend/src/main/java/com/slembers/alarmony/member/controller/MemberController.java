@@ -43,10 +43,9 @@ public class MemberController {
      */
 
     @PostMapping("/sign-up")
-    public ResponseEntity<String> signUp(@Valid @RequestBody SignUpDto signUpDto) {
+    public ResponseEntity<MessageResponseDto> signUp(@Valid @RequestBody SignUpDto signUpDto) {
 
-        memberService.signUp(signUpDto);
-        return new ResponseEntity<>(signUpDto.getNickname() + "님의 회원 가입을 완료했습니다. 이메일 인증을 확인해주세요", HttpStatus.CREATED);
+        return new ResponseEntity<>(memberService.signUp(signUpDto), HttpStatus.CREATED);
 
     }
 

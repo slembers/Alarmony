@@ -16,6 +16,7 @@ import androidx.compose.material.TextField
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -27,12 +28,14 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.slembers.alarmony.R
 import com.slembers.alarmony.network.repository.MemberService.findPswd
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
-
 @Composable
+@ExperimentalMaterial3Api
+@ExperimentalGlideComposeApi
 fun Findpswd(navController: NavController) {
 
     val context = LocalContext.current

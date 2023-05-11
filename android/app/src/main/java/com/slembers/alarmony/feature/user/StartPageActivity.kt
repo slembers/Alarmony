@@ -42,6 +42,13 @@ import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.slembers.alarmony.R
 import com.slembers.alarmony.feature.common.NavItem
 import com.slembers.alarmony.network.repository.MemberService.login
+import com.slembers.alarmony.network.repository.MemberService.putRegistTokenAfterSignIn
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
 
 
 enum class Routes() {
@@ -155,12 +162,15 @@ fun LoginScreen(navController: NavController) {
 //MutableState<String>와 String은 형식이 다르기에 String 값을 보내기 위해 .value를 붙여준다.
             onClick = {
                 Log.d("확인", "${idState.value}, ${passwordState.value} +로그인")
-                login(
-                    username = idState.value,
-                    password = passwordState.value,
-                    navController = navController,
-                    context = context
-                )
+                CoroutineScope(Dispatchers.Main).launch {
+                    val result = login(
+                        username = idState.value,
+                        password = passwordState.value
+                    )
+                    putRegistTokenAfterSignIn()
+                    Log.d("INFO","result : $result")
+                    if(result) navController.navigate(NavItem.AlarmListScreen.route)
+                }
             },
             modifier = Modifier
                 .padding(vertical = 8.dp)
