@@ -20,6 +20,7 @@ import retrofit2.http.Header
 import retrofit2.http.POST
 import com.slembers.alarmony.model.db.dto.CheckIdResponseDto
 import com.slembers.alarmony.model.db.dto.CheckNicnameResponseDto
+import com.slembers.alarmony.model.db.dto.MyInfoResponse
 import retrofit2.http.Path
 import retrofit2.http.Query
 import retrofit2.http.PUT
@@ -63,10 +64,10 @@ interface MemberRepository {
     fun logOut(
     ) :Call<Unit>
 
-//    @GET("members/info")
-//    fun getMyInfo(
-//    ): Call<>
-//    )
+    @GET("members/info")
+    fun getMyInfo(
+    ): Call<MyInfoResponse>
+
 
     @DELETE("member")
     fun signOut(

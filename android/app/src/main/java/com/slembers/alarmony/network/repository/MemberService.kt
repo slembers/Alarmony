@@ -366,6 +366,13 @@ object MemberService {
         }
     }
 
+    fun findMyInfo() {
+        try {
+
+        }
+    }
+
+
     fun checkNickname(nickname:String,
                       isSuccess : (Boolean) -> Unit = {}) {
         try{
