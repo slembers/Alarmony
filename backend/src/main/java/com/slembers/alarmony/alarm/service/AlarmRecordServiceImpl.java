@@ -13,8 +13,7 @@ import com.slembers.alarmony.global.execption.CustomException;
 import java.util.List;
 
 import com.slembers.alarmony.member.entity.Member;
-import com.slembers.alarmony.member.exception.MemberErrorCode;
-import com.slembers.alarmony.member.repository.MemberRepository;
+import com.slembers.alarmony.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -24,9 +23,9 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class AlarmRecordServiceImpl implements AlarmRecordService {
 
-    private final AlarmRepository alarmRepository;
+    private final AlarmService alarmService;
     private final AlarmRecordRepository alarmRecordRepository;
-    private final MemberRepository memberRepository;
+    private final MemberService memberService;
 
     /**
      * 오늘의 알람 기록 정보를 가져온다.
@@ -57,15 +56,13 @@ public class AlarmRecordServiceImpl implements AlarmRecordService {
      */
     @Override
     public void putAlarmRecord(AlarmEndRecordDto alarmEndRecordDto) {
-        Member member = memberRepository.findByUsername(alarmEndRecordDto.getUsername())
-            .orElseThrow(() -> new CustomException(MemberErrorCode.MEMBER_NOT_FOUND));
+        Member member = memberService.findMemberByUsername(alarmEndRecordDto.getUsername());
 
         AlarmRecord alarmRecord = alarmRecordRepository.findByMemberAndAlarm(member.getId(),
                 alarmEndRecordDto.getAlarmId())
             .orElseThrow(() -> new CustomException(AlarmRecordErrorCode.ALARM_RECORD_NOT_EXIST));
 
-        Alarm alarm = alarmRepository.findById(alarmEndRecordDto.getAlarmId())
-            .orElseThrow(() -> new CustomException(AlarmErrorCode.ALARM_NOT_FOUND));
+        Alarm alarm = alarmService.findAlarmByAlarmId(alarmEndRecordDto.getAlarmId());
 
         try {
             if (alarmEndRecordDto.isSuccess()) {
