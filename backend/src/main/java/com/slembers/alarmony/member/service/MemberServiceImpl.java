@@ -1,7 +1,6 @@
 package com.slembers.alarmony.member.service;
 
 import com.slembers.alarmony.global.amazons3.AmazonS3Util;
-import com.slembers.alarmony.global.dto.MessageResponseDto;
 import com.slembers.alarmony.global.execption.CustomException;
 import com.slembers.alarmony.global.security.jwt.JwtTokenProvider;
 import com.slembers.alarmony.global.redis.service.RedisUtil;
@@ -57,20 +56,17 @@ public class MemberServiceImpl implements MemberService {
      */
     @Transactional
     @Override
-    public MessageResponseDto signUp(SignUpDto signUpDto) {
+    public void signUp(SignUpDto signUpDto) {
 
         checkDuplicatedField(signUpDto);
 
         Member member = modelMapper.map(signUpDto, Member.class);
-
 
         member.encodePassword(passwordEncoder);
 
         emailVerifyService.sendVerificationMail(member.getUsername(), member.getEmail());
 
         memberRepository.save(member);
-
-        return new MessageResponseDto("m201",signUpDto.getUsername() +"의 회원가입이 완료되었습니다. 이메일 인증을 완료해주세요");
 
     }
 
@@ -129,10 +125,9 @@ public class MemberServiceImpl implements MemberService {
             throw new CustomException(MemberErrorCode.ID_DUPLICATED);
         }
 
-        //닉네임 중복 체크
         if (checkForDuplicateNickname(signUpDto.getNickname()).isDuplicated())
             throw new CustomException(MemberErrorCode.NICKNAME_DUPLICATED);
-        //이메일 중복 체크
+
         if (checkForDuplicateEmail(signUpDto.getEmail()).isDuplicated())
             throw new CustomException(MemberErrorCode.EMAIL_DUPLICATED);
 
@@ -184,7 +179,7 @@ public class MemberServiceImpl implements MemberService {
      */
 
     @Override
-    public MessageResponseDto findMemberId(FindMemberIdDto findMemberIdDto) {
+    public void findMemberId(FindMemberIdDto findMemberIdDto) {
 
         Member member = memberRepository.findMemberByEmail(findMemberIdDto.getEmail())
                 .orElseThrow(() -> new CustomException(MemberErrorCode.EMAIL_NOT_FOUND));
@@ -194,7 +189,6 @@ public class MemberServiceImpl implements MemberService {
 
         emailVerifyService.sendTemplateEmail("알라모니 아이디 찾기", findMemberIdDto.getEmail(), "FindId", values);
 
-        return new MessageResponseDto("m200",findMemberIdDto.getEmail() + "로 아이디 찾기 안내 메일을 전송하였습니다.");
     }
 
     /**
@@ -202,7 +196,7 @@ public class MemberServiceImpl implements MemberService {
      */
     @Transactional
     @Override
-    public MessageResponseDto findMemberPassword(FindPasswordDto findPasswordDto) {
+    public void findMemberPassword(FindPasswordDto findPasswordDto) {
 
         Member member = memberRepository.findMemberByUsernameAndEmail(findPasswordDto.getUsername(), findPasswordDto.getEmail())
                 .orElseThrow(() -> new CustomException(MemberErrorCode.MEMBER_NOT_FOUND));
@@ -222,8 +216,6 @@ public class MemberServiceImpl implements MemberService {
         member.encodePassword(passwordEncoder);
 
         memberRepository.save(member);
-
-        return new MessageResponseDto("m200","임시 비밀번호 발급 완료");
 
     }
 
@@ -263,7 +255,7 @@ public class MemberServiceImpl implements MemberService {
      */
     @Override
     @Transactional
-    public MessageResponseDto deleteMember(String username) {
+    public void deleteMember(String username) {
 
 
         Member member = memberRepository.findByUsername(username)
@@ -274,7 +266,6 @@ public class MemberServiceImpl implements MemberService {
 
         memberRepository.save(member);
 
-        return new MessageResponseDto("m200","회원 탈퇴 완료");
     }
 
     /**
@@ -317,7 +308,6 @@ public class MemberServiceImpl implements MemberService {
         memberRepository.save(member);
         return new MemberInfoDto(modifiedMemberInfoDto.getNickname(), url);
 
-
     }
 
     /**
@@ -325,7 +315,7 @@ public class MemberServiceImpl implements MemberService {
      */
     @Override
     @Transactional
-    public MessageResponseDto changePassword(String username, ChangePasswordDto changePasswordDto) {
+    public void changePassword(String username, ChangePasswordDto changePasswordDto) {
 
         //가존 비밀번호와 일치하는지 확인
 
@@ -345,7 +335,5 @@ public class MemberServiceImpl implements MemberService {
         member.encodePassword(passwordEncoder);
 
         memberRepository.save(member);
-
-        return new MessageResponseDto("m200","비밀번호 변경을 완료하였습니다.");
     }
 }

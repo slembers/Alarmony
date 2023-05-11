@@ -1,6 +1,5 @@
 package com.slembers.alarmony.member.service;
 
-import com.slembers.alarmony.global.dto.MessageResponseDto;
 import com.slembers.alarmony.member.dto.ChangePasswordDto;
 import com.slembers.alarmony.member.dto.MemberInfoDto;
 import com.slembers.alarmony.member.dto.request.FindMemberIdDto;
@@ -21,8 +20,7 @@ public interface MemberService {
     /**
      * 회원 가입
      */
-    MessageResponseDto signUp(SignUpDto signUpDto);
-
+    void signUp(SignUpDto signUpDto);
 
     /**
      * 아이디 중복체크
@@ -53,13 +51,13 @@ public interface MemberService {
      * 아이디 찾기
      */
 
-    MessageResponseDto findMemberId (FindMemberIdDto findMemberIdDto) throws MessagingException;
+    void findMemberId (FindMemberIdDto findMemberIdDto) throws MessagingException;
 
     /**
      * 비밀 번호 찾기
      */
 
-    MessageResponseDto findMemberPassword(FindPasswordDto findPasswordDto);
+    void findMemberPassword(FindPasswordDto findPasswordDto);
 
     /**
      * 회원 정보 조회하기
@@ -70,7 +68,7 @@ public interface MemberService {
     /**
      *  회원 탈퇴
      */
-    MessageResponseDto deleteMember(String username);
+    void deleteMember(String username);
 
 
     /**
@@ -81,6 +79,6 @@ public interface MemberService {
     /**
      * 비밀 번호 변경
      */
-    MessageResponseDto changePassword(String username,ChangePasswordDto changePasswordDto);
+    void changePassword(String username,ChangePasswordDto changePasswordDto);
 
 }
