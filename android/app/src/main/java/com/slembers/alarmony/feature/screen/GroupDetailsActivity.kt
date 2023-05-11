@@ -78,13 +78,13 @@ fun GroupDetailsScreen(
     val isClosed = remember { mutableStateOf(false) }
     val openDialog = remember { mutableStateOf(true) }
     val alarm = remember{ mutableStateOf<Alarm>(Alarm(
-        alarm_id =  0,
+        alarmId =  0,
         title =  "임시제목",
         hour =  0,
         minute =  0,
-        alarm_date =  listOf(),
-        sound_name =  "Nomal",
-        sound_volumn =  7,
+        alarmDate =  listOf(),
+        soundName =  "Nomal",
+        soundVolume =  7,
         vibrate =  true,
     )) }
 

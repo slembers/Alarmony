@@ -309,7 +309,8 @@ fun DefaultView() {
         listOf(true, true, true, false, false, true, true),
         "자장가",
         15,
-        true,
+        vibrate = true,
+        host = false
     )
     AlarmScreen(alarmDto = alarmDto)
 }

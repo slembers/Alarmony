@@ -193,7 +193,8 @@ fun AlarmListScreen(navController : NavHostController) {
                     listOf(true, true, true, true, true, true, true),
                     "자장가",
                     15,
-                    true
+                    true,
+                    false
                 )
                     saveTestAlarm(alarm999, context)
                     Toast.makeText(context, "8초 뒤에 알람이 울립니다.", Toast.LENGTH_SHORT).show()}
@@ -233,7 +234,7 @@ fun MyListItem(
             )
             .background(Color.White)
             .fillMaxWidth()
-            .clickable { navController.navigate("${NavItem.GroupDetails.route}/${item.alarm_id}") },
+            .clickable { navController.navigate("${NavItem.GroupDetails.route}/${item.alarmId}") },
         shape = RoundedCornerShape(20.dp),
         colors = CardDefaults.cardColors(containerColor = "#FFFFFF".toColor()))
 
