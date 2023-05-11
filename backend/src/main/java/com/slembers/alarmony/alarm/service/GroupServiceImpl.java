@@ -9,9 +9,10 @@ import com.slembers.alarmony.alarm.repository.MemberAlarmRepository;
 import com.slembers.alarmony.global.execption.CustomException;
 import com.slembers.alarmony.member.dto.MemberInfoDto;
 import com.slembers.alarmony.member.entity.Member;
-import com.slembers.alarmony.member.exception.MemberErrorCode;
 import com.slembers.alarmony.member.repository.MemberRepository;
 import java.util.List;
+
+import com.slembers.alarmony.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -22,8 +23,10 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class GroupServiceImpl implements GroupService {
 
+    private final MemberService memberService;
     private final MemberRepository memberRepository;
     private final AlarmRepository alarmRepository;
+    private final AlarmService alarmService;
     private final MemberAlarmRepository memberAlarmRepository;
     private final AlarmRecordRepository alarmRecordRepository;
 
@@ -35,10 +38,8 @@ public class GroupServiceImpl implements GroupService {
      */
     @Override
     public boolean isGroupOwner(Long groupId, String username) {
-        Member member = memberRepository.findByUsername(username)
-            .orElseThrow(() -> new CustomException(MemberErrorCode.MEMBER_NOT_FOUND));
-        Alarm alarm = alarmRepository.findById(groupId)
-            .orElseThrow(() -> new CustomException(AlarmErrorCode.ALARM_NOT_FOUND));
+        Member member = memberService.findMemberByUsername(username);
+        Alarm alarm = alarmService.findAlarmByAlarmId(groupId);
 
         return member.equals(alarm.getHost());
     }
@@ -51,8 +52,7 @@ public class GroupServiceImpl implements GroupService {
      */
     @Override
     public boolean isGroupOwnerByNickname(Long groupId, String nickname) {
-        Alarm alarm = alarmRepository.findById(groupId)
-            .orElseThrow(() -> new CustomException(AlarmErrorCode.ALARM_NOT_FOUND));
+        Alarm alarm =  alarmService.findAlarmByAlarmId(groupId);
 
         return alarm.getHost().getNickname().equals(nickname);
     }
@@ -69,8 +69,7 @@ public class GroupServiceImpl implements GroupService {
     public List<MemberInfoDto> getInviteableMemberInfoList(Long groupId, String keyword,
         String username) {
 
-        Member member = memberRepository.findByUsername(username)
-            .orElseThrow(() -> new CustomException(MemberErrorCode.MEMBER_NOT_FOUND));
+        Member member = memberService.findMemberByUsername(username);
         return memberRepository.findMembersWithGroupAndTeamByGroupId(groupId, keyword,
             member.getId());
     }
@@ -88,8 +87,7 @@ public class GroupServiceImpl implements GroupService {
             throw new CustomException(AlarmErrorCode.MEMBER_IN_GROUP);
         }
 
-        Alarm alarm = alarmRepository.findById(groupId)
-            .orElseThrow(() -> new CustomException(AlarmErrorCode.ALARM_NOT_FOUND));
+        Alarm alarm =  alarmService.findAlarmByAlarmId(groupId);
 
         MemberAlarm memberAlarm = memberAlarmRepository.findByMemberAndAlarm(alarm.getHost(), alarm)
             .orElseThrow(() -> new CustomException(AlarmErrorCode.MEMBER_NOT_IN_GROUP));
@@ -108,10 +106,8 @@ public class GroupServiceImpl implements GroupService {
     @Transactional
     @Override
     public void removeMemberByUsername(Long groupId, String username) {
-        Member member = memberRepository.findByUsername(username)
-            .orElseThrow(() -> new CustomException(MemberErrorCode.MEMBER_NOT_FOUND));
-        Alarm alarm = alarmRepository.findById(groupId)
-            .orElseThrow(() -> new CustomException(AlarmErrorCode.ALARM_NOT_FOUND));
+        Member member = memberService.findMemberByUsername(username);
+        Alarm alarm =  alarmService.findAlarmByAlarmId(groupId);
 
         MemberAlarm memberAlarm = memberAlarmRepository.findByMemberAndAlarm(member, alarm)
             .orElseThrow(() -> new CustomException(AlarmErrorCode.MEMBER_NOT_IN_GROUP));
@@ -128,10 +124,8 @@ public class GroupServiceImpl implements GroupService {
     @Transactional
     @Override
     public void removeMemberByNickname(Long groupId, String nickname) {
-        Member member = memberRepository.findByNickname(nickname)
-            .orElseThrow(() -> new CustomException(MemberErrorCode.MEMBER_NOT_FOUND));
-        Alarm alarm = alarmRepository.findById(groupId)
-            .orElseThrow(() -> new CustomException(AlarmErrorCode.ALARM_NOT_FOUND));
+        Member member = memberService.findMemberByNickName(nickname);
+        Alarm alarm =  alarmService.findAlarmByAlarmId(groupId);
 
         MemberAlarm memberAlarm = memberAlarmRepository.findByMemberAndAlarm(member, alarm)
             .orElseThrow(() -> new CustomException(AlarmErrorCode.MEMBER_NOT_IN_GROUP));

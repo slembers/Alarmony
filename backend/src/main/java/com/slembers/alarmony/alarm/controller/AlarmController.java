@@ -13,7 +13,6 @@ import java.util.HashMap;
 import java.util.Map;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -34,7 +33,7 @@ public class AlarmController {
     @GetMapping
     public ResponseEntity<AlarmListResponseDto> getAlarmList() {
         String username = SecurityUtil.getCurrentUsername();
-        return new ResponseEntity<>(alarmService.getAlarmList(username), HttpStatus.OK);
+        return ResponseEntity.ok(alarmService.getAlarmList(username));
     }
 
     /**
@@ -51,7 +50,7 @@ public class AlarmController {
 
         Map<String, Object> map = new HashMap<>();
         map.put("groupId", alarmId);
-        return new ResponseEntity<>(map, HttpStatus.OK);
+        return ResponseEntity.ok(map);
     }
 
     /**
@@ -62,14 +61,14 @@ public class AlarmController {
      * @return 확인 메시지
      */
     @PutMapping("/{alarm-id}/message")
-    public ResponseEntity<String> putAlarmMessage(
+    public ResponseEntity<Void> putAlarmMessage(
         @PathVariable("alarm-id") Long alarmId,
         @Valid @RequestBody PutAlarmMessageRequestDto putAlarmMessageRequestDto) {
 
         String username = SecurityUtil.getCurrentUsername();
 
         alarmService.putAlarmMessage(username, alarmId, putAlarmMessageRequestDto.getMessage());
-        return new ResponseEntity<>("알람 메시지가 기록되었습니다.", HttpStatus.OK);
+        return ResponseEntity.noContent().build();
     }
 
     /**
@@ -80,7 +79,8 @@ public class AlarmController {
      */
     @GetMapping("/{alarm-id}")
     public ResponseEntity<AlarmDto> getAlarmInfo(@PathVariable("alarm-id") Long alarmId) {
-        return new ResponseEntity<>(alarmService.getAlarmInfo(alarmId), HttpStatus.OK);
+
+        return ResponseEntity.ok(alarmService.getAlarmInfo(alarmId));
     }
 
     /**
@@ -91,7 +91,7 @@ public class AlarmController {
      * @return 성공 메시지
      */
     @PutMapping("/{alarm-id}/record")
-    public ResponseEntity<String> putAlarmRecord(@PathVariable("alarm-id") Long alarmId,
+    public ResponseEntity<Void> putAlarmRecord(@PathVariable("alarm-id") Long alarmId,
         @Valid @RequestBody PutAlarmRecordTimeRequestDto putAlarmRecordTimeRequestDto) {
         String username = SecurityUtil.getCurrentUsername();
         alarmRecordService.putAlarmRecord(AlarmEndRecordDto.builder()
@@ -100,7 +100,7 @@ public class AlarmController {
             .datetime(putAlarmRecordTimeRequestDto.getDatetime())
             .success(true)
             .build());
-        return new ResponseEntity<>("알람 종료 시간이 기록되었습니다.", HttpStatus.OK);
+        return ResponseEntity.noContent().build();
     }
 
     /**
@@ -110,13 +110,13 @@ public class AlarmController {
      * @return 실패 메시지
      */
     @PutMapping("/{alarm-id}/failed")
-    public ResponseEntity<String> putAlarmFailed(@PathVariable("alarm-id") Long alarmId) {
+    public ResponseEntity<Void> putAlarmFailed(@PathVariable("alarm-id") Long alarmId) {
         String username = SecurityUtil.getCurrentUsername();
         alarmRecordService.putAlarmRecord(AlarmEndRecordDto.builder()
             .alarmId(alarmId)
             .username(username)
             .success(false)
             .build());
-        return new ResponseEntity<>("알람 종료 실패로 기록되었습니다.", HttpStatus.OK);
+        return ResponseEntity.noContent().build();
     }
 }

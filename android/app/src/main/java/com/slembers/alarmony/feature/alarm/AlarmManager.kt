@@ -23,7 +23,7 @@ fun saveAlarm(alarmDto: AlarmDto, context: Context) {
     CoroutineScope(Dispatchers.IO).launch {
         repository.addAlarm(alarm)
     }
-    setTestAlarm(context, alarmDto)
+    setAlarm(alarmDto, context)
 }
 fun deleteAlarm(alarmId: Long, context: Context) {
     lateinit var repository: AlarmRepository
@@ -35,6 +35,7 @@ fun deleteAlarm(alarmId: Long, context: Context) {
             repository.deleteAlarm(alarm)
         }
     }
+    cancelAlarm(alarmId, context)
 }
 fun cancelAlarm(alarmId: Long, context: Context) {
     val alarmManager = context.getSystemService(ALARM_SERVICE) as AlarmManager
@@ -52,7 +53,7 @@ fun calAlarm(alarmDto: AlarmDto) : Long {
     return alarmTime
 }
 
-fun setAlarm(context: Context, alarmDto: AlarmDto) {
+fun setAlarm(alarmDto: AlarmDto, context: Context) {
     val calendar: Calendar = Calendar.getInstance()
     val intervalDay : Long = 24*60*60*1000 // 24시간
     calendar.set(Calendar.HOUR_OF_DAY, alarmDto.hour)
@@ -101,10 +102,10 @@ fun saveTestAlarm(alarmDto: AlarmDto, context: Context) {
     CoroutineScope(Dispatchers.IO).launch {
         repository.addAlarm(alarm)
     }
-    setTestAlarm(context, alarmDto)
+    setTestAlarm(alarmDto, context)
 }
 
-fun setTestAlarm(context: Context, alarmDto: AlarmDto) {
+fun setTestAlarm(alarmDto: AlarmDto, context: Context) {
     val newTime = System.currentTimeMillis() + (8 * 1000)  // 테스트용 코드 (8초 뒤 알람 설정)
     val intent = Intent(context, AlarmReceiver::class.java).apply {
         putExtra("alarmId", alarmDto.alarm_id)
