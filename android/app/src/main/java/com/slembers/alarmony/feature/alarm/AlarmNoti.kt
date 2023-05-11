@@ -7,6 +7,7 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
 import android.media.AudioAttributes
+import android.media.AudioManager
 import android.media.MediaPlayer
 import android.media.Ringtone
 import android.media.RingtoneManager
@@ -15,11 +16,16 @@ import android.os.VibrationEffect
 import android.os.Vibrator
 import android.os.VibratorManager
 import android.provider.Settings
+import android.util.Log
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.NotificationsActive
 import androidx.core.app.NotificationCompat
+import androidx.core.content.ContextCompat.getSystemService
 import androidx.test.core.app.ApplicationProvider.getApplicationContext
 import com.slembers.alarmony.R
+import java.lang.Math.ceil
+import java.lang.Math.round
+import kotlin.math.roundToInt
 
 
 object AlarmNoti {
@@ -27,8 +33,10 @@ object AlarmNoti {
     private var notification: Notification? = null
     private var notificationManager: NotificationManager? = null
     private var mBuilder: NotificationCompat.Builder? = null
-    private var ringtone: Ringtone? = null
     private var vibrator : Vibrator? = null
+    private lateinit var audioManager : AudioManager
+    private lateinit var mediaPlayer : MediaPlayer
+    private var currentVolumn : Int = 0
 
     @SuppressLint("ServiceCast")
     fun runNotification(context: Application, alarmDto: AlarmDto) {
@@ -44,21 +52,15 @@ object AlarmNoti {
         mBuilder!!.priority = Notification.PRIORITY_HIGH
         mBuilder!!.setOnlyAlertOnce(true)
 
-        // 벨소리 가져오기
-        val uri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM)
-        ringtone = RingtoneManager.getRingtone(context, uri)
-        val audioAttributes =
-            AudioAttributes.Builder().setUsage(AudioAttributes.USAGE_ALARM).build()
-        ringtone!!.volume = 1.0f
-        ringtone!!.setAudioAttributes(audioAttributes)
-        ringtone!!.play()
-
-        // 사운드 ( 볼륨 범위 0.0f ~ 1.0f )
-//        var mp : MediaPlayer = MediaPlayer.create(context, Settings.System.DEFAULT_ALARM_ALERT_URI)
-//        val audioAttributes =
-//            AudioAttributes.Builder().setUsage(AudioAttributes.USAGE_ALARM).build()
-//        mp.setAudioAttributes(audioAttributes)
-//        mp.start();
+        audioManager = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
+        currentVolumn = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC) // 현재 미디어 사운드 세팅
+        mediaPlayer = MediaPlayer.create(context, Settings.System.DEFAULT_ALARM_ALERT_URI)
+        mediaPlayer.isLooping = true
+        val maxVolume = audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC)
+        Log.d("MaxVolumn", maxVolume.toString())
+        val newVolume = (maxVolume * 0.5).roundToInt() // 볼륨 값을 최대 볼륨의 절반으로 설정
+        audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, newVolume, 0)
+        mediaPlayer.start()
 
         if (alarmDto.vibrate) { // 진동 체크한 경우 진동 설정
             val pattern = longArrayOf(0, 1000, 500, 1000, 500, 1000)
@@ -91,7 +93,8 @@ object AlarmNoti {
 
     fun cancelNotification() {
         notificationManager!!.cancel(NotificationID)
-        ringtone!!.stop()
+        audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, currentVolumn, 0) // 알람 울리기 전 사운드 세팅으로 돌려놓음.
+        mediaPlayer.release()
         if (vibrator != null) {
             vibrator!!.cancel()
         }
