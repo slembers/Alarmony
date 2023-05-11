@@ -1,6 +1,5 @@
 package com.slembers.alarmony.member.service;
 
-import com.slembers.alarmony.global.dto.MessageResponseDto;
 import com.slembers.alarmony.member.dto.ChangePasswordDto;
 import com.slembers.alarmony.member.dto.MemberInfoDto;
 import com.slembers.alarmony.member.dto.request.FindMemberIdDto;
@@ -10,6 +9,7 @@ import com.slembers.alarmony.member.dto.request.SignUpDto;
 import com.slembers.alarmony.member.dto.response.CheckDuplicateDto;
 import com.slembers.alarmony.member.dto.response.MemberResponseDto;
 import com.slembers.alarmony.member.dto.response.TokenResponseDto;
+import com.slembers.alarmony.member.entity.Member;
 import com.slembers.alarmony.report.dto.ModifiedMemberInfoDto;
 
 import javax.mail.MessagingException;
@@ -21,8 +21,7 @@ public interface MemberService {
     /**
      * 회원 가입
      */
-    MessageResponseDto signUp(SignUpDto signUpDto);
-
+    void signUp(SignUpDto signUpDto);
 
     /**
      * 아이디 중복체크
@@ -53,7 +52,7 @@ public interface MemberService {
      * 아이디 찾기
      */
 
-    MessageResponseDto findMemberId (FindMemberIdDto findMemberIdDto) throws MessagingException;
+    void findMemberId (FindMemberIdDto findMemberIdDto) throws MessagingException;
 
     /**
      * 비밀 번호 찾기
@@ -70,7 +69,7 @@ public interface MemberService {
     /**
      *  회원 탈퇴
      */
-    MessageResponseDto deleteMember(String username);
+    void deleteMember(String username);
 
 
     /**
@@ -81,6 +80,10 @@ public interface MemberService {
     /**
      * 비밀 번호 변경
      */
-    MessageResponseDto changePassword(String username,ChangePasswordDto changePasswordDto);
+    void changePassword(String username,ChangePasswordDto changePasswordDto);
+
+    Member findMemberByUsername(String username);
+
+    Member findMemberByNickName(String nickname);
 
 }

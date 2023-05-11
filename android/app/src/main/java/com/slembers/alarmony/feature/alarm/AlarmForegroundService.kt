@@ -64,7 +64,7 @@ class AlarmForegroundService : Service() {
             val alarmList = alarms.value ?: return@launch
             for (alarm in alarmList) {
                 val alarmDto = AlarmDto.toDto(alarm)
-                setAlarm(this@AlarmForegroundService, alarmDto)
+                setAlarm(alarmDto, this@AlarmForegroundService)
             }
             delay(5000)
             stopForeground(true)

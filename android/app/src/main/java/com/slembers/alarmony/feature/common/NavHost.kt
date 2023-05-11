@@ -24,11 +24,12 @@ import com.slembers.alarmony.feature.screen.SoundScreen
 import com.slembers.alarmony.feature.user.AccountMtnc
 import com.slembers.alarmony.feature.user.FindId
 import com.slembers.alarmony.feature.user.Findpswd
-import com.slembers.alarmony.feature.user.LoginScreen
+
 import com.slembers.alarmony.feature.user.ProfileSetting
 import com.slembers.alarmony.feature.user.SignupScreen
 import com.slembers.alarmony.feature.user.AccountMtnc
-import com.slembers.alarmony.feature.user.Routes
+import com.slembers.alarmony.feature.user.LoginScreen
+
 import com.slembers.alarmony.viewModel.GroupViewModel
 
 
@@ -57,7 +58,7 @@ fun NavController(
             NotiListScreen(navController)
         }
         // 로그인 페이지
-        composable( route = NavItem.LoginScreen.route) {LoginScreen(navController = navController)}
+        composable( route = NavItem.LoginScreen.route) { LoginScreen(navController = navController) }
         composable( route = NavItem.FindIdActivity.route) {FindId(navController = navController) }
         // 회원가입 페이지
         composable( route = NavItem.Signup.route) { SignupScreen(navController = navController) }

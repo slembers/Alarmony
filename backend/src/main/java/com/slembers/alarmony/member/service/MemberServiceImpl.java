@@ -1,7 +1,6 @@
 package com.slembers.alarmony.member.service;
 
 import com.slembers.alarmony.global.amazons3.AmazonS3Util;
-import com.slembers.alarmony.global.dto.MessageResponseDto;
 import com.slembers.alarmony.global.execption.CustomException;
 import com.slembers.alarmony.global.security.jwt.JwtTokenProvider;
 import com.slembers.alarmony.global.redis.service.RedisUtil;
@@ -57,20 +56,17 @@ public class MemberServiceImpl implements MemberService {
      */
     @Transactional
     @Override
-    public MessageResponseDto signUp(SignUpDto signUpDto) {
+    public void signUp(SignUpDto signUpDto) {
 
         checkDuplicatedField(signUpDto);
 
         Member member = modelMapper.map(signUpDto, Member.class);
-
 
         member.encodePassword(passwordEncoder);
 
         emailVerifyService.sendVerificationMail(member.getUsername(), member.getEmail());
 
         memberRepository.save(member);
-
-        return new MessageResponseDto("m201",signUpDto.getUsername() +"의 회원가입이 완료되었습니다. 이메일 인증을 완료해주세요");
 
     }
 
@@ -80,13 +76,11 @@ public class MemberServiceImpl implements MemberService {
      * @param username 유저 아이디
      * @return 존재여부
      **/
-
-
     @Override
     public CheckDuplicateDto checkForDuplicateId(String username) {
-
-        return CheckDuplicateDto.builder().isDuplicated(memberRepository.existsByUsername(username)).build();
-
+        return CheckDuplicateDto.builder()
+                .isDuplicated(memberRepository.existsByUsername(username))
+                .build();
     }
 
     /**
@@ -97,11 +91,10 @@ public class MemberServiceImpl implements MemberService {
      */
     @Override
     public CheckDuplicateDto checkForDuplicateEmail(String email) {
-
-        //TODO: 얘 리펙토링 필요한거 같음 리턴을 dto로 하면 안될듯
-        return CheckDuplicateDto.builder().isDuplicated(memberRepository.existsByEmail(email)).build();
+        return CheckDuplicateDto.builder()
+                .isDuplicated(memberRepository.existsByEmail(email))
+                .build();
     }
-
 
     /**
      * 닉네임 중복 체크
@@ -109,10 +102,11 @@ public class MemberServiceImpl implements MemberService {
      * @param nickname : 닉네임
      * @return 존재여부
      */
-
     @Override
     public CheckDuplicateDto checkForDuplicateNickname(String nickname) {
-        return CheckDuplicateDto.builder().isDuplicated(memberRepository.existsByNickname(nickname)).build();
+        return CheckDuplicateDto.builder()
+                .isDuplicated(memberRepository.existsByNickname(nickname))
+                .build();
     }
 
     /**
@@ -122,31 +116,25 @@ public class MemberServiceImpl implements MemberService {
      */
 
     private void checkDuplicatedField(SignUpDto signUpDto) {
-        log.info("중복체크");
-        //아이디 중복 체크
-        if (checkForDuplicateId(signUpDto.getUsername()).isDuplicated()){
-            log.error("아이디 중복");
+        if (checkForDuplicateId(signUpDto.getUsername()).isDuplicated()) {
             throw new CustomException(MemberErrorCode.ID_DUPLICATED);
         }
-
-        //닉네임 중복 체크
         if (checkForDuplicateNickname(signUpDto.getNickname()).isDuplicated())
             throw new CustomException(MemberErrorCode.NICKNAME_DUPLICATED);
-        //이메일 중복 체크
         if (checkForDuplicateEmail(signUpDto.getEmail()).isDuplicated())
             throw new CustomException(MemberErrorCode.EMAIL_DUPLICATED);
-
     }
 
     @Override
     public TokenResponseDto reissueToken(ReissueTokenDto reissueTokenDto) {
 
-        //예외처리
         jwtTokenProvider.validRefreshToken(reissueTokenDto.getRefreshToken());
 
         String redisRefreshToken = redisUtil.getData("Refresh:" + reissueTokenDto.getUsername());
 
-        Member member = memberRepository.findByUsername(reissueTokenDto.getUsername()).orElseThrow(() -> new CustomException(MemberErrorCode.MEMBER_NOT_FOUND));
+
+        //? (reissueTokenDto.getUsername()??
+        Member member = findMemberByUsername(reissueTokenDto.getUsername());
 
         if (redisRefreshToken.equals(redisRefreshToken)) { //일치할때만 재발급
 
@@ -164,8 +152,7 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     public void putRegistrationToken(String username, String registrationToken) {
-        Member member = memberRepository.findByUsername(username)
-                .orElseThrow(() -> new CustomException(MemberErrorCode.MEMBER_NOT_FOUND));
+        Member member = findMemberByUsername(username);
         if (registrationToken == null || registrationToken.length() == 0)
             throw new CustomException(MemberErrorCode.MEMBER_REGISTRATION_TOKEN_WRONG);
 
@@ -184,7 +171,7 @@ public class MemberServiceImpl implements MemberService {
      */
 
     @Override
-    public MessageResponseDto findMemberId(FindMemberIdDto findMemberIdDto) {
+    public void findMemberId(FindMemberIdDto findMemberIdDto) {
 
         Member member = memberRepository.findMemberByEmail(findMemberIdDto.getEmail())
                 .orElseThrow(() -> new CustomException(MemberErrorCode.EMAIL_NOT_FOUND));
@@ -194,7 +181,6 @@ public class MemberServiceImpl implements MemberService {
 
         emailVerifyService.sendTemplateEmail("알라모니 아이디 찾기", findMemberIdDto.getEmail(), "FindId", values);
 
-        return new MessageResponseDto("m200",findMemberIdDto.getEmail() + "로 아이디 찾기 안내 메일을 전송하였습니다.");
     }
 
     /**
@@ -248,11 +234,7 @@ public class MemberServiceImpl implements MemberService {
      */
     @Override
     public MemberResponseDto getMemberInfo(String username) {
-
-
-        Member member = memberRepository.findByUsername(username)
-                .orElseThrow(() -> new CustomException(MemberErrorCode.MEMBER_NOT_FOUND));
-
+        Member member = findMemberByUsername(username);
         return modelMapper.map(member, MemberResponseDto.class);
     }
 
@@ -261,18 +243,10 @@ public class MemberServiceImpl implements MemberService {
      */
     @Override
     @Transactional
-    public MessageResponseDto deleteMember(String username) {
-
-
-        Member member = memberRepository.findByUsername(username)
-                .orElseThrow(() -> new CustomException(MemberErrorCode.MEMBER_NOT_FOUND));
-
-        //권한 비활성화로 변경
+    public void deleteMember(String username) {
+        Member member = findMemberByUsername(username);
         member.modifyAuthority(AuthorityEnum.ROLE_WITHDRAWAL);
-
         memberRepository.save(member);
-
-        return new MessageResponseDto("m200","회원 탈퇴 완료");
     }
 
     /**
@@ -282,8 +256,7 @@ public class MemberServiceImpl implements MemberService {
     @Transactional
     public MemberInfoDto modifyMemberInfo(String username, ModifiedMemberInfoDto modifiedMemberInfoDto) {
 
-        Member member = memberRepository.findByUsername(username)
-                .orElseThrow(() -> new CustomException(MemberErrorCode.MEMBER_NOT_FOUND));
+        Member member = findMemberByUsername(username);
 
         String key = "";
         String url = "";
@@ -308,13 +281,11 @@ public class MemberServiceImpl implements MemberService {
             member.changeProfileImg(url);
             member.changeProfileKey(key);
 
-
         }
 
         member.changeNickname(modifiedMemberInfoDto.getNickname());
         memberRepository.save(member);
         return new MemberInfoDto(modifiedMemberInfoDto.getNickname(), url);
-
 
     }
 
@@ -323,12 +294,9 @@ public class MemberServiceImpl implements MemberService {
      */
     @Override
     @Transactional
-    public MessageResponseDto changePassword(String username, ChangePasswordDto changePasswordDto) {
+    public void changePassword(String username, ChangePasswordDto changePasswordDto) {
 
-        //가존 비밀번호와 일치하는지 확인
-
-        Member member = memberRepository.findByUsername(username)
-                .orElseThrow(() -> new CustomException(MemberErrorCode.MEMBER_NOT_FOUND));
+        Member member = findMemberByUsername(username);
 
         if (!passwordEncoder.matches(changePasswordDto.getOldPassword(), member.getPassword())) {
             throw new CustomException(MemberErrorCode.PASSWORD_NOT_VALID);
@@ -343,7 +311,18 @@ public class MemberServiceImpl implements MemberService {
         member.encodePassword(passwordEncoder);
 
         memberRepository.save(member);
+    }
 
-        return new MessageResponseDto("m200","비밀번호 변경을 완료하였습니다.");
+
+    @Override
+    public Member findMemberByUsername(String username){
+        return memberRepository.findByUsername(username)
+                .orElseThrow(() -> new CustomException(MemberErrorCode.MEMBER_NOT_FOUND));
+    }
+
+    @Override
+    public Member findMemberByNickName(String nickname){
+        return memberRepository.findByNickname(nickname)
+                .orElseThrow(() -> new CustomException(MemberErrorCode.MEMBER_NOT_FOUND));
     }
 }
