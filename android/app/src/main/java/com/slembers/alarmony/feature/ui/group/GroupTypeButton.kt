@@ -25,6 +25,7 @@ import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.slembers.alarmony.R
 import com.slembers.alarmony.feature.common.ui.compose.GroupCard
 import com.slembers.alarmony.feature.common.ui.compose.GroupTitle
+import com.slembers.alarmony.feature.common.ui.theme.toColor
 import com.slembers.alarmony.viewModel.GroupViewModel
 
 @Composable
@@ -55,7 +56,7 @@ fun GroupTypeButton(
                                 .size(this.maxHeight)
                                 .align(Alignment.Center)
                                 .clip(CircleShape)
-                                .background(MaterialTheme.colorScheme.primary)
+                                .background("#00B4D8".toColor())
                         ) {
                             Image(
                                 modifier = Modifier.align(Alignment.Center),
@@ -76,7 +77,7 @@ fun GroupTypeButton(
                                 .clip(CircleShape)
                                 .background(
                                     if (isVibrate)
-                                        MaterialTheme.colorScheme.primary
+                                        "#00B4D8".toColor()
                                     else
                                         MaterialTheme.colorScheme.background
                                 )

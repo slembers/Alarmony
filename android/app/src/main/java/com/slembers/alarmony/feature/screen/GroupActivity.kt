@@ -8,6 +8,7 @@ import android.util.Log
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.foundation.background
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -54,6 +55,7 @@ import com.slembers.alarmony.feature.common.NavItem
 import com.slembers.alarmony.feature.common.ui.compose.GroupCard
 import com.slembers.alarmony.feature.common.ui.compose.GroupSubjet
 import com.slembers.alarmony.feature.common.ui.compose.GroupTitle
+import com.slembers.alarmony.feature.common.ui.theme.backgroundColor
 import com.slembers.alarmony.feature.common.ui.theme.toColor
 import com.slembers.alarmony.feature.ui.common.CommonDialog
 import com.slembers.alarmony.feature.ui.group.GroupBottomButtom
@@ -257,7 +259,7 @@ fun GroupScreen(
                                             containerColor =
                                             viewModel.getIsWeek(item).let {
                                                 if(it) {
-                                                    MaterialTheme.colorScheme.primary
+                                                    "#00B4D8".toColor()
                                                 } else {
                                                     MaterialTheme.colorScheme.background
                                                 }

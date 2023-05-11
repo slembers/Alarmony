@@ -15,6 +15,7 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
+import com.slembers.alarmony.feature.common.ui.theme.toColor
 import kotlinx.serialization.json.JsonNull.content
 
 
@@ -27,8 +28,8 @@ fun GroupDetailsBoardBtn(
 ) {
     TextButton(
         colors = ButtonDefaults.buttonColors(
-            contentColor = AlarmisCheck(isCheck, MaterialTheme.colorScheme.primary, MaterialTheme.colorScheme.background),
-            containerColor = AlarmisCheck(isCheck, MaterialTheme.colorScheme.background, MaterialTheme.colorScheme.primary)
+            contentColor = AlarmisCheck(isCheck, "#00B4D8".toColor(), MaterialTheme.colorScheme.background),
+            containerColor = AlarmisCheck(isCheck, MaterialTheme.colorScheme.background, "#00B4D8".toColor())
         ),
         onClick = onClick,
         modifier = modifier,
