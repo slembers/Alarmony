@@ -159,15 +159,15 @@ fun GroupScreen(
                                     saveAlarm(
                                         AlarmDto.toDto(
                                             Alarm(
-                                                alarm_id = groupId,
+                                                alarmId = groupId,
                                                 title = title!!,
                                                 hour = timePickerState?.hour!!,
                                                 minute = timePickerState?.minute!!,
-                                                alarm_date = weeks.map {
+                                                alarmDate = weeks.map {
                                                     isWeeks?.getValue(it) ?: false
                                                 }.toList(),
-                                                sound_name = soundName!!,
-                                                sound_volumn = soundVolume?.toInt()!!,
+                                                soundName = soundName!!,
+                                                soundVolume = soundVolume?.toInt()!!,
                                                 vibrate = vibration!!
                                             )
                                         ), context

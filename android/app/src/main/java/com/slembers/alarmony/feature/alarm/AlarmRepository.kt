@@ -5,8 +5,8 @@ import androidx.lifecycle.LiveData
 class AlarmRepository(private val alarmDao: AlarmDao) {
     val readAllData : LiveData<List<Alarm>> = alarmDao.getAllAlarms()
 
-    fun findAlarm(alarm_id : Long) : Alarm? {
-        val alarm : Alarm? = alarmDao.getAlarmById(alarm_id)
+    fun findAlarm(alarmId : Long) : Alarm? {
+        val alarm : Alarm? = alarmDao.getAlarmById(alarmId)
         return alarm
     }
 
