@@ -23,6 +23,8 @@ import com.slembers.alarmony.feature.notification.NotiDto
 import com.slembers.alarmony.feature.notification.SendAlarmForegroundService
 import com.slembers.alarmony.feature.notification.saveNoti
 import com.slembers.alarmony.network.repository.MemberService
+import com.slembers.alarmony.util.Constants.FIRE_ALARM
+import com.slembers.alarmony.util.Constants.OPEN_TYPE
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -63,6 +65,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
                 val alarmDto = AlarmDto.toDto(alarm!!)
                 if (alarmDto == null) return@launch
                 newIntent.putExtra("alarmId", alarmId)
+                newIntent.putExtra(OPEN_TYPE, FIRE_ALARM)
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                     this@MyFirebaseMessagingService.startForegroundService(newIntent)
                 } else {
