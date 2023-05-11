@@ -32,7 +32,7 @@ interface GroupRepositroy {
     suspend fun addMembers(
         @Path("groupId", encoded = true) groupId : Long?,
         @Body members : HashMap<String, List<String>>
-    ) : Response<String>
+    ) : Response<Unit>
 
     @GET("groups/{groupId}/records")
     suspend fun getGroupRecord(

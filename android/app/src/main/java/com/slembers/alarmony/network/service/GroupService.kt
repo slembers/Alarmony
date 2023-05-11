@@ -45,11 +45,11 @@ object GroupService {
                 vibrate = vibrate!!
             )).body()
             Log.d("response","[그룹생성] response : $response")
-//            val message = groupApi.addMembers(
-//                response?.groupId,
-//                hashMapOf("members" to (members ?: listOf()))
-//            )
-//            Log.d("response","[그룹생성] response : $message")
+            val message = groupApi.addMembers(
+                response?.groupId,
+                hashMapOf("members" to (members ?: listOf()))
+            )
+            Log.d("response","[그룹생성] response : $message")
 
             return response?.groupId
         } catch ( e : Exception ) {
