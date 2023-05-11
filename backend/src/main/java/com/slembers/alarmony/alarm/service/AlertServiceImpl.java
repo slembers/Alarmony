@@ -261,7 +261,7 @@ public class AlertServiceImpl implements AlertService {
                     .setBody(alert.getContent())
                     .build())
                 .putData("alertId", String.valueOf(alert.getId()))
-                .putData("profileImg", imageUrl == null ? "noImage" : imageUrl)
+                .putData("profileImg", imageUrl == null ? "" : imageUrl)
                 .putData("content", alert.getContent())
                 .putData("type", alert.getType().name())
                 .setToken(targetMobile)
