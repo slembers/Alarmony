@@ -46,21 +46,21 @@ val alarm4 = AlarmDto(
 
 val aaa = listOf(alarm1, alarm2, alarm3, alarm4)
 
-data class Noti(
+data class Notitest(
     val alert_id: Int,
     val profile_img: String,
     val content: String,
     val type: Boolean
 )
 
-val noti1 = Noti(
+val noti1 = Notitest(
     0,
     "https://cdn-icons-png.flaticon.com/512/149/149071.png",
     "'미라클모닝' 그룹 초대입니다.",
     true
 )
 
-val noti2 = Noti(
+val noti2 = Notitest(
     1,
     "https://ps.w.org/user-avatar-reloaded/assets/icon-256x256.png?rev=2540745",
     "'딘딘'님이 초대를 거절하셨습니다.",
