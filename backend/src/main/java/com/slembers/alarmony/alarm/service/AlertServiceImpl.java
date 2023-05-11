@@ -19,12 +19,13 @@ import com.slembers.alarmony.alarm.repository.AlertRepository;
 import com.slembers.alarmony.alarm.repository.MemberAlarmRepository;
 import com.slembers.alarmony.global.execption.CustomException;
 import com.slembers.alarmony.member.entity.Member;
-import com.slembers.alarmony.member.exception.MemberErrorCode;
 import com.slembers.alarmony.member.repository.MemberRepository;
 
 import java.util.List;
 
 import java.util.Optional;
+
+import com.slembers.alarmony.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -34,6 +35,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class AlertServiceImpl implements AlertService {
 
+    private final MemberService memberService;
     private final MemberRepository memberRepository;
     private final AlarmRepository alarmRepository;
     private final AlertRepository alertRepository;
@@ -48,8 +50,7 @@ public class AlertServiceImpl implements AlertService {
     @Override
     public int inviteMemberToGroup(InviteMemberSetToGroupDto inviteMemberSetToGroupDto) {
 
-        Member sender = memberRepository.findByUsername(inviteMemberSetToGroupDto.getSender())
-            .orElseThrow(() -> new CustomException(MemberErrorCode.MEMBER_NOT_FOUND));
+        Member sender = memberService.findMemberByUsername(inviteMemberSetToGroupDto.getSender());
 
         Alarm alarm = alarmRepository.findById(inviteMemberSetToGroupDto.getGroupId())
             .orElseThrow(() -> new CustomException(AlarmErrorCode.ALARM_NOT_FOUND));
@@ -121,8 +122,7 @@ public class AlertServiceImpl implements AlertService {
      */
     @Override
     public AlertListResponseDto getAlertList(String username) {
-        Member member = memberRepository.findByUsername(username)
-            .orElseThrow(() -> new CustomException(MemberErrorCode.MEMBER_NOT_FOUND));
+        Member member = memberService.findMemberByUsername(username);
         try {
             List<AlertDto> alertDtos = alertRepository.findMemberAlertDtos(member);
             return AlertListResponseDto.builder().alerts(alertDtos).build();
@@ -287,8 +287,7 @@ public class AlertServiceImpl implements AlertService {
 
         Alarm alarm = alarmRepository.findById(groupId)
             .orElseThrow(() -> new CustomException(AlertErrorCode.ALERT_NOT_FOUND));
-        Member member = memberRepository.findByNickname(nickname)
-            .orElseThrow(() -> new CustomException(MemberErrorCode.MEMBER_NOT_FOUND));
+        Member member = memberService.findMemberByNickName(nickname);
         if (!memberAlarmRepository.existsByMemberAndAlarm(member, alarm)) {
             log.error("멤버 알람 정보가 존재하지 않음");
             throw new CustomException(MemberAlarmErrorCode.MEMBER_ALARM_NOT_FOUND);
