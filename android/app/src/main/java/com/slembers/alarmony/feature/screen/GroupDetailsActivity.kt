@@ -37,6 +37,7 @@ import com.slembers.alarmony.feature.alarm.deleteAlarm
 import com.slembers.alarmony.feature.common.CardBox
 import com.slembers.alarmony.feature.common.NavItem
 import com.slembers.alarmony.feature.common.ui.compose.GroupTitle
+import com.slembers.alarmony.feature.common.ui.theme.toColor
 import com.slembers.alarmony.feature.ui.common.CommonDialog
 import com.slembers.alarmony.feature.ui.group.GroupToolBar
 import com.slembers.alarmony.feature.ui.groupDetails.GroupDetailsBoard
@@ -102,22 +103,24 @@ fun GroupDetailsScreen(
     )
 
     LaunchedEffect(Unit) {
+        Log.d("alarmDetails","[알람 상세] 초기화 불러오는 중 ...")
         val repository = AlarmRepository(alarmDao)
         val _alarm = withContext(Dispatchers.IO) {
             repository.findAlarm(alarmId!!)
         }
 
         val _record = details.getRecord(alarmId!!)
-
+        Log.d("alarmDetails","[알람 상세] 초기화 불러오는 완료 ...")
+        Log.d("alarmDetails","[알람 상세] alarm : $_alarm")
         alarm.value = _alarm!!
         record.value = _record
     }
 
-    Log.d("alarmDetails","[알람 상세] details : $details")
-
     Log.d("alarmDetails","[알람 상세] alarm : $alarm")
+    Log.d("alarmDetails","[알람 상세] alarm_date : ${alarm.value.alarm_date}")
     Log.d("alarmDetails","[알람 상세] alarmId : $alarmId")
     Log.d("alarmDetails","[알람 상세] record : $record")
+    Log.d("alarmDetails","[알람 상세] details : $details")
 
     val scrollState = rememberScrollState()
 
@@ -128,6 +131,7 @@ fun GroupDetailsScreen(
                 navClick = { navController.popBackStack() }
             )
         },
+        containerColor = "#F9F9F9".toColor(),
         content = { innerPadding ->
             Column(
                 modifier = Modifier
@@ -140,12 +144,17 @@ fun GroupDetailsScreen(
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 GroupDetailsTitle(alarm.value)
-                GroupDetailsBoard(record.value)
+                GroupDetailsBoard(
+                    items = record.value,
+                    groupId = alarmId!!
+                )
                 CardBox(
                     title = { GroupTitle(
                         title = "그룹원 통계",
                         content = { Icon(
-                            modifier = Modifier.size(50.dp),
+                            modifier = Modifier
+                                .padding(end = 10.dp)
+                                .size(30.dp),
                             imageVector = Icons.Filled.BarChart,
                             contentDescription = null
                         )}
@@ -154,7 +163,9 @@ fun GroupDetailsScreen(
                 CardBox( title = { GroupTitle(
                     title = "그룹 나가기",
                     content = { Icon(
-                        modifier = Modifier.size(50.dp),
+                        modifier = Modifier
+                            .padding(end = 10.dp)
+                            .size(30.dp),
                         imageVector = Icons.Filled.ExitToApp,
                         contentDescription = null,
                         tint = Color.Red

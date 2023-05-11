@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -27,6 +28,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.min
 import androidx.compose.ui.unit.sp
 import com.slembers.alarmony.feature.common.ui.theme.toColor
 
@@ -37,12 +39,16 @@ fun CommonDialog(
     title: String = "임시제목",
     context: String = "여기에 문구를 작성해주세요.",
     isClosed : MutableState<Boolean> = mutableStateOf(false),
-    openDialog: MutableState<Boolean> = mutableStateOf(false),
-    accept: () -> Unit = {}
+    openDialog: MutableState<Boolean> = mutableStateOf(true),
+    accept: () -> Unit = {},
+    isButton: Boolean = true
 ) {
     if (openDialog.value) {
         AlertDialog(
             shape = RoundedCornerShape(20.dp),
+            modifier = Modifier.heightIn(
+                min(100.dp,100.dp)
+            ),
             onDismissRequest = {
                 isClosed.value = false
             },
@@ -72,35 +78,37 @@ fun CommonDialog(
                 }
             },
             buttons = {
-                Row(
-                    horizontalArrangement = Arrangement.SpaceEvenly,
-                    modifier = Modifier
-                        .padding(20.dp)
-                        .fillMaxWidth()
-                ) {
-                    Button(
-                        onClick = { isClosed.value = false },
-                        colors = ButtonDefaults.buttonColors(containerColor = "#C93636".toColor())
+                if (isButton) {
+                    Row(
+                        horizontalArrangement = Arrangement.SpaceEvenly,
+                        modifier = Modifier
+                            .padding(20.dp)
+                            .fillMaxWidth()
                     ) {
-                        Icon(
-                            imageVector = Icons.Outlined.Close,
-                            contentDescription = "Notification",
-                            tint = Color.White,
-                            modifier = Modifier.size(25.dp)
-                        )
-                        Text(text = "취소")
-                    }
-                    Button(
-                        onClick = accept,
-                        colors = ButtonDefaults.buttonColors(containerColor = "#31AF91".toColor()),
-                    ) {
-                        Icon(
-                            imageVector = Icons.Outlined.Check,
-                            contentDescription = "Notification",
-                            tint = Color.White,
-                            modifier = Modifier.size(25.dp)
-                        )
-                        Text("수락")
+                        Button(
+                            onClick = { isClosed.value = false },
+                            colors = ButtonDefaults.buttonColors(containerColor = "#C93636".toColor())
+                        ) {
+                            Icon(
+                                imageVector = Icons.Outlined.Close,
+                                contentDescription = "Notification",
+                                tint = Color.White,
+                                modifier = Modifier.size(25.dp)
+                            )
+                            Text(text = "취소")
+                        }
+                        Button(
+                            onClick = accept,
+                            colors = ButtonDefaults.buttonColors(containerColor = "#31AF91".toColor()),
+                        ) {
+                            Icon(
+                                imageVector = Icons.Outlined.Check,
+                                contentDescription = "Notification",
+                                tint = Color.White,
+                                modifier = Modifier.size(25.dp)
+                            )
+                            Text("수락")
+                        }
                     }
                 }
             }

@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -69,11 +70,18 @@ fun GroupDetailsTitle(
                                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                                 userScrollEnabled = false,
                                 content = {
-                                    items(week) {
-                                        GroupDetailsText(
-                                            text = it,
-                                            color = GroupDetailsWeek(it)
-                                        )
+                                    itemsIndexed(items = week) { index, item ->
+                                        if(alarm.alarm_date.isEmpty()) {
+                                            GroupDetailsText(
+                                                text = item,
+                                                color = GroupDetailsWeek(item)
+                                            )
+                                        } else {
+                                            GroupDetailsText(
+                                                text = item,
+                                                color = GroupDetailsWeek(item, alarm.alarm_date[index])
+                                            )
+                                        }
                                     }
                                 }
                             )
@@ -138,16 +146,17 @@ fun GroupDetailsText(
 }
 
 private fun GroupDetailsWeek(
-    word : String = "월"
+    word : String = "월",
+    ischeck : Boolean = false
 ) : Color {
     return when (word) {
-        "월" -> Color.Gray
-        "화" -> Color.Gray
-        "수" -> Color.Gray
-        "목" -> Color.Gray
-        "금" -> Color.Gray
-        "토" -> Color.Red
-        "일" -> Color.Red
+        "월" -> if(ischeck) Color.Black.copy(alpha = 1f) else Color.Black.copy(alpha = 0.4f)
+        "화" -> if(ischeck) Color.Black.copy(alpha = 1f) else Color.Black.copy(alpha = 0.4f)
+        "수" -> if(ischeck) Color.Black.copy(alpha = 1f) else Color.Black.copy(alpha = 0.4f)
+        "목" -> if(ischeck) Color.Black.copy(alpha = 1f) else Color.Black.copy(alpha = 0.4f)
+        "금" -> if(ischeck) Color.Black.copy(alpha = 1f) else Color.Black.copy(alpha = 0.4f)
+        "토" -> if(ischeck) Color.Red.copy(alpha = 1f) else Color.Red.copy(alpha = 0.4f)
+        "일" -> if(ischeck) Color.Red.copy(alpha = 1f) else Color.Red.copy(alpha = 0.4f)
         else -> {Color.Black}
     }
 }
