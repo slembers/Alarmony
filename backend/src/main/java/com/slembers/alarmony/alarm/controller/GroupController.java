@@ -56,7 +56,7 @@ public class GroupController {
 
         Map<String, Object> map = new HashMap<>();
         map.put("memberInfoList", memberInfoList);
-        return new ResponseEntity<>(map, HttpStatus.OK);
+        return ResponseEntity.ok(map);
     }
 
     /**
@@ -67,7 +67,7 @@ public class GroupController {
      * @return 성공 여부
      */
     @PostMapping("/{group-id}/members")
-    public ResponseEntity<String> inviteMemberToGroup(
+    public ResponseEntity<Map<String, Object>> inviteMemberToGroup(
         @PathVariable(name = "group-id") Long groupId,
         @Valid @RequestBody InviteMemberToGroupRequestDto inviteMemberToGroupRequestDto) {
 
@@ -79,8 +79,11 @@ public class GroupController {
             .sender(username)
             .build();
         int cnt = alertService.inviteMemberToGroup(dto);
-        return new ResponseEntity<>(String.format("%d/%d 멤버에게 그룹 초대를 요청했습니다.",
-            cnt, inviteMemberToGroupRequestDto.getMembers().size()), HttpStatus.OK);
+
+        Map<String, Object> map = new HashMap<>();
+        map.put("success", cnt);
+        map.put("total", inviteMemberToGroupRequestDto.getMembers().size());
+        return ResponseEntity.ok(map);
     }
 
     /**
@@ -141,7 +144,7 @@ public class GroupController {
 
         Map<String, Object> map = new HashMap<>();
         map.put("alarmList", alarmList);
-        return new ResponseEntity<>(map, HttpStatus.OK);
+        return ResponseEntity.ok(map);
     }
 
     /**
@@ -158,7 +161,7 @@ public class GroupController {
 
         Map<String, Object> map = new HashMap<>();
         map.put("members", alarmRanking);
-        return new ResponseEntity<>(map, HttpStatus.OK);
+        return ResponseEntity.ok(map);
     }
 
     /**

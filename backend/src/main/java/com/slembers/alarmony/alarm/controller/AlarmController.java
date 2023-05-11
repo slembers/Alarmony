@@ -13,7 +13,6 @@ import java.util.HashMap;
 import java.util.Map;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -34,7 +33,7 @@ public class AlarmController {
     @GetMapping
     public ResponseEntity<AlarmListResponseDto> getAlarmList() {
         String username = SecurityUtil.getCurrentUsername();
-        return new ResponseEntity<>(alarmService.getAlarmList(username), HttpStatus.OK);
+        return ResponseEntity.ok(alarmService.getAlarmList(username));
     }
 
     /**
@@ -51,7 +50,7 @@ public class AlarmController {
 
         Map<String, Object> map = new HashMap<>();
         map.put("groupId", alarmId);
-        return new ResponseEntity<>(map, HttpStatus.OK);
+        return ResponseEntity.ok(map);
     }
 
     /**
@@ -80,7 +79,8 @@ public class AlarmController {
      */
     @GetMapping("/{alarm-id}")
     public ResponseEntity<AlarmDto> getAlarmInfo(@PathVariable("alarm-id") Long alarmId) {
-        return new ResponseEntity<>(alarmService.getAlarmInfo(alarmId), HttpStatus.OK);
+
+        return ResponseEntity.ok(alarmService.getAlarmInfo(alarmId));
     }
 
     /**

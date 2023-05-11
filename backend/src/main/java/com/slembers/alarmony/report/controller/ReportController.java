@@ -36,7 +36,7 @@ public class ReportController {
 
         Map<String, Object> map = new HashMap<>();
         map.put("reports", reportList);
-        return new ResponseEntity<>(map, HttpStatus.OK);
+        return ResponseEntity.ok(map);
     }
 
     /**
@@ -49,7 +49,7 @@ public class ReportController {
     public ResponseEntity<ReportResponseDto> getReportDetail(
         @PathVariable(name = "report-id") Long reportId) {
 
-        return new ResponseEntity<>(reportService.getReportDetail(reportId), HttpStatus.OK);
+        return ResponseEntity.ok(reportService.getReportDetail(reportId));
     }
 
     /**

@@ -10,7 +10,6 @@ import com.slembers.alarmony.global.security.util.SecurityUtil;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -30,7 +29,7 @@ public class AlertController {
     @GetMapping
     public ResponseEntity<AlertListResponseDto> getAlertList() {
         String username = SecurityUtil.getCurrentUsername();
-        return new ResponseEntity<>(alertService.getAlertList(username), HttpStatus.OK);
+        return ResponseEntity.ok(alertService.getAlertList(username));
     }
 
     /**
@@ -60,9 +59,9 @@ public class AlertController {
         if (responseInviteRequestDto == null || responseInviteRequestDto.getAccept() == null) {
             throw new CustomException(AlertErrorCode.ALERT_BAD_REQUEST);
         } else if (Boolean.TRUE.equals(responseInviteRequestDto.getAccept())) {
-            return new ResponseEntity<>(alertService.acceptInvite(alertId), HttpStatus.OK);
+            return ResponseEntity.ok(alertService.acceptInvite(alertId));
         } else {
-            return new ResponseEntity<>(alertService.refuseInvite(alertId), HttpStatus.OK);
+            return ResponseEntity.ok(alertService.refuseInvite(alertId));
         }
     }
 
