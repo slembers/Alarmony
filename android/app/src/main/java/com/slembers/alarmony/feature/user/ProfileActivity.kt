@@ -25,6 +25,7 @@ import androidx.compose.material.TextField
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
@@ -32,6 +33,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.Role.Companion.Image
 import androidx.compose.ui.text.input.ImeAction
@@ -41,7 +43,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.slembers.alarmony.R
-
+import com.slembers.alarmony.network.repository.MemberService.logOut
+@OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
 fun ProfileSetting(navController: NavController) {
@@ -55,7 +58,7 @@ fun ProfileSetting(navController: NavController) {
 
     // 닉네임 수정 모드를 제어하는 상태 변수
     var isEditMode = remember { mutableStateOf(false) }
-
+    val context = LocalContext.current
     Scaffold(
         topBar = {
             TopAppBar(
@@ -146,7 +149,11 @@ fun ProfileSetting(navController: NavController) {
 
                     horizontalArrangement = Arrangement.SpaceAround
                 ) {
-                    TextButton(onClick = { /* 회원가입 버튼 클릭 시 처리할 동작 */ }) {
+                    TextButton(onClick = {
+                        logOut(context, navController)})
+
+
+                    {
                         Text(text = "로그아웃 |")
                     }
 
