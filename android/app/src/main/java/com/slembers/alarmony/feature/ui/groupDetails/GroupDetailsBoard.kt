@@ -1,5 +1,6 @@
 package com.slembers.alarmony.feature.ui.groupDetails
 
+import android.content.Context
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -12,6 +13,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
@@ -25,6 +27,10 @@ import com.slembers.alarmony.feature.common.CardBox
 import com.slembers.alarmony.feature.common.CardDivider
 import com.slembers.alarmony.feature.common.CardTitle
 import com.slembers.alarmony.model.db.Record
+import com.slembers.alarmony.network.service.GroupService
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import java.text.SimpleDateFormat
 import java.time.LocalDate
 import java.time.ZoneId
@@ -39,7 +45,8 @@ fun GroupDetailsBoard(
     items: Map<String, List<Record>> = hashMapOf(
         "success" to listOf(),
         "failed" to listOf()
-    )
+    ),
+    groupId: Long = 0
 ) {
     CardBox(
         title = { CardTitle(
@@ -100,7 +107,17 @@ fun GroupDetailsBoard(
                                     MemberDetails(
                                         nickname = it.nickname,
                                         profile = it.profileImg,
-                                        isCheck = it.success
+                                        isCheck = it.success,
+                                        onClick = {
+                                            if(it.success.not()) {
+                                                CoroutineScope(Dispatchers.IO).async {
+                                                    GroupService.notification(
+                                                        groupId,
+                                                        it.nickname
+                                                    )
+                                                }
+                                            }
+                                        }
                                     )
                                 }
                             }

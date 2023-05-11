@@ -15,6 +15,7 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
+import kotlinx.serialization.json.JsonNull.content
 
 
 @Preview
@@ -22,7 +23,7 @@ import androidx.compose.ui.unit.sp
 fun GroupDetailsBoardBtn(
     isCheck : Boolean = false,
     modifier : Modifier = Modifier,
-    onClick : () -> Unit = {}
+    onClick : () -> Unit = {},
 ) {
     TextButton(
         colors = ButtonDefaults.buttonColors(

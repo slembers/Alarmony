@@ -43,4 +43,11 @@ interface GroupRepositroy {
     suspend fun deleteGroup(
         @Path("groupId") groupId : Long
     ) : Response<Unit>
+
+    @POST("groups/{groupId}/members/{nickname}/alarms")
+    suspend fun notificationGroup(
+        @Path("groupId") groupId : Long,
+        @Path("nickname") nickname : String
+    ) : Response<Unit>
+
 }
