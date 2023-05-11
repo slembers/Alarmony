@@ -25,7 +25,11 @@ import com.slembers.alarmony.feature.common.CardBox
 import com.slembers.alarmony.feature.common.CardDivider
 import com.slembers.alarmony.feature.common.CardTitle
 import com.slembers.alarmony.model.db.Record
-import kotlinx.coroutines.Deferred
+import java.text.SimpleDateFormat
+import java.time.LocalDate
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
+import java.util.Date
 
 @Preview
 @Composable
@@ -42,7 +46,7 @@ fun GroupDetailsBoard(
             title = "오늘 알람 기록",
             content =  {
                 Text(
-                    text = "23/04/19",
+                    text = currentDate(),
                     style = TextStyle(
                         color = Color.Black,
                         fontSize = 15.sp,
@@ -106,4 +110,10 @@ fun GroupDetailsBoard(
             )
         }
     )
+}
+
+private fun currentDate() : String {
+    val local = LocalDate.now(ZoneId.of("Asia/Seoul"))
+    val dateTimeFormat = DateTimeFormatter.ofPattern("yy/MM/dd")
+    return local.format(dateTimeFormat)
 }
