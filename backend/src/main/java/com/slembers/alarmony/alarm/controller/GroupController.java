@@ -72,6 +72,9 @@ public class GroupController {
         @Valid @RequestBody InviteMemberToGroupRequestDto inviteMemberToGroupRequestDto) {
 
         String username = SecurityUtil.getCurrentUsername();
+        if (!groupService.isGroupOwner(groupId, username)) {
+            throw new CustomException(AlarmErrorCode.MEMBER_NOT_HOST);
+        }
 
         InviteMemberSetToGroupDto dto = InviteMemberSetToGroupDto.builder()
             .groupId(groupId)
