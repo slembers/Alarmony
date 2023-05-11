@@ -37,6 +37,7 @@ import com.slembers.alarmony.feature.alarm.deleteAlarm
 import com.slembers.alarmony.feature.common.CardBox
 import com.slembers.alarmony.feature.common.NavItem
 import com.slembers.alarmony.feature.common.ui.compose.GroupTitle
+import com.slembers.alarmony.feature.common.ui.theme.toColor
 import com.slembers.alarmony.feature.ui.common.CommonDialog
 import com.slembers.alarmony.feature.ui.group.GroupToolBar
 import com.slembers.alarmony.feature.ui.groupDetails.GroupDetailsBoard
@@ -130,6 +131,7 @@ fun GroupDetailsScreen(
                 navClick = { navController.popBackStack() }
             )
         },
+        containerColor = "#F9F9F9".toColor(),
         content = { innerPadding ->
             Column(
                 modifier = Modifier

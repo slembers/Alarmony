@@ -21,6 +21,7 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
+import com.slembers.alarmony.feature.common.ui.theme.toColor
 
 @Composable
 @ExperimentalMaterial3Api
@@ -32,8 +33,7 @@ fun CardBox(
 ) {
 
     Card(
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.background),
+        colors = CardDefaults.cardColors(containerColor = "#FFFFFF".toColor()),
         shape = MaterialTheme.shapes.medium,
         modifier = modifier,
         content = {

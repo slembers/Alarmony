@@ -68,6 +68,7 @@ import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.slembers.alarmony.R
 import com.slembers.alarmony.feature.common.CardBox
 import com.slembers.alarmony.feature.common.CardTitle
+import com.slembers.alarmony.feature.common.ui.theme.toColor
 import com.slembers.alarmony.model.db.Member
 import com.slembers.alarmony.viewModel.GroupSearchViewModel
 import java.util.Locale
@@ -198,8 +199,7 @@ fun GroupCard(
 ) {
 
     Card(
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.background),
+        colors = CardDefaults.cardColors(containerColor = "#FFFFFF".toColor()),
         shape = MaterialTheme.shapes.medium,
         modifier = Modifier
             .fillMaxWidth()
