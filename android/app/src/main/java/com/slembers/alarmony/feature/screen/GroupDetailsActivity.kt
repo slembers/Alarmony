@@ -17,7 +17,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -38,6 +37,7 @@ import com.slembers.alarmony.feature.alarm.deleteAlarm
 import com.slembers.alarmony.feature.common.CardBox
 import com.slembers.alarmony.feature.common.NavItem
 import com.slembers.alarmony.feature.common.ui.compose.GroupTitle
+import com.slembers.alarmony.feature.ui.common.CommonDialog
 import com.slembers.alarmony.feature.ui.group.GroupToolBar
 import com.slembers.alarmony.feature.ui.groupDetails.GroupDetailsBoard
 import com.slembers.alarmony.feature.ui.groupDetails.GroupDetailsTitle
@@ -47,7 +47,7 @@ import com.slembers.alarmony.viewModel.GroupDetailsViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class GroupDetailsActivity : Fragment() {
@@ -68,15 +68,15 @@ fun GroupDetailsScreen(
     alarmId: Long? = null
 ) {
 
-
     val context = LocalContext.current
-
     if(alarmId == null) {
         Toast.makeText(context,"에러가 발생했습니다.",Toast.LENGTH_SHORT)
         navController.popBackStack()
     }
 
     val alarmDao = AlarmDatabase.getInstance(context).alarmDao()
+    val isClosed = remember { mutableStateOf(false) }
+    val openDialog = remember { mutableStateOf(true) }
     val alarm = remember{ mutableStateOf<Alarm>(Alarm(
         alarm_id =  0,
         title =  "임시제목",
@@ -159,16 +159,23 @@ fun GroupDetailsScreen(
                         contentDescription = null,
                         tint = Color.Red
                     )},
-                    onClick = {
-                        CoroutineScope(Dispatchers.IO).async {
-                            val exit = GroupService.deleteGroup(alarmId!!)
-                            if(exit) {
-                                deleteAlarm(alarmId!!, context)
-                                navController.popBackStack()
-                            }
-                        }
-                    }
+                    onClick = { isClosed.value = true }
                 )}
+                )
+            }
+            if(isClosed.value) {
+                CommonDialog(
+                    title = "그룹 나가기",
+                    context = "정말로 나가겠어요?",
+                    isClosed = isClosed,
+                    openDialog = openDialog,
+                    accept = {
+                        CoroutineScope(Dispatchers.IO).launch {
+                            GroupService.deleteGroup(alarmId!!)
+                            deleteAlarm(alarmId, context)
+                        }
+                        navController.popBackStack()
+                    }
                 )
             }
         }
