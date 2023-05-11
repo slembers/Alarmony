@@ -27,6 +27,7 @@ import com.slembers.alarmony.network.repository.MemberService.singup
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.focus.FocusRequester
@@ -37,6 +38,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.ui.NavigationUI.navigateUp
+import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.slembers.alarmony.feature.common.NavItem
 import com.slembers.alarmony.feature.ui.common.ShowAlertDialog
 import com.slembers.alarmony.model.db.SignupRequest
@@ -51,6 +53,8 @@ import androidx.compose.ui.graphics.Color.Companion.Green
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
+@ExperimentalMaterial3Api
+@ExperimentalGlideComposeApi
 fun SignupScreen(navController: NavController) {
 //    이번엔 state가 아니라 String형식으로 저장해보기
     var username  by remember { mutableStateOf("") }

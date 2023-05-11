@@ -56,7 +56,7 @@ public class GroupController {
 
         Map<String, Object> map = new HashMap<>();
         map.put("memberInfoList", memberInfoList);
-        return new ResponseEntity<>(map, HttpStatus.OK);
+        return ResponseEntity.ok(map);
     }
 
     /**
@@ -67,11 +67,14 @@ public class GroupController {
      * @return 성공 여부
      */
     @PostMapping("/{group-id}/members")
-    public ResponseEntity<String> inviteMemberToGroup(
+    public ResponseEntity<Map<String, Object>> inviteMemberToGroup(
         @PathVariable(name = "group-id") Long groupId,
         @Valid @RequestBody InviteMemberToGroupRequestDto inviteMemberToGroupRequestDto) {
 
         String username = SecurityUtil.getCurrentUsername();
+        if (!groupService.isGroupOwner(groupId, username)) {
+            throw new CustomException(AlarmErrorCode.MEMBER_NOT_HOST);
+        }
 
         InviteMemberSetToGroupDto dto = InviteMemberSetToGroupDto.builder()
             .groupId(groupId)
@@ -79,8 +82,11 @@ public class GroupController {
             .sender(username)
             .build();
         int cnt = alertService.inviteMemberToGroup(dto);
-        return new ResponseEntity<>(String.format("%d/%d 멤버에게 그룹 초대를 요청했습니다.",
-            cnt, inviteMemberToGroupRequestDto.getMembers().size()), HttpStatus.OK);
+
+        Map<String, Object> map = new HashMap<>();
+        map.put("success", cnt);
+        map.put("total", inviteMemberToGroupRequestDto.getMembers().size());
+        return ResponseEntity.ok(map);
     }
 
     /**
@@ -90,7 +96,7 @@ public class GroupController {
      * @return 성공 여부
      */
     @DeleteMapping("/{group-id}")
-    public ResponseEntity<String> leaveFromGroup(
+    public ResponseEntity<Void> leaveFromGroup(
         @PathVariable(name = "group-id") Long groupId) {
         String username = SecurityUtil.getCurrentUsername();
 
@@ -99,7 +105,7 @@ public class GroupController {
         } else {
             groupService.removeMemberByUsername(groupId, username);
         }
-        return new ResponseEntity<>("그룹 탈퇴에 성공했습니다.", HttpStatus.OK);
+        return ResponseEntity.noContent().build();
     }
 
     /**
@@ -110,7 +116,7 @@ public class GroupController {
      * @return 성공 여부
      */
     @DeleteMapping("/{group-id}/members/{nickname}")
-    public ResponseEntity<String> removeMemberFromGroup(
+    public ResponseEntity<Void> removeMemberFromGroup(
         @PathVariable(name = "group-id") Long groupId,
         @PathVariable(name = "nickname") String nickname) {
 
@@ -124,7 +130,7 @@ public class GroupController {
         }
 
         groupService.removeMemberByNickname(groupId, nickname);
-        return new ResponseEntity<>("해당 멤버 퇴출에 성공했습니다.", HttpStatus.OK);
+        return ResponseEntity.noContent().build();
     }
 
     /**
@@ -141,7 +147,7 @@ public class GroupController {
 
         Map<String, Object> map = new HashMap<>();
         map.put("alarmList", alarmList);
-        return new ResponseEntity<>(map, HttpStatus.OK);
+        return ResponseEntity.ok(map);
     }
 
     /**
@@ -158,7 +164,7 @@ public class GroupController {
 
         Map<String, Object> map = new HashMap<>();
         map.put("members", alarmRanking);
-        return new ResponseEntity<>(map, HttpStatus.OK);
+        return ResponseEntity.ok(map);
     }
 
     /**
@@ -169,7 +175,7 @@ public class GroupController {
      * @return 성공 여부
      */
     @PostMapping("/{group-id}/members/{nickname}/alarms")
-    public ResponseEntity<String> sendAlarm(
+    public ResponseEntity<Void> sendAlarm(
         @PathVariable(name = "group-id") Long groupId,
         @PathVariable(name = "nickname") String nickname) {
 
@@ -183,7 +189,7 @@ public class GroupController {
         }
 
         alertService.sendAlarm(groupId, nickname);
-        return new ResponseEntity<>("알람 보내기에 성공했습니다.", HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
 }

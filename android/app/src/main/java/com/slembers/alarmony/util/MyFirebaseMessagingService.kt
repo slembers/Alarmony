@@ -7,13 +7,22 @@ import android.app.NotificationManager
 import android.content.pm.PackageManager
 import android.os.Build
 import android.util.Log
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
+import com.slembers.alarmony.MainActivity
 import com.slembers.alarmony.R
+import com.slembers.alarmony.network.repository.MemberService
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 
+@ExperimentalMaterial3Api
+@ExperimentalGlideComposeApi
 class MyFirebaseMessagingService : FirebaseMessagingService() {
 
     companion object {
@@ -25,6 +34,14 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         super.onNewToken(token)
         Log.i("디버깅", "Refreshed token = $token");
         // TODO: 서버로 토큰 전송
+        if(MainActivity.prefs.getString("accessToken","").isNotBlank()){
+            CoroutineScope(Dispatchers.IO).async {
+                MemberService.putRegistToken(token)
+            }
+        } else {
+            Log.i("디버깅", "등록된 멤버가 없으니 등록 토큰을 저장합니다 $token");
+            MainActivity.prefs.setString("registrationToken",token)
+        }
     }
 
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
@@ -66,6 +83,13 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
             builder?.setContentTitle(title)
                 ?.setContentText(body)
                 ?.setSmallIcon(R.drawable.ic_launcher_background)
+
+            val data = remoteMessage.data
+            Log.d("RECEIVED MESSAGE", "-----------------received-----------------------")
+            Log.d("RECEIVED MESSAGE", "alertId : ${data["alertId"]}")
+            Log.d("RECEIVED MESSAGE", "profileImg : ${data["profileImg"]}")
+            Log.d("RECEIVED MESSAGE", "content : ${data["content"]}")
+            Log.d("RECEIVED MESSAGE", "type : ${data["type"]}")
         }
 
         val notification: Notification = builder?.build()!!
