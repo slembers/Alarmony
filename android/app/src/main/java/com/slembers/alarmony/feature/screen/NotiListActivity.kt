@@ -58,6 +58,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import com.slembers.alarmony.R
 import com.slembers.alarmony.feature.common.ui.theme.notosanskr
 import com.slembers.alarmony.feature.common.ui.theme.toColor
 import com.slembers.alarmony.feature.notification.Noti
@@ -127,6 +128,8 @@ fun NotiListScreen(navController: NavController) {
 @Composable
 fun MyNotiItem(item : Noti) {
     val isClicked = remember { mutableStateOf(false)  }
+    val profileImage = if (item.profileImg.length > 0) {item.profileImg}
+    else {R.drawable.profiledefault}
     Card(
         modifier = Modifier
             .padding(8.dp)
@@ -156,7 +159,7 @@ fun MyNotiItem(item : Noti) {
                 .fillMaxWidth()) {
             AsyncImage(
                 model = ImageRequest.Builder(LocalContext.current)
-                    .data(item.profileImg)
+                    .data(profileImage)
                     .build(),
                 contentDescription = "ImageRequest example",
                 modifier = Modifier.size(65.dp)

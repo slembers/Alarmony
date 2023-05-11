@@ -1,5 +1,6 @@
 package com.slembers.alarmony.feature.common
 
+import android.content.Intent
 import android.util.Log
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -34,10 +35,16 @@ import com.slembers.alarmony.viewModel.GroupViewModel
 @ExperimentalMaterial3Api
 @ExperimentalGlideComposeApi
 fun NavController(
-    navController : NavHostController = rememberNavController()
+intent : Intent, navController : NavHostController = rememberNavController()
 ) {
+    val screen: String? = intent.getStringExtra("GO")
+    if (screen == "AlarmListActivity") {
+        navController.navigate(NavItem.NotiListScreen.route)
+    }
+
     val accessToken = MainActivity.prefs.getString("accessToken","")
     Log.d("token","[로그인] $accessToken !!")
+
     val startDestinate = if(accessToken.isNotBlank()) NavItem.AlarmListScreen.route else NavItem.LoginScreen.route
     NavHost(
         modifier = Modifier.fillMaxSize(),
