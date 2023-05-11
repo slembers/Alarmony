@@ -21,6 +21,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.MaterialTheme.colors
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.outlined.Notifications
@@ -51,7 +52,9 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.os.bundleOf
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavHost
 import androidx.navigation.NavHostController
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.slembers.alarmony.R
@@ -197,7 +200,11 @@ fun AlarmListScreen(navController : NavHostController) {
                 //////////////////
                 LazyColumn{
                     items(alarms.size) {model ->
-                        MyListItem(item = alarms[model], onItemClick=onListItemClick)
+                        MyListItem(
+                            item = alarms[model],
+                            onItemClick=onListItemClick,
+                            navController = navController
+                        )
                     }
                 }
             }
@@ -207,7 +214,10 @@ fun AlarmListScreen(navController : NavHostController) {
 }
 
 @Composable
-fun MyListItem(item : Alarm, onItemClick: (String) -> Unit) {
+fun MyListItem(
+    item : Alarm,
+    onItemClick: (String) -> Unit,
+    navController: NavHostController) {
     Card(
         modifier = Modifier
             .padding(8.dp)
@@ -220,7 +230,7 @@ fun MyListItem(item : Alarm, onItemClick: (String) -> Unit) {
             )
             .background(Color.White)
             .fillMaxWidth()
-            .clickable { onItemClick("Heelo") },
+            .clickable { navController.navigate("${NavItem.GroupDetails.route}/${item.alarm_id}") },
         shape = RoundedCornerShape(20.dp),
         colors = CardDefaults.cardColors(containerColor = "#FFFFFF".toColor()))
 
