@@ -44,7 +44,10 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.slembers.alarmony.R
+import com.slembers.alarmony.network.repository.MemberService.getMyInfo
 import com.slembers.alarmony.network.repository.MemberService.logOut
+import retrofit2.http.Multipart
+
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalGlideComposeApi::class)
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
@@ -52,15 +55,30 @@ fun ProfileSetting(navController: NavController) {
 
 
     // 이메일과 닉네임 정보를 가지고 있는 상태 변수
-    var nickname = remember { mutableStateOf("닉네임") }
-    var email = remember { mutableStateOf("xxxx@naver.com") }
+    var nicknamePro = remember { mutableStateOf("닉네임") }
+    var emailPro = remember { mutableStateOf("xxxx@naver.com") }
+    var usernamePro = remember { mutableStateOf("유저네임") }
 
     // 프로필 이미지를 가지고 있는 상태 변수
-    var profileImage = remember { mutableStateOf(R.drawable.mascot_foreground) }
+//    따라서, 클라이언트 측에서는 이미지 파일의 경로나 URI를 주고받아야 한다.
+//    서버 측에서는 이를 멀티파트 데이터로 변환해서 전송해야 합니다.
+    var profileImagePro = remember { mutableStateOf(null) }
+    var basicProfileImage = remember { mutableStateOf(R.drawable.mascot_foreground) }
 
     // 닉네임 수정 모드를 제어하는 상태 변수
     var isEditMode = remember { mutableStateOf(false) }
     val context = LocalContext.current
+
+    getMyInfo(
+        context,
+        navController,
+        username = { usernamePro.value = it ?: "default value" },
+        email = { emailPro.value = it ?: "default value" },
+        profileImage = { profileImagePro.value = null },
+        nickname = { nicknamePro.value = it ?: "default value" }
+
+    )
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -81,19 +99,34 @@ fun ProfileSetting(navController: NavController) {
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 // 프로필 이미지
-                Image(
-                    painter = painterResource(profileImage.value),
-                    contentDescription = "프로필 이미지",
-                    modifier = Modifier
-                        .size(100.dp)
-                        .clickable(onClick = { /* 프로필 사진 변경 로직 */ })
-                )
+//                이미지가 없으면 drawable 형식의 기본이미자, 아니라면 multipart이미지
+                if (profileImagePro.value == null) {
+                    Image(
+                        painter = painterResource(basicProfileImage.value),
+                        contentDescription = "프로필 이미지",
+                        modifier = Modifier
+                            .size(100.dp)
+                            .clickable(onClick = { /* 프로필 사진 변경 로직 */ })
+                    )
+
+                } else {
+                    Log.d("response", "이미지${profileImagePro}")
+                    Text("기본이 아닌 유저프로필 사진")
+//                    Image(
+//                        painter = painterResource(profileImagePro.value),
+//                        contentDescription = "프로필 이미지",
+//                        modifier = Modifier
+//                            .size(100.dp)
+//                            .clickable(onClick = { /* 프로필 사진 변경 로직 */ })
+//                    )
+                }
+
 
                 Spacer(modifier = Modifier.height(16.dp))
 
                 // 이메일
                 Text(
-                    text = email.value,
+                    text = emailPro.value,
                     style = MaterialTheme.typography.subtitle1,
 
 
@@ -105,8 +138,8 @@ fun ProfileSetting(navController: NavController) {
                 if (isEditMode.value) {
                     // 수정 모드일 경우 TextField를 보여준다.
                     OutlinedTextField(
-                        value = nickname.value,
-                        onValueChange = { nickname.value = it },
+                        value = nicknamePro.value,
+                        onValueChange = { nicknamePro.value = it },
                         modifier = Modifier.fillMaxWidth(),
                         label = { Text("닉네임") },
                         keyboardOptions = KeyboardOptions(
@@ -118,7 +151,7 @@ fun ProfileSetting(navController: NavController) {
                 } else {
                     // 수정 모드가 아닐 경우 Text를 보여준다.
                     Text(
-                        text = nickname.value,
+                        text = nicknamePro.value,
                         style = MaterialTheme.typography.h6,
                         textAlign = TextAlign.Center,
                         modifier = Modifier.fillMaxWidth()

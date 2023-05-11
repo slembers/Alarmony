@@ -32,6 +32,9 @@ import com.slembers.alarmony.feature.screen.GroupActivity
 import com.slembers.alarmony.model.db.dto.CheckEmailResponseDto
 import com.slembers.alarmony.model.db.dto.CheckIdResponseDto
 import com.slembers.alarmony.model.db.dto.CheckNicnameResponseDto
+import com.slembers.alarmony.model.db.dto.MyInfoResponse
+import retrofit2.http.Multipart
+import java.io.File
 
 @ExperimentalMaterial3Api
 @ExperimentalGlideComposeApi
@@ -366,8 +369,54 @@ object MemberService {
         }
     }
 
-    fun findMyInfo() {
+    fun getMyInfo(
+        context: Context,
+        navController: NavController,
+        username: (String?) -> Unit = {},
+        email: (String?) -> Unit = {},
+        profileImage: (String?) -> Unit = {},
+        nickname: (String?) -> Unit = {},
+
+        ) {
         try {
+            memberApi.getMyInfo(
+
+            ).enqueue(object: Callback<MyInfoResponse> {
+                override fun onResponse(
+                    call: Call<MyInfoResponse>,
+                    response: Response<MyInfoResponse>
+                ) {
+                    if (response.isSuccessful) {
+                        Log.d("response", "내 프로필 정보 가져오기")
+                        Log.d("response", "내 프로필 정보${response.body()}")
+                        Log.d("response", "내 프로필 정보${response.body()?.username}")
+                        username(response.body()?.username)
+                        email(response.body()?.email)
+                        profileImage(response.body()?.profileImg)
+                        nickname(response.body()?.nickname)
+
+
+                    } else {
+                        Log.d("response", "내 프로필 가져오기 실패")
+                        Log.d("response", "내 프로필 정보${response.body()}")
+
+                        showDialog("알림", "존재하지 않는 회원입니다.", context, navController)
+                        navController.navigateUp()
+
+                    }
+                }
+
+                override fun onFailure(call: Call<MyInfoResponse>, t: Throwable) {
+                    Log.d("fail", "프로필 실패")
+                    showDialog("알림", "뭔가 잘못되었어요...", context, navController)
+                    navController.navigateUp()
+
+                }
+            })
+        } catch ( e : Exception ) {
+            Log.d("fail", "프로필 불러오기 예외 발생")
+            showDialog("알림", "뭔가 잘못됐나봐요", context, navController)
+            navController.navigateUp()
 
         }
     }
