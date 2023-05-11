@@ -17,12 +17,16 @@ import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import com.slembers.alarmony.MainActivity
 import com.slembers.alarmony.R
+import com.slembers.alarmony.feature.alarm.AlarmDatabase
+import com.slembers.alarmony.feature.alarm.AlarmDto
 import com.slembers.alarmony.feature.notification.NotiDto
+import com.slembers.alarmony.feature.notification.SendAlarmForegroundService
 import com.slembers.alarmony.feature.notification.saveNoti
 import com.slembers.alarmony.network.repository.MemberService
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
 
 @ExperimentalMaterial3Api
 @ExperimentalGlideComposeApi
@@ -51,7 +55,20 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
 
         if (remoteMessage.data?.get("type").equals("ALARM")) {
             Log.i("디버깅", "알람 울려라!!!!!!!!!!!!!!!!!!!!!!!!!!");
-            // 알람 울리는 로직 넣어주십쇼
+            val newIntent = Intent(this, SendAlarmForegroundService::class.java)
+            val alarmId = remoteMessage.data["alarmId"]!!.toLong()
+            CoroutineScope(Dispatchers.IO).launch {
+                val alarmDao = AlarmDatabase.getInstance(this@MyFirebaseMessagingService).alarmDao()
+                val alarm = alarmDao.getAlarmById(alarmId)
+                val alarmDto = AlarmDto.toDto(alarm!!)
+                if (alarmDto == null) return@launch
+                newIntent.putExtra("alarmId", alarmId)
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    this@MyFirebaseMessagingService.startForegroundService(newIntent)
+                } else {
+                    this@MyFirebaseMessagingService.startService(newIntent)
+                }
+            }
 
         } else {
             sendNotification(remoteMessage)
