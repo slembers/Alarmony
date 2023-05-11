@@ -183,7 +183,8 @@ fun SignupScreen(navController: NavController) {
 
                 TextField(
                     value = passwordConfirm,
-                    onValueChange = { passwordConfirm = it },
+                    onValueChange = {
+                        passwordConfirm = it },
                     label = { Text(text = "비밀번호 재입력") },
                     keyboardOptions = KeyboardOptions(
                         keyboardType = KeyboardType.Email,
@@ -202,6 +203,12 @@ fun SignupScreen(navController: NavController) {
                         }
                     },
                 )
+                if (password != passwordConfirm) {
+                    Text(
+                        text = "동일한 비밀번호를 입력해주세요."
+                    )
+                }
+
                 if (!passwordregex.matches(password)) {
                     Text(
                         text = "비밀번호는 8~16자의 영어와 숫자로만 입력해주세요.",
