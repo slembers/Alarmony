@@ -28,7 +28,7 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <service
-            android:name=".feature.notification.SendAlarmForegroundService"
+            android:name=".feature.sendAlarm.SendAlarmForegroundService"
             android:enabled="true"
             android:exported="true" >
         </service>

@@ -9,9 +9,7 @@ import android.media.RingtoneManager
 import android.os.Build
 import android.util.Log
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
-import androidx.core.app.NotificationManagerCompat
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
@@ -20,7 +18,7 @@ import com.slembers.alarmony.R
 import com.slembers.alarmony.feature.alarm.AlarmDatabase
 import com.slembers.alarmony.feature.alarm.AlarmDto
 import com.slembers.alarmony.feature.notification.NotiDto
-import com.slembers.alarmony.feature.notification.SendAlarmForegroundService
+import com.slembers.alarmony.feature.sendAlarm.SendAlarmForegroundService
 import com.slembers.alarmony.feature.notification.saveNoti
 import com.slembers.alarmony.network.repository.MemberService
 import com.slembers.alarmony.util.Constants.FIRE_ALARM

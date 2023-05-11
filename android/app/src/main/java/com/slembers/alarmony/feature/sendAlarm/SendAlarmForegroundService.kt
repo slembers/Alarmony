@@ -1,4 +1,4 @@
-package com.slembers.alarmony.feature.notification
+package com.slembers.alarmony.feature.sendAlarm
 
 import android.app.Notification
 import android.app.NotificationChannel
@@ -12,14 +12,10 @@ import android.os.IBinder
 import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
-import androidx.lifecycle.LiveData
 import com.slembers.alarmony.R
-import com.slembers.alarmony.feature.alarm.Alarm
-import com.slembers.alarmony.feature.alarm.AlarmActivity
 import com.slembers.alarmony.feature.alarm.AlarmDatabase
 import com.slembers.alarmony.feature.alarm.AlarmDto
 import com.slembers.alarmony.feature.alarm.AlarmRepository
-import com.slembers.alarmony.feature.alarm.setAlarm
 import com.slembers.alarmony.util.Constants
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
