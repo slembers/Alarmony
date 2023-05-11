@@ -2,23 +2,28 @@ package com.slembers.alarmony.network.service
 
 import android.content.Context
 import android.util.Log
+import androidx.core.graphics.convertTo
 import androidx.navigation.NavHostController
 import com.slembers.alarmony.model.db.Group
+import com.slembers.alarmony.model.db.Record
 import com.slembers.alarmony.model.db.dto.GroupDto
 import com.slembers.alarmony.model.db.dto.MemberListDto
 import com.slembers.alarmony.model.db.dto.MessageDto
+import com.slembers.alarmony.model.db.dto.RecordListDto
 import com.slembers.alarmony.network.api.AlarmonyServer
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import kotlin.streams.toList
 
 object GroupService {
-
-    fun addGroupAlarm(
+    val groupApi = AlarmonyServer().groupApi
+    suspend fun addGroupAlarm(
         title : String?,
         hour : Int,
         minute : Int,
@@ -26,13 +31,11 @@ object GroupService {
         members : List<String>?,
         soundName : String? = "자장가",
         soundVolume : Float? = 7f,
-        vibrate : Boolean? = true,
-        context: Context,
-        navController: NavHostController
-    ) {
+        vibrate : Boolean? = true
+    ) : Long? {
         val groupApi = AlarmonyServer().groupApi
-        CoroutineScope(Dispatchers.IO).async {
-            val responseGroup = groupApi.addGroupAlarm(Group(
+        try {
+            val response = groupApi.addGroupAlarm(Group(
                 title = title!!,
                 hour = hour,
                 minute = minute,
@@ -40,14 +43,20 @@ object GroupService {
                 soundName = soundName!!,
                 soundVolume = soundVolume!!,
                 vibrate = vibrate!!
-            ))
-            Log.d("response","[그룹생성] response : $responseGroup")
+            )).body()
+            Log.d("response","[그룹생성] response : $response")
             val message = groupApi.addMembers(
-                responseGroup.groupId,
+                response?.groupId,
                 hashMapOf("members" to (members ?: listOf()))
             )
             Log.d("response","[그룹생성] response : $message")
+
+            return response?.groupId
+        } catch ( e : Exception ) {
+            Log.d("exception","저장 진생 중 에러 발행")
+            Log.d("exception","에러 원인 : ${e.printStackTrace()}")
         }
+        return -1
 //        groupApi.addGroupAlarm(
 //            group = Group(
 //                title = title!!,
@@ -119,5 +128,52 @@ object GroupService {
                 Log.d("disconnection", "[그룹검색] 연결되지 않았습니다. : ${t.message} : []")
             }
         })
+    }
+
+    suspend fun getGroupRecord(
+        groupId : Long
+    ) : Map<String,List<Record>> {
+        val groupApi = AlarmonyServer().groupApi
+        var result = hashMapOf<String, List<Record>>(
+            "success" to listOf<Record>(),
+            "failed" to listOf<Record>()
+        )
+        try {
+            Log.d("getGroup","[알람 상세] 오늘의 알림 검색..")
+            var successItems : MutableList<Record> = mutableListOf()
+            var failItems : MutableList<Record> = mutableListOf()
+            val recordList = groupApi.getGroupRecord(groupId).body()
+            Log.d("getGroup","[알람 상세] 오늘의 알림 현황 : ${recordList}")
+            recordList?.alarmList.let {
+                it?.map {
+                   val temp = Record(it.nickname,it.profileImg,it.success)
+                    when(temp.success) {
+                        true -> successItems.add(temp)
+                        else -> failItems.add(temp)
+                    }
+                }
+            }
+            result.put("success",successItems)
+            result.put("failed",failItems)
+            return result
+        } catch (e : Exception) {
+            Log.d("getGroup","[알람 상세] 오늘의 알림 불러오기 오류 : ${e.message}")
+            return result
+        }
+        return result
+    }
+
+    suspend fun deleteGroup(
+        groupId : Long
+    ) : Boolean {
+        try {
+            val response = groupApi.deleteGroup(groupId)
+            Log.d("deleteGroup","[그룹 나가기] 나가기 결과 : $response")
+            if(response.code() in 200..299) return true
+        } catch ( e : Exception ) {
+            Log.d("deleteGroup","[그룹 나가기] 그룹나가기 오류발생 : ${e.message}")
+            return false
+        }
+        return false
     }
 }

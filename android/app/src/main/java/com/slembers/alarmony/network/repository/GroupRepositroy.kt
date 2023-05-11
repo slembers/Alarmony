@@ -5,8 +5,11 @@ import com.slembers.alarmony.model.db.Group
 import com.slembers.alarmony.model.db.dto.GroupDto
 import com.slembers.alarmony.model.db.dto.MemberListDto
 import com.slembers.alarmony.model.db.dto.MessageDto
+import com.slembers.alarmony.model.db.dto.RecordListDto
 import retrofit2.Call
+import retrofit2.Response
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.Path
@@ -17,7 +20,7 @@ interface GroupRepositroy {
     @POST("alarms")
     suspend fun addGroupAlarm(
         @Body group : Group
-    ) : GroupDto
+    ) : Response<GroupDto>
 
     @GET("groups/inviteable-members")
     fun searchGroup(
@@ -29,6 +32,15 @@ interface GroupRepositroy {
     suspend fun addMembers(
         @Path("groupId", encoded = true) groupId : Long?,
         @Body members : HashMap<String, List<String>>
-    ) : MessageDto
+    ) : Response<Unit>
 
+    @GET("groups/{groupId}/records")
+    suspend fun getGroupRecord(
+        @Path("groupId") groupId : Long
+    ) : Response<RecordListDto>
+
+    @DELETE("groups/{groupId}")
+    suspend fun deleteGroup(
+        @Path("groupId") groupId : Long
+    ) : Response<Unit>
 }

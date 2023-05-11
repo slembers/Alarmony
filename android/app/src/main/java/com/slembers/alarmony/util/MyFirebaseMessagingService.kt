@@ -9,13 +9,14 @@ import android.media.RingtoneManager
 import android.os.Build
 import android.util.Log
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import com.slembers.alarmony.MainActivity
 import com.slembers.alarmony.R
-import com.slembers.alarmony.feature.alarm.NotiForegroundService
 import com.slembers.alarmony.feature.notification.NotiDto
 import com.slembers.alarmony.feature.notification.saveNoti
 import com.slembers.alarmony.network.repository.MemberService
@@ -56,23 +57,15 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
             sendNotification(remoteMessage)
 
             val data = remoteMessage.data
-            Log.d("RECEIVED MESSAGE", "-----------------received-----------------------")
-            Log.d("RECEIVED MESSAGE", "alertId : ${data["alertId"]}")
-            Log.d("RECEIVED MESSAGE", "profileImg : ${data["profileImg"]}")
-            Log.d("RECEIVED MESSAGE", "content : ${data["content"]}")
-            Log.d("RECEIVED MESSAGE", "type : ${data["type"]}")
 
-            val newIntent = Intent(this, NotiForegroundService::class.java)
-            newIntent.putExtra("alertId", data["alertId"]!!.toLong())
-            newIntent.putExtra("profileImg", data["profile"]!!.toString())
-            newIntent.putExtra("content", data["content"]!!.toString())
-            newIntent.putExtra("type", data["type"]!!.toString())
-
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                this.startForegroundService(newIntent)
-            } else {
-                this.startService(newIntent)
-            }
+            sendNotification(remoteMessage)
+            val noti = NotiDto(
+                data["alertId"]!!.toLong(),
+                data["profileImg"]!!,
+                data["content"]!!,
+                data["type"]!!
+            )
+            saveNoti(noti, this)
         }
     }
 
@@ -106,9 +99,13 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
 
         val notificationManager =
             getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-
-        val notiImfortance = if (remoteMessage.data["type"] == "INVITE") {NotificationManager.IMPORTANCE_HIGH}
-        else {NotificationManager.IMPORTANCE_DEFAULT}
+        val notiImfortance =
+            if (remoteMessage.data["type"] == "INVITE") {
+                NotificationManager.IMPORTANCE_HIGH
+            }
+            else {
+                NotificationManager.IMPORTANCE_DEFAULT
+            }
         // 오레오 버전 이후에는 채널이 필요
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
             val channel = NotificationChannel(channelId, "Notice", notiImfortance)

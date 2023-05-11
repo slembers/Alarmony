@@ -27,7 +27,7 @@ class Alarm(
                 alarmDto.alarmDate,
                 alarmDto.soundName,
                 alarmDto.soundVolume,
-                alarmDto.vibrate
+                alarmDto.vibrate,
             )
             return alarm
         }

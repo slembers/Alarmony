@@ -9,24 +9,28 @@ import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.lifecycle.viewmodel.viewModelFactory
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.slembers.alarmony.MainActivity
 import com.slembers.alarmony.feature.alarm.NotiListScreen
 import com.slembers.alarmony.feature.screen.AlarmListScreen
+import com.slembers.alarmony.feature.screen.GroupDetailsScreen
 import com.slembers.alarmony.feature.screen.GroupScreen
 import com.slembers.alarmony.feature.screen.InviteScreen
 import com.slembers.alarmony.feature.screen.SoundScreen
 import com.slembers.alarmony.feature.user.AccountMtnc
 import com.slembers.alarmony.feature.user.FindId
 import com.slembers.alarmony.feature.user.Findpswd
-import com.slembers.alarmony.feature.user.LoginScreen
+
 import com.slembers.alarmony.feature.user.ProfileSetting
 import com.slembers.alarmony.feature.user.SignupScreen
 import com.slembers.alarmony.feature.user.AccountMtnc
-import com.slembers.alarmony.feature.user.Routes
+import com.slembers.alarmony.feature.user.LoginScreen
+
 import com.slembers.alarmony.viewModel.GroupViewModel
 
 
@@ -37,11 +41,6 @@ import com.slembers.alarmony.viewModel.GroupViewModel
 fun NavController(
 intent : Intent, navController : NavHostController = rememberNavController()
 ) {
-    val screen: String? = intent.getStringExtra("GO")
-    if (screen == "AlarmListActivity") {
-        navController.navigate(NavItem.NotiListScreen.route)
-    }
-
     val accessToken = MainActivity.prefs.getString("accessToken","")
     Log.d("token","[로그인] $accessToken !!")
 
@@ -83,8 +82,23 @@ intent : Intent, navController : NavHostController = rememberNavController()
 
         }
 
+        composable(
+            route = "${NavItem.GroupDetails.route}/{alarmId}",
+            arguments = listOf(
+                navArgument("alarmId") {
+                    type = NavType.LongType
+                }
+            )
+        ) { entry ->
+            val alarmId = entry.arguments?.getLong("alarmId")
+            GroupDetailsScreen(navController, alarmId)
+        }
 
+    }
 
+    val screen: String? = intent.getStringExtra("GO")
+    if (screen != null && screen == "Noti") {
+        navController.navigate(NavItem.NotiListScreen.route)
     }
 }
 

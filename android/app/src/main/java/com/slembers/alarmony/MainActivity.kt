@@ -40,6 +40,7 @@ class MainActivity : AppCompatActivity() {
 //      SharedPreferences 클래스는 앱에 있는 다른 Class보다 먼저 생성되어야함
         prefs = PresharedUtil(application)
         setContent {
+            Log.d("myIntent", intent.toString())
             NavController(intent)
             requestAlertPermission() // 권한 실행
         }

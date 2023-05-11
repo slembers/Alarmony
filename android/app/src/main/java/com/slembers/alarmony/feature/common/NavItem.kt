@@ -50,4 +50,10 @@ sealed class NavItem (
     object ProfileActivity : NavItem("profile_screen", "profile_screen",Icons.Default.Home)
     object AccountMtnc : NavItem("accountmtnc_screen", "accountmtnc_screen",Icons.Default.Home)
 
+    object GroupDetails : NavItem(
+        route = "GroupDetails",
+        title = "알람 상세",
+        image = Icons.Default.ArrowForwardIos
+    )
+
 }
