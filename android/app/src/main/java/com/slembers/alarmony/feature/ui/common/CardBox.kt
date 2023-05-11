@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Divider
@@ -56,11 +57,12 @@ fun DefaultModifier() : Modifier {
             MaterialTheme.shapes.medium
         )
         .padding(4.dp)
-        .border(1.dp, Color.Black, MaterialTheme.shapes.medium)
+//            .border(1.dp, Color.Black, MaterialTheme.shapes.medium)
         .shadow(
-            elevation = 1.dp,
-            MaterialTheme.shapes.medium,
-            ambientColor = Color.Gray
+            elevation = 5.dp,
+            ambientColor = Color.Black,
+            spotColor = Color.Black,
+            shape = RoundedCornerShape(20.dp)
         )
 }
 

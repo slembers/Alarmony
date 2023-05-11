@@ -40,7 +40,7 @@ fun GroupDetailsBoardBtn(
             Text(
                 text = AlarmisCheck(isCheck, "일어났어요", "알람보내기"),
                 style = TextStyle(
-                    fontSize = 8.sp,
+                    fontSize = 12.sp,
                     fontFamily = FontFamily.Monospace,
                     fontWeight = FontWeight.Bold,
                 ),
