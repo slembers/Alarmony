@@ -2,8 +2,7 @@ package com.slembers.alarmony.report.service;
 
 import com.slembers.alarmony.global.execption.CustomException;
 import com.slembers.alarmony.member.entity.Member;
-import com.slembers.alarmony.member.exception.MemberErrorCode;
-import com.slembers.alarmony.member.repository.MemberRepository;
+import com.slembers.alarmony.member.service.MemberService;
 import com.slembers.alarmony.report.dto.ReportDto;
 import com.slembers.alarmony.report.dto.response.ReportResponseDto;
 import com.slembers.alarmony.report.entity.Report;
@@ -22,7 +21,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class ReportServiceImpl implements ReportService {
 
-    private final MemberRepository memberRepository;
+    private final MemberService memberService;
     private final ReportRepository reportRepository;
     private final ReportTypeRepository reportTypeRepository;
 
@@ -71,10 +70,8 @@ public class ReportServiceImpl implements ReportService {
     public void createReport(ReportDto reportDto) {
         ReportType reportType = reportTypeRepository.findByReportTypeName(reportDto.getReportType())
             .orElseThrow(() -> new CustomException(ReportErrorCode.REPORT_TYPE_NOT_FOUND));
-        Member reporter = memberRepository.findByUsername(reportDto.getReporterUsername())
-            .orElseThrow(() -> new CustomException(MemberErrorCode.MEMBER_NOT_FOUND));
-        Member reported = memberRepository.findByNickname(reportDto.getReportedNickname())
-            .orElseThrow(() -> new CustomException(MemberErrorCode.MEMBER_NOT_FOUND));
+        Member reporter = memberService.findMemberByUsername(reportDto.getReporterUsername());
+        Member reported = memberService.findMemberByNickName(reportDto.getReportedNickname());
 
         Report report = Report.builder()
             .reportType(reportType)

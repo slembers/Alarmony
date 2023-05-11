@@ -14,10 +14,10 @@ import com.slembers.alarmony.alarm.exception.AlarmRecordErrorCode;
 import com.slembers.alarmony.alarm.exception.AlertErrorCode;
 import com.slembers.alarmony.alarm.exception.MemberAlarmErrorCode;
 import com.slembers.alarmony.alarm.repository.AlarmRecordRepository;
-import com.slembers.alarmony.alarm.repository.AlarmRepository;
 import com.slembers.alarmony.alarm.repository.AlertRepository;
 import com.slembers.alarmony.alarm.repository.MemberAlarmRepository;
 import com.slembers.alarmony.global.execption.CustomException;
+import com.slembers.alarmony.global.security.util.SecurityUtil;
 import com.slembers.alarmony.member.entity.Member;
 import com.slembers.alarmony.member.repository.MemberRepository;
 
@@ -140,6 +140,7 @@ public class AlertServiceImpl implements AlertService {
     public void deleteAlert(Long alertId) {
         Alert alert = alertRepository.findById(alertId)
             .orElseThrow(() -> new CustomException(AlertErrorCode.ALERT_NOT_FOUND));
+        confirmAlertReceiver(alert);
         try {
             alertRepository.delete(alert);
         } catch (Exception e) {
@@ -157,6 +158,7 @@ public class AlertServiceImpl implements AlertService {
     public AlarmInviteResponseDto acceptInvite(Long alertId) {
         Alert alert = alertRepository.findById(alertId)
             .orElseThrow(() -> new CustomException(AlertErrorCode.ALERT_NOT_FOUND));
+        confirmAlertReceiver(alert);
         // 알람 초대를 수락했으니, 멤버-알람과 알람-기록을 추가해야 한다. 이 코드 실행은 alarmservice로 넘긴다.
 
         MemberAlarm memberAlarm;
@@ -218,6 +220,7 @@ public class AlertServiceImpl implements AlertService {
     public AlarmInviteResponseDto refuseInvite(Long alertId) {
         Alert alert = alertRepository.findById(alertId)
             .orElseThrow(() -> new CustomException(AlertErrorCode.ALERT_NOT_FOUND));
+        confirmAlertReceiver(alert);
         sendCustomAlert(Alert.builder()
             .sender(alert.getReceiver())
             .receiver(alert.getSender())
@@ -316,5 +319,15 @@ public class AlertServiceImpl implements AlertService {
             log.error(e.getMessage());
             throw new CustomException(AlertErrorCode.ALERT_SERVER_ERROR);
         }
+    }
+
+
+    /**
+     * 알림에 관한 명령이 본인것이 맞는지 확인한다.
+     * @param alert 알림
+     */
+    private void confirmAlertReceiver(Alert alert) {
+        Member member = memberService.findMemberByUsername(SecurityUtil.getCurrentUsername());
+        if (!alert.getReceiver().equals(member)) throw new CustomException(AlertErrorCode.ALERT_MEMBER_NOT_EQUAL);
     }
 }
