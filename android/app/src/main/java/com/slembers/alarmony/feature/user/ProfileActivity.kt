@@ -49,6 +49,7 @@ import com.slembers.alarmony.network.repository.MemberService.logOut
 @Composable
 fun ProfileSetting(navController: NavController) {
 
+
     // 이메일과 닉네임 정보를 가지고 있는 상태 변수
     var nickname = remember { mutableStateOf("닉네임") }
     var email = remember { mutableStateOf("xxxx@naver.com") }

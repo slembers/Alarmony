@@ -59,11 +59,14 @@ interface MemberRepository {
         @Body findPasswordDto : FindPasswordRequest
     ) : Call<FindPasswordResponseDto>
 
-    @GET("auth/logout")
+    @GET("members/logout")
     fun logOut(
-
-
     ) :Call<Unit>
+
+//    @GET("members/info")
+//    fun getMyInfo(
+//    ): Call<>
+//    )
 
     @DELETE("member")
     fun signOut(
