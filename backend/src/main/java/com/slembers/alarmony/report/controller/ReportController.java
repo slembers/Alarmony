@@ -36,7 +36,7 @@ public class ReportController {
 
         Map<String, Object> map = new HashMap<>();
         map.put("reports", reportList);
-        return new ResponseEntity<>(map, HttpStatus.OK);
+        return ResponseEntity.ok(map);
     }
 
     /**
@@ -49,7 +49,7 @@ public class ReportController {
     public ResponseEntity<ReportResponseDto> getReportDetail(
         @PathVariable(name = "report-id") Long reportId) {
 
-        return new ResponseEntity<>(reportService.getReportDetail(reportId), HttpStatus.OK);
+        return ResponseEntity.ok(reportService.getReportDetail(reportId));
     }
 
     /**
@@ -59,7 +59,7 @@ public class ReportController {
      * @return 성공 여부
      */
     @PostMapping
-    public ResponseEntity<String> createReport(@RequestBody ReportRequestDto reportRequestDto) {
+    public ResponseEntity<Void> createReport(@RequestBody ReportRequestDto reportRequestDto) {
 
         ReportDto reportDto = ReportDto.builder()
             .reportType(reportRequestDto.getReportType())
@@ -68,7 +68,7 @@ public class ReportController {
             .content(reportRequestDto.getContent())
             .build();
         reportService.createReport(reportDto);
-        return new ResponseEntity<>("신고 요청에 성공했습니다.", HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
 }
