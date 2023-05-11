@@ -85,14 +85,14 @@ public class AlertServiceImpl implements AlertService {
             // 알림 메시지를 저장한다.
             alertRepository.save(alert);
             String targetMobile = alert.getReceiver().getRegistrationToken();
-            String content = alert.getReceiver().getNickname() + "님에게 " + alert.getContent();
+            String content = alert.getContent();
             String imageUrl = alert.getSender().getProfileImgUrl();
             // 메시지 설정
             Message message = Message.builder()
-                .setNotification(Notification.builder()
-                    .setTitle("Alarmony 그룹 초대 알림")
-                    .setBody(content)
-                    .build())
+//                .setNotification(Notification.builder()
+//                    .setTitle("Alarmony 그룹 초대 알림")
+//                    .setBody(content)
+//                    .build())
                 .putData("alertId", String.valueOf(alert.getId()))
                 .putData("profileImg", imageUrl == null ? "" : imageUrl)
                 .putData("content", content)
@@ -258,10 +258,10 @@ public class AlertServiceImpl implements AlertService {
             String imageUrl = alert.getSender().getProfileImgUrl();
             // 메시지 설정
             Message message = Message.builder()
-                .setNotification(Notification.builder()
-                    .setTitle(title)
-                    .setBody(alert.getContent())
-                    .build())
+//                .setNotification(Notification.builder()
+//                    .setTitle(title)
+//                    .setBody(alert.getContent())
+//                    .build())
                 .putData("alertId", String.valueOf(alert.getId()))
                 .putData("profileImg", imageUrl == null ? "" : imageUrl)
                 .putData("content", alert.getContent())
