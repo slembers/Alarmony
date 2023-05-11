@@ -37,8 +37,8 @@ public class AlertServiceImpl implements AlertService {
 
     private final MemberService memberService;
     private final MemberRepository memberRepository;
-    private final AlarmRepository alarmRepository;
     private final AlertRepository alertRepository;
+    private final AlarmService alarmService;
     private final MemberAlarmRepository memberAlarmRepository;
     private final AlarmRecordRepository alarmRecordRepository;
 
@@ -52,8 +52,7 @@ public class AlertServiceImpl implements AlertService {
 
         Member sender = memberService.findMemberByUsername(inviteMemberSetToGroupDto.getSender());
 
-        Alarm alarm = alarmRepository.findById(inviteMemberSetToGroupDto.getGroupId())
-            .orElseThrow(() -> new CustomException(AlarmErrorCode.ALARM_NOT_FOUND));
+        Alarm alarm = alarmService.findAlarmByAlarmId(inviteMemberSetToGroupDto.getGroupId());
 
         return inviteMemberSetToGroupDto.getNicknames().stream()
             .map(memberRepository::findByNickname)
@@ -285,8 +284,7 @@ public class AlertServiceImpl implements AlertService {
     @Override
     public void sendAlarm(Long groupId, String nickname) {
 
-        Alarm alarm = alarmRepository.findById(groupId)
-            .orElseThrow(() -> new CustomException(AlertErrorCode.ALERT_NOT_FOUND));
+        Alarm alarm = alarmService.findAlarmByAlarmId(groupId);
         Member member = memberService.findMemberByNickName(nickname);
         if (!memberAlarmRepository.existsByMemberAndAlarm(member, alarm)) {
             log.error("멤버 알람 정보가 존재하지 않음");

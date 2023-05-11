@@ -23,7 +23,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class AlarmRecordServiceImpl implements AlarmRecordService {
 
-    private final AlarmRepository alarmRepository;
+    private final AlarmService alarmService;
     private final AlarmRecordRepository alarmRecordRepository;
     private final MemberService memberService;
 
@@ -62,8 +62,7 @@ public class AlarmRecordServiceImpl implements AlarmRecordService {
                 alarmEndRecordDto.getAlarmId())
             .orElseThrow(() -> new CustomException(AlarmRecordErrorCode.ALARM_RECORD_NOT_EXIST));
 
-        Alarm alarm = alarmRepository.findById(alarmEndRecordDto.getAlarmId())
-            .orElseThrow(() -> new CustomException(AlarmErrorCode.ALARM_NOT_FOUND));
+        Alarm alarm = alarmService.findAlarmByAlarmId(alarmEndRecordDto.getAlarmId());
 
         try {
             if (alarmEndRecordDto.isSuccess()) {

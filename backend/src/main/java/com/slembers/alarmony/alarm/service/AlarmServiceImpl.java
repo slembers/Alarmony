@@ -158,8 +158,7 @@ public class AlarmServiceImpl implements AlarmService {
     public AlarmDto getAlarmInfo(Long alarmId) {
         try {
             // 알람 정보를 가져온다.
-            Alarm alarm = alarmRepository.findById(alarmId)
-                .orElseThrow(() -> new CustomException(AlarmErrorCode.ALARM_NOT_FOUND));
+            Alarm alarm = findAlarmByAlarmId(alarmId);
             // 중복 계산을 피하기 위해 시간 정보를 가져온다.
             LocalTime localTime = alarm.getTime();
 
@@ -170,5 +169,16 @@ public class AlarmServiceImpl implements AlarmService {
             log.error(e.getMessage());
             throw new CustomException(AlarmErrorCode.ALARM_GET_ERROR);
         }
+    }
+
+    /**
+     * 알람 아이디로 알람 객체를 찾아온다.
+     * @param alarmID 알람 아이디
+     * @return 알람 객체
+     */
+    @Override
+    public Alarm findAlarmByAlarmId(Long alarmID) {
+        return alarmRepository.findById(alarmID)
+                .orElseThrow(() -> new CustomException(AlarmErrorCode.ALARM_NOT_FOUND));
     }
 }
