@@ -3,7 +3,6 @@ package com.slembers.alarmony.feature.user
 import android.annotation.SuppressLint
 import android.util.Log
 import android.widget.Toast
-//import androidx.compose.foundation.gestures.ModifierLocalScrollableContainerProvider.value
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
@@ -36,7 +35,9 @@ import androidx.compose.ui.focus.FocusState
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import androidx.navigation.ui.NavigationUI.navigateUp
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.slembers.alarmony.feature.common.NavItem
@@ -55,7 +56,8 @@ import androidx.compose.ui.graphics.Color.Companion.Green
 @Composable
 @ExperimentalMaterial3Api
 @ExperimentalGlideComposeApi
-fun SignupScreen(navController: NavController) {
+@Preview
+fun SignupScreen(navController: NavController = rememberNavController()) {
 //    이번엔 state가 아니라 String형식으로 저장해보기
     var username  by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
