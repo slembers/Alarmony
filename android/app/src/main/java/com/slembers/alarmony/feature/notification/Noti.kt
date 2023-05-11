@@ -12,7 +12,7 @@ class Noti(
     val type: String
 ) {
     companion object {
-        fun toEntity(notiDto: NotiDto): NotiDto{
+        fun toEntity(notiDto: NotiDto): Noti {
             val noti = Noti(
                 notiDto.notiId,
                 notiDto.profileImg,
