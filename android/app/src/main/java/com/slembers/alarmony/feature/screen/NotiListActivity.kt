@@ -1,5 +1,6 @@
 package com.slembers.alarmony.feature.alarm
 
+import android.app.Application
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -36,6 +37,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -52,16 +54,25 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.slembers.alarmony.feature.common.ui.theme.notosanskr
 import com.slembers.alarmony.feature.common.ui.theme.toColor
+import com.slembers.alarmony.feature.notification.Noti
 import com.slembers.alarmony.feature.notification.NotiDto
+import com.slembers.alarmony.feature.notification.NotiViewModel
+import com.slembers.alarmony.feature.notification.NotiViewModelFactory
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NotiListScreen(navController: NavController) {
+    val context = LocalContext.current
+    val mNotiViewModel : NotiViewModel = viewModel(
+        factory = NotiViewModelFactory(context.applicationContext as Application)
+    )
+    val notis = mNotiViewModel.readAllData.observeAsState(listOf()).value
     Scaffold(
         topBar = {
             TopAppBar(
@@ -114,7 +125,7 @@ fun NotiListScreen(navController: NavController) {
 }
 
 @Composable
-fun MyNotiItem(item : NotiDto) {
+fun MyNotiItem(item : Noti) {
     val isClicked = remember { mutableStateOf(false)  }
     Card(
         modifier = Modifier
@@ -163,7 +174,7 @@ fun MyNotiItem(item : NotiDto) {
 }
 
 @Composable
-fun GroupNoti(item : NotiDto, isClicked : MutableState<Boolean>) {
+fun GroupNoti(item : Noti, isClicked : MutableState<Boolean>) {
     val openDialog = remember { mutableStateOf(true)  }
     if (openDialog.value) {
         AlertDialog(
