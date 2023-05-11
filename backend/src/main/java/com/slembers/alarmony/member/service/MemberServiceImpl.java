@@ -134,7 +134,7 @@ public class MemberServiceImpl implements MemberService {
 
 
         //? (reissueTokenDto.getUsername()??
-        Member member = findMember(reissueTokenDto.getUsername());
+        Member member = findMemberByUsername(reissueTokenDto.getUsername());
 
         if (redisRefreshToken.equals(redisRefreshToken)) { //일치할때만 재발급
 
@@ -152,7 +152,7 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     public void putRegistrationToken(String username, String registrationToken) {
-        Member member = findMember(username);
+        Member member = findMemberByUsername(username);
         if (registrationToken == null || registrationToken.length() == 0)
             throw new CustomException(MemberErrorCode.MEMBER_REGISTRATION_TOKEN_WRONG);
 
@@ -234,7 +234,7 @@ public class MemberServiceImpl implements MemberService {
      */
     @Override
     public MemberResponseDto getMemberInfo(String username) {
-        Member member = findMember(username);
+        Member member = findMemberByUsername(username);
         return modelMapper.map(member, MemberResponseDto.class);
     }
 
@@ -244,7 +244,7 @@ public class MemberServiceImpl implements MemberService {
     @Override
     @Transactional
     public void deleteMember(String username) {
-        Member member = findMember(username);
+        Member member = findMemberByUsername(username);
         member.modifyAuthority(AuthorityEnum.ROLE_WITHDRAWAL);
         memberRepository.save(member);
     }
@@ -256,7 +256,7 @@ public class MemberServiceImpl implements MemberService {
     @Transactional
     public MemberInfoDto modifyMemberInfo(String username, ModifiedMemberInfoDto modifiedMemberInfoDto) {
 
-        Member member = findMember(username);
+        Member member = findMemberByUsername(username);
 
         String key = "";
         String url = "";
@@ -296,7 +296,7 @@ public class MemberServiceImpl implements MemberService {
     @Transactional
     public void changePassword(String username, ChangePasswordDto changePasswordDto) {
 
-        Member member = findMember(username);
+        Member member = findMemberByUsername(username);
 
         if (!passwordEncoder.matches(changePasswordDto.getOldPassword(), member.getPassword())) {
             throw new CustomException(MemberErrorCode.PASSWORD_NOT_VALID);
@@ -314,8 +314,15 @@ public class MemberServiceImpl implements MemberService {
     }
 
 
-    private Member findMember(String username){
+    @Override
+    public Member findMemberByUsername(String username){
         return memberRepository.findByUsername(username)
+                .orElseThrow(() -> new CustomException(MemberErrorCode.MEMBER_NOT_FOUND));
+    }
+
+    @Override
+    public Member findMemberByNickName(String nickname){
+        return memberRepository.findByNickname(nickname)
                 .orElseThrow(() -> new CustomException(MemberErrorCode.MEMBER_NOT_FOUND));
     }
 }
