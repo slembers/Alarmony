@@ -52,6 +52,12 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
+import androidx.compose.material.icons.filled.Visibility
+import androidx.compose.material.icons.filled.VisibilityOff
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 
 
 enum class Routes() {
@@ -96,6 +102,7 @@ fun LoginScreen(navController: NavController) {
     // 아이디와 비밀번호에 대한 상태를 저장할 mutableState 변수 선언
     val idState = remember { mutableStateOf("") }
     val passwordState = remember { mutableStateOf("") }
+    var passwordVisibility = true
     var isSuccess = false
     var msg = ""
     val keyboardController = LocalSoftwareKeyboardController.current
@@ -116,14 +123,13 @@ fun LoginScreen(navController: NavController) {
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Email,
                 imeAction = ImeAction.Next,
-
                 ),
             modifier = Modifier
                 .padding(vertical = 8.dp, horizontal = 16.dp)
                 .fillMaxWidth()
-                .clip(RoundedCornerShape(20.dp))
+                .clip(RoundedCornerShape(20.dp)),
 //                .onFocusChanged{ keyboardController?.hide()}
-                .onFocusChanged{ /* 아이디의 중복api넣기 */}
+
 
 
         )
@@ -139,7 +145,8 @@ fun LoginScreen(navController: NavController) {
             modifier = Modifier
                 .padding(vertical = 8.dp, horizontal = 16.dp)
                 .fillMaxWidth()
-                .clip(RoundedCornerShape(20.dp))
+                .clip(RoundedCornerShape(20.dp)),
+            visualTransformation =  PasswordVisualTransformation()
 //                .onFocusChanged{ keyboardController?.hide()}
         )
 //아래는 자동로그인 체크박스
