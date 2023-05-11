@@ -9,6 +9,7 @@ import com.slembers.alarmony.member.dto.request.SignUpDto;
 import com.slembers.alarmony.member.dto.response.CheckDuplicateDto;
 import com.slembers.alarmony.member.dto.response.MemberResponseDto;
 import com.slembers.alarmony.member.dto.response.TokenResponseDto;
+import com.slembers.alarmony.member.entity.Member;
 import com.slembers.alarmony.report.dto.ModifiedMemberInfoDto;
 
 import javax.mail.MessagingException;
@@ -80,5 +81,9 @@ public interface MemberService {
      * 비밀 번호 변경
      */
     void changePassword(String username,ChangePasswordDto changePasswordDto);
+
+    Member findMemberByUsername(String username);
+
+    Member findMemberByNickName(String nickname);
 
 }
