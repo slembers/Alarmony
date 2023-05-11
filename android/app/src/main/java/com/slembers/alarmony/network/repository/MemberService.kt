@@ -291,7 +291,9 @@ object MemberService {
 //        fun signOut(context:Context, navController: NavController)
     }
 
-    fun checkId(username:String) {
+    fun checkId(
+        username:String,
+        isSuccess : (Boolean) -> Unit = {}) {
         try{
             memberApi.checkId(
 
@@ -301,10 +303,16 @@ object MemberService {
                     call: Call<CheckIdResponseDto>,
                     response: Response<CheckIdResponseDto>
                 ) {
+//                    엄밍히 말하면 모든 응답이 성공으로 들어온다.
                     if(response.isSuccessful) {
                         Log.d("response", "아이디체크")
                         Log.d("response", "${username}")
                         Log.d("response", "${response.body()}")
+                        if(response.body()?.duplicated == true) {
+                            isSuccess(true)
+                        } else {
+                            isSuccess(false)
+                        }
 
                     } else {
                         Log.d("response", "아이디체크 실패")
@@ -322,7 +330,8 @@ object MemberService {
         }
     }
 
-    fun checkEmail(email:String) {
+    fun checkEmail(email:String,
+                   isSuccess : (Boolean) -> Unit = {}) {
         try{
             memberApi.checkEmail(
 
@@ -333,9 +342,13 @@ object MemberService {
                     response: Response<CheckEmailResponseDto>
                 ) {
                     if(response.isSuccessful) {
-                        Log.d("response", "이메일체크")
-                        Log.d("response", "${email}")
+                        Log.d("response", "이메일체크통신")
                         Log.d("response", "${response.body()}")
+                        if(response.body()?.duplicated == true) {
+                            isSuccess(true)
+                        } else {
+                            isSuccess(false)
+                        }
 
                     } else {
                         Log.d("response", "이메일 실패")
@@ -353,7 +366,8 @@ object MemberService {
         }
     }
 
-    fun checkNickname(nickname:String) {
+    fun checkNickname(nickname:String,
+                      isSuccess : (Boolean) -> Unit = {}) {
         try{
             memberApi.checkNickname(
 
@@ -367,6 +381,11 @@ object MemberService {
                         Log.d("response", "닉네임체크")
                         Log.d("response", "${nickname}")
                         Log.d("response", "${response.body()}")
+                        if(response.body()?.duplicated == true) {
+                            isSuccess(true)
+                        } else {
+                            isSuccess(false)
+                        }
 
                     } else {
                         Log.d("response", "닉네임 실패")
