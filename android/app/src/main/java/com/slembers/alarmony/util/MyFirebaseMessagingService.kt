@@ -83,6 +83,13 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
             builder?.setContentTitle(title)
                 ?.setContentText(body)
                 ?.setSmallIcon(R.drawable.ic_launcher_background)
+
+            val data = remoteMessage.data
+            Log.d("RECEIVED MESSAGE", "-----------------received-----------------------")
+            Log.d("RECEIVED MESSAGE", "alertId : ${data["alertId"]}")
+            Log.d("RECEIVED MESSAGE", "profileImg : ${data["profileImg"]}")
+            Log.d("RECEIVED MESSAGE", "content : ${data["content"]}")
+            Log.d("RECEIVED MESSAGE", "type : ${data["type"]}")
         }
 
         val notification: Notification = builder?.build()!!

@@ -82,21 +82,28 @@ public class AlertServiceImpl implements AlertService {
      */
     private boolean sendInviteAlert(Alert alert) {
         try {
+            // 알림 메시지를 저장한다.
+            alertRepository.save(alert);
             String targetMobile = alert.getReceiver().getRegistrationToken();
+            String content = alert.getReceiver().getNickname() + "님에게 " + alert.getContent();
+            String imageUrl = alert.getSender().getProfileImgUrl();
             // 메시지 설정
             Message message = Message.builder()
                 .setNotification(Notification.builder()
                     .setTitle("Alarmony 그룹 초대 알림")
-                    .setBody(alert.getReceiver().getNickname() + "님에게 " + alert.getContent())
+                    .setBody(content)
                     .build())
+                .putData("alertId", String.valueOf(alert.getId()))
+                .putData("profileImg", imageUrl == null ? "" : imageUrl)
+                .putData("content", content)
+                .putData("type", alert.getType().name())
                 .setToken(targetMobile)
                 .build();
             // 웹 API 토큰을 가져와서 보냄
             String response = FirebaseMessaging.getInstance().send(message);
             // 결과 출력
             log.info("초대 메시지 전송 완료: " + response);
-            // 푸쉬 알림을 보냈으니, 알림 테이블에도 추가해야 한다
-            alertRepository.save(alert);
+
 
             return true;
         } catch (Exception e) {
@@ -236,14 +243,27 @@ public class AlertServiceImpl implements AlertService {
      */
     @Override
     public void sendCustomAlert(Alert alert, String title) {
+        // 알림 테이블에도 추가
+        try {
+            alertRepository.save(alert);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            throw new CustomException(AlertErrorCode.ALERT_SERVER_ERROR);
+        }
+
         try {
             String targetMobile = alert.getReceiver().getRegistrationToken();
+            String imageUrl = alert.getSender().getProfileImgUrl();
             // 메시지 설정
             Message message = Message.builder()
                 .setNotification(Notification.builder()
                     .setTitle(title)
                     .setBody(alert.getContent())
                     .build())
+                .putData("alertId", String.valueOf(alert.getId()))
+                .putData("profileImg", imageUrl == null ? "" : imageUrl)
+                .putData("content", alert.getContent())
+                .putData("type", alert.getType().name())
                 .setToken(targetMobile)
                 .build();
             // 웹 API 토큰을 가져와서 보냄
@@ -253,14 +273,6 @@ public class AlertServiceImpl implements AlertService {
         } catch (Exception e) {
             log.error(e.getMessage());
             throw new CustomException(AlertErrorCode.ALERT_INVITE_SEND_ERROR);
-        }
-
-        // 푸쉬 알림을 보냈으니, 알림 테이블에도 추가해야 한다
-        try {
-            alertRepository.save(alert);
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            throw new CustomException(AlertErrorCode.ALERT_SERVER_ERROR);
         }
     }
 
