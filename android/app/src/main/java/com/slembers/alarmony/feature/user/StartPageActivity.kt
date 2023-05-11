@@ -30,9 +30,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -49,6 +52,12 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
+import androidx.compose.material.icons.filled.Visibility
+import androidx.compose.material.icons.filled.VisibilityOff
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 
 
 enum class Routes() {
@@ -81,7 +90,7 @@ class StartPageActivity : AppCompatActivity() {
     }
 }
 
-@OptIn(ExperimentalGlideComposeApi::class)
+@OptIn(ExperimentalGlideComposeApi::class, ExperimentalComposeUiApi::class)
 //위 @OptIn(ExperimentalGlideComposeApi::class)이 회색으로 나오는 이유는
 //사용되지 않아서가 아니라 실험적이고 불안정한 기능이기 때문이다.
 @Composable
@@ -93,28 +102,36 @@ fun LoginScreen(navController: NavController) {
     // 아이디와 비밀번호에 대한 상태를 저장할 mutableState 변수 선언
     val idState = remember { mutableStateOf("") }
     val passwordState = remember { mutableStateOf("") }
+    var passwordVisibility = true
     var isSuccess = false
     var msg = ""
+    val keyboardController = LocalSoftwareKeyboardController.current
 
     Column(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
+
     ) {
 
         mascott(drawing = R.drawable.mascot_foreground)
         logo(drawing = R.drawable.alarmony)
         TextField(
             value = idState.value,
-            onValueChange = { idState.value = it },
+            onValueChange = { idState.value = it
+                            },
             label = { Text("ID") },
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Email,
-                imeAction = ImeAction.Next
-            ),
+                imeAction = ImeAction.Next,
+                ),
             modifier = Modifier
                 .padding(vertical = 8.dp, horizontal = 16.dp)
                 .fillMaxWidth()
-                .clip(RoundedCornerShape(20.dp))
+                .clip(RoundedCornerShape(20.dp)),
+//                .onFocusChanged{ keyboardController?.hide()}
+
+
+
         )
 
         TextField(
@@ -128,7 +145,9 @@ fun LoginScreen(navController: NavController) {
             modifier = Modifier
                 .padding(vertical = 8.dp, horizontal = 16.dp)
                 .fillMaxWidth()
-                .clip(RoundedCornerShape(20.dp))
+                .clip(RoundedCornerShape(20.dp)),
+            visualTransformation =  PasswordVisualTransformation()
+//                .onFocusChanged{ keyboardController?.hide()}
         )
 //아래는 자동로그인 체크박스
 
