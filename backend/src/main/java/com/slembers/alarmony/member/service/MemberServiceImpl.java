@@ -76,13 +76,11 @@ public class MemberServiceImpl implements MemberService {
      * @param username 유저 아이디
      * @return 존재여부
      **/
-
-
     @Override
     public CheckDuplicateDto checkForDuplicateId(String username) {
-
-        return CheckDuplicateDto.builder().isDuplicated(memberRepository.existsByUsername(username)).build();
-
+        return CheckDuplicateDto.builder()
+                .isDuplicated(memberRepository.existsByUsername(username))
+                .build();
     }
 
     /**
@@ -93,11 +91,10 @@ public class MemberServiceImpl implements MemberService {
      */
     @Override
     public CheckDuplicateDto checkForDuplicateEmail(String email) {
-
-        //TODO: 얘 리펙토링 필요한거 같음 리턴을 dto로 하면 안될듯
-        return CheckDuplicateDto.builder().isDuplicated(memberRepository.existsByEmail(email)).build();
+        return CheckDuplicateDto.builder()
+                .isDuplicated(memberRepository.existsByEmail(email))
+                .build();
     }
-
 
     /**
      * 닉네임 중복 체크
@@ -105,10 +102,11 @@ public class MemberServiceImpl implements MemberService {
      * @param nickname : 닉네임
      * @return 존재여부
      */
-
     @Override
     public CheckDuplicateDto checkForDuplicateNickname(String nickname) {
-        return CheckDuplicateDto.builder().isDuplicated(memberRepository.existsByNickname(nickname)).build();
+        return CheckDuplicateDto.builder()
+                .isDuplicated(memberRepository.existsByNickname(nickname))
+                .build();
     }
 
     /**
@@ -118,30 +116,25 @@ public class MemberServiceImpl implements MemberService {
      */
 
     private void checkDuplicatedField(SignUpDto signUpDto) {
-        log.info("중복체크");
-        //아이디 중복 체크
-        if (checkForDuplicateId(signUpDto.getUsername()).isDuplicated()){
-            log.error("아이디 중복");
+        if (checkForDuplicateId(signUpDto.getUsername()).isDuplicated()) {
             throw new CustomException(MemberErrorCode.ID_DUPLICATED);
         }
-
         if (checkForDuplicateNickname(signUpDto.getNickname()).isDuplicated())
             throw new CustomException(MemberErrorCode.NICKNAME_DUPLICATED);
-
         if (checkForDuplicateEmail(signUpDto.getEmail()).isDuplicated())
             throw new CustomException(MemberErrorCode.EMAIL_DUPLICATED);
-
     }
 
     @Override
     public TokenResponseDto reissueToken(ReissueTokenDto reissueTokenDto) {
 
-        //예외처리
         jwtTokenProvider.validRefreshToken(reissueTokenDto.getRefreshToken());
 
         String redisRefreshToken = redisUtil.getData("Refresh:" + reissueTokenDto.getUsername());
 
-        Member member = memberRepository.findByUsername(reissueTokenDto.getUsername()).orElseThrow(() -> new CustomException(MemberErrorCode.MEMBER_NOT_FOUND));
+
+        //? (reissueTokenDto.getUsername()??
+        Member member = findMember(reissueTokenDto.getUsername());
 
         if (redisRefreshToken.equals(redisRefreshToken)) { //일치할때만 재발급
 
@@ -159,8 +152,7 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     public void putRegistrationToken(String username, String registrationToken) {
-        Member member = memberRepository.findByUsername(username)
-                .orElseThrow(() -> new CustomException(MemberErrorCode.MEMBER_NOT_FOUND));
+        Member member = findMember(username);
         if (registrationToken == null || registrationToken.length() == 0)
             throw new CustomException(MemberErrorCode.MEMBER_REGISTRATION_TOKEN_WRONG);
 
@@ -242,11 +234,7 @@ public class MemberServiceImpl implements MemberService {
      */
     @Override
     public MemberResponseDto getMemberInfo(String username) {
-
-
-        Member member = memberRepository.findByUsername(username)
-                .orElseThrow(() -> new CustomException(MemberErrorCode.MEMBER_NOT_FOUND));
-
+        Member member = findMember(username);
         return modelMapper.map(member, MemberResponseDto.class);
     }
 
@@ -256,16 +244,9 @@ public class MemberServiceImpl implements MemberService {
     @Override
     @Transactional
     public void deleteMember(String username) {
-
-
-        Member member = memberRepository.findByUsername(username)
-                .orElseThrow(() -> new CustomException(MemberErrorCode.MEMBER_NOT_FOUND));
-
-        //권한 비활성화로 변경
+        Member member = findMember(username);
         member.modifyAuthority(AuthorityEnum.ROLE_WITHDRAWAL);
-
         memberRepository.save(member);
-
     }
 
     /**
@@ -275,8 +256,7 @@ public class MemberServiceImpl implements MemberService {
     @Transactional
     public MemberInfoDto modifyMemberInfo(String username, ModifiedMemberInfoDto modifiedMemberInfoDto) {
 
-        Member member = memberRepository.findByUsername(username)
-                .orElseThrow(() -> new CustomException(MemberErrorCode.MEMBER_NOT_FOUND));
+        Member member = findMember(username);
 
         String key = "";
         String url = "";
@@ -301,7 +281,6 @@ public class MemberServiceImpl implements MemberService {
             member.changeProfileImg(url);
             member.changeProfileKey(key);
 
-
         }
 
         member.changeNickname(modifiedMemberInfoDto.getNickname());
@@ -317,10 +296,7 @@ public class MemberServiceImpl implements MemberService {
     @Transactional
     public void changePassword(String username, ChangePasswordDto changePasswordDto) {
 
-        //가존 비밀번호와 일치하는지 확인
-
-        Member member = memberRepository.findByUsername(username)
-                .orElseThrow(() -> new CustomException(MemberErrorCode.MEMBER_NOT_FOUND));
+        Member member = findMember(username);
 
         if (!passwordEncoder.matches(changePasswordDto.getOldPassword(), member.getPassword())) {
             throw new CustomException(MemberErrorCode.PASSWORD_NOT_VALID);
@@ -335,5 +311,11 @@ public class MemberServiceImpl implements MemberService {
         member.encodePassword(passwordEncoder);
 
         memberRepository.save(member);
+    }
+
+
+    private Member findMember(String username){
+        return memberRepository.findByUsername(username)
+                .orElseThrow(() -> new CustomException(MemberErrorCode.MEMBER_NOT_FOUND));
     }
 }
