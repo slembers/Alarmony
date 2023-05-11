@@ -18,6 +18,10 @@ import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.POST
+import com.slembers.alarmony.model.db.dto.CheckIdResponseDto
+import com.slembers.alarmony.model.db.dto.CheckNicnameResponseDto
+import retrofit2.http.Path
+import retrofit2.http.Query
 import retrofit2.http.PUT
 import com.slembers.alarmony.model.db.dto.CheckIdResponseDto
 import com.slembers.alarmony.model.db.dto.CheckNicnameResponseDto

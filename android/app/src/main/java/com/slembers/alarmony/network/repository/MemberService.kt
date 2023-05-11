@@ -246,7 +246,7 @@ object MemberService {
         }
     }
 
-    @OptIn(ExperimentalGlideComposeApi::class)
+//    @OptIn(ExperimentalGlideComposeApi::class)
     @ExperimentalMaterial3Api
     fun logOut(context:Context, navController: NavController) {
         try{
