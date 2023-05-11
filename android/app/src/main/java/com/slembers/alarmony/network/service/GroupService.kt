@@ -2,6 +2,7 @@ package com.slembers.alarmony.network.service
 
 import android.content.Context
 import android.util.Log
+import androidx.core.graphics.convertTo
 import androidx.navigation.NavHostController
 import com.slembers.alarmony.model.db.Group
 import com.slembers.alarmony.model.db.Record
@@ -21,7 +22,7 @@ import retrofit2.Response
 import kotlin.streams.toList
 
 object GroupService {
-
+    val groupApi = AlarmonyServer().groupApi
     suspend fun addGroupAlarm(
         title : String?,
         hour : Int,
@@ -160,5 +161,19 @@ object GroupService {
             return result
         }
         return result
+    }
+
+    suspend fun deleteGroup(
+        groupId : Long
+    ) : Boolean {
+        try {
+            val response = groupApi.deleteGroup(groupId)
+            Log.d("deleteGroup","[그룹 나가기] 나가기 결과 : $response")
+            if(response.code() in 200..299) return true
+        } catch ( e : Exception ) {
+            Log.d("deleteGroup","[그룹 나가기] 그룹나가기 오류발생 : ${e.message}")
+            return false
+        }
+        return false
     }
 }

@@ -34,6 +34,7 @@ import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.slembers.alarmony.feature.alarm.Alarm
 import com.slembers.alarmony.feature.alarm.AlarmDatabase
 import com.slembers.alarmony.feature.alarm.AlarmRepository
+import com.slembers.alarmony.feature.alarm.deleteAlarm
 import com.slembers.alarmony.feature.common.CardBox
 import com.slembers.alarmony.feature.common.NavItem
 import com.slembers.alarmony.feature.common.ui.compose.GroupTitle
@@ -41,6 +42,7 @@ import com.slembers.alarmony.feature.ui.group.GroupToolBar
 import com.slembers.alarmony.feature.ui.groupDetails.GroupDetailsBoard
 import com.slembers.alarmony.feature.ui.groupDetails.GroupDetailsTitle
 import com.slembers.alarmony.model.db.Record
+import com.slembers.alarmony.network.service.GroupService
 import com.slembers.alarmony.viewModel.GroupDetailsViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -156,7 +158,16 @@ fun GroupDetailsScreen(
                         imageVector = Icons.Filled.ExitToApp,
                         contentDescription = null,
                         tint = Color.Red
-                    )}
+                    )},
+                    onClick = {
+                        CoroutineScope(Dispatchers.IO).async {
+                            val exit = GroupService.deleteGroup(alarmId!!)
+                            if(exit) {
+                                deleteAlarm(alarmId!!, context)
+                                navController.popBackStack()
+                            }
+                        }
+                    }
                 )}
                 )
             }
