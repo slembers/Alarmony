@@ -272,48 +272,48 @@ fun MyListItem(item : Alarm, onItemClick: (String) -> Unit) {
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.padding(start = 20.dp)
             ) {
-                val myDate = item.alarm_date
-                if (myDate[0] == true && myDate[1] == true && myDate[2] == true && myDate[3] == true && myDate[4] == true && myDate[5] == false && myDate[6] == false) {
+                val myDate = item.alarmDate
+                if (myDate[0] && myDate[1] && myDate[2] && myDate[3] && myDate[4] && !myDate[5] && !myDate[6]) {
                     Text(text = "주중", modifier = Modifier.padding(start = 5.dp))
                 }
-                else if (myDate[0] == false && myDate[1] == false && myDate[2] == false && myDate[3] == false && myDate[4] == false && myDate[5] == true && myDate[6] == true) {
+                else if (!myDate[0] && !myDate[1] && !myDate[2] && !myDate[3] && !myDate[4] && myDate[5] && myDate[6]) {
                     Text(text = "주말", color= Color.Red, modifier = Modifier.padding(start = 5.dp))
                 }
-                else if (myDate[0] == true && myDate[1] == true && myDate[2] == true && myDate[3] == true && myDate[4] == true && myDate[5] == true && myDate[6] == true) {
+                else if (myDate[0] && myDate[1] && myDate[2] && myDate[3] && myDate[4] && myDate[5] && myDate[6]) {
                     Text(text = "매일", color= Color.Black, modifier = Modifier.padding(start = 5.dp))
                 }
                 else {
-                    if (myDate[0] == true) {
+                    if (myDate[0]) {
                         Text(text = "월")
                     } else {
                         Text(text = "월", color= Color.Black.copy(alpha = 0.2f))
                     }
-                    if (myDate[1] == true) {
+                    if (myDate[1]) {
                         Text(text = " 화")
                     } else {
                         Text(text = " 화", color= Color.Black.copy(alpha = 0.2f))
                     }
-                    if (myDate[2] == true) {
+                    if (myDate[2]) {
                         Text(text = " 수")
                     } else {
                         Text(text = " 수", color= Color.Black.copy(alpha = 0.2f))
                     }
-                    if (myDate[3] == true) {
+                    if (myDate[3]) {
                         Text(text = " 목")
                     } else {
                         Text(text = " 목", color= Color.Black.copy(alpha = 0.2f))
                     }
-                    if (myDate[4] == true) {
+                    if (myDate[4]) {
                         Text(text = " 금")
                     } else {
                         Text(text = " 금", color= Color.Black.copy(alpha = 0.2f))
                     }
-                    if (myDate[5] == true) {
+                    if (myDate[5]) {
                         Text(text = " 토")
                     } else {
                         Text(text = " 토", color= Color.Black.copy(alpha = 0.2f))
                     }
-                    if (myDate[6] == true) {
+                    if (myDate[6]) {
                         Text(text = " 일")
                     } else {
                         Text(text = " 일", color= Color.Black.copy(alpha = 0.2f))

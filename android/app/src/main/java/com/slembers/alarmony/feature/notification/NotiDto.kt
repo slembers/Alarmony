@@ -12,18 +12,14 @@ class NotiDto (
     @SerializedName("type") val type : String
 )  {
     companion object {
-        fun toDto(alarm: Alarm): AlarmDto {
-            val alarmDto = AlarmDto(
-                alarm.alarm_id,
-                alarm.title,
-                alarm.hour,
-                alarm.minute,
-                alarm.alarm_date,
-                alarm.sound_name,
-                alarm.sound_volumn,
-                alarm.vibrate
+        fun toDto(noti: Noti): NotiDto {
+            val notiDto = NotiDto(
+                noti.notiId,
+                noti.profileImg,
+                noti.content,
+                noti.type
             )
-            return alarmDto
+            return notiDto
         }
     }
 

@@ -109,7 +109,7 @@ fun setSnoozeAlarm(context: Context, alarmDto: AlarmDto, snoozeType: Int) {
             System.currentTimeMillis() + (10 * 60 * 1000) // 스누즈 10분
         }
     val intent = Intent(context, AlarmReceiver::class.java)
-    intent.putExtra("alarmId", alarmDto.alarm_id)
+    intent.putExtra("alarmId", alarmDto.alarmId)
     intent.putExtra("isSnooze", true)
     val myPendingIntent : Int = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
         PendingIntent.FLAG_MUTABLE

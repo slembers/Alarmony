@@ -76,7 +76,7 @@ class AlarmForegroundService : Service() {
 
         CoroutineScope(Dispatchers.Main).launch {
             val newIntent = Intent(applicationContext, AlarmActivity::class.java)
-            newIntent.putExtra("alarmId", alarmDto.alarm_id)
+            newIntent.putExtra("alarmId", alarmDto.alarmId)
             newIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             startActivity(newIntent)
             delay(2000)

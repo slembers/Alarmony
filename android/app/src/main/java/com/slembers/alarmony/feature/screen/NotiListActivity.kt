@@ -57,6 +57,7 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.slembers.alarmony.feature.common.ui.theme.notosanskr
 import com.slembers.alarmony.feature.common.ui.theme.toColor
+import com.slembers.alarmony.feature.notification.NotiDto
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -100,7 +101,7 @@ fun NotiListScreen(navController: NavController) {
                     .padding(10.dp)
                     .padding(innerPadding)
             ) {
-                val itemArray = notiSample
+                val itemArray = notis
                 LazyColumn{
                     items(itemArray.size) {model ->
                         MyNotiItem(item = itemArray[model])
@@ -113,7 +114,7 @@ fun NotiListScreen(navController: NavController) {
 }
 
 @Composable
-fun MyNotiItem(item : Noti) {
+fun MyNotiItem(item : NotiDto) {
     val isClicked = remember { mutableStateOf(false)  }
     Card(
         modifier = Modifier
@@ -128,7 +129,7 @@ fun MyNotiItem(item : Noti) {
             .background(Color.White)
             .fillMaxWidth()
             .clickable {
-                if (item.type) {
+                if (item.type == "INVITE") {
                     isClicked.value = true
                 }
             },
@@ -144,7 +145,7 @@ fun MyNotiItem(item : Noti) {
                 .fillMaxWidth()) {
             AsyncImage(
                 model = ImageRequest.Builder(LocalContext.current)
-                    .data(item.profile_img)
+                    .data(item.profileImg)
                     .build(),
                 contentDescription = "ImageRequest example",
                 modifier = Modifier.size(65.dp)
@@ -162,7 +163,7 @@ fun MyNotiItem(item : Noti) {
 }
 
 @Composable
-fun GroupNoti(item : Noti, isClicked : MutableState<Boolean>) {
+fun GroupNoti(item : NotiDto, isClicked : MutableState<Boolean>) {
     val openDialog = remember { mutableStateOf(true)  }
     if (openDialog.value) {
         AlertDialog(

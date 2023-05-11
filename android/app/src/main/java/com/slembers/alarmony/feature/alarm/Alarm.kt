@@ -8,25 +8,25 @@ import androidx.room.TypeConverters
 @Entity(tableName = "alarms")
 class Alarm(
     @PrimaryKey
-    val alarm_id: Long,
+    val alarmId: Long,
     val title: String,
     val hour: Int,
     val minute: Int,
-    val alarm_date: List<Boolean>,
-    val sound_name: String,
-    val sound_volumn: Int,
+    val alarmDate: List<Boolean>,
+    val soundName: String,
+    val soundVolume: Int,
     val vibrate: Boolean,
 ) {
     companion object {
         fun toEntity(alarmDto: AlarmDto): Alarm {
             val alarm = Alarm(
-                alarmDto.alarm_id,
+                alarmDto.alarmId,
                 alarmDto.title,
                 alarmDto.hour,
                 alarmDto.minute,
-                alarmDto.alarm_date,
-                alarmDto.sound_name,
-                alarmDto.sound_volumn,
+                alarmDto.alarmDate,
+                alarmDto.soundName,
+                alarmDto.soundVolume,
                 alarmDto.vibrate
             )
             return alarm
