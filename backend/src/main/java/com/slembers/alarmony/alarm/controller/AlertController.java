@@ -40,9 +40,9 @@ public class AlertController {
      * @return 성공 메시지
      */
     @DeleteMapping("/{alert-id}")
-    public ResponseEntity<String> deleteAlert(@PathVariable("alert-id") Long alertId) {
+    public ResponseEntity<Void> deleteAlert(@PathVariable("alert-id") Long alertId) {
         alertService.deleteAlert(alertId);
-        return new ResponseEntity<>("알림을 삭제했습니다.", HttpStatus.OK);
+        return ResponseEntity.noContent().build();
     }
 
     /**
