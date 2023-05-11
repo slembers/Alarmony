@@ -4,9 +4,11 @@ import android.content.Context
 import android.util.Log
 import androidx.navigation.NavHostController
 import com.slembers.alarmony.model.db.Group
+import com.slembers.alarmony.model.db.Record
 import com.slembers.alarmony.model.db.dto.GroupDto
 import com.slembers.alarmony.model.db.dto.MemberListDto
 import com.slembers.alarmony.model.db.dto.MessageDto
+import com.slembers.alarmony.model.db.dto.RecordListDto
 import com.slembers.alarmony.network.api.AlarmonyServer
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -16,6 +18,7 @@ import kotlinx.coroutines.withContext
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import kotlin.streams.toList
 
 object GroupService {
 
@@ -124,5 +127,38 @@ object GroupService {
                 Log.d("disconnection", "[그룹검색] 연결되지 않았습니다. : ${t.message} : []")
             }
         })
+    }
+
+    suspend fun getGroupRecord(
+        groupId : Long
+    ) : Map<String,List<Record>> {
+        val groupApi = AlarmonyServer().groupApi
+        var result = hashMapOf<String, List<Record>>(
+            "success" to listOf<Record>(),
+            "failed" to listOf<Record>()
+        )
+        try {
+            Log.d("getGroup","[알람 상세] 오늘의 알림 검색..")
+            var successItems : MutableList<Record> = mutableListOf()
+            var failItems : MutableList<Record> = mutableListOf()
+            val recordList = groupApi.getGroupRecord(groupId).body()
+            Log.d("getGroup","[알람 상세] 오늘의 알림 현황 : ${recordList}")
+            recordList?.alarmList.let {
+                it?.map {
+                   val temp = Record(it.nickname,it.profileImg,it.success)
+                    when(temp.success) {
+                        true -> successItems.add(temp)
+                        else -> failItems.add(temp)
+                    }
+                }
+            }
+            result.put("success",successItems)
+            result.put("failed",failItems)
+            return result
+        } catch (e : Exception) {
+            Log.d("getGroup","[알람 상세] 오늘의 알림 불러오기 오류 : ${e.message}")
+            return result
+        }
+        return result
     }
 }

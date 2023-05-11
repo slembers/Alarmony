@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -23,12 +24,19 @@ import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.slembers.alarmony.feature.common.CardBox
 import com.slembers.alarmony.feature.common.CardDivider
 import com.slembers.alarmony.feature.common.CardTitle
+import com.slembers.alarmony.model.db.Record
+import kotlinx.coroutines.Deferred
 
 @Preview
 @Composable
 @ExperimentalMaterial3Api
 @ExperimentalGlideComposeApi
-fun GroupDetailsBoard() {
+fun GroupDetailsBoard(
+    items: Map<String, List<Record>> = hashMapOf(
+        "success" to listOf(),
+        "failed" to listOf()
+    )
+) {
     CardBox(
         title = { CardTitle(
             title = "오늘 알람 기록",
@@ -59,23 +67,41 @@ fun GroupDetailsBoard() {
                     ),
                 content = {
                     CardDivider()
-                    LazyColumn(
-                        modifier = Modifier.height(200.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        content = {
-                            items(count = 3) {
-                                MemberDetails( isCheck = true )
+                    if(items.getValue("success").isEmpty()) {
+
+                    } else {
+                        LazyColumn(
+                            modifier = Modifier.height(200.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            content = {
+                                items(items.getValue("success")) {
+                                    MemberDetails(
+                                        nickname = it.nickname,
+                                        profile = it.profileImg,
+                                        isCheck = it.success
+                                    )
+                                }
                             }
-                        })
+                        )
+                    }
                     CardDivider()
-                    LazyColumn(
-                        modifier = Modifier.height(200.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        content = {
-                            items(count = 3) {
-                                MemberDetails()
+                    if(items.getValue("failed").isEmpty()) {
+
+                    } else {
+                        LazyColumn(
+                            modifier = Modifier.height(200.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            content = {
+                                items(items.getValue("failed")) {
+                                    MemberDetails(
+                                        nickname = it.nickname,
+                                        profile = it.profileImg,
+                                        isCheck = it.success
+                                    )
+                                }
                             }
-                        })
+                        )
+                    }
                 }
             )
         }
