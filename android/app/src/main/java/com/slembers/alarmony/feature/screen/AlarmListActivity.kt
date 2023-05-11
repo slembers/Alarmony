@@ -66,6 +66,8 @@ import com.slembers.alarmony.feature.alarm.setTestAlarm
 import com.slembers.alarmony.feature.common.NavItem
 import com.slembers.alarmony.feature.common.ui.theme.notosanskr
 import com.slembers.alarmony.feature.common.ui.theme.toColor
+import com.slembers.alarmony.feature.notification.NotiViewModel
+import com.slembers.alarmony.feature.notification.NotiViewModelFactory
 
 @ExperimentalGlideComposeApi
 @OptIn(ExperimentalMaterial3Api::class)
@@ -76,6 +78,10 @@ fun AlarmListScreen(navController : NavHostController) {
         factory = AlarmViewModelFactory(context.applicationContext as Application)
     )
     val alarms = mAlarmViewModel.readAllData.observeAsState(listOf()).value
+    val mNotiViewModel : NotiViewModel = viewModel(
+        factory = NotiViewModelFactory(context.applicationContext as Application)
+    )
+    val notis = mNotiViewModel.readAllData.observeAsState(listOf()).value
     val launcher = rememberLauncherForActivityResult(
         ActivityResultContracts.StartActivityForResult()) { result ->
         if (result.resultCode == Activity.RESULT_OK) {
@@ -109,7 +115,7 @@ fun AlarmListScreen(navController : NavHostController) {
                     containerColor = "#FFFFFF".toColor()
                 ),
                 actions = {
-                    if (notiSample.isEmpty()) {
+                    if (notis.isEmpty()) {
                         IconButton(onClick = { navController.navigate(NavItem.NotiListScreen.route) }) {
                             Icon(
                                 imageVector = Icons.Outlined.Notifications,
