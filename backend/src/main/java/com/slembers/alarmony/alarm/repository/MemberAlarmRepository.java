@@ -1,6 +1,6 @@
 package com.slembers.alarmony.alarm.repository;
 
-import com.slembers.alarmony.alarm.dto.AlarmDto;
+import com.slembers.alarmony.alarm.dto.AlarmListDetailDto;
 import com.slembers.alarmony.alarm.entity.Alarm;
 import com.slembers.alarmony.alarm.entity.MemberAlarm;
 import com.slembers.alarmony.member.entity.Member;
@@ -46,11 +46,13 @@ public interface MemberAlarmRepository extends JpaRepository<MemberAlarm, Long> 
      * @param memberId 멤버 아이디
      * @return 알람 리스트
      */
-    @Query("SELECT new com.slembers.alarmony.alarm.dto.AlarmDto( " +
-        "ar.id, ar.title, hour(ar.time), minute(ar.time), ar.alarmDate) " +
+    @Query("SELECT new com.slembers.alarmony.alarm.dto.AlarmListDetailDto( " +
+        "CASE WHEN ar.host.id = :memberId THEN true ELSE false END, " +
+        "ar.id, ar.title, hour(ar.time), minute(ar.time), ar.alarmDate, " +
+        "ar.soundName, ar.soundVolume, ar.vibrate ) " +
         "from member_alarm as ma inner join alarm as ar on ma.alarm.id = ar.id " +
         "where ma.member.id = :memberId")
-    List<AlarmDto> getAlarmDtosByMember(Long memberId);
+    List<AlarmListDetailDto> getAlarmDtosByMember(Long memberId);
 
     /**
      * 알람에 속한 멤버 수를 반환한다.

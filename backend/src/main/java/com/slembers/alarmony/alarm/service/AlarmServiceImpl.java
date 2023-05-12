@@ -1,6 +1,8 @@
 package com.slembers.alarmony.alarm.service;
 
+import com.slembers.alarmony.alarm.dto.AlarmDetailDto;
 import com.slembers.alarmony.alarm.dto.AlarmDto;
+import com.slembers.alarmony.alarm.dto.AlarmListDetailDto;
 import com.slembers.alarmony.alarm.dto.CreateAlarmDto;
 import com.slembers.alarmony.alarm.dto.response.AlarmListResponseDto;
 import com.slembers.alarmony.alarm.entity.Alarm;
@@ -48,7 +50,7 @@ public class AlarmServiceImpl implements AlarmService {
 
         try {
             //멤버의 멤버알람 목록을 가져온다
-            List<AlarmDto> alarms = memberAlarmRepository.getAlarmDtosByMember(member.getId());
+            List<AlarmListDetailDto> alarms = memberAlarmRepository.getAlarmDtosByMember(member.getId());
             // 리스트를 객체에 담아서 전송한다.
             return AlarmListResponseDto.builder().alarms(alarms).build();
         } catch (Exception e) {
