@@ -54,9 +54,7 @@ import kotlinx.coroutines.withContext
 class GroupDetailsActivity : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
     }
-
 }
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -87,6 +85,7 @@ fun GroupDetailsScreen(
         soundName =  "Nomal",
         soundVolume =  7,
         vibrate =  true,
+        host = false
     )) }
 
     var record = remember{ mutableStateOf<Map<String, List<Record>>>(
@@ -117,7 +116,7 @@ fun GroupDetailsScreen(
     }
 
     Log.d("alarmDetails","[알람 상세] alarm : $alarm")
-    Log.d("alarmDetails","[알람 상세] alarm_date : ${alarm.value.alarm_date}")
+    Log.d("alarmDetails","[알람 상세] alarm_date : ${alarm.value.alarmDate}")
     Log.d("alarmDetails","[알람 상세] alarmId : $alarmId")
     Log.d("alarmDetails","[알람 상세] record : $record")
     Log.d("alarmDetails","[알람 상세] details : $details")
