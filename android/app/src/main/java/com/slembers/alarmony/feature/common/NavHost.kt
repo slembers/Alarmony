@@ -6,8 +6,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.lifecycle.viewmodel.viewModelFactory
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -17,22 +15,18 @@ import androidx.navigation.navArgument
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.slembers.alarmony.MainActivity
 import com.slembers.alarmony.feature.alarm.NotiListScreen
+import com.slembers.alarmony.feature.report.ReportDetailScreen
+import com.slembers.alarmony.feature.report.ReportListScreen
+import com.slembers.alarmony.feature.report.ReportScreen
 import com.slembers.alarmony.feature.screen.AlarmListScreen
 import com.slembers.alarmony.feature.screen.GroupDetailsScreen
-import com.slembers.alarmony.feature.screen.GroupScreen
-import com.slembers.alarmony.feature.screen.InviteScreen
-import com.slembers.alarmony.feature.screen.SoundScreen
 import com.slembers.alarmony.feature.user.AccountMtnc
 import com.slembers.alarmony.feature.user.FindId
 import com.slembers.alarmony.feature.user.Findpswd
 
 import com.slembers.alarmony.feature.user.ProfileSetting
 import com.slembers.alarmony.feature.user.SignupScreen
-import com.slembers.alarmony.feature.user.AccountMtnc
 import com.slembers.alarmony.feature.user.LoginScreen
-
-import com.slembers.alarmony.viewModel.GroupViewModel
-
 
 
 @Composable
@@ -43,7 +37,6 @@ intent : Intent, navController : NavHostController = rememberNavController()
 ) {
     val accessToken = MainActivity.prefs.getString("accessToken","")
     Log.d("token","[로그인] $accessToken !!")
-
     val startDestinate = if(accessToken.isNotBlank()) NavItem.AlarmListScreen.route else NavItem.LoginScreen.route
     NavHost(
         modifier = Modifier.fillMaxSize(),
@@ -82,6 +75,7 @@ intent : Intent, navController : NavHostController = rememberNavController()
 
         }
 
+
         composable(
             route = "${NavItem.GroupDetails.route}/{alarmId}",
             arguments = listOf(
@@ -93,7 +87,17 @@ intent : Intent, navController : NavHostController = rememberNavController()
             val alarmId = entry.arguments?.getLong("alarmId")
             GroupDetailsScreen(navController, alarmId)
         }
+        composable(NavItem.ReportPage.route) {
+            ReportScreen(navController = navController)
+        }
 
+        composable(NavItem.ReportList.route) {
+            ReportListScreen(navController = navController)
+        }
+
+        composable(NavItem.ReportDetail.route) {
+            ReportDetailScreen(navController = navController)
+        }
     }
 
     val screen: String? = intent.getStringExtra("GO")
