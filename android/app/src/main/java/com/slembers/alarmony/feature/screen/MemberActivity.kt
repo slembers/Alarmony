@@ -1,6 +1,7 @@
 package com.slembers.alarmony.feature.screen
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -44,4 +45,15 @@ class MemberActivity : AppCompatActivity() {
             }
         }
     }
+
+    override fun onStart() {
+        super.onStart()
+        Log.d("MemberActivity","MemberActivity 시작")
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        Log.d("MemberActivity","MemberActivity 종료")
+    }
+
 }
