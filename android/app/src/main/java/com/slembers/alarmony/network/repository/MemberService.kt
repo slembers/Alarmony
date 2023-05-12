@@ -406,7 +406,7 @@ object MemberService {
      */
     suspend fun reissueToken(username: String, refreshToken: String) :Boolean {
 
-        Log.d("refresh","ㅇㅁㄴㅇㄴㅁㅇㄴㅁㅇㄴㅁ")
+        Log.d("refresh","토큰 재발급")
         // 토큰 재발급 API 호출
         val response = memberApi.refresh(TokenReissueRequest(
             grantType = "Bearer",

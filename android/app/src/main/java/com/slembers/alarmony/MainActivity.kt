@@ -20,6 +20,7 @@ import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.runtime.LaunchedEffect
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.core.content.ContextCompat
@@ -27,7 +28,12 @@ import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.gun0912.tedpermission.PermissionListener
 import com.gun0912.tedpermission.normal.TedPermission
 import com.slembers.alarmony.feature.common.NavController
+import com.slembers.alarmony.feature.screen.MemberActivity
+import com.slembers.alarmony.network.repository.MemberService
+import com.slembers.alarmony.network.repository.MemberService.reissueToken
 import com.slembers.alarmony.util.PresharedUtil
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 @ExperimentalMaterial3Api
 @ExperimentalGlideComposeApi
@@ -40,13 +46,25 @@ class MainActivity : AppCompatActivity() {
 //      SharedPreferences 클래스는 앱에 있는 다른 Class보다 먼저 생성되어야함
         prefs = PresharedUtil(application)
         setContent {
+            val access = prefs.getString("accessToken","")
+            val refresh = prefs.getString("refreshToken","")
+            val username = prefs.getString("username","")
+            if( access.isNotBlank() || access.isNotEmpty() ) {
+                Log.d("application start","토큰을 재발급 받으려고 합니다..")
+                LaunchedEffect(Unit) {
+                    withContext(Dispatchers.IO) {
+                        reissueToken(username = username, refreshToken = refresh)
+                    }
+                }
+            } else {
+                Log.d("application start","로그인을 시도해야 합니다.")
+                val intent = Intent(this, MemberActivity::class.java)
+                startActivity(intent)
+            }
             Log.d("myIntent", intent.toString())
             NavController(intent)
             requestAlertPermission() // 권한 실행
         }
-
-
-
     }
 
     // 백그라운드 권한 설정

@@ -53,44 +53,6 @@ fun NavController(
     intent: Intent, navController: NavHostController = rememberNavController()
 ) {
 
-
-    //TODO Refresh Token을 전송한다.
-    val accessToken = MainActivity.prefs.getString("accessToken", "")
-    val refreshToken = MainActivity.prefs.getString("refreshToken", "")
-    var username = MainActivity.prefs.getString("username", "")
-    username =""
-    Log.d("refresh","[알람목록] ${username} ${refreshToken}")
-
-    var dasdsa = LocalContext.current
-    val launcher = rememberLauncherForActivityResult(
-        ActivityResultContracts.StartActivityForResult()) { result ->
-        if (result.resultCode == Activity.RESULT_OK) {
-            Log.d("AlarmListScreen","[알람목록] Activity 이동성공")
-        }
-    }
-
-    // 유저아이디나 Refresh토큰이 없는경우 -> 로그인 창으로 이동
-    if (refreshToken.isBlank() || username.isBlank()) {
-        Log.d("refresh","로그인 다시해야됨")
-        //로그아웃 -> 로그인 페이지로 이동시킨다.
-     //   Intent(dasdsa,StartPageActivity::class.java)
-        //launcher.launch( Intent(dasdsa,StartPageActivity::class.java))
-    } else {
-
-        LaunchedEffect(Unit) {
-            if (!reissueToken(username, refreshToken)) {
-                Log.d("refresh","ㅇㅁㄴㅇㄴㅁㅇㄴㅁㅇㄴㅁ")
-                //로그인 페이지로 이동
-             //  Intent(dasdsa,StartPageActivity::class.java)
-             //   launcher.launch( Intent(dasdsa,StartPageActivity::class.java))
-            }
-
-        }
-    }
-
-    Log.d("token","[로그인] $accessToken !!")
-    val startDestinate = if(accessToken.isNotBlank()) NavItem.AlarmListScreen.route else NavItem.LoginScreen.route
-
     val context = LocalContext.current
     var details : GroupDetailsViewModel = viewModel(
         factory = GroupDetailsViewModel.GroupViewModelFactory(
@@ -101,7 +63,7 @@ fun NavController(
         modifier = Modifier.fillMaxSize(),
         navController = navController,
 //        startDestination = NavItem.Group.route
-        startDestination = startDestinate
+        startDestination = NavItem.AlarmListScreen.route
     ) {
         // 알람 목록 조회 페이지
         composable(route = NavItem.AlarmListScreen.route) {
@@ -111,29 +73,13 @@ fun NavController(
         composable(route = NavItem.NotiListScreen.route) {
             NotiListScreen(navController)
         }
-        // 로그인 페이지
-        composable(route = NavItem.LoginScreen.route) { LoginScreen(navController = navController) }
-        composable(route = NavItem.FindIdActivity.route) { FindId(navController = navController) }
-        // 회원가입 페이지
-        composable(route = NavItem.Signup.route) { SignupScreen(navController = navController) }
-        composable(NavItem.FindIdActivity.route) {
-            FindId(navController = navController)
-
-        }
-        composable(NavItem.FindPswdActivity.route) {
-            Findpswd(navController = navController)
-
-        }
         composable(NavItem.ProfileActivity.route) {
             ProfileSetting(navController = navController)
-
         }
 
         composable(NavItem.AccountMtnc.route) {
             AccountMtnc(navController = navController)
-
         }
-
 
         composable(
             route = "${NavItem.GroupDetails.route}/{alarmId}",
