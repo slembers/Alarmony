@@ -46,11 +46,11 @@ import com.slembers.alarmony.feature.common.NavItem
 import com.slembers.alarmony.model.db.SignupRequest
 import com.slembers.alarmony.network.repository.MemberService.checkEmail
 import com.slembers.alarmony.network.repository.MemberService.checkId
-import com.slembers.alarmony.network.repository.MemberService.checkNickname
 import kotlinx.coroutines.runBlocking
 
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color.Companion.Green
+import com.slembers.alarmony.network.repository.MemberService
 
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
@@ -312,7 +312,7 @@ fun SignupScreen(navController: NavController) {
                         )
 
                     } else if (nicknameFocused == true) {
-                        checkNickname(nickname) { isSuccess ->
+                        MemberService.checkNickname(nickname) { isSuccess ->
                             nicknameResult = isSuccess
                             Log.d("response", "${nicknameResult}")
                             if (nicknameResult == true) {

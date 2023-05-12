@@ -8,6 +8,7 @@ import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.slembers.alarmony.MainActivity
 import com.slembers.alarmony.feature.common.NavItem
 import com.slembers.alarmony.feature.ui.common.showDialog
+import com.slembers.alarmony.model.db.ChangeMyInfoRequest
 import com.slembers.alarmony.model.db.FindIdRequest
 import com.slembers.alarmony.model.db.FindPasswordRequest
 import com.slembers.alarmony.model.db.LoginRequest
@@ -420,16 +421,16 @@ object MemberService {
         val profileImage: MultipartBody.Part? = null
     )
 
-    fun userProfoileEditSubmit(myFormData: MyFormData) {
+    fun userProfoileEditSubmit(myFormData: Any) {
         try {
             memberApi.userProfoileEditSubmit(
-                myFormData
+                myFormData as ChangeMyInfoRequest
             ).enqueue(object : Callback<Unit> {
                 override fun onResponse(
                     call: Call<Unit>, response: Response<Unit>
                 ) {
                     if (response.isSuccessful) {
-                        Log.d("response", "프로필 수정 방응함수실행")
+                        Log.d("response", "프로필 수정 반응성공")
                         Log.d("response", "프로필 수정 ${myFormData}")
                     } else {
                         Log.d("response", "프로필 수정 반응실패")
