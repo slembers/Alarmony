@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.ColumnDefault;
 
 @Getter
 @Builder
@@ -20,7 +21,9 @@ public class Report {
     @Column(name = "report_record_id")
     private Long id;
 
-    @Column(name = "report_type", nullable = false)
+    @Enumerated(EnumType.STRING)
+    @Column(name = "report_type", nullable = false, columnDefinition = "VARCHAR(20)")
+    @ColumnDefault("'APP_BUG'")
     private ReportTypeEnum reportType;
 
     @ManyToOne(fetch = FetchType.LAZY)
