@@ -27,6 +27,8 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import android.content.Intent
+import android.view.Gravity
+import androidx.compose.ui.platform.LocalContext
 import com.google.android.ads.mediationtestsuite.activities.HomeActivity
 import com.slembers.alarmony.feature.screen.GroupActivity
 import com.slembers.alarmony.model.db.dto.CheckEmailResponseDto
@@ -37,6 +39,7 @@ import com.slembers.alarmony.model.db.dto.CheckNicnameResponseDto
 @ExperimentalGlideComposeApi
 object MemberService {
     val memberApi = AlarmonyServer().memberApi
+
     suspend fun putRegistTokenAfterSignIn() : Unit {
         Log.d("INFO", "동적으로 가져오는 토큰 정보")
         val token = MainActivity.prefs.getString("registrationToken","")
@@ -108,62 +111,60 @@ object MemberService {
     @ExperimentalMaterial3Api
     suspend fun login(
         username: String,
-        password:String
+        password:String,
+        context: Context
     ) : Boolean {
-            try {
-                Log.d("Start", "login --> 로그인 시도")
-                val response = memberApi.login(
-                    LoginRequest(
-                        username = username,
-                        password = password
-                    )
+        val duration = Toast.LENGTH_SHORT
+        var message = ""
+        val toast = Toast.makeText(context,message,duration)
+        toast.setGravity(Gravity.TOP, 0, 0)
+
+            Log.d("Start", "login --> 로그인 시도")
+            val response = memberApi.login(
+                LoginRequest(
+                    username = username,
+                    password = password
                 )
+            )
+            Log.d("response", "[로그인] code : ${response.code()}")
+            Log.d("response", "[로그인] 결과 : ${response.body()}")
+            //로그인 성공시 토큰값
+            var loginResult = response.body()
 
-                Log.d("response","[로그인] code : ${response.code()}")
-                Log.d("response","[로그인] 결과 : ${response.body()}")
-                var loginResult = response.body()
+            //로그인이 성공하였을경우 -> SUCCESS 200번대
+            if (response.isSuccessful) {
+                //sharedPreference에 저장
+                MainActivity.prefs.setString("accessToken", loginResult?.accessToken)
+                MainActivity.prefs.setString("refreshToken", loginResult?.refreshToken)
 
-                if(response.isSuccessful && response.body() != null) {
+                Log.d("login", "[로그인] 성공!")
 
-                    //로그인이 성공했을 경우 로직
-                    if(loginResult!!.status == null) {
-
-                        Log.d("response", "[로그인] 성공!")
-                        Log.d("response","[로그인] access토큰 : ${loginResult?.accessToken}")
-                        Log.d("response","[로그인] refresh토큰 : ${loginResult?.refreshToken}")
-                        MainActivity.prefs.setString("accessToken", loginResult?.accessToken)
-                        MainActivity.prefs.setString("refreshToken", loginResult?.refreshToken)
-//                    Toast.makeText(context, "정상적으로 로그인에 성공하였습니다.",Toast.LENGTH_SHORT).show()
-                        Log.d("Exit", "login <-- 로그인 종료")
-                        return true
-
-                    } else if(loginResult!!.status!! == "401") {
-                        Log.d("response","[로그인] 비밀번호가 일치하지 않는다.")
-//                    Toast.makeText(context, "비밀번호가 일치하지 않는다.",Toast.LENGTH_SHORT).show()
-                    } else if(loginResult!!.status!! == "403") {
-                        Log.d("response","[로그인] 이메일 정보를 확인해 주세요.")
-//                    Toast.makeText(context, "이메일을 확인해주세요.",Toast.LENGTH_SHORT).show()
-                    } else if(loginResult.status!! == "404") {
-                        Log.d("response","[로그인] 회원이 존재하지 않음.")
-//                    Toast.makeText(context, "회원이 존재하지 않습니다.",Toast.LENGTH_SHORT).show()
-                    } else {
-                        Log.d("response","[로그인] 기타 에러입니다.")
-                    }
-                } else {
-                    Log.d("response","[로그인] access토큰 : ${loginResult?.accessToken}")
-                    Log.d("response","[로그인] refresh토큰 : ${loginResult?.refreshToken}")
-                    Log.d("response","[로그인] 로그인에 실패하였습니다.")
-//                Toast.makeText(context, "로그인 정보가 정확하지 않습니다.",Toast.LENGTH_SHORT).show()
-                }
-
-
-            } catch ( e : Exception ) {
-                Log.i("response", "[로그인] 에러가 발생하여 실패하였습니다..")
-                Log.i("response", "문제 원인 : ${e.message}")
-//            Toast.makeText(context, "에러가 발생하였습니다.",Toast.LENGTH_SHORT).show()
-                println(e.message)
+                return true;
             }
-        return false
+            //로그인이 실패하였을 경우 400번대 에러
+            else {
+
+                when (loginResult!!.status!!) {
+                    "401" -> {
+                        message = "아이디와 비밀번호를 다시 확인해주세요."
+                    }
+
+                    "402" -> {
+                        message = "아이디와 비밀번호를 다시 확인해주세요."
+                    }
+
+                    "403" -> {
+                        message = "아이디와 비밀번호를 다시 확인해주세요."
+                    }
+
+                    else -> {
+                        message = "내부 서버에 문제가 발생하였습니다. 잠시 후에 다시 시도해주세요"
+                    }
+
+                }
+                toast.show()
+                return false;
+            }
     }
 
     fun findId(email: String, context:Context,navController: NavController,) {
