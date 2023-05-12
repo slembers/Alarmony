@@ -110,8 +110,16 @@ intent : Intent, navController : NavHostController = rememberNavController()
             ReportListScreen(navController = navController)
         }
 
-        composable(NavItem.ReportDetail.route) {
-            ReportDetailScreen(navController = navController)
+        composable(
+            route = "${NavItem.ReportDetail.route}/{reportId}",
+            arguments = listOf(
+                navArgument("reportId"){
+                    type = NavType.LongType
+                }
+            )
+        ) {entry ->
+            val reportId = entry.arguments?.getLong("reportId")
+            ReportDetailScreen(navController, reportId)
         }
 
         composable(
