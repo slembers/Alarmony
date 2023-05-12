@@ -73,6 +73,7 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import com.slembers.alarmony.MainActivity
+import com.slembers.alarmony.network.repository.MemberService
 import kotlin.math.log
 
 
@@ -239,7 +240,12 @@ fun LoginScreen(navController: NavController = rememberNavController()) {
                     )
 
                     Log.d("INFO","result : $result")
-                    if(result) { (context as Activity).finish() }
+                    if(result) {
+                        putRegistTokenAfterSignIn()
+                        val intent = Intent(context,MainActivity::class.java)
+                        context.startActivity(intent)
+                        (context as Activity).finish()
+                    }
                 }
             },
             enabled = isFilledId.value && isFilledPassword.value,

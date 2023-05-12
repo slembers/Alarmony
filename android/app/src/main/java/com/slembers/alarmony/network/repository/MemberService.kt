@@ -1,6 +1,8 @@
 package com.slembers.alarmony.network.repository
 
+import android.app.Activity
 import android.content.Context
+import android.content.Intent
 import android.util.Log
 import android.view.Gravity
 import android.widget.Toast
@@ -9,6 +11,7 @@ import androidx.navigation.NavController
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.slembers.alarmony.MainActivity
 import com.slembers.alarmony.feature.common.NavItem
+import com.slembers.alarmony.feature.screen.MemberActivity
 import com.slembers.alarmony.feature.ui.common.showDialog
 import com.slembers.alarmony.model.db.FindIdRequest
 import com.slembers.alarmony.model.db.FindPasswordRequest
@@ -255,8 +258,10 @@ object MemberService {
                         Log.d("response", "${response.body()}")
                         Log.d("response", "${response.code()}")
                         showDialog("알림", "로그아웃되었어요!", context, navController)
-                        navController.navigate(NavItem.LoginScreen.route)
                         MainActivity.prefs.reset()
+                        val intent = Intent(context, MemberActivity::class.java)
+                        context.startActivity(intent)
+                        (context as Activity).finish()
 
                     } else {
                         Log.d("response", "로그아웃")
