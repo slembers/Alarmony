@@ -39,6 +39,7 @@ import androidx.navigation.compose.rememberNavController
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.slembers.alarmony.feature.common.ui.theme.toColor
 import com.slembers.alarmony.model.db.Member
+import com.slembers.alarmony.viewModel.GroupDetailsViewModel
 import com.slembers.alarmony.viewModel.GroupSearchViewModel
 import com.slembers.alarmony.viewModel.GroupViewModel
 

@@ -73,4 +73,10 @@ sealed class NavItem (
         title = "신고상세",
         image = Icons.Default.Home
     )
+
+    object GroupDetailsInvite : NavItem(
+        route = "GroupInvteDetails",
+        title = "알람초대",
+        image = Icons.Default.ArrowForwardIos
+    )
 }

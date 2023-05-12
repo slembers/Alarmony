@@ -1,6 +1,5 @@
 package com.slembers.alarmony.feature.screen
 
-import android.app.Application
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
@@ -13,7 +12,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.BarChart
 import androidx.compose.material.icons.filled.ExitToApp
 import androidx.compose.material.icons.outlined.GroupAdd
-import androidx.compose.material.icons.outlined.Notifications
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -67,6 +65,7 @@ class GroupDetailsActivity : Fragment() {
 @ExperimentalGlideComposeApi
 fun GroupDetailsScreen(
     navController : NavHostController = rememberNavController(),
+    details : GroupDetailsViewModel = viewModel(),
     alarmId: Long? = null
 ) {
 
@@ -98,12 +97,6 @@ fun GroupDetailsScreen(
         )
     )}
 
-    var details : GroupDetailsViewModel = viewModel(
-        factory = GroupDetailsViewModel.GroupViewModelFactory(
-            application = context.applicationContext as Application
-        )
-    )
-
     LaunchedEffect(Unit) {
         Log.d("alarmDetails","[알람 상세] 초기화 불러오는 중 ...")
         val repository = AlarmRepository(alarmDao)
@@ -114,6 +107,7 @@ fun GroupDetailsScreen(
         val _record = details.getRecord(alarmId!!)
         Log.d("alarmDetails","[알람 상세] 초기화 불러오는 완료 ...")
         Log.d("alarmDetails","[알람 상세] alarm : $_alarm")
+
         alarm.value = _alarm!!
         record.value = _record
     }
@@ -133,7 +127,7 @@ fun GroupDetailsScreen(
                 navClick = { navController.popBackStack() },
                 action = {
                     if(alarm.value.host) {
-                        IconButton(onClick = { }) {
+                        IconButton(onClick = { navController.navigate(NavItem.GroupDetailsInvite.route + "/$alarmId") }) {
                             Icon(
                                 imageVector = Icons.Outlined.GroupAdd,
                                 contentDescription = "groupAdd",
