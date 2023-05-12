@@ -5,10 +5,14 @@ package com.slembers.alarmony.feature.user
 
 
 //통신api
+import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
@@ -68,6 +72,7 @@ import kotlinx.coroutines.launch
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
+import com.slembers.alarmony.MainActivity
 import kotlin.math.log
 
 
@@ -118,6 +123,12 @@ fun LoginScreen(navController: NavController = rememberNavController()) {
     var isSuccess = false
     var msg = ""
 
+    val launcher = rememberLauncherForActivityResult(
+        ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                Log.d("AlarmListScreen","[알람목록] Activity 이동성공")
+        }
+    }
 
     val usernameRegex = "^[a-z0-9]{4,20}$".toRegex()
     val passwordRegex = "^(?=.*[0-9])(?=.*[a-zA-Z])[a-zA-Z\\d]{8,16}\$".toRegex()
@@ -228,7 +239,10 @@ fun LoginScreen(navController: NavController = rememberNavController()) {
                     )
 
                     Log.d("INFO","result : $result")
-                    if(result) navController.navigate(NavItem.AlarmListScreen.route)
+                    if(result) {
+                        val intent = Intent(context,MainActivity::class.java)
+                        launcher.launch(intent)
+                    }
                 }
             },
             enabled = isFilledId.value && isFilledPassword.value,
@@ -238,7 +252,7 @@ fun LoginScreen(navController: NavController = rememberNavController()) {
                 .clip(RoundedCornerShape(20.dp)),
 
             colors = ButtonDefaults.buttonColors(
-                backgroundColor = Color.Black, // Set the background color of the button
+                backgroundColor = Black, // Set the background color of the button
                 contentColor = Color.White // Set the text color of the buttonl
             )
 
