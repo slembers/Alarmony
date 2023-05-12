@@ -187,8 +187,8 @@ fun AlarmListScreen(navController : NavHostController) {
                     8,
                     45,
                     listOf(true, true, true, true, true, true, true),
-                    "자장가",
-                    15,
+                    "Piano",
+                    7,
                     true,
                     false
                 )

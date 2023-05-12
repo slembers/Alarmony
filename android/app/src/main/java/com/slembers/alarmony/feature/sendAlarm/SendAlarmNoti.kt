@@ -17,6 +17,7 @@ import android.util.Log
 import androidx.core.app.NotificationCompat
 import com.slembers.alarmony.R
 import com.slembers.alarmony.feature.alarm.AlarmDto
+import com.slembers.alarmony.util.soundConverter
 import kotlin.math.roundToInt
 
 
@@ -47,7 +48,7 @@ object SendAlarmNoti {
 
         audioManager = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
         currentVolumn = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC) // 현재 미디어 사운드 세팅
-        mediaPlayer = MediaPlayer.create(context, Settings.System.DEFAULT_ALARM_ALERT_URI)
+        mediaPlayer = MediaPlayer.create(context, soundConverter(context, alarmDto.soundName))
         mediaPlayer.isLooping = true
         val maxVolume = audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC)
         Log.d("MaxVolumn", maxVolume.toString())

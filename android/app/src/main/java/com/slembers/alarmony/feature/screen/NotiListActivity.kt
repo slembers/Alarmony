@@ -116,7 +116,7 @@ fun NotiListScreen(navController: NavController) {
                 val itemArray = notis
                 LazyColumn{
                     items(itemArray.size) {model ->
-                        MyNotiItem(item = itemArray[model])
+                        MyNotiItem(item = itemArray[model], mNotiViewModel)
                     }
                 }
             }
@@ -126,7 +126,7 @@ fun NotiListScreen(navController: NavController) {
 }
 
 @Composable
-fun MyNotiItem(item : Noti) {
+fun MyNotiItem(item : Noti, mNotiViewModel: NotiViewModel) {
     val isClicked = remember { mutableStateOf(false)  }
     val profileImage = if (item.profileImg.length > 0) {item.profileImg}
     else {R.drawable.profiledefault}
@@ -170,14 +170,14 @@ fun MyNotiItem(item : Noti) {
             )
         }
         if (isClicked.value) {
-            GroupNoti(item, isClicked)
+            GroupNoti(item, isClicked, mNotiViewModel)
         }
 
     }
 }
 
 @Composable
-fun GroupNoti(item : Noti, isClicked : MutableState<Boolean>) {
+fun GroupNoti(item : Noti, isClicked : MutableState<Boolean>, mNotiViewModel : NotiViewModel) {
     val openDialog = remember { mutableStateOf(true)  }
     if (openDialog.value) {
         AlertDialog(
@@ -221,6 +221,7 @@ fun GroupNoti(item : Noti, isClicked : MutableState<Boolean>) {
                     Button(
                         onClick = {
                             openDialog.value = false
+                            mNotiViewModel.deleteNoti(item)
                         },
                         colors = ButtonDefaults.buttonColors(containerColor = "#C93636".toColor())
                     ) {
@@ -235,6 +236,7 @@ fun GroupNoti(item : Noti, isClicked : MutableState<Boolean>) {
                     Button(
                         onClick = {
                             openDialog.value = false
+                            mNotiViewModel.deleteNoti(item)
                         },
                         colors = ButtonDefaults.buttonColors(containerColor = "#31AF91".toColor()),
                     ) {

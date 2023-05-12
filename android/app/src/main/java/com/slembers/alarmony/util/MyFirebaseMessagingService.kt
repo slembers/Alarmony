@@ -72,10 +72,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
             }
 
         } else {
-            sendNotification(remoteMessage)
-
             val data = remoteMessage.data
-
             sendNotification(remoteMessage)
             val noti = NotiDto(
                 data["alertId"]!!.toLong(),
@@ -92,7 +89,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         // RemoteCode, ID를 고유값으로 지정하여 알림이 개별 표시 되도록 함
         val uniId: Int = (System.currentTimeMillis() / 7).toInt()
         val intent = Intent(this, MainActivity::class.java)
-        intent.putExtra("GO", "AlarmListActivity")
+        intent.putExtra("GO", "Noti")
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
         val myPendingIntent : Int = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             PendingIntent.FLAG_MUTABLE
