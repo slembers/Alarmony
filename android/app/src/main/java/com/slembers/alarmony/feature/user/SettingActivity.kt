@@ -71,7 +71,6 @@ fun BtnFm() {
 }
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
-
 @Composable
 fun AccountMtnc(navController: NavController) {
 
@@ -82,7 +81,7 @@ fun AccountMtnc(navController: NavController) {
             TopAppBar(
                 title = { Text("설정") },
                 navigationIcon = {
-                    IconButton(onClick = {navController.navigateUp() }) {
+                    IconButton(onClick = { navController.navigateUp() }) {
                         Icon(Icons.Filled.ArrowBack, "뒤로가기")
                     }
                 },
@@ -90,7 +89,7 @@ fun AccountMtnc(navController: NavController) {
             )
         },
     ) {
-        Column (
+        Column(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp),
@@ -98,7 +97,7 @@ fun AccountMtnc(navController: NavController) {
         ) {
 
             Button(
-                onClick = { navController.navigate(NavItem.ProfileActivity.route)},
+                onClick = { navController.navigate(NavItem.ProfileActivity.route) },
                 modifier = Modifier
                     .width(240.dp)
                     .padding(10.dp)
@@ -116,7 +115,7 @@ fun AccountMtnc(navController: NavController) {
 
             }
             Button(
-                onClick = {/* 태마설정변경*/},
+                onClick = {/* 태마설정변경*/ },
                 modifier = Modifier
                     .width(240.dp)
                     .padding(10.dp)
@@ -134,7 +133,7 @@ fun AccountMtnc(navController: NavController) {
 
             }
             Button(
-                onClick = {/* 어플리케이션 정보 페이지*/},
+                onClick = {/* 어플리케이션 정보 페이지*/ },
                 modifier = Modifier
                     .width(240.dp)
                     .padding(10.dp)
@@ -152,33 +151,50 @@ fun AccountMtnc(navController: NavController) {
 
             }
             Button(
-                onClick = {/* 푸쉬알림 설정 변경*/},
+                onClick = {/* 푸쉬알림 설정 변경*/ },
                 modifier = Modifier
                     .width(240.dp)
                     .padding(10.dp)
-            ) {  Row(
-                verticalAlignment = Alignment.CenterVertically
             ) {
-                Icon(
-                    imageVector = Icons.Filled.Notifications,
-                    contentDescription = "푸쉬알림 설정",
+                Row(
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.Notifications,
+                        contentDescription = "푸쉬알림 설정",
 //            tint = LocalContentColor.current.copy(alpha = ContentAlpha.high)
-                )
-                Spacer(modifier = Modifier.width(20.dp))
-                Text(
-                    text = "푸쉬알림 설정",
+                    )
+                    Spacer(modifier = Modifier.width(20.dp))
+                    Text(
+                        text = "푸쉬알림 설정",
 //            textAlign = TextAlign.Center
 
-                )
-                Spacer(modifier = Modifier.weight(1f))
-                Switch(
-                    checked = Notichecked.value,
-                    onCheckedChange = { /**/},
-                    modifier = Modifier.padding(end = 12.dp)
-                )
-            }
+                    )
+                    Spacer(modifier = Modifier.weight(1f))
+                    Switch(
+                        checked = Notichecked.value,
+                        onCheckedChange = { /**/ },
+                        modifier = Modifier.padding(end = 12.dp)
+                    )
+                }
             }
 
+            Button(
+                onClick = {navController.navigate(NavItem.ReportPage.route)},
+                modifier = Modifier
+                    .width(240.dp)
+                    .padding(10.dp)
+            ) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.Report,
+                        contentDescription = "신고 하기",
+                    )
+                    Text(text = "신고 하기")
+                }
+            }
         }
 
     }

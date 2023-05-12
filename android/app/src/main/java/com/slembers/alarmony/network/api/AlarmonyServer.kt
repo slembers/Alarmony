@@ -6,18 +6,20 @@ import com.google.gson.GsonBuilder
 import com.slembers.alarmony.MainActivity
 import com.slembers.alarmony.network.repository.GroupRepositroy
 import com.slembers.alarmony.network.repository.MemberRepository
+import com.slembers.alarmony.network.repository.ReportRepository
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.Response
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import retrofit2.create
 
 class AlarmonyServer {
 
     val gson = GsonBuilder().setLenient().create()
 
-//    private val BASE_URL = "http://192.168.0.102:5000/api/"
+//    private val BASE_URL = "http://10.0.2.2:5000/api/"
     private val BASE_URL = "https://k8c205.p.ssafy.io/api/"
 
     private fun okHttpClient(interceptor : Appinterceptor): OkHttpClient {
@@ -37,6 +39,7 @@ class AlarmonyServer {
 
     val memberApi = retrofit.create(MemberRepository::class.java)
     val groupApi = retrofit.create(GroupRepositroy::class.java)
+    val reportApi = retrofit.create(ReportRepository::class.java)
 
     @OptIn(ExperimentalMaterial3Api::class, ExperimentalGlideComposeApi::class)
     class Appinterceptor : Interceptor {

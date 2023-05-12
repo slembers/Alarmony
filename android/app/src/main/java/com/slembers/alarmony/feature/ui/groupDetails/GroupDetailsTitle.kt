@@ -71,7 +71,7 @@ fun GroupDetailsTitle(
                                 userScrollEnabled = false,
                                 content = {
                                     itemsIndexed(items = week) { index, item ->
-                                        if(alarm.alarm_date.isEmpty()) {
+                                        if(alarm.alarmDate.isEmpty()) {
                                             GroupDetailsText(
                                                 text = item,
                                                 color = GroupDetailsWeek(item)
@@ -79,7 +79,7 @@ fun GroupDetailsTitle(
                                         } else {
                                             GroupDetailsText(
                                                 text = item,
-                                                color = GroupDetailsWeek(item, alarm.alarm_date[index])
+                                                color = GroupDetailsWeek(item, alarm.alarmDate[index])
                                             )
                                         }
                                     }

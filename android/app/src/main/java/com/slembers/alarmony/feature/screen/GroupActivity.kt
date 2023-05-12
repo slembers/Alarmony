@@ -183,7 +183,8 @@ fun GroupScreen(
                                                 }.toList(),
                                                 soundName = soundName!!,
                                                 soundVolume = soundVolume?.toInt()!!,
-                                                vibrate = vibration!!
+                                                vibrate = vibration!!,
+                                                host = true
                                             )
                                         ), context
                                     )
