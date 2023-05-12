@@ -2,12 +2,18 @@ package com.slembers.alarmony.viewModel
 
 import android.app.Application
 import android.util.Log
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.slembers.alarmony.feature.alarm.Alarm
 import com.slembers.alarmony.feature.alarm.AlarmDatabase
 import com.slembers.alarmony.feature.alarm.AlarmRepository
+import com.slembers.alarmony.model.db.Member
 import com.slembers.alarmony.model.db.Record
 import com.slembers.alarmony.network.service.GroupService
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -21,6 +27,9 @@ class GroupDetailsViewModel (
 ) : ViewModel() {
 
     private val repository : AlarmRepository
+    private val _members : MutableState<MutableList<Member>> = mutableStateOf(mutableListOf())
+    private val _currentMembers : MutableLiveData<MutableList<Member>> =
+        MutableLiveData(mutableListOf())
 
     init {
         Log.d("groupViewModel","VIewModel 초기화!!")
@@ -40,6 +49,20 @@ class GroupDetailsViewModel (
             val result = repository.findAlarm(alarmId)
             continuation.resume(result)
         }
+    }
+
+    val members : LiveData<MutableList<Member>>
+        get() = _currentMembers
+
+    suspend fun updateCurrentMember(alarmId: Long) : MutableList<Member> = suspendCoroutine { continuation ->
+        viewModelScope.launch {
+            val result = GroupService.getGroupMemberList(alarmId)
+            continuation.resume(result)
+        }
+    }
+
+    fun deleteCurrentMember() {
+
     }
 
     class GroupViewModelFactory(

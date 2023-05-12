@@ -1,4 +1,4 @@
-package com.slembers.alarmony.feature.ui.group
+package com.slembers.alarmony.feature.ui.groupInvite
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
