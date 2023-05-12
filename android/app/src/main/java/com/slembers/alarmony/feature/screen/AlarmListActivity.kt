@@ -21,6 +21,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.MaterialTheme.colors
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.outlined.Notifications
@@ -51,7 +52,9 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.os.bundleOf
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavHost
 import androidx.navigation.NavHostController
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.slembers.alarmony.R
@@ -59,13 +62,12 @@ import com.slembers.alarmony.feature.alarm.Alarm
 import com.slembers.alarmony.feature.alarm.AlarmDto
 import com.slembers.alarmony.feature.alarm.AlarmViewModel
 import com.slembers.alarmony.feature.alarm.AlarmViewModelFactory
-import com.slembers.alarmony.feature.alarm.alarm1
-import com.slembers.alarmony.feature.alarm.notiSample
 import com.slembers.alarmony.feature.alarm.saveTestAlarm
-import com.slembers.alarmony.feature.alarm.setTestAlarm
 import com.slembers.alarmony.feature.common.NavItem
 import com.slembers.alarmony.feature.common.ui.theme.notosanskr
 import com.slembers.alarmony.feature.common.ui.theme.toColor
+import com.slembers.alarmony.feature.notification.NotiViewModel
+import com.slembers.alarmony.feature.notification.NotiViewModelFactory
 
 @ExperimentalGlideComposeApi
 @OptIn(ExperimentalMaterial3Api::class)
@@ -76,6 +78,10 @@ fun AlarmListScreen(navController : NavHostController) {
         factory = AlarmViewModelFactory(context.applicationContext as Application)
     )
     val alarms = mAlarmViewModel.readAllData.observeAsState(listOf()).value
+    val mNotiViewModel : NotiViewModel = viewModel(
+        factory = NotiViewModelFactory(context.applicationContext as Application)
+    )
+    val notis = mNotiViewModel.readAllData.observeAsState(listOf()).value
     val launcher = rememberLauncherForActivityResult(
         ActivityResultContracts.StartActivityForResult()) { result ->
         if (result.resultCode == Activity.RESULT_OK) {
@@ -109,7 +115,7 @@ fun AlarmListScreen(navController : NavHostController) {
                     containerColor = "#FFFFFF".toColor()
                 ),
                 actions = {
-                    if (notiSample.isEmpty()) {
+                    if (notis.isEmpty()) {
                         IconButton(onClick = { navController.navigate(NavItem.NotiListScreen.route) }) {
                             Icon(
                                 imageVector = Icons.Outlined.Notifications,
@@ -187,7 +193,8 @@ fun AlarmListScreen(navController : NavHostController) {
                     listOf(true, true, true, true, true, true, true),
                     "자장가",
                     15,
-                    true
+                    true,
+                    false
                 )
                     saveTestAlarm(alarm999, context)
                     Toast.makeText(context, "8초 뒤에 알람이 울립니다.", Toast.LENGTH_SHORT).show()}
@@ -197,7 +204,11 @@ fun AlarmListScreen(navController : NavHostController) {
                 //////////////////
                 LazyColumn{
                     items(alarms.size) {model ->
-                        MyListItem(item = alarms[model], onItemClick=onListItemClick)
+                        MyListItem(
+                            item = alarms[model],
+                            onItemClick=onListItemClick,
+                            navController = navController
+                        )
                     }
                 }
             }
@@ -207,7 +218,10 @@ fun AlarmListScreen(navController : NavHostController) {
 }
 
 @Composable
-fun MyListItem(item : Alarm, onItemClick: (String) -> Unit) {
+fun MyListItem(
+    item : Alarm,
+    onItemClick: (String) -> Unit,
+    navController: NavHostController) {
     Card(
         modifier = Modifier
             .padding(8.dp)
@@ -220,7 +234,7 @@ fun MyListItem(item : Alarm, onItemClick: (String) -> Unit) {
             )
             .background(Color.White)
             .fillMaxWidth()
-            .clickable { onItemClick("Heelo") },
+            .clickable { navController.navigate("${NavItem.GroupDetails.route}/${item.alarmId}") },
         shape = RoundedCornerShape(20.dp),
         colors = CardDefaults.cardColors(containerColor = "#FFFFFF".toColor()))
 
@@ -272,48 +286,48 @@ fun MyListItem(item : Alarm, onItemClick: (String) -> Unit) {
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.padding(start = 20.dp)
             ) {
-                val myDate = item.alarm_date
-                if (myDate[0] == true && myDate[1] == true && myDate[2] == true && myDate[3] == true && myDate[4] == true && myDate[5] == false && myDate[6] == false) {
+                val myDate = item.alarmDate
+                if (myDate[0] && myDate[1] && myDate[2] && myDate[3] && myDate[4] && !myDate[5] && !myDate[6]) {
                     Text(text = "주중", modifier = Modifier.padding(start = 5.dp))
                 }
-                else if (myDate[0] == false && myDate[1] == false && myDate[2] == false && myDate[3] == false && myDate[4] == false && myDate[5] == true && myDate[6] == true) {
+                else if (!myDate[0] && !myDate[1] && !myDate[2] && !myDate[3] && !myDate[4] && myDate[5] && myDate[6]) {
                     Text(text = "주말", color= Color.Red, modifier = Modifier.padding(start = 5.dp))
                 }
-                else if (myDate[0] == true && myDate[1] == true && myDate[2] == true && myDate[3] == true && myDate[4] == true && myDate[5] == true && myDate[6] == true) {
+                else if (myDate[0] && myDate[1] && myDate[2] && myDate[3] && myDate[4] && myDate[5] && myDate[6]) {
                     Text(text = "매일", color= Color.Black, modifier = Modifier.padding(start = 5.dp))
                 }
                 else {
-                    if (myDate[0] == true) {
+                    if (myDate[0]) {
                         Text(text = "월")
                     } else {
                         Text(text = "월", color= Color.Black.copy(alpha = 0.2f))
                     }
-                    if (myDate[1] == true) {
+                    if (myDate[1]) {
                         Text(text = " 화")
                     } else {
                         Text(text = " 화", color= Color.Black.copy(alpha = 0.2f))
                     }
-                    if (myDate[2] == true) {
+                    if (myDate[2]) {
                         Text(text = " 수")
                     } else {
                         Text(text = " 수", color= Color.Black.copy(alpha = 0.2f))
                     }
-                    if (myDate[3] == true) {
+                    if (myDate[3]) {
                         Text(text = " 목")
                     } else {
                         Text(text = " 목", color= Color.Black.copy(alpha = 0.2f))
                     }
-                    if (myDate[4] == true) {
+                    if (myDate[4]) {
                         Text(text = " 금")
                     } else {
                         Text(text = " 금", color= Color.Black.copy(alpha = 0.2f))
                     }
-                    if (myDate[5] == true) {
+                    if (myDate[5]) {
                         Text(text = " 토")
                     } else {
                         Text(text = " 토", color= Color.Black.copy(alpha = 0.2f))
                     }
-                    if (myDate[6] == true) {
+                    if (myDate[6]) {
                         Text(text = " 일")
                     } else {
                         Text(text = " 일", color= Color.Black.copy(alpha = 0.2f))

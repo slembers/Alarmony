@@ -45,7 +45,7 @@ class AlarmForegroundService : Service() {
                 )
             val alarmId = intent.getLongExtra("alarmId", -1L)
             CoroutineScope(Dispatchers.IO).launch {
-                val alarm = repository.findAlarm(alarm_id = alarmId)
+                val alarm = repository.findAlarm(alarmId = alarmId)
                 val alarmDto = AlarmDto.toDto(alarm!!)
                 val alarms = repository.readAllData
                 CoroutineScope(Dispatchers.Main).launch {
@@ -73,10 +73,9 @@ class AlarmForegroundService : Service() {
     }
 
     private fun startAlarm(alarmDto: AlarmDto) {
-
         CoroutineScope(Dispatchers.Main).launch {
             val newIntent = Intent(applicationContext, AlarmActivity::class.java)
-            newIntent.putExtra("alarmId", alarmDto.alarm_id)
+            newIntent.putExtra("alarmId", alarmDto.alarmId)
             newIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             startActivity(newIntent)
             delay(2000)
@@ -100,7 +99,7 @@ class AlarmForegroundService : Service() {
             .setPriority(NotificationCompat.PRIORITY_MIN)
             .setContentTitle("")
             .setContentText(type)
-            .setCategory(Notification.CATEGORY_SERVICE)
+                .setCategory(Notification.CATEGORY_SERVICE)
             .build()
         startForeground(101, notification)
     }
@@ -117,4 +116,3 @@ class AlarmForegroundService : Service() {
         return channelId
     }
 }
-

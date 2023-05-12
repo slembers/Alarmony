@@ -3,7 +3,7 @@ package com.slembers.alarmony.feature.user
 import android.annotation.SuppressLint
 import android.util.Log
 import android.widget.Toast
-//import androidx.compose.foundation.gestures.ModifierLocalScrollableContainerProvider.value
+import androidx.compose.foundation.interaction.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
@@ -13,6 +13,9 @@ import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.ImeAction
 
 import androidx.compose.ui.text.input.KeyboardType
@@ -40,7 +43,6 @@ import androidx.navigation.NavController
 import androidx.navigation.ui.NavigationUI.navigateUp
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.slembers.alarmony.feature.common.NavItem
-import com.slembers.alarmony.feature.ui.common.ShowAlertDialog
 import com.slembers.alarmony.model.db.SignupRequest
 import com.slembers.alarmony.network.repository.MemberService.checkEmail
 import com.slembers.alarmony.network.repository.MemberService.checkId

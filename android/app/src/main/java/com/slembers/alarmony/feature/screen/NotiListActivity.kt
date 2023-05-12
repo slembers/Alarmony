@@ -1,5 +1,6 @@
 package com.slembers.alarmony.feature.alarm
 
+import android.app.Application
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -36,6 +37,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -52,15 +54,26 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import com.slembers.alarmony.R
 import com.slembers.alarmony.feature.common.ui.theme.notosanskr
 import com.slembers.alarmony.feature.common.ui.theme.toColor
+import com.slembers.alarmony.feature.notification.Noti
+import com.slembers.alarmony.feature.notification.NotiDto
+import com.slembers.alarmony.feature.notification.NotiViewModel
+import com.slembers.alarmony.feature.notification.NotiViewModelFactory
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NotiListScreen(navController: NavController) {
+    val context = LocalContext.current
+    val mNotiViewModel : NotiViewModel = viewModel(
+        factory = NotiViewModelFactory(context.applicationContext as Application)
+    )
+    val notis = mNotiViewModel.readAllData.observeAsState(listOf()).value
     Scaffold(
         topBar = {
             TopAppBar(
@@ -100,7 +113,7 @@ fun NotiListScreen(navController: NavController) {
                     .padding(10.dp)
                     .padding(innerPadding)
             ) {
-                val itemArray = notiSample
+                val itemArray = notis
                 LazyColumn{
                     items(itemArray.size) {model ->
                         MyNotiItem(item = itemArray[model])
@@ -115,6 +128,8 @@ fun NotiListScreen(navController: NavController) {
 @Composable
 fun MyNotiItem(item : Noti) {
     val isClicked = remember { mutableStateOf(false)  }
+    val profileImage = if (item.profileImg.length > 0) {item.profileImg}
+    else {R.drawable.profiledefault}
     Card(
         modifier = Modifier
             .padding(8.dp)
@@ -128,7 +143,7 @@ fun MyNotiItem(item : Noti) {
             .background(Color.White)
             .fillMaxWidth()
             .clickable {
-                if (item.type) {
+                if (item.type == "INVITE") {
                     isClicked.value = true
                 }
             },
@@ -144,7 +159,7 @@ fun MyNotiItem(item : Noti) {
                 .fillMaxWidth()) {
             AsyncImage(
                 model = ImageRequest.Builder(LocalContext.current)
-                    .data(item.profile_img)
+                    .data(profileImage)
                     .build(),
                 contentDescription = "ImageRequest example",
                 modifier = Modifier.size(65.dp)

@@ -40,7 +40,7 @@ object AlarmNoti {
 
     @SuppressLint("ServiceCast")
     fun runNotification(context: Application, alarmDto: AlarmDto) {
-        NotificationID = alarmDto.alarm_id.toInt()
+        NotificationID = alarmDto.alarmId.toInt()
         notificationManager =
             context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         mBuilder = NotificationCompat.Builder(context.applicationContext, "notify_001")

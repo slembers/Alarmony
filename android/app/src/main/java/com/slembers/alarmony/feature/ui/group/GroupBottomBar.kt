@@ -15,6 +15,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.slembers.alarmony.feature.common.ui.theme.toColor
+import kotlinx.serialization.json.JsonNull.content
 
 
 @Preview
@@ -33,7 +35,7 @@ fun GroupBottomButtom(
                     .fillMaxWidth()
                     .fillMaxHeight()
                     .background(
-                        MaterialTheme.colorScheme.primary,
+                        "#00B4D8".toColor(),
                         MaterialTheme.shapes.extraSmall
                     ),
                 onClick = onClick,

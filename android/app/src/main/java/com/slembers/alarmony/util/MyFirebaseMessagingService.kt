@@ -1,30 +1,36 @@
 package com.slembers.alarmony.util
 
-import android.Manifest
-import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
-import android.content.pm.PackageManager
+import android.app.PendingIntent
+import android.content.Context
+import android.content.Intent
+import android.media.RingtoneManager
 import android.os.Build
 import android.util.Log
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
-import androidx.core.app.NotificationManagerCompat
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import com.slembers.alarmony.MainActivity
 import com.slembers.alarmony.R
+import com.slembers.alarmony.feature.alarm.AlarmDatabase
+import com.slembers.alarmony.feature.alarm.AlarmDto
+import com.slembers.alarmony.feature.notification.NotiDto
+import com.slembers.alarmony.feature.sendAlarm.SendAlarmForegroundService
+import com.slembers.alarmony.feature.notification.saveNoti
 import com.slembers.alarmony.network.repository.MemberService
+import com.slembers.alarmony.util.Constants.FIRE_ALARM
+import com.slembers.alarmony.util.Constants.OPEN_TYPE
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
 
 @ExperimentalMaterial3Api
 @ExperimentalGlideComposeApi
 class MyFirebaseMessagingService : FirebaseMessagingService() {
-
     companion object {
         private const val CHANNEL_ID = "1"
         private const val CHANNEL_NAME = "Alarmony"
@@ -46,67 +52,84 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
 
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
         super.onMessageReceived(remoteMessage)
-        // 수신한 메시지를 처리
-        val notificationManager = NotificationManagerCompat.from(applicationContext)
-
-        val builder: NotificationCompat.Builder? =
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                if (notificationManager.getNotificationChannel(CHANNEL_ID) == null) {
-                    val channel =
-                        NotificationChannel(
-                            CHANNEL_ID,
-                            CHANNEL_NAME,
-                            NotificationManager.IMPORTANCE_DEFAULT
-                        )
-                    notificationManager.createNotificationChannel(channel)
-                }
-                NotificationCompat.Builder(applicationContext, CHANNEL_ID)
-            } else {
-                NotificationCompat.Builder(applicationContext)
-            }
 
         if (remoteMessage.data?.get("type").equals("ALARM")) {
             Log.i("디버깅", "알람 울려라!!!!!!!!!!!!!!!!!!!!!!!!!!");
-            // 알람 울리는 로직 넣어주십쇼
-
-            var group = remoteMessage.data?.get("group")
-
-            builder?.setContentTitle("Alarmony")
-                ?.setContentText("[$group] 알람이 울리는 중입니다.")
-                ?.setSmallIcon(R.drawable.ic_launcher_background)
+            val newIntent = Intent(this, SendAlarmForegroundService::class.java)
+            val alarmId = remoteMessage.data["alarmId"]!!.toLong()
+            CoroutineScope(Dispatchers.IO).launch {
+                val alarmDao = AlarmDatabase.getInstance(this@MyFirebaseMessagingService).alarmDao()
+                val alarm = alarmDao.getAlarmById(alarmId)
+                val alarmDto = AlarmDto.toDto(alarm!!)
+                if (alarmDto == null) return@launch
+                newIntent.putExtra("alarmId", alarmId)
+                newIntent.putExtra(OPEN_TYPE, FIRE_ALARM)
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    this@MyFirebaseMessagingService.startForegroundService(newIntent)
+                } else {
+                    this@MyFirebaseMessagingService.startService(newIntent)
+                }
+            }
 
         } else {
-
-            val title = remoteMessage.notification?.title
-            val body = remoteMessage.notification?.body
-
-            builder?.setContentTitle(title)
-                ?.setContentText(body)
-                ?.setSmallIcon(R.drawable.ic_launcher_background)
+            sendNotification(remoteMessage)
 
             val data = remoteMessage.data
-            Log.d("RECEIVED MESSAGE", "-----------------received-----------------------")
-            Log.d("RECEIVED MESSAGE", "alertId : ${data["alertId"]}")
-            Log.d("RECEIVED MESSAGE", "profileImg : ${data["profileImg"]}")
-            Log.d("RECEIVED MESSAGE", "content : ${data["content"]}")
-            Log.d("RECEIVED MESSAGE", "type : ${data["type"]}")
-        }
 
-        val notification: Notification = builder?.build()!!
-        if (ActivityCompat.checkSelfPermission(
-                this,
-                Manifest.permission.POST_NOTIFICATIONS
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-            return
+            sendNotification(remoteMessage)
+            val noti = NotiDto(
+                data["alertId"]!!.toLong(),
+                data["profileImg"]!!,
+                data["content"]!!,
+                data["type"]!!
+            )
+            saveNoti(noti, this)
         }
-        notificationManager.notify(1, notification)
+    }
+
+    // 알림 생성 (아이콘, 알림 소리 등)
+    private fun sendNotification(remoteMessage: RemoteMessage){
+        // RemoteCode, ID를 고유값으로 지정하여 알림이 개별 표시 되도록 함
+        val uniId: Int = (System.currentTimeMillis() / 7).toInt()
+        val intent = Intent(this, MainActivity::class.java)
+        intent.putExtra("GO", "AlarmListActivity")
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+        val myPendingIntent : Int = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            PendingIntent.FLAG_MUTABLE
+        } else {
+            PendingIntent.FLAG_UPDATE_CURRENT
+        }
+        val pendingIntent = PendingIntent.getActivity(this, uniId, intent, myPendingIntent)
+
+        // 알림 채널 이름
+        val channelId = "AlarmonyNotification"
+        // 알림 소리
+        val notiUrl = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
+
+        // 알림에 대한 UI 정보와 작업을 지정
+        val notificationBuilder = NotificationCompat.Builder(this, channelId)
+            .setSmallIcon(R.drawable.mas)     // 아이콘 설정
+            .setContentTitle("alarmony")     // 제목
+            .setContentText(remoteMessage.data["content"].toString())     // 메시지 내용
+            .setAutoCancel(true)
+            .setSound(notiUrl)     // 알림 소리
+            .setContentIntent(pendingIntent)       // 알림 실행 시 Intent
+
+        val notificationManager =
+            getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        val notiImfortance =
+            if (remoteMessage.data["type"] == "INVITE") {
+                NotificationManager.IMPORTANCE_HIGH
+            }
+            else {
+                NotificationManager.IMPORTANCE_DEFAULT
+            }
+        // 오레오 버전 이후에는 채널이 필요
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
+            val channel = NotificationChannel(channelId, "Notice", notiImfortance)
+            notificationManager.createNotificationChannel(channel)
+        }
+        // 알림 생성
+        notificationManager.notify(uniId, notificationBuilder.build())
     }
 }

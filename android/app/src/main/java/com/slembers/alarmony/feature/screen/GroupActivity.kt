@@ -1,11 +1,14 @@
 package com.slembers.alarmony.feature.screen
 
 import android.app.Activity
+import android.app.Application
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.foundation.background
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -27,6 +30,8 @@ import androidx.compose.material3.TimeInput
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -39,10 +44,20 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
+import com.slembers.alarmony.MainActivity
+import com.slembers.alarmony.R
+import com.slembers.alarmony.feature.alarm.Alarm
+import com.slembers.alarmony.feature.alarm.AlarmDto
+import com.slembers.alarmony.feature.alarm.AlarmViewModel
+import com.slembers.alarmony.feature.alarm.AlarmViewModelFactory
+import com.slembers.alarmony.feature.alarm.saveAlarm
 import com.slembers.alarmony.feature.common.NavItem
 import com.slembers.alarmony.feature.common.ui.compose.GroupCard
 import com.slembers.alarmony.feature.common.ui.compose.GroupSubjet
 import com.slembers.alarmony.feature.common.ui.compose.GroupTitle
+import com.slembers.alarmony.feature.common.ui.theme.backgroundColor
+import com.slembers.alarmony.feature.common.ui.theme.toColor
+import com.slembers.alarmony.feature.ui.common.CommonDialog
 import com.slembers.alarmony.feature.ui.group.GroupBottomButtom
 import com.slembers.alarmony.feature.ui.group.GroupInvite
 import com.slembers.alarmony.feature.ui.group.GroupSound
@@ -52,6 +67,13 @@ import com.slembers.alarmony.feature.ui.group.GroupVolume
 import com.slembers.alarmony.model.db.dto.MemberDto
 import com.slembers.alarmony.network.service.GroupService
 import com.slembers.alarmony.viewModel.GroupViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import kotlin.streams.toList
 
 @ExperimentalMaterial3Api
 @ExperimentalGlideComposeApi
@@ -110,6 +132,8 @@ fun GroupScreen(
     // 초대된 그룹원 확인
     val checkedMember = navController.previousBackStackEntry?.savedStateHandle?.get<Set<MemberDto>>("checkedMember")
     Log.d("checked","[그룹생성] 선택한 멤버 : ${checkedMember.toString()}")
+    val isClosed = remember { mutableStateOf(false) }
+    val alertContext = remember { mutableStateOf("") }
 
     Scaffold(
         topBar = {
@@ -118,27 +142,58 @@ fun GroupScreen(
                 navClick = { (context as Activity).finish() }
             )
          },
+        containerColor = "#F9F9F9".toColor(),
         bottomBar = {
             GroupBottomButtom(
                 text = "저장",
                 onClick = {
-                    Log.d("viewmodel:ID","[그룹생성] groupActivity ID : $viewModel")
+                    if(title?.isEmpty() == true) {
+                        isClosed.value = true
+                        alertContext.value = "제목을 입력해주세요."
+                        return@GroupBottomButtom
+                    }
 
-                    GroupService.addGroupAlarm(
-                        title = title,
-                        hour = timePickerState?.hour ?: 7,
-                        minute = timePickerState?.hour ?: 0,
-                        alarmDate = weeks.map {
-                            isWeeks?.getValue(it) ?: false
-                        }.toList(),
-                        members = members?.map { it.nickname }?.toList(),
-                        soundName = soundName,
-                        soundVolume = soundVolume,
-                        vibrate = vibration,
-                        context = context,
-                        navController = navController
-                    )
-                }
+                    Log.d("viewmodel:ID","[그룹생성] groupActivity ID : $viewModel")
+                    CoroutineScope(Dispatchers.Main).launch {
+                        val groupId = GroupService.addGroupAlarm(
+                            title = title,
+                            hour = timePickerState?.hour ?: 7,
+                            minute = timePickerState?.hour ?: 0,
+                            alarmDate = weeks.map {
+                                isWeeks?.getValue(it) ?: false
+                            }.toList(),
+                            members = members?.map { it.nickname }?.toList(),
+                            soundName = soundName,
+                            soundVolume = soundVolume,
+                            vibrate = vibration
+                        )
+                        if(groupId != null && groupId > 0) {
+                            Log.d("response", "[그룹생성] response : $groupId")
+                            suspend fun save() = coroutineScope {
+                                async {
+                                    saveAlarm(
+                                        AlarmDto.toDto(
+                                            Alarm(
+                                                alarmId = groupId,
+                                                title = title!!,
+                                                hour = timePickerState?.hour!!,
+                                                minute = timePickerState?.minute!!,
+                                                alarmDate = weeks.map {
+                                                    isWeeks?.getValue(it) ?: false
+                                                }.toList(),
+                                                soundName = soundName!!,
+                                                soundVolume = soundVolume?.toInt()!!,
+                                                vibrate = vibration!!
+                                            )
+                                        ), context
+                                    )
+                                }
+                            }.await()
+                            save()
+                            if (groupId > 0) (context as Activity).finish()
+                        }
+                    }
+               }
             )
         },
         content = { innerPadding ->
@@ -204,7 +259,7 @@ fun GroupScreen(
                                             containerColor =
                                             viewModel.getIsWeek(item).let {
                                                 if(it) {
-                                                    MaterialTheme.colorScheme.primary
+                                                    "#00B4D8".toColor()
                                                 } else {
                                                     MaterialTheme.colorScheme.background
                                                 }
@@ -234,6 +289,14 @@ fun GroupScreen(
                 GroupVolume(
                     volume = soundVolume ?: 7f,
                     setVolume = { viewModel.onChangeVolume(it) }
+                )
+            }
+            if(isClosed.value) {
+                CommonDialog(
+                    title = "알림",
+                    context = alertContext.value,
+                    isClosed = isClosed,
+                    isButton = false
                 )
             }
         }

@@ -19,6 +19,10 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.slembers.alarmony.R
+import com.slembers.alarmony.network.service.GroupService
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 
 @Preview
 @Composable
@@ -59,6 +63,9 @@ fun MemberDetails(
             modifier = Modifier.weight(1f),
             maxLines = 1
         )
-        GroupDetailsBoardBtn(isCheck = isCheck)
+        GroupDetailsBoardBtn(
+            isCheck = isCheck,
+            onClick = onClick
+        )
     }
 }

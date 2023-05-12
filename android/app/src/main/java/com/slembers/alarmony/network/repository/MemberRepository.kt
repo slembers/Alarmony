@@ -1,5 +1,7 @@
 package com.slembers.alarmony.network.repository
 
+import androidx.compose.material3.ExperimentalMaterial3Api
+import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.slembers.alarmony.model.db.FindIdRequest
 import com.slembers.alarmony.model.db.FindPasswordRequest
 import com.slembers.alarmony.model.db.LoginRequest
@@ -64,10 +66,10 @@ interface MemberRepository {
     fun logOut(
     ) :Call<Unit>
 
-    @GET("members/info")
-    fun getMyInfo(
-    ): Call<MyInfoResponse>
-
+//    @GET("members/info")
+//    fun getMyInfo(
+//    ): Call<>
+//    )
 
     @DELETE("member")
     fun signOut(
@@ -81,5 +83,9 @@ interface MemberRepository {
 
     @GET("members/check-nickname")
     fun checkNickname(@Query("nickname") nickname: String): Call<CheckNicnameResponseDto>
+
+    @OptIn(ExperimentalMaterial3Api::class, ExperimentalGlideComposeApi::class)
+    @PUT("members")
+    fun userProfoileEditSubmit(myFormData: MemberService.MyFormData): Call<Unit>
 
 }

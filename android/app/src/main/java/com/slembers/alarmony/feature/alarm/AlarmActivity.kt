@@ -2,6 +2,7 @@ package com.slembers.alarmony.feature.alarm
 
 import android.app.Activity
 import android.app.KeyguardManager
+import android.app.Notification
 import android.content.Context
 import android.graphics.Typeface
 import android.icu.util.Calendar
@@ -308,7 +309,8 @@ fun DefaultView() {
         listOf(true, true, true, false, false, true, true),
         "자장가",
         15,
-        true,
+        vibrate = true,
+        host = false
     )
     AlarmScreen(alarmDto = alarmDto)
 }

@@ -85,14 +85,14 @@ public class AlertServiceImpl implements AlertService {
             // 알림 메시지를 저장한다.
             alertRepository.save(alert);
             String targetMobile = alert.getReceiver().getRegistrationToken();
-            String content = alert.getReceiver().getNickname() + "님에게 " + alert.getContent();
+            String content = alert.getContent();
             String imageUrl = alert.getSender().getProfileImgUrl();
             // 메시지 설정
             Message message = Message.builder()
-                .setNotification(Notification.builder()
-                    .setTitle("Alarmony 그룹 초대 알림")
-                    .setBody(content)
-                    .build())
+//                .setNotification(Notification.builder()
+//                    .setTitle("Alarmony 그룹 초대 알림")
+//                    .setBody(content)
+//                    .build())
                 .putData("alertId", String.valueOf(alert.getId()))
                 .putData("profileImg", imageUrl == null ? "" : imageUrl)
                 .putData("content", content)
@@ -258,10 +258,10 @@ public class AlertServiceImpl implements AlertService {
             String imageUrl = alert.getSender().getProfileImgUrl();
             // 메시지 설정
             Message message = Message.builder()
-                .setNotification(Notification.builder()
-                    .setTitle(title)
-                    .setBody(alert.getContent())
-                    .build())
+//                .setNotification(Notification.builder()
+//                    .setTitle(title)
+//                    .setBody(alert.getContent())
+//                    .build())
                 .putData("alertId", String.valueOf(alert.getId()))
                 .putData("profileImg", imageUrl == null ? "" : imageUrl)
                 .putData("content", alert.getContent())
@@ -293,21 +293,21 @@ public class AlertServiceImpl implements AlertService {
             log.error("멤버 알람 정보가 존재하지 않음");
             throw new CustomException(MemberAlarmErrorCode.MEMBER_ALARM_NOT_FOUND);
         }
-        sendAlarmTo(member.getRegistrationToken(), alarm.getTitle());
+        sendAlarmTo(member.getRegistrationToken(), alarm.getId());
     }
 
     /**
      * 사용자에게 알람을 보낸다.
      *
      * @param targetToken 목표 기기 토큰
-     * @param groupTitle  그룹 타이틀
+     * @param alarmId  그룹 아이디
      */
-    private void sendAlarmTo(String targetToken, String groupTitle) {
+    private void sendAlarmTo(String targetToken, Long alarmId) {
         try {
             // 메시지 설정
             Message message = Message.builder()
                 .putData("type", "ALARM")
-                .putData("group", groupTitle)
+                .putData("alarmId", String.valueOf(alarmId))
                 .setToken(targetToken)
                 .build();
 
