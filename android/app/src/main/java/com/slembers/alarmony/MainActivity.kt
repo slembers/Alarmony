@@ -60,6 +60,7 @@ class MainActivity : AppCompatActivity() {
                 Log.d("application start","로그인을 시도해야 합니다.")
                 val intent = Intent(this, MemberActivity::class.java)
                 startActivity(intent)
+                finish()
             }
             Log.d("myIntent", intent.toString())
             NavController(intent)

@@ -67,7 +67,7 @@ fun ProfileSetting(navController: NavController) {
             TopAppBar(
                 title = { Text("계정설정") },
                 navigationIcon = {
-                    IconButton(onClick = { navController.navigateUp()}) {
+                    IconButton(onClick = { navController.navigateUp() }) {
                         Icon(Icons.Filled.ArrowBack, "뒤로가기")
                     }
                 },
@@ -75,7 +75,7 @@ fun ProfileSetting(navController: NavController) {
             )
         },
         content = {
-            Column (
+            Column(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(16.dp),
@@ -98,7 +98,7 @@ fun ProfileSetting(navController: NavController) {
                     style = MaterialTheme.typography.subtitle1,
 
 
-                )
+                    )
 
                 Spacer(modifier = Modifier.height(16.dp))
 
@@ -115,7 +115,7 @@ fun ProfileSetting(navController: NavController) {
                             imeAction = ImeAction.Done
                         ),
 
-                    )
+                        )
                 } else {
                     // 수정 모드가 아닐 경우 Text를 보여준다.
                     Text(
@@ -152,16 +152,15 @@ fun ProfileSetting(navController: NavController) {
 
                     horizontalArrangement = Arrangement.SpaceAround
                 ) {
-                    TextButton(onClick = {
-                        logOut(context, navController)})
-
-
-                    {
+                    TextButton(
+                        onClick = { logOut(context, navController) }
+                    ) {
                         Text(text = "로그아웃 |")
                     }
 
                     TextButton(onClick = { /* 아이디 찾기 버튼 클릭 시 처리할 동작 */ }) {
-                        Text(text = "회원탈퇴",
+                        Text(
+                            text = "회원탈퇴",
                             style = MaterialTheme.typography.body1.copy(color = Color.Red)
                         )
                     }
