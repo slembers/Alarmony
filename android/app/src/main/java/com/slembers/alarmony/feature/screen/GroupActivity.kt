@@ -158,7 +158,7 @@ fun GroupScreen(
                         val groupId = GroupService.addGroupAlarm(
                             title = title,
                             hour = timePickerState?.hour ?: 7,
-                            minute = timePickerState?.hour ?: 0,
+                            minute = timePickerState?.minute ?: 0,
                             alarmDate = weeks.map {
                                 isWeeks?.getValue(it) ?: false
                             }.toList(),
