@@ -225,42 +225,14 @@ fun LoginScreen(navController: NavController = rememberNavController()) {
 
 
         }
-//아래는 자동로그인 체크박스
-
-//        Row(modifier = Modifier.padding(0.dp)) {
-//            // Checkbox Composable을 사용하여 체크박스 UI를 생성
-//            Checkbox(
-//                checked = checkedState.value,
-//                onCheckedChange = {
-//                    checkedState.value = it
-//                    if (it) {
-////                        prefs.setString("autoLogin", "true")
-////                        prefs.setBoolean("auto_login", true)
-//                      Log.d("체크박스", "자동 로그인 온")
-//                      Log.d("체크박스", "${prefs.getBoolean("auto_login", false)}")
-//                    } else {
-////                        prefs.setBoolean("auto_login", false)
-//                        Log.d("체크박스", "자동 로그인 오프")
-//                        Log.d("체크박스", "${prefs.getBoolean("auto_login", false)}")
-//
-//                    }
-//                }
-//            )
-//            Text(text = "자동 로그인 ")
-//        }
-
-
-
-//        아래는 로그인을 위한 통신로직을 RetrofitClient에서 가져와서 수행
-
         Button(
-//MutableState<String>와 String은 형식이 다르기에 String 값을 보내기 위해 .value를 붙여준다.
             onClick = {
                 Log.d("확인", "${idState.value}, ${passwordState.value} +로그인")
                 CoroutineScope(Dispatchers.Main).launch {
                     val result = login(
                         username = idState.value,
-                        password = passwordState.value
+                        password = passwordState.value,
+                        context
                     )
                     putRegistTokenAfterSignIn()
                     Log.d("INFO","result : $result")
