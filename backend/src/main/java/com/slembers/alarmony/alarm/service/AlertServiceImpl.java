@@ -205,7 +205,7 @@ public class AlertServiceImpl implements AlertService {
         }
 
         return AlarmInviteResponseDto.builder()
-                .alarmDetail(
+                .alarm(
                         AlarmDetailDto.builder(alert.getAlarm(), alert.getReceiver()))
                 .message(alert.getAlarm().getTitle() + "의 그룹 초대를 수락하였습니다.")
                 .build();
