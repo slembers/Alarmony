@@ -2,15 +2,12 @@ package com.slembers.alarmony.network.repository
 
 import android.content.Context
 import android.util.Log
+import android.view.Gravity
 import android.widget.Toast
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.navigation.NavController
-import androidx.navigation.NavHostController
-import coil.util.CoilUtils.result
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
-import com.google.gson.Gson
 import com.slembers.alarmony.MainActivity
-import com.slembers.alarmony.R
 import com.slembers.alarmony.feature.common.NavItem
 import com.slembers.alarmony.feature.ui.common.showDialog
 import com.slembers.alarmony.model.db.FindIdRequest
@@ -18,22 +15,18 @@ import com.slembers.alarmony.model.db.FindPasswordRequest
 import com.slembers.alarmony.model.db.LoginRequest
 import com.slembers.alarmony.model.db.RegistTokenDto
 import com.slembers.alarmony.model.db.SignupRequest
-import com.slembers.alarmony.model.db.dto.FindIdResponseDto
-import com.slembers.alarmony.model.db.dto.FindPasswordResponseDto
-import com.slembers.alarmony.model.db.dto.LoginResponseDto
-import com.slembers.alarmony.model.db.dto.SignupResponseDto
-import com.slembers.alarmony.network.api.AlarmonyServer
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
-import android.content.Intent
-import android.view.Gravity
-import androidx.compose.ui.platform.LocalContext
-import com.google.android.ads.mediationtestsuite.activities.HomeActivity
-import com.slembers.alarmony.feature.screen.GroupActivity
 import com.slembers.alarmony.model.db.dto.CheckEmailResponseDto
 import com.slembers.alarmony.model.db.dto.CheckIdResponseDto
 import com.slembers.alarmony.model.db.dto.CheckNicnameResponseDto
+import com.slembers.alarmony.model.db.dto.FindIdResponseDto
+import com.slembers.alarmony.model.db.dto.FindPasswordResponseDto
+import com.slembers.alarmony.model.db.dto.SignupResponseDto
+import com.slembers.alarmony.network.api.AlarmonyServer
+import org.json.JSONObject
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+
 
 @ExperimentalMaterial3Api
 @ExperimentalGlideComposeApi
@@ -114,10 +107,7 @@ object MemberService {
         password:String,
         context: Context
     ) : Boolean {
-        val duration = Toast.LENGTH_SHORT
-        var message = ""
-        val toast = Toast.makeText(context,message,duration)
-        toast.setGravity(Gravity.TOP, 0, 0)
+
 
             Log.d("Start", "login --> 로그인 시도")
             val response = memberApi.login(
@@ -126,13 +116,11 @@ object MemberService {
                     password = password
                 )
             )
-            Log.d("response", "[로그인] code : ${response.code()}")
-            Log.d("response", "[로그인] 결과 : ${response.body()}")
-            //로그인 성공시 토큰값
-            var loginResult = response.body()
 
             //로그인이 성공하였을경우 -> SUCCESS 200번대
             if (response.isSuccessful) {
+
+                var loginResult = response.body()
                 //sharedPreference에 저장
                 MainActivity.prefs.setString("accessToken", loginResult?.accessToken)
                 MainActivity.prefs.setString("refreshToken", loginResult?.refreshToken)
@@ -143,18 +131,22 @@ object MemberService {
             }
             //로그인이 실패하였을 경우 400번대 에러
             else {
+                val duration = Toast.LENGTH_SHORT
+                var message = ""
 
-                when (loginResult!!.status!!) {
+                val jObjError = JSONObject(response.errorBody()!!.string())
+                val status = jObjError.getString("status")
+
+                when (status) {
                     "401" -> {
                         message = "아이디와 비밀번호를 다시 확인해주세요."
                     }
 
-                    "402" -> {
-                        message = "아이디와 비밀번호를 다시 확인해주세요."
-                    }
-
                     "403" -> {
-                        message = "아이디와 비밀번호를 다시 확인해주세요."
+                        message = "회원가입 이메일 인증을 완료해주세요"
+                    }
+                    "404" -> {
+                        message = "가입되지 않은 회원입니다."
                     }
 
                     else -> {
@@ -162,12 +154,14 @@ object MemberService {
                     }
 
                 }
+                val toast = Toast.makeText(context,message,duration)
+                toast.setGravity(Gravity.TOP, 0, 0)
                 toast.show()
                 return false;
             }
     }
 
-    fun findId(email: String, context:Context,navController: NavController,) {
+    fun findId(email: String, context: Context, navController: NavController) {
         try {
             Log.d("test","아이디 찾기 위해 이메일 보냄")
             memberApi.findId(
@@ -197,7 +191,7 @@ object MemberService {
                     }
                 }
                 //서버 요청이 자체가 실패한 경우 아래 onFailure가 실행된다.
-                override fun onFailure(call: Call<FindIdResponseDto>, t: Throwable, ) {
+                override fun onFailure(call: Call<FindIdResponseDto>, t: Throwable) {
                     showDialog("알림", "뭔가 잘못됐나봐요", context, navController)
                     Log.d("response", "서버 요청이 실패")
                     Log.d("response", "${t}")
