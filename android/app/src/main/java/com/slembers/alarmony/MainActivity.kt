@@ -44,6 +44,9 @@ class MainActivity : AppCompatActivity() {
             NavController(intent)
             requestAlertPermission() // 권한 실행
         }
+
+
+
     }
 
     // 백그라운드 권한 설정

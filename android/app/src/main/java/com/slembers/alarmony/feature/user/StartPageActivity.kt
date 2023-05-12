@@ -87,14 +87,6 @@ class StartPageActivity : AppCompatActivity() {
                 horizontalAlignment = Alignment.CenterHorizontally
             )  {
 
-//                SignupScreen()
-//                Findpswd()
-//                FindId()()
-//                ProfileSetting()
-//                AccountMtnc()
-
-//                LoginScreen()
-//                Navigation()
 
             }
         }
@@ -234,7 +226,7 @@ fun LoginScreen(navController: NavController = rememberNavController()) {
                         password = passwordState.value,
                         context
                     )
-                    putRegistTokenAfterSignIn()
+
                     Log.d("INFO","result : $result")
                     if(result) navController.navigate(NavItem.AlarmListScreen.route)
                 }

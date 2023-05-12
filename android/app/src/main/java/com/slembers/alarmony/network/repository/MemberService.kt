@@ -15,12 +15,14 @@ import com.slembers.alarmony.model.db.FindPasswordRequest
 import com.slembers.alarmony.model.db.LoginRequest
 import com.slembers.alarmony.model.db.RegistTokenDto
 import com.slembers.alarmony.model.db.SignupRequest
+import com.slembers.alarmony.model.db.TokenReissueRequest
 import com.slembers.alarmony.model.db.dto.CheckEmailResponseDto
 import com.slembers.alarmony.model.db.dto.CheckIdResponseDto
 import com.slembers.alarmony.model.db.dto.CheckNicnameResponseDto
 import com.slembers.alarmony.model.db.dto.FindIdResponseDto
 import com.slembers.alarmony.model.db.dto.FindPasswordResponseDto
 import com.slembers.alarmony.model.db.dto.SignupResponseDto
+import com.slembers.alarmony.model.db.dto.TokenReissueResponse
 import com.slembers.alarmony.network.api.AlarmonyServer
 import org.json.JSONObject
 import retrofit2.Call
@@ -124,6 +126,7 @@ object MemberService {
                 //sharedPreference에 저장
                 MainActivity.prefs.setString("accessToken", loginResult?.accessToken)
                 MainActivity.prefs.setString("refreshToken", loginResult?.refreshToken)
+                MainActivity.prefs.setString("username",username)
 
                 Log.d("login", "[로그인] 성공!")
 
@@ -396,6 +399,35 @@ object MemberService {
             Log.d("fail","실패2")
 
         }
+    }
+
+    /**
+     * 토큰 재발급
+     */
+    suspend fun reissueToken(username: String, refreshToken: String) :Boolean {
+
+        Log.d("refresh","ㅇㅁㄴㅇㄴㅁㅇㄴㅁㅇㄴㅁ")
+        // 토큰 재발급 API 호출
+        val response = memberApi.refresh(TokenReissueRequest(
+            grantType = "Bearer",
+            username = username,
+            refreshToken = refreshToken,
+        ))
+        //성공 200~300번
+        //성공 시에는 재발급 받은 토큰을 sharedPreference에 저장한다.
+        if (response.isSuccessful) {
+            Log.d("refresh","액세스 토큰"+response.body()?.accessToken)
+            Log.d("refresh","리프레시 토큰"+response.body()?.refreshToken)
+
+            MainActivity.prefs.setString("accessToken", response.body()?.accessToken)
+            MainActivity.prefs.setString("refreshToken", response.body()?.refreshToken)
+
+            return true;
+        }else{
+            //실패 시에는 로그인 만료 메세지를 보내주고 로그아웃 시킨다.
+            return false
+        }
+        //실패 400번
     }
 }
 
