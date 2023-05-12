@@ -30,7 +30,8 @@ fun MemberDetails(
     profile : String? = null,
     nickname : String = "Alarmony",
     isCheck : Boolean = false,
-    onClick : () -> Unit = {}
+    onClick : () -> Unit = {},
+    host : Boolean = false
 ) {
 
     Row(
@@ -63,9 +64,11 @@ fun MemberDetails(
             modifier = Modifier.weight(1f),
             maxLines = 1
         )
-        GroupDetailsBoardBtn(
-            isCheck = isCheck,
-            onClick = onClick
-        )
+        if(host) {
+            GroupDetailsBoardBtn(
+                isCheck = isCheck,
+                onClick = onClick
+            )
+        }
     }
 }

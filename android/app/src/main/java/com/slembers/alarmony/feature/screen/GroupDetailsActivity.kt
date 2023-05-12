@@ -12,8 +12,11 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.BarChart
 import androidx.compose.material.icons.filled.ExitToApp
+import androidx.compose.material.icons.outlined.GroupAdd
+import androidx.compose.material.icons.outlined.Notifications
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -87,6 +90,7 @@ fun GroupDetailsScreen(
         soundName =  "Nomal",
         soundVolume =  7,
         vibrate =  true,
+        host = false
     )) }
 
     var record = remember{ mutableStateOf<Map<String, List<Record>>>(
@@ -117,7 +121,7 @@ fun GroupDetailsScreen(
     }
 
     Log.d("alarmDetails","[알람 상세] alarm : $alarm")
-    Log.d("alarmDetails","[알람 상세] alarm_date : ${alarm.value.alarm_date}")
+    Log.d("alarmDetails","[알람 상세] alarm_date : ${alarm.value.alarmDate}")
     Log.d("alarmDetails","[알람 상세] alarmId : $alarmId")
     Log.d("alarmDetails","[알람 상세] record : $record")
     Log.d("alarmDetails","[알람 상세] details : $details")
@@ -127,8 +131,20 @@ fun GroupDetailsScreen(
     Scaffold(
         topBar = {
             GroupToolBar(
-                title = NavItem.Group.title,
-                navClick = { navController.popBackStack() }
+                title = NavItem.GroupDetails.title,
+                navClick = { navController.popBackStack() },
+                action = {
+                    if(alarm.value.host) {
+                        IconButton(onClick = { }) {
+                            Icon(
+                                imageVector = Icons.Outlined.GroupAdd,
+                                contentDescription = "groupAdd",
+                                tint = Color.Black,
+                                modifier = Modifier.size(25.dp)
+                            )
+                        }
+                    }
+                }
             )
         },
         containerColor = "#F9F9F9".toColor(),
@@ -146,7 +162,8 @@ fun GroupDetailsScreen(
                 GroupDetailsTitle(alarm.value)
                 GroupDetailsBoard(
                     items = record.value,
-                    groupId = alarmId!!
+                    groupId = alarmId!!,
+                    host = alarm.value.host
                 )
                 CardBox(
                     title = { GroupTitle(
