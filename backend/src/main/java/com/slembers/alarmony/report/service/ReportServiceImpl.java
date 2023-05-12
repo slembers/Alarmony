@@ -6,10 +6,9 @@ import com.slembers.alarmony.member.service.MemberService;
 import com.slembers.alarmony.report.dto.ReportDto;
 import com.slembers.alarmony.report.dto.response.ReportResponseDto;
 import com.slembers.alarmony.report.entity.Report;
-import com.slembers.alarmony.report.entity.ReportType;
 import com.slembers.alarmony.report.exception.ReportErrorCode;
 import com.slembers.alarmony.report.repository.ReportRepository;
-import com.slembers.alarmony.report.repository.ReportTypeRepository;
+
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -23,7 +22,6 @@ public class ReportServiceImpl implements ReportService {
 
     private final MemberService memberService;
     private final ReportRepository reportRepository;
-    private final ReportTypeRepository reportTypeRepository;
 
     /**
      * 신고 목록을 가져온다.
@@ -35,7 +33,7 @@ public class ReportServiceImpl implements ReportService {
         return reportRepository.findAll().stream()
             .map(report -> ReportResponseDto.builder()
                 .reportId(report.getId())
-                .reportType(report.getReportType().getReportTypeName())
+                .reportType(String.valueOf(report.getReportType()))
                 .reporterNickname(report.getReporter().getNickname())
                 .reportedNickname(report.getReported().getNickname())
                 .build())
@@ -54,7 +52,7 @@ public class ReportServiceImpl implements ReportService {
             .orElseThrow(() -> new CustomException(ReportErrorCode.REPORT_NOT_FOUND));
         return ReportResponseDto.builder()
             .reportId(report.getId())
-            .reportType(report.getReportType().getReportTypeName())
+            .reportType(String.valueOf(report.getReportType()))
             .reporterNickname(report.getReporter().getNickname())
             .reportedNickname(report.getReported().getNickname())
             .content(report.getContent())
@@ -68,13 +66,11 @@ public class ReportServiceImpl implements ReportService {
      */
     @Override
     public void createReport(ReportDto reportDto) {
-        ReportType reportType = reportTypeRepository.findByReportTypeName(reportDto.getReportType())
-            .orElseThrow(() -> new CustomException(ReportErrorCode.REPORT_TYPE_NOT_FOUND));
         Member reporter = memberService.findMemberByUsername(reportDto.getReporterUsername());
         Member reported = memberService.findMemberByNickName(reportDto.getReportedNickname());
 
         Report report = Report.builder()
-            .reportType(reportType)
+            .reportType(reportDto.getReportType())
             .reporter(reporter)
             .reported(reported)
             .content(reportDto.getContent())

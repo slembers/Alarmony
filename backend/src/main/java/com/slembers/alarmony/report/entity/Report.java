@@ -20,16 +20,15 @@ public class Report {
     @Column(name = "report_record_id")
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "report_type", nullable = false)
-    private ReportType reportType;
+    @Column(name = "report_type", nullable = false)
+    private ReportTypeEnum reportType;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "reporter_id", nullable = false)
     private Member reporter;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "reported_id", nullable = false)
+    @JoinColumn(name = "reported_id")
     private Member reported;
 
     @Column(name = "content", columnDefinition = "VARCHAR(1000)")
