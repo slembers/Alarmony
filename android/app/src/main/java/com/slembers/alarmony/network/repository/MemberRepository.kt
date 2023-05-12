@@ -6,6 +6,7 @@ import com.slembers.alarmony.model.db.LoginRequest
 import com.slembers.alarmony.model.db.Member
 import com.slembers.alarmony.model.db.RegistTokenDto
 import com.slembers.alarmony.model.db.SignupRequest
+import com.slembers.alarmony.model.db.TokenReissueRequest
 import com.slembers.alarmony.model.db.dto.CheckEmailResponseDto
 import com.slembers.alarmony.model.db.dto.FindIdResponseDto
 import com.slembers.alarmony.model.db.dto.FindPasswordResponseDto
@@ -20,6 +21,7 @@ import retrofit2.http.Header
 import retrofit2.http.POST
 import com.slembers.alarmony.model.db.dto.CheckIdResponseDto
 import com.slembers.alarmony.model.db.dto.CheckNicnameResponseDto
+import com.slembers.alarmony.model.db.dto.TokenReissueResponse
 import retrofit2.http.Query
 import retrofit2.http.PUT
 
@@ -38,6 +40,11 @@ interface MemberRepository {
     suspend fun login(
         @Body loginDto : LoginRequest
     ) : Response<LoginResponseDto>
+
+    @POST("members/refresh")
+    suspend fun refresh(
+        @Body tokenReissueRequest: TokenReissueRequest
+    ) : Response<TokenReissueResponse>
 
 //    회원가입
     @POST("members/sign-up")
