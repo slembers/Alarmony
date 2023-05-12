@@ -68,6 +68,7 @@ import kotlinx.coroutines.launch
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
+import kotlin.math.log
 
 
 enum class Routes() {
@@ -112,14 +113,22 @@ fun LoginScreen(navController: NavController = rememberNavController()) {
     val scaffoldState = rememberScaffoldState()
     // 아이디와 비밀번호에 대한 상태를 저장할 mutableState 변수 선언
     val idState = remember { mutableStateOf("") }
-    var idError = rememberSaveable  { mutableStateOf<Boolean>(false) }
+    //var idError = rememberSaveable  { mutableStateOf<Boolean>(false) }
+    //var idError = false;
+    var isIdError = remember { mutableStateOf(false) }
+    var isPasswordError = remember { mutableStateOf(false) }
+
+    //아이디랑 비밀번호가 정확하게 입력되었는지
+    var isFilledId = remember { mutableStateOf(false) }
+    var isFilledPassword = remember { mutableStateOf(false) }
     val passwordState = remember { mutableStateOf("") }
     var passwordVisibility = true
     var isSuccess = false
     var msg = ""
 
+
     val usernameRegex = "^[a-z0-9]{4,20}$".toRegex()
-    val passwordRegex = "^[a-zA-Z\\d]{8,16}\$".toRegex()
+    val passwordRegex = "^(?=.*[0-9])(?=.*[a-zA-Z])[a-zA-Z\\d]{8,16}\$".toRegex()
 
     Column(
         verticalArrangement = Arrangement.Center,
@@ -129,55 +138,93 @@ fun LoginScreen(navController: NavController = rememberNavController()) {
 
         mascott(drawing = R.drawable.mascot_foreground)
         logo(drawing = R.drawable.alarmony)
-        OutlinedTextField(
-            value = idState.value,
-            onValueChange = { idState.value = it;
 
-                idError = mutableStateOf(!usernameRegex.matches(it))
-                            },
-            colors = TextFieldDefaults.outlinedTextFieldColors(
-                focusedBorderColor = Black,
-                unfocusedBorderColor = Black,
-                errorBorderColor = Red
+        Column {
+
+
+            OutlinedTextField(
+                value = idState.value,
+                onValueChange = {
+                    idState.value = it
+                    //정규식이 불일치 할 경우
+                    if(!usernameRegex.matches(it)){
+                        isIdError.value = true;
+                        isFilledId.value = false;
+                    }else{
+                        isIdError.value = false;
+                        isFilledId.value = true;
+                    }
+                },
+                colors = TextFieldDefaults.outlinedTextFieldColors(
+                    focusedBorderColor = Black,
+                    unfocusedBorderColor = Black,
+                    errorBorderColor = Red
                 ),
-            label = { Text("아이디") },
-            keyboardOptions = KeyboardOptions(
-                keyboardType = KeyboardType.Email,
-                imeAction = ImeAction.Next
-            ),
-            modifier = Modifier
-                .padding(vertical = 8.dp, horizontal = 16.dp)
-                .fillMaxWidth(),
+                label = { Text("아이디") },
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Email,
+                    imeAction = ImeAction.Next
+                ),
+                modifier = Modifier
+                    .padding(vertical = 8.dp, horizontal = 16.dp)
+                    .fillMaxWidth(),
 
-            isError = idError.value,
+                isError = isIdError.value,
+
+                )
+            if (isIdError.value) {
+                Log.d("idError", isIdError.value.toString())
+                Text(
+                    text = "영소문, 숫자를 조합해서 입력해주세요.(4~20자) ",
+                    color = MaterialTheme.colors.error,
+                    style = MaterialTheme.typography.caption,
+                    modifier = Modifier.padding(start = 16.dp)
+                )
+            }
+        }
+
+        Column {
+            OutlinedTextField(
+                value = passwordState.value,
+                onValueChange = { passwordState.value = it
+                  //  isPasswordError.value = !passwordRegex.matches(it)
+
+                    if(!passwordRegex.matches(it)){
+                        isPasswordError.value = true;
+                        isFilledPassword.value = false;
+                    }else{
+                        isPasswordError.value = false;
+                        isFilledPassword.value = true;
+                    }
+                                },
+                label = { Text("비밀번호") },
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Password,
+                    imeAction = ImeAction.Done
+                ),
+
+                colors = TextFieldDefaults.outlinedTextFieldColors(
+                    focusedBorderColor = Black,
+                    unfocusedBorderColor = Black,
+                    errorBorderColor = Red,
+                ),
+                modifier = Modifier
+                    .padding(vertical = 8.dp, horizontal = 16.dp)
+                    .fillMaxWidth(),
+                visualTransformation = PasswordVisualTransformation(),
+                isError = isPasswordError.value,
+                )
+            if (isPasswordError.value) {
+                Text(
+                    text = "영문, 숫자를 조합해서 입력해주세요. (8-16자) ",
+                    color = MaterialTheme.colors.error,
+                    style = MaterialTheme.typography.caption,
+                    modifier = Modifier.padding(start = 16.dp)
+                )
+            }
 
 
-
-        )
-
-        OutlinedTextField(
-            value = passwordState.value,
-            onValueChange = { passwordState.value = it },
-            label = { Text("비밀번호") },
-            keyboardOptions = KeyboardOptions(
-                keyboardType = KeyboardType.Password,
-                imeAction = ImeAction.Done
-            ),
-
-            colors = TextFieldDefaults.outlinedTextFieldColors(
-                focusedBorderColor = Black,
-                unfocusedBorderColor = Black,
-                errorBorderColor= Red,
-            ),
-            modifier = Modifier
-                .padding(vertical = 8.dp, horizontal = 16.dp)
-                .fillMaxWidth(),
-
-
-            visualTransformation =  PasswordVisualTransformation(),
-
-
-        )
+        }
 //아래는 자동로그인 체크박스
 
 //        Row(modifier = Modifier.padding(0.dp)) {
@@ -220,14 +267,17 @@ fun LoginScreen(navController: NavController = rememberNavController()) {
                     if(result) navController.navigate(NavItem.AlarmListScreen.route)
                 }
             },
+            enabled = isFilledId.value && isFilledPassword.value,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(vertical = 12.dp, horizontal = 15.dp)
                 .clip(RoundedCornerShape(20.dp)),
+
             colors = ButtonDefaults.buttonColors(
                 backgroundColor = Color.Black, // Set the background color of the button
-                contentColor = Color.White // Set the text color of the button
+                contentColor = Color.White // Set the text color of the buttonl
             )
+
 
         ) {
             Text("로그인")
