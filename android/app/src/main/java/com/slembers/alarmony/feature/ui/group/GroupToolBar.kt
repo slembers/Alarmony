@@ -44,7 +44,7 @@ fun GroupToolBar(
             )
         },
         modifier = Modifier
-            .padding(start = 5.dp)
+            .padding(start = 5.dp, end = 5.dp)
             .shadow(
                 elevation = 10.dp,
                 ambientColor = Color.Blue,
@@ -60,5 +60,6 @@ fun GroupToolBar(
         colors = TopAppBarDefaults.mediumTopAppBarColors(
             containerColor = "#FFFFFF".toColor()),
         actions = action
+
     )
 }

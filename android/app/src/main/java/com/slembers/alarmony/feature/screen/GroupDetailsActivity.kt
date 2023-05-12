@@ -1,6 +1,5 @@
 package com.slembers.alarmony.feature.screen
 
-import android.app.Application
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
@@ -12,8 +11,10 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.BarChart
 import androidx.compose.material.icons.filled.ExitToApp
+import androidx.compose.material.icons.outlined.GroupAdd
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -64,6 +65,7 @@ class GroupDetailsActivity : Fragment() {
 @ExperimentalGlideComposeApi
 fun GroupDetailsScreen(
     navController : NavHostController = rememberNavController(),
+    details : GroupDetailsViewModel = viewModel(),
     alarmId: Long? = null
 ) {
 
@@ -95,12 +97,6 @@ fun GroupDetailsScreen(
         )
     )}
 
-    var details : GroupDetailsViewModel = viewModel(
-        factory = GroupDetailsViewModel.GroupViewModelFactory(
-            application = context.applicationContext as Application
-        )
-    )
-
     LaunchedEffect(Unit) {
         Log.d("alarmDetails","[알람 상세] 초기화 불러오는 중 ...")
         val repository = AlarmRepository(alarmDao)
@@ -111,6 +107,7 @@ fun GroupDetailsScreen(
         val _record = details.getRecord(alarmId!!)
         Log.d("alarmDetails","[알람 상세] 초기화 불러오는 완료 ...")
         Log.d("alarmDetails","[알람 상세] alarm : $_alarm")
+
         alarm.value = _alarm!!
         record.value = _record
     }
@@ -126,8 +123,20 @@ fun GroupDetailsScreen(
     Scaffold(
         topBar = {
             GroupToolBar(
-                title = NavItem.Group.title,
-                navClick = { navController.popBackStack() }
+                title = NavItem.GroupDetails.title,
+                navClick = { navController.popBackStack() },
+                action = {
+                    if(alarm.value.host) {
+                        IconButton(onClick = { navController.navigate(NavItem.GroupDetailsInvite.route + "/$alarmId") }) {
+                            Icon(
+                                imageVector = Icons.Outlined.GroupAdd,
+                                contentDescription = "groupAdd",
+                                tint = Color.Black,
+                                modifier = Modifier.size(25.dp)
+                            )
+                        }
+                    }
+                }
             )
         },
         containerColor = "#F9F9F9".toColor(),
@@ -145,7 +154,8 @@ fun GroupDetailsScreen(
                 GroupDetailsTitle(alarm.value)
                 GroupDetailsBoard(
                     items = record.value,
-                    groupId = alarmId!!
+                    groupId = alarmId!!,
+                    host = alarm.value.host
                 )
                 CardBox(
                     title = { GroupTitle(
