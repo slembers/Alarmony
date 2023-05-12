@@ -31,13 +31,13 @@ class AlarmReceiver : BroadcastReceiver() {
                 val alarmDto = AlarmDto.toDto(alarm!!)
                 if (alarmDto == null) return@launch
                 newIntent.putExtra(OPEN_TYPE, FIRE_ALARM)
-                newIntent.putExtra("alarmId", alarmDto.alarm_id)
+                newIntent.putExtra("alarmId", alarmDto.alarmId)
                 val isSnooze = intent.getBooleanExtra("isSnooze", false)
                 if (!isSnooze) { // 스누즈가 아닐 경우
                     val calendar: Calendar = Calendar.getInstance()
                     var todayDayOfWeek: Int = calendar.get(Calendar.DAY_OF_WEEK) - 2    // 오늘 요일 구하기
                     if (todayDayOfWeek == -1) todayDayOfWeek = 6
-                    if (alarmDto!!.alarm_date[todayDayOfWeek] == false) return@launch // 오늘이 울리는 요일이 아니면 리턴
+                    if (alarmDto!!.alarmDate[todayDayOfWeek] == false) return@launch // 오늘이 울리는 요일이 아니면 리턴
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                         context.startForegroundService(newIntent)
                     } else {

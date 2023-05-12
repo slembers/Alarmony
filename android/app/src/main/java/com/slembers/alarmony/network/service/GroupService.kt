@@ -2,6 +2,8 @@ package com.slembers.alarmony.network.service
 
 import android.content.Context
 import android.util.Log
+import android.widget.Toast
+import androidx.core.graphics.convertTo
 import androidx.navigation.NavHostController
 import com.slembers.alarmony.model.db.Group
 import com.slembers.alarmony.model.db.Record
@@ -18,10 +20,12 @@ import kotlinx.coroutines.withContext
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import retrofit2.http.POST
+import javax.annotation.meta.When
 import kotlin.streams.toList
 
 object GroupService {
-
+    val groupApi = AlarmonyServer().groupApi
     suspend fun addGroupAlarm(
         title : String?,
         hour : Int,
@@ -44,11 +48,11 @@ object GroupService {
                 vibrate = vibrate!!
             )).body()
             Log.d("response","[그룹생성] response : $response")
-//            val message = groupApi.addMembers(
-//                response?.groupId,
-//                hashMapOf("members" to (members ?: listOf()))
-//            )
-//            Log.d("response","[그룹생성] response : $message")
+            val message = groupApi.addMembers(
+                response?.groupId,
+                hashMapOf("members" to (members ?: listOf()))
+            )
+            Log.d("response","[그룹생성] response : $message")
 
             return response?.groupId
         } catch ( e : Exception ) {
@@ -160,5 +164,40 @@ object GroupService {
             return result
         }
         return result
+    }
+
+    suspend fun deleteGroup(
+        groupId : Long
+    ) : Boolean {
+        try {
+            val response = groupApi.deleteGroup(groupId)
+            Log.d("deleteGroup","[그룹 나가기] 나가기 결과 : $response")
+            if(response.code() in 200..299) return true
+        } catch ( e : Exception ) {
+            Log.d("deleteGroup","[그룹 나가기] 그룹나가기 오류발생 : ${e.message}")
+            return false
+        }
+        return false
+    }
+
+    suspend fun notification(
+        groupId: Long,
+        nickname: String
+    ) : Boolean {
+        try {
+            val response = groupApi.notificationGroup(
+                groupId,
+                nickname
+            )
+            Log.d("notification","[그룹 알림] 알림 결과 : $response")
+            when(response.code()) {
+                in 200..299 -> return true
+                in 400..499 -> return false
+            }
+        } catch ( e : Exception) {
+            Log.d("notification","[그룹 알림] 알림 발송 중에 에러가 발생")
+            Log.d("notification","[그룹 알림] 알림 발송 중에 에러 원인 : ${e.message}")
+        }
+        return false
     }
 }

@@ -1,4 +1,4 @@
-package com.slembers.alarmony.feature.alarm
+package com.slembers.alarmony.feature.sendAlarm
 
 import android.app.Notification
 import android.app.NotificationChannel
@@ -12,20 +12,22 @@ import android.os.IBinder
 import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
-import androidx.lifecycle.LiveData
 import com.slembers.alarmony.R
-import com.slembers.alarmony.util.Constants.OPEN_TYPE
-import com.slembers.alarmony.util.Constants.REFRESH
+import com.slembers.alarmony.feature.alarm.AlarmDatabase
+import com.slembers.alarmony.feature.alarm.AlarmDto
+import com.slembers.alarmony.feature.alarm.AlarmRepository
+import com.slembers.alarmony.util.Constants
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-class AlarmForegroundService : Service() {
+class SendAlarmForegroundService : Service() {
     private lateinit var repository: AlarmRepository
     override fun onBind(intent: Intent): IBinder? {
         return null
     }
+
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int) : Int {
         if (intent == null) {
             Log.e("NullPointException", "intent is null")
@@ -36,7 +38,7 @@ class AlarmForegroundService : Service() {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
                 startForeground(
                     intent.getStringExtra(
-                        OPEN_TYPE
+                        Constants.OPEN_TYPE
                     )!!
                 ) else
                 startForeground(
@@ -47,34 +49,14 @@ class AlarmForegroundService : Service() {
             CoroutineScope(Dispatchers.IO).launch {
                 val alarm = repository.findAlarm(alarmId = alarmId)
                 val alarmDto = AlarmDto.toDto(alarm!!)
-                val alarms = repository.readAllData
-                CoroutineScope(Dispatchers.Main).launch {
-                    if (intent?.getStringExtra(OPEN_TYPE) == REFRESH) {
-                        refreshAlarms(alarms)
-                    } else {
-                        startAlarm(alarmDto!!)
-                    }
-                }
+                startAlarm(alarmDto!!)
             }
             return START_STICKY
         }
     }
-    private fun refreshAlarms(alarms : LiveData<List<Alarm>>) {
-        CoroutineScope(Dispatchers.IO).launch {
-            val alarmList = alarms.value ?: return@launch
-            for (alarm in alarmList) {
-                val alarmDto = AlarmDto.toDto(alarm)
-                setAlarm(alarmDto, this@AlarmForegroundService)
-            }
-            delay(5000)
-            stopForeground(true)
-            stopSelf()
-        }
-    }
-
     private fun startAlarm(alarmDto: AlarmDto) {
         CoroutineScope(Dispatchers.Main).launch {
-            val newIntent = Intent(applicationContext, AlarmActivity::class.java)
+            val newIntent = Intent(applicationContext, SendAlarmActivity::class.java)
             newIntent.putExtra("alarmId", alarmDto.alarmId)
             newIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             startActivity(newIntent)
@@ -99,7 +81,7 @@ class AlarmForegroundService : Service() {
             .setPriority(NotificationCompat.PRIORITY_MIN)
             .setContentTitle("")
             .setContentText(type)
-                .setCategory(Notification.CATEGORY_SERVICE)
+            .setCategory(Notification.CATEGORY_SERVICE)
             .build()
         startForeground(101, notification)
     }

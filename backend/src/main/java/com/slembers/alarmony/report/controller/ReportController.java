@@ -4,6 +4,7 @@ import com.slembers.alarmony.global.security.util.SecurityUtil;
 import com.slembers.alarmony.report.dto.ReportDto;
 import com.slembers.alarmony.report.dto.request.ReportRequestDto;
 import com.slembers.alarmony.report.dto.response.ReportResponseDto;
+import com.slembers.alarmony.report.entity.ReportTypeEnum;
 import com.slembers.alarmony.report.service.ReportService;
 import java.util.HashMap;
 import java.util.List;
@@ -62,7 +63,7 @@ public class ReportController {
     public ResponseEntity<Void> createReport(@RequestBody ReportRequestDto reportRequestDto) {
 
         ReportDto reportDto = ReportDto.builder()
-            .reportType(reportRequestDto.getReportType())
+            .reportType(ReportTypeEnum.valueOf(reportRequestDto.getReportType()))
             .reporterUsername(SecurityUtil.getCurrentUsername())
             .reportedNickname(reportRequestDto.getReportedNickname())
             .content(reportRequestDto.getContent())

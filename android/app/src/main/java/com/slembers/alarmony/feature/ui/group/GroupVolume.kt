@@ -15,6 +15,7 @@ import androidx.compose.ui.unit.dp
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.slembers.alarmony.feature.common.ui.compose.GroupCard
 import com.slembers.alarmony.feature.common.ui.compose.GroupTitle
+import com.slembers.alarmony.feature.common.ui.theme.toColor
 
 @Composable
 @ExperimentalMaterial3Api
@@ -41,7 +42,7 @@ fun GroupVolume(
                         enabled = true,
                         colors = SliderDefaults.colors(
                             thumbColor = MaterialTheme.colorScheme.background,
-                            activeTrackColor = MaterialTheme.colorScheme.primary
+                            activeTrackColor = "#00B4D8".toColor()
                         ),
                     )
                 }

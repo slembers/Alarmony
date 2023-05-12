@@ -67,7 +67,7 @@ fun setAlarm(alarmDto: AlarmDto, context: Context) {
         newTime += intervalDay
     }
     val intent = Intent(context, AlarmReceiver::class.java)
-    intent.putExtra("alarmId", alarmDto.alarm_id)
+    intent.putExtra("alarmId", alarmDto.alarmId)
     val myPendingIntent : Int = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
         PendingIntent.FLAG_MUTABLE
     } else {
@@ -76,7 +76,7 @@ fun setAlarm(alarmDto: AlarmDto, context: Context) {
     val alarmIntentRTC: PendingIntent =
         PendingIntent.getBroadcast(
             context,
-            alarmDto.alarm_id.toInt(),
+            alarmDto.alarmId.toInt(),
             intent,
             myPendingIntent
         )
@@ -108,7 +108,7 @@ fun saveTestAlarm(alarmDto: AlarmDto, context: Context) {
 fun setTestAlarm(alarmDto: AlarmDto, context: Context) {
     val newTime = System.currentTimeMillis() + (8 * 1000)  // 테스트용 코드 (8초 뒤 알람 설정)
     val intent = Intent(context, AlarmReceiver::class.java).apply {
-        putExtra("alarmId", alarmDto.alarm_id)
+        putExtra("alarmId", alarmDto.alarmId)
     }
     val myPendingIntent : Int = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
         PendingIntent.FLAG_MUTABLE
@@ -118,7 +118,7 @@ fun setTestAlarm(alarmDto: AlarmDto, context: Context) {
     val alarmIntentRTC: PendingIntent =
         PendingIntent.getBroadcast(
             context,
-            alarmDto.alarm_id.toInt(),
+            alarmDto.alarmId.toInt(),
             intent,
             myPendingIntent
         )

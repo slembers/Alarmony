@@ -1,63 +1,47 @@
 package com.slembers.alarmony.feature.user
 
+//import androidx.compose.foundation.gestures.ModifierLocalScrollableContainerProvider.value
+
 import android.annotation.SuppressLint
 import android.util.Log
 import android.widget.Toast
+import androidx.compose.foundation.interaction.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.input.ImeAction
-
-import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.focus.onFocusChanged
-import androidx.compose.ui.focus.onFocusEvent
-import androidx.compose.ui.text.input.VisualTransformation
-import androidx.compose.foundation.interaction.*
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.ui.unit.dp
-import com.slembers.alarmony.network.repository.MemberService.singup
-import androidx.compose.foundation.text.KeyboardActions
-import androidx.compose.material.Text
-import androidx.compose.material.TextField
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.focus.FocusState
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
-import androidx.navigation.ui.NavigationUI.navigateUp
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.slembers.alarmony.feature.common.NavItem
-import com.slembers.alarmony.feature.ui.common.ShowAlertDialog
 import com.slembers.alarmony.model.db.SignupRequest
 import com.slembers.alarmony.network.repository.MemberService.checkEmail
 import com.slembers.alarmony.network.repository.MemberService.checkId
 import com.slembers.alarmony.network.repository.MemberService.checkNickname
-import kotlinx.coroutines.runBlocking
-
-import androidx.compose.ui.focus.onFocusChanged
-import androidx.compose.ui.graphics.Color.Companion.Green
+import com.slembers.alarmony.network.repository.MemberService.singup
 
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
 @ExperimentalMaterial3Api
 @ExperimentalGlideComposeApi
-@Preview
-fun SignupScreen(navController: NavController = rememberNavController()) {
+fun SignupScreen(navController: NavController) {
 //    이번엔 state가 아니라 String형식으로 저장해보기
     var username  by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }

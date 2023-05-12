@@ -1,15 +1,12 @@
-package com.slembers.alarmony.feature.alarm
+package com.slembers.alarmony.feature.sendAlarm
 
-import android.app.Activity
 import android.app.KeyguardManager
-import android.app.Notification
 import android.content.Context
 import android.graphics.Typeface
 import android.icu.util.Calendar
 import android.os.Build
 import android.os.Bundle
 import android.os.PowerManager
-import android.util.Log
 import android.view.WindowManager
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -31,10 +28,7 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -45,21 +39,22 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.graphics.toArgb
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.slembers.alarmony.feature.alarm.AlarmNoti.cancelNotification
-import com.slembers.alarmony.feature.alarm.AlarmNoti.runNotification
+import com.slembers.alarmony.feature.alarm.AlarmDatabase
+import com.slembers.alarmony.feature.alarm.AlarmDto
+import com.slembers.alarmony.feature.alarm.AlarmRepository
 import com.slembers.alarmony.feature.common.ui.theme.toColor
+import com.slembers.alarmony.feature.sendAlarm.SendAlarmNoti.cancelSendAlarmNotification
+import com.slembers.alarmony.feature.sendAlarm.SendAlarmNoti.runSendAlarmNotification
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
-class AlarmActivity : ComponentActivity() {
+class SendAlarmActivity : ComponentActivity() {
     lateinit var repository: AlarmRepository
     lateinit var wakeLock: PowerManager.WakeLock
     lateinit var alarmDto: AlarmDto
@@ -67,13 +62,12 @@ class AlarmActivity : ComponentActivity() {
 
         super.onCreate(savedInstanceState)
         val alarmId = intent.getLongExtra("alarmId", -1L)
-        Log.d("ForeA1", alarmId.toString())
         val alarmDao = AlarmDatabase.getInstance(this).alarmDao()
         CoroutineScope(Dispatchers.IO).launch {
             repository = AlarmRepository(alarmDao)
             val alarm = repository.findAlarm(alarmId)
             alarmDto = AlarmDto.toDto(alarm!!)
-            runNotification(application, alarmDto!!)
+            runSendAlarmNotification(application, alarmDto!!)
         }
         wakeLock =
             (getSystemService(Context.POWER_SERVICE) as PowerManager).run {
@@ -105,7 +99,7 @@ class AlarmActivity : ComponentActivity() {
         }
 
         setContent {
-            AlarmScreen(alarmDto!!)
+            SendAlarmScreen(alarmDto!!)
         }
     }
 
@@ -120,27 +114,12 @@ class AlarmActivity : ComponentActivity() {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AlarmScreen(alarmDto : AlarmDto) {
-    val context = LocalContext.current as Activity
-    val isClicked5 = remember { mutableStateOf(false)  }
-    val isClicked10 = remember { mutableStateOf(false)  }
-    val alarmStartTime = calAlarm(alarmDto)
+fun SendAlarmScreen(alarmDto : AlarmDto) {
+//    val context = LocalContext.current as Activity
     Scaffold(
         modifier = Modifier.fillMaxSize(),
-        containerColor = "#66D5ED".toColor(),
+        containerColor = Color.White,
         content = { innerPadding ->
-//            BoxWithConstraints(
-//                modifier = Modifier.fillMaxSize(),
-//                contentAlignment = Alignment.Center
-//            ) {
-//                Image(
-//                    painter = painterResource(id = R.drawable.backsun),
-//                    contentDescription = null,
-//                    contentScale = ContentScale.FillBounds,
-//                    modifier = Modifier.fillMaxSize()
-//                )
-//                // 여기에 다른 콘텐츠 추가
-//            }
             Column(
                 modifier = Modifier
                     .fillMaxSize()
@@ -156,35 +135,16 @@ fun AlarmScreen(alarmDto : AlarmDto) {
                     modifier = Modifier.padding(bottom = 20.dp)
                 ) {
                     Button(
-                        onClick = { isClicked5.value = true },
-                        shape = CircleShape,
-                        modifier = Modifier
-                            .padding(5.dp)
-                            .size(90.dp),
-                        colors = ButtonDefaults.buttonColors("#FFDA8C".toColor())
-                    ) {
-                        Text(
-                            text = "5분",
-                            color = Color.Black,
-                            fontWeight = FontWeight.Bold,
-                            fontSize =20.sp
-                        )
-                    }
-
-                    Button(
                         onClick = {
-                            val alarmEndTime = System.currentTimeMillis()
-                            val alarmRemainTime = alarmEndTime - alarmStartTime // 알람 끄기 까지 걸린 시간
-                            cancelNotification()
-                            context.finish()
-                            // 정지 누르면 끝 시간 api
+                            cancelSendAlarmNotification()
+//                            context.finish()
                         },
                         shape = CircleShape,
                         border = BorderStroke(10.dp, "#63B1C2".toColor()),
                         modifier = Modifier
                             .padding(5.dp)
                             .size(130.dp),
-                        colors = ButtonDefaults.buttonColors("#FFDA8C".toColor())
+                        colors = ButtonDefaults.buttonColors("#66D5ED".toColor())
                     ) {
                         Icon(
                             imageVector = Icons.Rounded.Stop,
@@ -193,28 +153,7 @@ fun AlarmScreen(alarmDto : AlarmDto) {
                             modifier = Modifier.size(80.dp)
                         )
                     }
-                    Button(
-                        onClick = { isClicked10.value = true },
-                        shape = CircleShape,
-                        modifier = Modifier
-                            .padding(5.dp)
-                            .size(90.dp),
-                        colors = ButtonDefaults.buttonColors("#FFDA8C".toColor())
-                    ) {
-                        Text(
-                            text = "10분",
-                            color = Color.Black,
-                            fontWeight = FontWeight.Bold,
-                            fontSize =20.sp
-                        )
-                    }
                 }
-            }
-            if (isClicked5.value) {
-                SnoozeNoti(5, isClicked5, context, alarmDto)
-            }
-            if (isClicked10.value) {
-                SnoozeNoti(10, isClicked10, context, alarmDto)
             }
         }
     )
@@ -222,14 +161,6 @@ fun AlarmScreen(alarmDto : AlarmDto) {
 
 @Composable
 fun DrawCircle(alarmDto : AlarmDto) {
-    val hour = if (alarmDto.hour.toString().length == 1) { "0" + alarmDto.hour.toString() }
-    else {
-        alarmDto.hour.toString()
-    }
-    val minute = if (alarmDto.minute.toString().length == 1) { "0" + alarmDto.minute.toString() }
-    else {
-        alarmDto.minute.toString()
-    }
     Canvas(
         modifier = Modifier.size(300.dp)
     ) {
@@ -245,7 +176,7 @@ fun DrawCircle(alarmDto : AlarmDto) {
         drawCircleWithInnerCircle(center, outerRadius / 1.2f, Color.White.copy(alpha = 0.9f))
 
         drawIntoCanvas { canvas ->
-            val text = "${hour}:${minute}"
+            val text = "알람 배달"
             val typeface = Typeface.create("font/roboto_bold.ttf", Typeface.BOLD)
             val paint1 = Paint().asFrameworkPaint().apply {
                 textAlign = android.graphics.Paint.Align.CENTER
@@ -312,5 +243,5 @@ fun DefaultView() {
         vibrate = true,
         host = false
     )
-    AlarmScreen(alarmDto = alarmDto)
+    SendAlarmScreen(alarmDto = alarmDto)
 }
