@@ -23,6 +23,7 @@ import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat.getSystemService
 import androidx.test.core.app.ApplicationProvider.getApplicationContext
 import com.slembers.alarmony.R
+import com.slembers.alarmony.util.soundConverter
 import java.lang.Math.ceil
 import java.lang.Math.round
 import kotlin.math.roundToInt
@@ -54,11 +55,12 @@ object AlarmNoti {
 
         audioManager = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
         currentVolumn = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC) // 현재 미디어 사운드 세팅
-        mediaPlayer = MediaPlayer.create(context, Settings.System.DEFAULT_ALARM_ALERT_URI)
+        mediaPlayer = MediaPlayer.create(context, soundConverter(context, alarmDto.soundName))
         mediaPlayer.isLooping = true
         val maxVolume = audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC)
-        Log.d("MaxVolumn", maxVolume.toString())
-        val newVolume = (maxVolume * 0.5).roundToInt() // 볼륨 값을 최대 볼륨의 절반으로 설정
+        Log.d("VolumnMax", maxVolume.toString())
+        Log.d("VolumnCurrent", currentVolumn.toString())
+        val newVolume = alarmDto.soundVolume
         audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, newVolume, 0)
         mediaPlayer.start()
 
