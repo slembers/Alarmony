@@ -10,5 +10,5 @@ public class AlarmInviteResponseDto {
 
     private String message;
 
-    private AlarmDetailDto alarmDetail;
+    private AlarmDetailDto alarm;
 }
