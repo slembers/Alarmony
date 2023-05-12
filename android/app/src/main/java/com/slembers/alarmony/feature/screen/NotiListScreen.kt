@@ -2,7 +2,6 @@ package com.slembers.alarmony.feature.alarm
 
 import android.app.Application
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -11,14 +10,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.AlertDialog
-import androidx.compose.material.TextField
-import androidx.compose.material.TextFieldColors
-import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.ArrowBackIos
 import androidx.compose.material.icons.outlined.Check
@@ -46,11 +40,8 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.DefaultTintColor
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -62,8 +53,7 @@ import com.slembers.alarmony.R
 import com.slembers.alarmony.feature.common.ui.theme.notosanskr
 import com.slembers.alarmony.feature.common.ui.theme.toColor
 import com.slembers.alarmony.feature.notification.Noti
-import com.slembers.alarmony.feature.notification.NotiApi.responseInvite
-import com.slembers.alarmony.feature.notification.NotiDto
+import com.slembers.alarmony.feature.notification.NotiApi.InviteResponseAPI
 import com.slembers.alarmony.feature.notification.NotiViewModel
 import com.slembers.alarmony.feature.notification.NotiViewModelFactory
 
@@ -223,8 +213,7 @@ fun GroupNoti(item : Noti, isClicked : MutableState<Boolean>, mNotiViewModel : N
                     Button(
                         onClick = {
                             openDialog.value = false
-                            responseInvite(false, item.notiId, context)
-                            mNotiViewModel.deleteNoti(item)
+                            InviteResponseAPI(false, item.notiId, context)
                         },
                         colors = ButtonDefaults.buttonColors(containerColor = "#C93636".toColor())
                     ) {
@@ -239,9 +228,7 @@ fun GroupNoti(item : Noti, isClicked : MutableState<Boolean>, mNotiViewModel : N
                     Button(
                         onClick = {
                             openDialog.value = false
-                            responseInvite(true, item.notiId, context)
-                            mNotiViewModel.deleteNoti(item)
-
+                            InviteResponseAPI(true, item.notiId, context)
                         },
                         colors = ButtonDefaults.buttonColors(containerColor = "#31AF91".toColor()),
                     ) {
