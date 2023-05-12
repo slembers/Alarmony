@@ -239,10 +239,7 @@ fun LoginScreen(navController: NavController = rememberNavController()) {
                     )
 
                     Log.d("INFO","result : $result")
-                    if(result) {
-                        val intent = Intent(context,MainActivity::class.java)
-                        launcher.launch(intent)
-                    }
+                    if(result) { (context as Activity).finish() }
                 }
             },
             enabled = isFilledId.value && isFilledPassword.value,
