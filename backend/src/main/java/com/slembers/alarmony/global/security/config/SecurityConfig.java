@@ -66,7 +66,7 @@ public class SecurityConfig  {
                 .httpBasic().disable()
                 .requestMatchers()
                 .antMatchers(
-                        "/members/**", "/alert/**", "/groups/**", "/alarms/**"
+                        "/members/**", "/alert/**", "/groups/**", "/alarms/**", "/reports/**"
                 )
                 .and()
                 .authorizeRequests()
