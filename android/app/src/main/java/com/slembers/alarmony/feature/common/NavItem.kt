@@ -56,4 +56,21 @@ sealed class NavItem (
         image = Icons.Default.ArrowForwardIos
     )
 
+    object ReportPage : NavItem(
+        route = "ReportDetails",
+        title = "신고하기",
+        image = Icons.Default.Home
+    )
+
+    object ReportList : NavItem(
+        route = "ReportList",
+        title = "신고목록",
+        image = Icons.Default.Home
+    )
+
+    object ReportDetail : NavItem(
+        route = "ReportDetail",
+        title = "신고상세",
+        image = Icons.Default.Home
+    )
 }

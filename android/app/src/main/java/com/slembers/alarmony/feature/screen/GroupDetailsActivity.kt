@@ -57,9 +57,7 @@ import kotlinx.coroutines.withContext
 class GroupDetailsActivity : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
     }
-
 }
 
 @OptIn(ExperimentalCoroutinesApi::class)

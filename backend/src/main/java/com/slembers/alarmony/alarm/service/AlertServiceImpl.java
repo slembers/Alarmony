@@ -293,21 +293,21 @@ public class AlertServiceImpl implements AlertService {
             log.error("멤버 알람 정보가 존재하지 않음");
             throw new CustomException(MemberAlarmErrorCode.MEMBER_ALARM_NOT_FOUND);
         }
-        sendAlarmTo(member.getRegistrationToken(), alarm.getTitle());
+        sendAlarmTo(member.getRegistrationToken(), alarm.getId());
     }
 
     /**
      * 사용자에게 알람을 보낸다.
      *
      * @param targetToken 목표 기기 토큰
-     * @param groupTitle  그룹 타이틀
+     * @param alarmId  그룹 아이디
      */
-    private void sendAlarmTo(String targetToken, String groupTitle) {
+    private void sendAlarmTo(String targetToken, Long alarmId) {
         try {
             // 메시지 설정
             Message message = Message.builder()
                 .putData("type", "ALARM")
-                .putData("group", groupTitle)
+                .putData("alarmId", String.valueOf(alarmId))
                 .setToken(targetToken)
                 .build();
 
