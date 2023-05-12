@@ -62,6 +62,7 @@ import com.slembers.alarmony.R
 import com.slembers.alarmony.feature.common.ui.theme.notosanskr
 import com.slembers.alarmony.feature.common.ui.theme.toColor
 import com.slembers.alarmony.feature.notification.Noti
+import com.slembers.alarmony.feature.notification.NotiApi.responseInvite
 import com.slembers.alarmony.feature.notification.NotiDto
 import com.slembers.alarmony.feature.notification.NotiViewModel
 import com.slembers.alarmony.feature.notification.NotiViewModelFactory
@@ -179,6 +180,7 @@ fun MyNotiItem(item : Noti, mNotiViewModel: NotiViewModel) {
 @Composable
 fun GroupNoti(item : Noti, isClicked : MutableState<Boolean>, mNotiViewModel : NotiViewModel) {
     val openDialog = remember { mutableStateOf(true)  }
+    val context = LocalContext.current
     if (openDialog.value) {
         AlertDialog(
             shape = RoundedCornerShape(20.dp),
@@ -221,6 +223,7 @@ fun GroupNoti(item : Noti, isClicked : MutableState<Boolean>, mNotiViewModel : N
                     Button(
                         onClick = {
                             openDialog.value = false
+                            responseInvite(false, item.notiId, context)
                             mNotiViewModel.deleteNoti(item)
                         },
                         colors = ButtonDefaults.buttonColors(containerColor = "#C93636".toColor())
@@ -236,7 +239,9 @@ fun GroupNoti(item : Noti, isClicked : MutableState<Boolean>, mNotiViewModel : N
                     Button(
                         onClick = {
                             openDialog.value = false
+                            responseInvite(true, item.notiId, context)
                             mNotiViewModel.deleteNoti(item)
+
                         },
                         colors = ButtonDefaults.buttonColors(containerColor = "#31AF91".toColor()),
                     ) {
