@@ -31,8 +31,6 @@ class AlarmForegroundService : Service() {
             Log.e("NullPointException", "intent is null")
             return START_NOT_STICKY
         } else {
-            val alarmDao = AlarmDatabase.getInstance(application).alarmDao()
-            repository = AlarmRepository(alarmDao)
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
                 startForeground(
                     intent.getStringExtra(
@@ -45,6 +43,8 @@ class AlarmForegroundService : Service() {
                 )
             val alarmId = intent.getLongExtra("alarmId", -1L)
             CoroutineScope(Dispatchers.IO).launch {
+                val alarmDao = AlarmDatabase.getInstance(application).alarmDao()
+                repository = AlarmRepository(alarmDao)
                 val alarm = repository.findAlarm(alarmId = alarmId)
                 val alarmDto = AlarmDto.toDto(alarm!!)
                 val alarms = repository.readAllData

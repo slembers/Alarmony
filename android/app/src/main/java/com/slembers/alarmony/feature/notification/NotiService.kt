@@ -9,16 +9,16 @@ import retrofit2.http.Path
 
 interface NotiService {
     @GET("alert")
-    fun getAllNotis() : Call<List<NotiDto>>
+    fun getAllNotis() : Call<getAllNotisResponseDto>
 
     @POST("alert/{alert-id}/response")
     fun responseInvite(
         @Body accept : Boolean,
         @Path("alert-id") alertId : Long
-    ) : Call<responseInviteDto>
+    ) : Call<InviteResponseDto>
 
     @DELETE("alert/{alert-id}")
     fun deleteNoti(
-        @Path("alert_id") alertId : Long
-    )
+        @Path("alert-id") alertId : Long
+    ) : Call<Unit>
 }

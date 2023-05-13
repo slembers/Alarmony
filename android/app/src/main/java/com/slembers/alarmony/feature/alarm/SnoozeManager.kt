@@ -37,6 +37,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.slembers.alarmony.feature.alarm.AlarmApi.snoozeMessageApi
 import com.slembers.alarmony.feature.alarm.AlarmNoti.cancelNotification
 import com.slembers.alarmony.feature.common.ui.theme.toColor
 
@@ -88,8 +89,10 @@ fun SnoozeNoti(snoozeType : Int, isClicked : MutableState<Boolean>, context : Ac
                         onClick = {
                             openDialog.value = false
                             cancelNotification()
+                            snoozeMessageApi(text.value, alarmDto.alarmId)
                             setSnoozeAlarm(newContext, alarmDto, snoozeType)
                             context.finish()
+                            goMain(context)
                         },
                         colors = ButtonDefaults.buttonColors(containerColor = "#31AF91".toColor()),
                     ) {
@@ -124,22 +127,8 @@ fun setSnoozeAlarm(context: Context, alarmDto: AlarmDto, snoozeType: Int) {
             myPendingIntent
         )
     val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-    when {
-        Build.VERSION.SDK_INT >= Build.VERSION_CODES.M -> {
-            alarmManager.setExactAndAllowWhileIdle(
-                AlarmManager.RTC_WAKEUP,
-                newTime,
-                alarmIntentRTC
-            )
-        }
-        else -> {
-            alarmManager.setExact(
-                AlarmManager.RTC_WAKEUP,
-                newTime,
-                alarmIntentRTC
-            )
-        }
-    }
+    val alarmInfo = AlarmManager.AlarmClockInfo(newTime, alarmIntentRTC)
+    alarmManager.setAlarmClock(alarmInfo, alarmIntentRTC)
 
     val receiver = ComponentName(context, AlarmReceiver::class.java)
     context.packageManager.setComponentEnabledSetting(
