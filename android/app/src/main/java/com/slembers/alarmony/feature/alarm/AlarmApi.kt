@@ -75,4 +75,22 @@ object AlarmApi {
             }
         })
     }
+
+    fun snoozeMessageApi(message : String, alarmId : Long) {
+        val call = alarmApi.snoozeMessage(message, alarmId)
+        call.enqueue(object : Callback<Unit>{
+            override fun onResponse(call: Call<Unit>, response: Response<Unit>) {
+                Log.d("myResponse", response.toString())
+                if (response.isSuccessful) {
+                    Log.d("myResponse", "메세지 전송성공.")
+                } else {
+                    Log.e("myResponse", "메세지 전송실패.")
+                }
+            }
+
+            override fun onFailure(call: Call<Unit>, t: Throwable) {
+                Log.d("myResponse", "네트워크 오류")
+            }
+        })
+    }
 }

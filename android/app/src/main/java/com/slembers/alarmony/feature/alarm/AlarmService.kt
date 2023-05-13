@@ -20,4 +20,10 @@ interface AlarmService {
         @Body datetime: String,
         @Path("alarm-id") alarmId : Long
     ) : Call<Unit>
+
+    @PUT("alarms/{alarm-id}/message")
+    fun snoozeMessage(
+        @Body message: String,
+        @Path("alarm-id") alarmId : Long
+    ) : Call<Unit>
 }

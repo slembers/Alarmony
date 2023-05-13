@@ -37,6 +37,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.slembers.alarmony.feature.alarm.AlarmApi.snoozeMessageApi
 import com.slembers.alarmony.feature.alarm.AlarmNoti.cancelNotification
 import com.slembers.alarmony.feature.common.ui.theme.toColor
 
@@ -88,6 +89,7 @@ fun SnoozeNoti(snoozeType : Int, isClicked : MutableState<Boolean>, context : Ac
                         onClick = {
                             openDialog.value = false
                             cancelNotification()
+                            snoozeMessageApi(text.value, alarmDto.alarmId)
                             setSnoozeAlarm(newContext, alarmDto, snoozeType)
                             context.finish()
                             goMain(context)
