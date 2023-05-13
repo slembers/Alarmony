@@ -44,6 +44,7 @@ fun InviteScreen(
         bottomBar = {
             GroupBottomButtom(
                 text = "저장",
+                enabled = true,
                 onClick = { isClicked.value = true }
             )
         },
