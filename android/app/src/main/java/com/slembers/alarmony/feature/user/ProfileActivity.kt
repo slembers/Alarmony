@@ -1,6 +1,8 @@
 package com.slembers.alarmony.feature.user
 
 import android.annotation.SuppressLint
+import android.app.Activity
+import android.content.Intent
 import android.media.Image
 import android.util.Log
 import androidx.compose.foundation.Image
@@ -44,7 +46,13 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.slembers.alarmony.R
+import com.slembers.alarmony.feature.screen.MemberActivity
+import com.slembers.alarmony.feature.ui.common.AnimationRotation
 import com.slembers.alarmony.network.repository.MemberService.logOut
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.withContext
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalGlideComposeApi::class)
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
@@ -62,6 +70,9 @@ fun ProfileSetting(navController: NavController) {
     // 닉네임 수정 모드를 제어하는 상태 변수
     var isEditMode = remember { mutableStateOf(false) }
     val context = LocalContext.current
+
+    // 로딩화면을 보여주는 변수
+    val loading = remember { mutableStateOf(false) }
     Scaffold(
         topBar = {
             TopAppBar(
@@ -153,7 +164,21 @@ fun ProfileSetting(navController: NavController) {
                     horizontalArrangement = Arrangement.SpaceAround
                 ) {
                     TextButton(
-                        onClick = { logOut(context, navController) }
+                        enabled = !loading.value,
+                        onClick = {
+                            loading.value = true
+                            CoroutineScope(Dispatchers.IO).async {
+                                val result = logOut()
+                                if( result ) {
+                                    val intent = Intent(context, MemberActivity::class.java)
+                                    context.startActivity(intent)
+                                    (context as Activity).finish()
+                                    loading.value = false
+                                }
+                                loading.value = false
+                            }
+
+                        }
                     ) {
                         Text(text = "로그아웃 |")
                     }
@@ -169,7 +194,9 @@ fun ProfileSetting(navController: NavController) {
             }
 
         }
-
     )
+    if(loading.value) {
+        AnimationRotation()
+    }
 
 }

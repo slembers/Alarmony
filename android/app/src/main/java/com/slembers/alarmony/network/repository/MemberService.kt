@@ -249,48 +249,18 @@ object MemberService {
 
 //    @OptIn(ExperimentalGlideComposeApi::class)
     @ExperimentalMaterial3Api
-    fun logOut(context:Context, navController: NavController) {
+    suspend fun logOut() : Boolean {
         try{
-            memberApi.logOut().enqueue(object: Callback<Unit> {
-                override fun onResponse(call: Call<Unit>, response: Response<Unit>) {
-                    if(response.isSuccessful) {
-                        Log.d("response", "로그아웃")
-                        Log.d("response", "${response.body()}")
-                        Log.d("response", "${response.code()}")
-                        showDialog("알림", "로그아웃되었어요!", context, navController)
-                        MainActivity.prefs.reset()
-                        val intent = Intent(context, MemberActivity::class.java)
-                        context.startActivity(intent)
-                        (context as Activity).finish()
-
-                    } else {
-                        Log.d("response", "로그아웃")
-                        Log.d("response", "${response.body()}")
-                        Log.d("response", "${response}")
-                        Log.d("response", "${response.code()}")
-                        showDialog("알림", "로그아웃실패...", context, navController)
-//                        navController.navigate(NavItem.LoginScreen.route)
-//                        MainActivity.prefs.reset()
-                    }
-                }
-                override fun onFailure(call: Call<Unit>, t: Throwable) {
-                    Log.d("fail", "비밀번호찾기 실패")
-                    showDialog("알림", "뭔가 잘못됐나봐요", context, navController)
-                }
-            })
-
+            val response = memberApi.logOut()
+            Log.d("response", "로그아웃")
+            Log.d("response", "${response.body()}")
+            Log.d("response", "${response.code()}")
+            MainActivity.prefs.reset()
+            return response.code() in 200..300
         } catch(e: Exception) {
             Log.d("fail", "로그아웃 예외 발생")
-            showDialog("알림", "뭔가 잘못됐나봐요", context, navController)
-
+            return false
         }
-
-
-
-
-
-
-
 //        fun signOut(context:Context, navController: NavController)
     }
 

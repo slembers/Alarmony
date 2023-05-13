@@ -19,6 +19,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -37,6 +39,7 @@ import com.slembers.alarmony.feature.common.CardBox
 import com.slembers.alarmony.feature.common.NavItem
 import com.slembers.alarmony.feature.common.ui.compose.GroupTitle
 import com.slembers.alarmony.feature.common.ui.theme.toColor
+import com.slembers.alarmony.feature.ui.common.AnimationRotation
 import com.slembers.alarmony.feature.ui.common.CommonDialog
 import com.slembers.alarmony.feature.ui.group.GroupToolBar
 import com.slembers.alarmony.feature.ui.groupDetails.GroupDetailsBoard
@@ -47,6 +50,7 @@ import com.slembers.alarmony.viewModel.GroupDetailsViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -68,6 +72,7 @@ fun GroupDetailsScreen(
     }
 
     val alarmDao = AlarmDatabase.getInstance(context).alarmDao()
+    var loading by remember { mutableStateOf(false) }
     val isClosed = remember { mutableStateOf(false) }
     val openDialog = remember { mutableStateOf(true) }
     val alarm = remember{ mutableStateOf<Alarm>(Alarm(
@@ -171,6 +176,7 @@ fun GroupDetailsScreen(
                         contentDescription = null,
                         tint = Color.Red
                     )},
+                    enable = !loading,
                     onClick = { isClosed.value = true }
                 )}
                 )
@@ -182,14 +188,20 @@ fun GroupDetailsScreen(
                     isClosed = isClosed,
                     openDialog = openDialog,
                     accept = {
-                        CoroutineScope(Dispatchers.IO).launch {
+                        loading = true
+                        isClosed.value = false
+                        CoroutineScope(Dispatchers.IO).async {
                             GroupService.deleteGroup(alarmId!!)
                             deleteAlarm(alarmId, context)
                         }
+                        loading = false
                         navController.popBackStack()
                     }
                 )
             }
         }
     )
+    if(loading) {
+        AnimationRotation()
+    }
 }
