@@ -24,9 +24,8 @@ class AlarmReceiver : BroadcastReceiver() {
         } else {
             val alarmId = intent.getLongExtra("alarmId", -1L)
             if (alarmId == -1L) return
-            val alarmDao = AlarmDatabase.getInstance(context).alarmDao()
-
             CoroutineScope(Dispatchers.IO).launch {
+                val alarmDao = AlarmDatabase.getInstance(context).alarmDao()
                 val alarm = alarmDao.getAlarmById(alarmId)
                 val alarmDto = AlarmDto.toDto(alarm!!)
                 if (alarmDto == null) return@launch

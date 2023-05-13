@@ -31,10 +31,10 @@ fun saveAlarm(alarmDto: AlarmDto, context: Context) {
 }
 fun deleteAlarm(alarmId: Long, context: Context) {
     lateinit var repository: AlarmRepository
-    val alarmDao = AlarmDatabase.getInstance(context).alarmDao()
-    repository = AlarmRepository(alarmDao)
-    val alarm = repository.findAlarm(alarmId)
     CoroutineScope(Dispatchers.IO).launch {
+        val alarmDao = AlarmDatabase.getInstance(context).alarmDao()
+        repository = AlarmRepository(alarmDao)
+        val alarm = repository.findAlarm(alarmId)
         if (alarm != null) {
             repository.deleteAlarm(alarm)
         }
@@ -96,11 +96,11 @@ fun setAlarm(alarmDto: AlarmDto, context: Context) {
 
 fun saveTestAlarm(alarmDto: AlarmDto, context: Context) {
     Log.d("save", alarmDto.toString())
-    lateinit var repository: AlarmRepository
-    val alarmDao = AlarmDatabase.getInstance(context).alarmDao()
-    repository = AlarmRepository(alarmDao)
-    val alarm : Alarm = Alarm.toEntity(alarmDto)
     CoroutineScope(Dispatchers.IO).launch {
+        lateinit var repository: AlarmRepository
+        val alarmDao = AlarmDatabase.getInstance(context).alarmDao()
+        repository = AlarmRepository(alarmDao)
+        val alarm : Alarm = Alarm.toEntity(alarmDto)
         repository.addAlarm(alarm)
     }
     setTestAlarm(alarmDto, context)
