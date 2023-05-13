@@ -69,6 +69,7 @@ import com.slembers.alarmony.feature.ui.group.GroupTypeButton
 import com.slembers.alarmony.feature.ui.group.GroupVolume
 import com.slembers.alarmony.model.db.dto.MemberDto
 import com.slembers.alarmony.network.service.GroupService
+import com.slembers.alarmony.util.groupSoundInfos
 import com.slembers.alarmony.viewModel.GroupViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -86,6 +87,7 @@ class GroupActivity : AppCompatActivity() {
         setContent {
             val navController : NavHostController = rememberNavController()
             val viewModel by viewModels<GroupViewModel>()
+            viewModel.onChangeSound(groupSoundInfos()[0].soundName)
             NavHost(
                 navController = navController,
                 startDestination = NavItem.Group.route
