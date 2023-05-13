@@ -6,6 +6,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
@@ -52,6 +53,9 @@ fun DefaultModifier() : Modifier {
     return Modifier
         .fillMaxWidth()
         .padding(5.dp)
+        .heightIn(
+            minOf(100.dp,100.dp)
+        )
         .border(
             BorderStroke(0.dp, MaterialTheme.colorScheme.background),
             MaterialTheme.shapes.medium

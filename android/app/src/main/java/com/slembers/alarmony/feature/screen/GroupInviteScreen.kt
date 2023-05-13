@@ -41,28 +41,17 @@ fun InviteScreen(
                 navClick = { navController.popBackStack() }
             )
         },
-        bottomBar = {
-            GroupBottomButtom(
-                text = "저장",
-                enabled = true,
-                onClick = { isClicked.value = true }
-            )
-        },
         content = { innerPadding ->
             Column(
                 modifier = Modifier.padding(innerPadding),
                 content = {
                     CurrentInvite(currentMembers = currentMembers.value ?: mutableListOf())
-                    SearchInviteMember(currentMembers = currentMembers.value ?: mutableListOf())
+                    SearchInviteMember(
+                        viewModel = viewModel,
+                        currentMembers = currentMembers.value ?: mutableListOf()
+                    )
                 }
             )
-            if(isClicked.value) {
-                GroupDialog(
-                    isClosed = isClicked,
-                    navController = navController,
-                    group = viewModel
-                )
-            }
         }
     )
 }
