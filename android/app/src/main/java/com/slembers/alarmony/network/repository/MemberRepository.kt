@@ -66,8 +66,8 @@ interface MemberRepository {
     ) : Call<FindPasswordResponseDto>
 
     @GET("members/logout")
-    fun logOut(
-    ) :Call<Unit>
+    suspend fun logOut(
+    ) :Response<Unit>
 
 //    @GET("members/info")
 //    fun getMyInfo(

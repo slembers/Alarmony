@@ -1,17 +1,11 @@
 package com.slembers.alarmony.feature.common
 
-import android.app.Activity
 import android.app.Application
 import android.content.Intent
-import android.util.Log
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
@@ -21,7 +15,6 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
-import com.slembers.alarmony.MainActivity
 import com.slembers.alarmony.feature.alarm.NotiListScreen
 import com.slembers.alarmony.feature.report.ReportDetailScreen
 import com.slembers.alarmony.feature.report.ReportListScreen
@@ -30,19 +23,7 @@ import com.slembers.alarmony.feature.screen.AlarmListScreen
 import com.slembers.alarmony.feature.screen.DetailsInviteScreen
 import com.slembers.alarmony.feature.screen.GroupDetailsScreen
 import com.slembers.alarmony.feature.user.AccountMtnc
-import com.slembers.alarmony.feature.user.FindId
-import com.slembers.alarmony.feature.user.Findpswd
-import com.slembers.alarmony.feature.user.LoginScreen
 import com.slembers.alarmony.feature.user.ProfileSetting
-import com.slembers.alarmony.feature.user.SignupScreen
-import com.slembers.alarmony.feature.user.LoginScreen
-import com.slembers.alarmony.feature.user.StartPageActivity
-import com.slembers.alarmony.network.api.AlarmonyServer
-import com.slembers.alarmony.network.repository.MemberService.reissueToken
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
-import kotlinx.coroutines.coroutineScope
 import com.slembers.alarmony.viewModel.GroupDetailsViewModel
 
 

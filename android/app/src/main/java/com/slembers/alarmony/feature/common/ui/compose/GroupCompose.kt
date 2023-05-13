@@ -7,6 +7,8 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.focusable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -71,6 +73,7 @@ import com.slembers.alarmony.feature.common.CardTitle
 import com.slembers.alarmony.feature.common.ui.theme.toColor
 import com.slembers.alarmony.model.db.Member
 import com.slembers.alarmony.viewModel.GroupSearchViewModel
+import kotlinx.serialization.json.JsonNull.content
 import java.util.Locale
 
 @Composable
@@ -104,6 +107,7 @@ fun GroupTitle(
     title : String,
     modifier: Modifier = Modifier,
     content : @Composable() () -> Unit = {},
+    enable : Boolean = false,
     onClick : () -> Unit = {}
 ) {
     Row(
@@ -118,6 +122,7 @@ fun GroupTitle(
                 end = 5.dp
             )
             .clickable(
+                enabled = enable,
                 onClick = onClick
             ),
         verticalAlignment = Alignment.CenterVertically
@@ -150,7 +155,8 @@ fun GroupTitle(
 @ExperimentalGlideComposeApi
 fun GroupSubjet(
     title : String,
-    onChangeValue : (String) -> Unit
+    onChangeValue : (String) -> Unit,
+    interactionSource: MutableInteractionSource
 ) {
 
     OutlinedTextField(
@@ -173,7 +179,8 @@ fun GroupSubjet(
             .border(
                 BorderStroke(1.dp, MaterialTheme.colorScheme.background),
                 MaterialTheme.shapes.extraSmall
-            ),
+            )
+            .focusable(enabled = true, interactionSource = interactionSource),
         singleLine = true
     )
     Divider(

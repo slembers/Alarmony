@@ -24,6 +24,7 @@ import kotlinx.serialization.json.JsonNull.content
 @ExperimentalMaterial3Api
 fun GroupBottomButtom(
     text : String = "버튼 이름",
+    enabled : Boolean = false,
     onClick : () -> Unit = {}
 ) {
     BottomAppBar(
@@ -39,6 +40,7 @@ fun GroupBottomButtom(
                         MaterialTheme.shapes.extraSmall
                     ),
                 onClick = onClick,
+                enabled = enabled,
                 content = {
                     Text(
                         text = text,

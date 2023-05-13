@@ -40,15 +40,39 @@ sealed class NavItem (
         image = Icons.Default.ArrowForwardIos
     )
 
-    object MainScreen : NavItem("main_screen", "main_screen", Icons.Default.Home)
-    object SettingScreen : NavItem("setting_screen", "setting_screen",Icons.Default.Home)
-    object LoginScreen : NavItem("login_screen","login_screen" ,Icons.Default.Home)
+    object MainScreen : NavItem(
+        route = "main_screen",
+        title = "main_screen",
+        image = Icons.Default.Home)
+    object SettingScreen : NavItem(
+        route = "setting_screen",
+        title = "setting_screen",
+        image = Icons.Default.Home)
+    object LoginScreen : NavItem(
+        route = "login_screen",
+        title = "login_screen" ,
+        image = Icons.Default.Home)
 
-    object FindIdActivity : NavItem("findid_screen", "findid_screen",Icons.Default.Home)
-    object FindPswdActivity : NavItem("findpswd_screen", "findpswd_screen",Icons.Default.Home)
-    object Signup : NavItem("signup_screen", "signup_screen",Icons.Default.Home)
-    object ProfileActivity : NavItem("profile_screen", "profile_screen",Icons.Default.Home)
-    object AccountMtnc : NavItem("accountmtnc_screen", "accountmtnc_screen",Icons.Default.Home)
+    object FindIdActivity : NavItem(
+        route = "findid_screen",
+        title = "findid_screen",
+        image = Icons.Default.Home)
+    object FindPswdActivity : NavItem(
+        route = "findpswd_screen",
+        title = "findpswd_screen",
+        image = Icons.Default.Home)
+    object Signup : NavItem(
+        route = "signup_screen",
+        title = "signup_screen",
+        image = Icons.Default.Home)
+    object ProfileActivity : NavItem(
+        route = "profile_screen",
+        title = "profile_screen",
+        image = Icons.Default.Home)
+    object AccountMtnc : NavItem(
+        route = "accountmtnc_screen",
+        title = "accountmtnc_screen",
+        image = Icons.Default.Home)
 
     object GroupDetails : NavItem(
         route = "GroupDetails",
