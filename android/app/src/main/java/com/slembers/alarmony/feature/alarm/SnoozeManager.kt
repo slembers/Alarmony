@@ -127,22 +127,8 @@ fun setSnoozeAlarm(context: Context, alarmDto: AlarmDto, snoozeType: Int) {
             myPendingIntent
         )
     val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-    when {
-        Build.VERSION.SDK_INT >= Build.VERSION_CODES.M -> {
-            alarmManager.setExactAndAllowWhileIdle(
-                AlarmManager.RTC_WAKEUP,
-                newTime,
-                alarmIntentRTC
-            )
-        }
-        else -> {
-            alarmManager.setExact(
-                AlarmManager.RTC_WAKEUP,
-                newTime,
-                alarmIntentRTC
-            )
-        }
-    }
+    val alarmInfo = AlarmManager.AlarmClockInfo(newTime, alarmIntentRTC)
+    alarmManager.setAlarmClock(alarmInfo, alarmIntentRTC)
 
     val receiver = ComponentName(context, AlarmReceiver::class.java)
     context.packageManager.setComponentEnabledSetting(
