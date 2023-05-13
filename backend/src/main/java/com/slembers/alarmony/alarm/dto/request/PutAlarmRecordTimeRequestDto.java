@@ -13,5 +13,5 @@ import lombok.NoArgsConstructor;
 public class PutAlarmRecordTimeRequestDto {
 
     @NotNull(message = "시간은 필수입니다.")
-    private LocalDateTime datetime;
+    private String datetime;
 }
