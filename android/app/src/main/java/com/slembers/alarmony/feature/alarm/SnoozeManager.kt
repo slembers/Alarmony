@@ -90,6 +90,7 @@ fun SnoozeNoti(snoozeType : Int, isClicked : MutableState<Boolean>, context : Ac
                             cancelNotification()
                             setSnoozeAlarm(newContext, alarmDto, snoozeType)
                             context.finish()
+                            goMain(context)
                         },
                         colors = ButtonDefaults.buttonColors(containerColor = "#31AF91".toColor()),
                     ) {

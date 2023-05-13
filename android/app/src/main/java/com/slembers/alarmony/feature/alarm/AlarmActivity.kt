@@ -177,6 +177,7 @@ fun AlarmScreen(alarmDto : AlarmDto) {
                             val alarmRemainTime = alarmEndTime - alarmStartTime // 알람 끄기 까지 걸린 시간
                             cancelNotification()
                             context.finish()
+                            goMain(context)
                             // 정지 누르면 끝 시간 api
                         },
                         shape = CircleShape,
