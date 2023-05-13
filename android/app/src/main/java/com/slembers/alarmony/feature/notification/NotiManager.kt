@@ -7,20 +7,20 @@ import kotlinx.coroutines.launch
 
 fun saveNoti(notiDto: NotiDto, context: Context) {
     lateinit var repository: NotiRepository
-    val notiDao = NotiDatabase.getInstance(context).notiDao()
-    repository = NotiRepository(notiDao)
-    val noti : Noti = Noti.toEntity(notiDto)
     CoroutineScope(Dispatchers.IO).launch {
+        val notiDao = NotiDatabase.getInstance(context).notiDao()
+        repository = NotiRepository(notiDao)
+        val noti : Noti = Noti.toEntity(notiDto)
         repository.addNoti(noti)
     }
 }
 
 fun deleteNoti(notiId: Long, context: Context) {
     lateinit var repository: NotiRepository
-    val notiDao = NotiDatabase.getInstance(context).notiDao()
-    repository = NotiRepository(notiDao)
-    val noti = repository.findNoti(notiId)
     CoroutineScope(Dispatchers.IO).launch {
+        val notiDao = NotiDatabase.getInstance(context).notiDao()
+        repository = NotiRepository(notiDao)
+        val noti = repository.findNoti(notiId)
         if (noti != null) {
             repository.deleteNoti(noti)
         }
@@ -29,9 +29,9 @@ fun deleteNoti(notiId: Long, context: Context) {
 
 fun deleteAllNotis(context: Context) {
     lateinit var repository: NotiRepository
-    val notiDao = NotiDatabase.getInstance(context).notiDao()
-    repository = NotiRepository(notiDao)
     CoroutineScope(Dispatchers.IO).launch {
+        val notiDao = NotiDatabase.getInstance(context).notiDao()
+        repository = NotiRepository(notiDao)
         repository.deleteAllNotis()
     }
 }

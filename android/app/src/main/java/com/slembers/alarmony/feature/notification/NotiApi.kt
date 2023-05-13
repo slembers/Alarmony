@@ -77,7 +77,6 @@ object NotiApi {
                             Toast.LENGTH_SHORT
                         ).show()
                     }
-                    deleteNotiApi(alertId, context) // 그룹 초대 승낙/거절 시 알림 사라짐
                 } else {
                     Log.e("myResponse", response.message())
                 }
@@ -100,6 +99,9 @@ object NotiApi {
         val call = notiApi.deleteNoti(alertId)
         call.enqueue(object : Callback<Unit>{
             override fun onResponse(call: Call<Unit>, response: Response<Unit>) {
+                Log.d("myResponse", response.toString())
+                Log.d("myResponse", response.body().toString())
+                Log.d("myResponse", response.code().toString())
                 if (response.isSuccessful) {
                     deleteNoti(alertId, context)
                     // 서버에서 알림 삭제 성공시, Room 에서도 알림을 삭제함

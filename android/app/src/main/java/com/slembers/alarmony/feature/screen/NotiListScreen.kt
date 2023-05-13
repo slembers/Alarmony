@@ -54,8 +54,12 @@ import com.slembers.alarmony.feature.common.ui.theme.notosanskr
 import com.slembers.alarmony.feature.common.ui.theme.toColor
 import com.slembers.alarmony.feature.notification.Noti
 import com.slembers.alarmony.feature.notification.NotiApi.InviteResponseApi
+import com.slembers.alarmony.feature.notification.NotiApi.deleteNotiApi
 import com.slembers.alarmony.feature.notification.NotiViewModel
 import com.slembers.alarmony.feature.notification.NotiViewModelFactory
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -118,6 +122,7 @@ fun NotiListScreen(navController: NavController) {
 
 @Composable
 fun MyNotiItem(item : Noti, mNotiViewModel: NotiViewModel) {
+    val context = LocalContext.current
     val isClicked = remember { mutableStateOf(false)  }
     val profileImage = if (item.profileImg.length > 0) {item.profileImg}
     else {R.drawable.profiledefault}
@@ -136,6 +141,10 @@ fun MyNotiItem(item : Noti, mNotiViewModel: NotiViewModel) {
             .clickable {
                 if (item.type == "INVITE") {
                     isClicked.value = true
+                } else {
+                    CoroutineScope(Dispatchers.IO).launch {
+                        deleteNotiApi(item.notiId, context)
+                    }
                 }
             },
         shape = RoundedCornerShape(50.dp),
@@ -214,6 +223,7 @@ fun GroupNoti(item : Noti, isClicked : MutableState<Boolean>, mNotiViewModel : N
                         onClick = {
                             openDialog.value = false
                             InviteResponseApi(false, item.notiId, context)
+                            mNotiViewModel.deleteNoti(item)
                         },
                         colors = ButtonDefaults.buttonColors(containerColor = "#C93636".toColor())
                     ) {
@@ -229,6 +239,7 @@ fun GroupNoti(item : Noti, isClicked : MutableState<Boolean>, mNotiViewModel : N
                         onClick = {
                             openDialog.value = false
                             InviteResponseApi(true, item.notiId, context)
+                            mNotiViewModel.deleteNoti(item)
                         },
                         colors = ButtonDefaults.buttonColors(containerColor = "#31AF91".toColor()),
                     ) {
