@@ -9,6 +9,8 @@ import com.slembers.alarmony.alarm.dto.response.AlarmListResponseDto;
 import com.slembers.alarmony.alarm.service.AlarmRecordService;
 import com.slembers.alarmony.alarm.service.AlarmService;
 import com.slembers.alarmony.global.security.util.SecurityUtil;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
 import javax.validation.Valid;
@@ -97,7 +99,10 @@ public class AlarmController {
         alarmRecordService.putAlarmRecord(AlarmEndRecordDto.builder()
             .alarmId(alarmId)
             .username(username)
-            .datetime(putAlarmRecordTimeRequestDto.getDatetime())
+            .datetime(
+                    LocalDateTime.parse(putAlarmRecordTimeRequestDto.getDatetime(),
+                            DateTimeFormatter.ISO_DATE_TIME))
+//                    putAlarmRecordTimeRequestDto.getDatetime()
             .success(true)
             .build());
         return ResponseEntity.noContent().build();
