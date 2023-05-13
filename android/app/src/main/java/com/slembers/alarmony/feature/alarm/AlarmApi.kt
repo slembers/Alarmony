@@ -26,8 +26,8 @@ object AlarmApi {
                     Log.d("myResponse", myResponse.toString())
                     if (myResponse!!.alarms != null) { // 서버에 알람 목록이 있으면
                         alarms = myResponse.alarms
-                        for(alarm : AlarmDto in alarms!!) {    // Room 알람 목록 저장
-                            saveAlarm(alarm, context)
+                        for(alarmDto : AlarmDto in alarms!!) {    // Room 알람 목록 저장
+                            saveAlarm(alarmDto, context)
                         }
                         Toast.makeText(
                             context,

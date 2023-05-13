@@ -38,6 +38,7 @@ class AlarmReceiver : BroadcastReceiver() {
                     var todayDayOfWeek: Int = calendar.get(Calendar.DAY_OF_WEEK) - 2    // 오늘 요일 구하기
                     if (todayDayOfWeek == -1) todayDayOfWeek = 6
                     if (alarmDto!!.alarmDate[todayDayOfWeek] == false) return@launch // 오늘이 울리는 요일이 아니면 리턴
+                    setAlarm(alarmDto, context)
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                         context.startForegroundService(newIntent)
                     } else {

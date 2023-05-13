@@ -1,7 +1,9 @@
 package com.slembers.alarmony.feature.sendAlarm
 
+import android.app.Activity
 import android.app.KeyguardManager
 import android.content.Context
+import android.content.Intent
 import android.graphics.Typeface
 import android.icu.util.Calendar
 import android.os.Build
@@ -39,12 +41,17 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.content.ContextCompat
+import androidx.core.content.ContextCompat.startActivity
+import com.slembers.alarmony.MainActivity
 import com.slembers.alarmony.feature.alarm.AlarmDatabase
 import com.slembers.alarmony.feature.alarm.AlarmDto
 import com.slembers.alarmony.feature.alarm.AlarmRepository
+import com.slembers.alarmony.feature.alarm.goMain
 import com.slembers.alarmony.feature.common.ui.theme.toColor
 import com.slembers.alarmony.feature.sendAlarm.SendAlarmNoti.cancelSendAlarmNotification
 import com.slembers.alarmony.feature.sendAlarm.SendAlarmNoti.runSendAlarmNotification
@@ -115,7 +122,7 @@ class SendAlarmActivity : ComponentActivity() {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SendAlarmScreen(alarmDto : AlarmDto) {
-//    val context = LocalContext.current as Activity
+    val context = LocalContext.current as Activity
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         containerColor = Color.White,
@@ -137,7 +144,8 @@ fun SendAlarmScreen(alarmDto : AlarmDto) {
                     Button(
                         onClick = {
                             cancelSendAlarmNotification()
-//                            context.finish()
+                            context.finish()
+                            goMain(context)
                         },
                         shape = CircleShape,
                         border = BorderStroke(10.dp, "#63B1C2".toColor()),

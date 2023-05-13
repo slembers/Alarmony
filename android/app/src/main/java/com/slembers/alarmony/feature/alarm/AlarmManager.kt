@@ -10,6 +10,10 @@ import android.content.pm.PackageManager
 import android.icu.util.Calendar
 import android.os.Build
 import android.util.Log
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.core.content.ContextCompat.startActivity
+import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
+import com.slembers.alarmony.MainActivity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -53,13 +57,9 @@ fun calAlarm(alarmDto: AlarmDto) : Long {
     return alarmTime
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 fun setAlarm(alarmDto: AlarmDto, context: Context) {
-    val calendar: Calendar = Calendar.getInstance()
     val intervalDay : Long = 24*60*60*1000 // 24시간
-    calendar.set(Calendar.HOUR_OF_DAY, alarmDto.hour)
-    calendar.set(Calendar.MINUTE, alarmDto.minute)
-    calendar.set(Calendar.SECOND, 0)
-    calendar.set(Calendar.MILLISECOND, 0)
     var newTime = calAlarm(alarmDto)
     var curTime = System.currentTimeMillis()
 
@@ -81,7 +81,8 @@ fun setAlarm(alarmDto: AlarmDto, context: Context) {
             myPendingIntent
         )
     val alarmManager = context.getSystemService(ALARM_SERVICE) as AlarmManager
-    alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, newTime, intervalDay, alarmIntentRTC)
+    val alarmInfo = AlarmManager.AlarmClockInfo(newTime, alarmIntentRTC)
+    alarmManager.setAlarmClock(alarmInfo, alarmIntentRTC)
 
     val receiver = ComponentName(context, AlarmReceiver::class.java)
     context.packageManager.setComponentEnabledSetting(
@@ -146,4 +147,10 @@ fun setTestAlarm(alarmDto: AlarmDto, context: Context) {
         PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
         PackageManager.DONT_KILL_APP
     )
+}
+
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalGlideComposeApi::class)
+fun goMain(context : Context) {
+    val intent = Intent(context, MainActivity::class.java)
+    context.startActivity(intent)
 }

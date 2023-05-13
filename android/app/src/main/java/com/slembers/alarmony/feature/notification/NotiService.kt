@@ -19,6 +19,6 @@ interface NotiService {
 
     @DELETE("alert/{alert-id}")
     fun deleteNoti(
-        @Path("alert_id") alertId : Long
+        @Path("alert-id") alertId : Long
     ) : Call<Unit>
 }
