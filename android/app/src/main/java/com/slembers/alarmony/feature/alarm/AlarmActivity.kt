@@ -50,6 +50,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.slembers.alarmony.feature.alarm.AlarmApi.recordAlarmApi
 import com.slembers.alarmony.feature.alarm.AlarmNoti.cancelNotification
 import com.slembers.alarmony.feature.alarm.AlarmNoti.runNotification
 import com.slembers.alarmony.feature.common.ui.theme.toColor
@@ -173,12 +174,13 @@ fun AlarmScreen(alarmDto : AlarmDto) {
 
                     Button(
                         onClick = {
-                            val alarmEndTime = System.currentTimeMillis()
-                            val alarmRemainTime = alarmEndTime - alarmStartTime // 알람 끄기 까지 걸린 시간
+                            val dateTime = LocalDateTime.now()
+                            val formatter = DateTimeFormatter.ISO_DATE_TIME
+                            val formattedDateTime = dateTime.format(formatter)
+                            recordAlarmApi(formattedDateTime, alarmDto.alarmId) // 알람 정지 시 기록 api
                             cancelNotification()
                             context.finish()
                             goMain(context)
-                            // 정지 누르면 끝 시간 api
                         },
                         shape = CircleShape,
                         border = BorderStroke(10.dp, "#63B1C2".toColor()),
