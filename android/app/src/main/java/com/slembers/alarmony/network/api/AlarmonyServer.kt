@@ -4,6 +4,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.google.gson.GsonBuilder
 import com.slembers.alarmony.MainActivity
+import com.slembers.alarmony.feature.alarm.AlarmService
 import com.slembers.alarmony.feature.notification.NotiService
 import com.slembers.alarmony.network.repository.GroupRepositroy
 import com.slembers.alarmony.network.repository.MemberRepository
@@ -38,6 +39,7 @@ class AlarmonyServer {
         .build()
 
     val notiApi = retrofit.create(NotiService::class.java)
+    val alarmApi = retrofit.create(AlarmService::class.java)
     val memberApi = retrofit.create(MemberRepository::class.java)
     val groupApi = retrofit.create(GroupRepositroy::class.java)
     val reportApi = retrofit.create(ReportRepository::class.java)

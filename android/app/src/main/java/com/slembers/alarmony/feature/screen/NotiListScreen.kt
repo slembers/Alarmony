@@ -53,7 +53,7 @@ import com.slembers.alarmony.R
 import com.slembers.alarmony.feature.common.ui.theme.notosanskr
 import com.slembers.alarmony.feature.common.ui.theme.toColor
 import com.slembers.alarmony.feature.notification.Noti
-import com.slembers.alarmony.feature.notification.NotiApi.InviteResponseAPI
+import com.slembers.alarmony.feature.notification.NotiApi.InviteResponseApi
 import com.slembers.alarmony.feature.notification.NotiViewModel
 import com.slembers.alarmony.feature.notification.NotiViewModelFactory
 
@@ -213,7 +213,7 @@ fun GroupNoti(item : Noti, isClicked : MutableState<Boolean>, mNotiViewModel : N
                     Button(
                         onClick = {
                             openDialog.value = false
-                            InviteResponseAPI(false, item.notiId, context)
+                            InviteResponseApi(false, item.notiId, context)
                         },
                         colors = ButtonDefaults.buttonColors(containerColor = "#C93636".toColor())
                     ) {
@@ -228,7 +228,7 @@ fun GroupNoti(item : Noti, isClicked : MutableState<Boolean>, mNotiViewModel : N
                     Button(
                         onClick = {
                             openDialog.value = false
-                            InviteResponseAPI(true, item.notiId, context)
+                            InviteResponseApi(true, item.notiId, context)
                         },
                         colors = ButtonDefaults.buttonColors(containerColor = "#31AF91".toColor()),
                     ) {

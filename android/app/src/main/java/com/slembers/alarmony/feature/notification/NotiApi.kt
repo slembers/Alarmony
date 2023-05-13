@@ -13,7 +13,7 @@ import retrofit2.Response
 object NotiApi {
     val notiApi = AlarmonyServer().notiApi
 
-    fun getAllNotisAPI(context : Context) : List<NotiDto>? {
+    fun getAllNotisApi(context : Context) {
         val call = notiApi.getAllNotis()
         var notis : List<NotiDto>? = null
         call.enqueue(object: Callback<getAllNotisResponseDto> {
@@ -38,10 +38,9 @@ object NotiApi {
                 Log.e("myResponse", "네트워크 오류")
             }
         })
-        return notis
     }
 
-    fun InviteResponseAPI(accept : Boolean, alertId : Long, context : Context) {
+    fun InviteResponseApi(accept : Boolean, alertId : Long, context : Context) {
         val call = notiApi.responseInvite(accept, alertId)
         Log.d("myResponse", "active")
         call.enqueue(object: Callback<InviteResponseDto>{
@@ -78,6 +77,7 @@ object NotiApi {
                             Toast.LENGTH_SHORT
                         ).show()
                     }
+                    deleteNotiApi(alertId, context) // 그룹 초대 승낙/거절 시 알림 사라짐
                 } else {
                     Log.e("myResponse", response.message())
                 }
@@ -103,6 +103,7 @@ object NotiApi {
                 if (response.isSuccessful) {
                     deleteNoti(alertId, context)
                     // 서버에서 알림 삭제 성공시, Room 에서도 알림을 삭제함
+                    Log.d("myResponse", "알림 삭제 성공.")
                 } else {
                     Log.e("myResponse", "알림 삭제에 실패했습니다.")
                 }
