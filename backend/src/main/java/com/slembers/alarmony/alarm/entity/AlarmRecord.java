@@ -49,7 +49,7 @@ public class AlarmRecord {
     /**
      * 전달된 메시지로 기록한다.
      *
-     * @param message
+     * @param message 메시지
      */
     public void changeMessage(String message) {
         this.message = message;
