@@ -325,7 +325,8 @@ fun GroupWeeks() {
 @ExperimentalMaterial3Api
 @ExperimentalGlideComposeApi
 fun GroupDefalutProfile(
-    nickname : String
+    nickname : String,
+    profileImg : String?
 ) {
 
     BoxWithConstraints(
@@ -333,13 +334,29 @@ fun GroupDefalutProfile(
             .width(60.dp)
             .height(70.dp)
     ) {
-        Image(
-            modifier = Modifier
-                .align(Alignment.TopCenter)
-                .size(this.maxWidth)
-                .padding(0.dp),
-            painter = painterResource(id = R.drawable.baseline_account_circle_24),
-            contentDescription = null)
+        if(profileImg == null) {
+            Image(
+                modifier = Modifier
+                    .align(Alignment.TopCenter)
+                    .size(this.maxWidth)
+                    .clip(CircleShape)
+                    .padding(0.dp),
+                painter = painterResource(id = R.drawable.baseline_account_circle_24),
+                contentDescription = null
+            )
+        } else {
+            AsyncImage(
+                model = ImageRequest.Builder(LocalContext.current)
+                    .data(profileImg)
+                    .build(),
+                contentDescription = "ImageRequest example",
+                modifier = Modifier
+                    .align(Alignment.TopCenter)
+                    .clip(CircleShape)
+                    .size(this.maxWidth)
+                    .padding(0.dp)
+            )
+        }
         Text(
             text = nickname,
             modifier = Modifier

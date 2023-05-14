@@ -26,6 +26,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
@@ -146,9 +147,11 @@ fun GroupDefalutProfile(
                         AsyncImage(
                             modifier = Modifier
                                 .matchParentSize()
+                                .clip(CircleShape)
                                 .align(Alignment.Center),
                             model = ImageRequest.Builder(LocalContext.current)
-                                .data(profileImg),
+                                .data(profileImg)
+                                .build(),
                             contentDescription = nickname)
                     }
                     if(newMember) {
