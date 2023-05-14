@@ -40,10 +40,10 @@ interface MemberRepository {
         @Body registTokenDto : RegistTokenDto
     ) : Response<Unit>
 
-    @GET("members")
-    fun getMember(
-        @Header("token") token : String?
-    ) : Call<Member>
+//    @GET("members")
+//    fun getMember(
+//        @Header("token") token : String?
+//    ) : Call<Member>
 
     @POST("members/login")
     suspend fun login(
@@ -61,12 +61,26 @@ interface MemberRepository {
         @Body signupDto : SignupRequest
     ) : Call<SignupResponseDto>
 
+    @GET("members/check-id")
+    fun checkId(@Query("username") username: String): Call<CheckIdResponseDto>
+
+    @GET("members/check-email")
+    fun checkEmail(@Query("email") email: String): Call<CheckEmailResponseDto>
+
+    @GET("members/check-nickname")
+    fun checkNickname(@Query("nickname") nickname: String): Call<CheckNicnameResponseDto>
 
 
     @POST("members/find-id")
     fun findId(
         @Body findIdDto : FindIdRequest
     ) : Call<FindIdResponseDto>
+
+    @DELETE("members")
+    fun signOut(
+    ): Call<Unit>
+
+
 
 
     @POST("members/find-pw")
@@ -82,19 +96,6 @@ interface MemberRepository {
     suspend fun getMyInfo(
     ): Response<GetMyInfoDto>
 
-
-    @DELETE("member")
-    fun signOut(
-    ): Call<Unit>
-
-    @GET("members/check-id")
-    fun checkId(@Query("username") username: String): Call<CheckIdResponseDto>
-
-    @GET("members/check-email")
-    fun checkEmail(@Query("email") email: String): Call<CheckEmailResponseDto>
-
-    @GET("members/check-nickname")
-    fun checkNickname(@Query("nickname") nickname: String): Call<CheckNicnameResponseDto>
 
     @Multipart
     @PATCH("members")

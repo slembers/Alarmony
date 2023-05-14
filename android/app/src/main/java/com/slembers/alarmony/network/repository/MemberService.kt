@@ -8,6 +8,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.navigation.NavController
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.slembers.alarmony.MainActivity
+import com.slembers.alarmony.MainActivity.Companion.prefs
 import com.slembers.alarmony.feature.ui.common.showDialog
 import com.slembers.alarmony.model.db.ChangeNicknameRequestDto
 import com.slembers.alarmony.model.db.FindIdRequest
@@ -32,6 +33,7 @@ import retrofit2.Response
 import com.slembers.alarmony.model.db.dto.CheckEmailResponseDto
 import com.slembers.alarmony.model.db.dto.CheckIdResponseDto
 import com.slembers.alarmony.model.db.dto.CheckNicnameResponseDto
+import com.slembers.alarmony.network.repository.MemberService.memberApi
 
 @ExperimentalMaterial3Api
 @ExperimentalGlideComposeApi
@@ -65,8 +67,45 @@ object MemberService {
         }
     }
 
+    fun signout(
+        isSuccess: (Boolean) -> Unit = {}
+        
+    ) {
+        try {
+            Log.d("response", "signout--화원탈퇴 시도")
+            memberApi.signOut()
+                .enqueue(object : Callback<Unit> {
+                    override fun onResponse(call: Call<Unit>, response: Response<Unit>) {
+                        if (response.isSuccessful) {
+                            Log.d("response", "회원탈퇴 성공${response}")
+                            isSuccess(true)
+                            prefs.reset()
+
+                        } else {
+                            Log.d("response", "회원탈퇴 실패1${response}")
+                            Log.d("response", "회원탈퇴 실패1${response.body()}")
+                            Log.d("response", "회원탈퇴 실패1${response.errorBody()}")
+                            isSuccess(false)
+                        }
+                    }
+
+                    override fun onFailure(call: Call<Unit>, t: Throwable) {
+                        Log.d("disconnection", "회원탈퇴 실패하였습니다..")
+                        Log.d("disconnection", "회원탈퇴 원인 : ${t.message}..")
+                        isSuccess(false)
+                    }
+
+                })
+        } catch (e: Exception) {
+            Log.d("response", "회원탈퇴 아예안됨?")
+            println(e.message)
+        }
+    }
+
     fun singup(
         request: SignupRequest,
+        context: Context,
+        navController: NavController,
         isSuccess: (Boolean) -> Unit = {}
     ) {
         try {

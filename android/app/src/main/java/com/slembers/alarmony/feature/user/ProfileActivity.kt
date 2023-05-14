@@ -57,10 +57,13 @@ import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.slembers.alarmony.R
+import com.slembers.alarmony.feature.screen.GroupActivity
+import com.slembers.alarmony.MainActivity
 import com.slembers.alarmony.network.repository.MemberService
 import com.slembers.alarmony.feature.screen.MemberActivity
 import com.slembers.alarmony.feature.ui.common.AnimationRotation
 import com.slembers.alarmony.network.repository.MemberService.logOut
+import com.slembers.alarmony.network.repository.MemberService.signout
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -90,7 +93,12 @@ fun ProfileSetting(navController: NavController = rememberNavController()) {
     var isEditMode = remember { mutableStateOf(false) }
     val context = LocalContext.current
     var mySelectedUri = remember { mutableStateOf<Uri>(Uri.EMPTY) }
-
+    val launcher = rememberLauncherForActivityResult(
+        ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            Log.d("AlarmListScreen","[알람목록] Activity 이동성공")
+        }
+    }
 
     LaunchedEffect(Unit) {
         val myInfo = MemberService.getMyInfo()
@@ -310,7 +318,20 @@ fun ProfileSetting(navController: NavController = rememberNavController()) {
                         Text(text = "로그아웃 |")
                     }
 
-                    TextButton(onClick = { /* 아이디 찾기 버튼 클릭 시 처리할 동작 */ }) {
+                    TextButton(onClick = { signout()
+                    {isSuccess ->
+                        if (isSuccess) {
+                            Log.d("response","회원탈퇴 성공~~~")
+                            Toast.makeText(context, "회원탈퇴 성공!", Toast.LENGTH_LONG).show()
+                            val intent = Intent(context, MainActivity::class.java)
+                            launcher.launch(intent)
+                        } else {
+                            Log.d("response","회원탈퇴 실패ㅜㅜ")
+                            Toast.makeText(context, "회원탈퇴 실패...", Toast.LENGTH_LONG).show()
+                        }
+                    }
+                    }
+                    ) {
                         Text(
                             text = "회원탈퇴",
                             style = MaterialTheme.typography.body1.copy(color = Color.Red)

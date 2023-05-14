@@ -81,6 +81,7 @@ fun SignupScreen(navController: NavController) {
     var emailFocused by remember {mutableStateOf(false)}
     var nicknameFocused by remember {mutableStateOf(false)}
 
+
     val focusRequester = remember { FocusRequester() }
 
 
@@ -339,13 +340,16 @@ fun SignupScreen(navController: NavController) {
                             // 회원가입이 완료되면 Snackbar 띄우기
                             Log.d("회원", "회원가입버튼누름")
 
+
                             singup(
                                 SignupRequest(
                                     username = username,
                                     password = password,
                                     nickname = nickname,
                                     email = email
-                                )
+                                ),
+                                context,
+                                navController
                             ) { isSuccess ->
                                 result = isSuccess
                                 Log.d("test", "${result}")
