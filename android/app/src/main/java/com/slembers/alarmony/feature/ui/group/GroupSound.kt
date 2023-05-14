@@ -34,6 +34,7 @@ fun GroupSound(
     GroupCard(
         title = { GroupTitle(
             title = NavItem.Sound.title,
+            enable = true,
             onClick = { navController.navigate( NavItem.Sound.route) },
             content = {
                 Row(
