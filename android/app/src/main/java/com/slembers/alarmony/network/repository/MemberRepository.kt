@@ -1,9 +1,11 @@
 package com.slembers.alarmony.network.repository
 
+import com.slembers.alarmony.model.db.ChangeNicknameRequestDto
 import com.slembers.alarmony.model.db.FindIdRequest
 import com.slembers.alarmony.model.db.FindPasswordRequest
 import com.slembers.alarmony.model.db.LoginRequest
 import com.slembers.alarmony.model.db.Member
+import com.slembers.alarmony.model.db.ModifyMemberInfoDto
 import com.slembers.alarmony.model.db.RegistTokenDto
 import com.slembers.alarmony.model.db.SignupRequest
 import com.slembers.alarmony.model.db.TokenReissueRequest
@@ -21,9 +23,16 @@ import retrofit2.http.Header
 import retrofit2.http.POST
 import com.slembers.alarmony.model.db.dto.CheckIdResponseDto
 import com.slembers.alarmony.model.db.dto.CheckNicnameResponseDto
+import com.slembers.alarmony.model.db.dto.GetMyInfoDto
+import com.slembers.alarmony.model.db.dto.ImageResponseDto
+import com.slembers.alarmony.model.db.dto.NicknameResponseDto
 import com.slembers.alarmony.model.db.dto.TokenReissueResponse
+import okhttp3.MultipartBody
+import retrofit2.http.Multipart
+import retrofit2.http.PATCH
 import retrofit2.http.Query
 import retrofit2.http.PUT
+import retrofit2.http.Part
 
 interface MemberRepository {
     @PUT("members/regist-token")
@@ -69,10 +78,10 @@ interface MemberRepository {
     suspend fun logOut(
     ) :Response<Unit>
 
-//    @GET("members/info")
-//    fun getMyInfo(
-//    ): Call<>
-//    )
+    @GET("members/info")
+    suspend fun getMyInfo(
+    ): Response<GetMyInfoDto>
+
 
     @DELETE("member")
     fun signOut(
@@ -87,4 +96,20 @@ interface MemberRepository {
     @GET("members/check-nickname")
     fun checkNickname(@Query("nickname") nickname: String): Call<CheckNicnameResponseDto>
 
+    @Multipart
+    @PATCH("members")
+    fun modifyMemberInfo(
+        @Part modifiedMemberInfo : ModifyMemberInfoDto
+    ) : Call<Unit>
+
+    @Multipart
+    @PATCH("members/image")
+    suspend fun modifyMemberImage(
+        @Part imgProfileFile : MultipartBody.Part
+    ) : Response<ImageResponseDto>
+
+    @POST("members/nickname")
+    suspend fun modifyMemberNickname(
+        @Body changeNicknameRequestDto : ChangeNicknameRequestDto
+    ) : Response<NicknameResponseDto>
 }
