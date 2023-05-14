@@ -114,8 +114,7 @@ fun GroupTitle(
         modifier = Modifier
             .fillMaxWidth()
             .heightIn(
-                min(50.dp,50.dp),
-                max(100.dp,100.dp)
+                min(50.dp,50.dp)
             )
             .padding(
                 start = 0.dp,
