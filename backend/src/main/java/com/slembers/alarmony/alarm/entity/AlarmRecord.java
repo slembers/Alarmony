@@ -49,7 +49,7 @@ public class AlarmRecord {
     /**
      * 전달된 메시지로 기록한다.
      *
-     * @param message
+     * @param message 메시지
      */
     public void changeMessage(String message) {
         this.message = message;
@@ -61,6 +61,7 @@ public class AlarmRecord {
      * @param recordTime 기록 시간
      */
     public void recordSuccess(LocalTime alarmTime, LocalDateTime recordTime) {
+        this.message = "";
         this.totalCount++;
         this.successCount++;
         this.todayAlarmRecord = recordTime;
@@ -74,6 +75,7 @@ public class AlarmRecord {
      * @param alarmTime 알람 시간
      */
     public void recordFailed(LocalTime alarmTime) {
+        this.message = "";
         // 최대 스누즈 시간 일단 30분으로 설정
         long maxSnooze = 3600;
         this.totalCount++;

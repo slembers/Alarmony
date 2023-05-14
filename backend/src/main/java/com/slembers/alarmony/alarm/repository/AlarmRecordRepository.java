@@ -39,10 +39,11 @@ public interface AlarmRecordRepository extends JpaRepository<AlarmRecord, Long> 
      * @return 알람 기록
      */
     @Query("SELECT new com.slembers.alarmony.alarm.dto.AlarmRecordDto(m.nickname, m.profileImgUrl, "
-        + "CASE WHEN DATE(ar.todayAlarmRecord) = DATE(NOW()) THEN true ELSE false END) "
+        + "CASE WHEN DATE(ar.todayAlarmRecord) = DATE(NOW()) THEN true ELSE false END, "
+        + "CASE WHEN DATE(ar.todayAlarmRecord) <> DATE(NOW()) THEN ar.message ELSE NULL END) "
         + "FROM member_alarm AS ma "
         + "INNER JOIN member AS m ON ma.member.id = m.id "
-        + "INNER JOIN alarm_record AS ar ON ma.id = ar.memberAlarm.id "
+        + "LEFT JOIN alarm_record AS ar ON ma.id = ar.memberAlarm.id "
         + "WHERE ma.alarm.id = :groupId")
     List<AlarmRecordDto> findTodayAlarmRecordsByAlarmId(Long groupId);
 

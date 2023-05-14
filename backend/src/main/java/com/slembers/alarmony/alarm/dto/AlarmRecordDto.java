@@ -12,5 +12,6 @@ public class AlarmRecordDto {
     String nickname;
     String profileImg;
     boolean success;
+    String message;
 
 }
