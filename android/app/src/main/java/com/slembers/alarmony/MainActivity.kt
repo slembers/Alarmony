@@ -11,6 +11,7 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.PowerManager
+import android.provider.MediaStore
 import android.provider.Settings
 import android.util.Log
 import android.widget.Toast
@@ -110,6 +111,11 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
+
+//    fun openGallery() {
+//        val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+//        requireActivity().startActivityForResult(intent, REQUEST_CODE_PICK_IMAGE)
+//    }
     // 알림 권한 요청 (13버전 이상)
     private fun requestNotificationPermission() {
         TedPermission.create()

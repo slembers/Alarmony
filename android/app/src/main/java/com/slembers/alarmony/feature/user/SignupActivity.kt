@@ -187,7 +187,7 @@ fun SignupScreen(navController: NavController) {
 
                     },
                     enabled = ((isIdCanUse.value && username.isNotBlank()) && (!isPasswordError.value && !isPasswordConfirmError.value)
-                    && (isEmailCanUse.value && email.isNotBlank()) && (isNicknameCanUse.value && nickname.isNotBlank())),
+                            && (isEmailCanUse.value && email.isNotBlank()) && (isNicknameCanUse.value && nickname.isNotBlank())),
                     shape = RoundedCornerShape(0.dp),
                     colors = ButtonDefaults.buttonColors(
                         backgroundColor = Black,

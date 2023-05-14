@@ -32,14 +32,12 @@ import okhttp3.MultipartBody
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-
-
 @ExperimentalMaterial3Api
 @ExperimentalGlideComposeApi
 object MemberService {
     val memberApi = AlarmonyServer().memberApi
 
-    suspend fun putRegistTokenAfterSignIn() : Unit {
+    suspend fun putRegistTokenAfterSignIn(): Unit {
         Log.d("INFO", "동적으로 가져오는 토큰 정보")
         val token = MainActivity.prefs.getString("registrationToken", "")
         if (token.isNotBlank()) {
@@ -66,17 +64,55 @@ object MemberService {
         }
     }
 
+    fun signout(
+        isSuccess: (Boolean) -> Unit = {}
+
+    ) {
+        try {
+            Log.d("response", "signout--화원탈퇴 시도")
+            memberApi.signOut()
+                .enqueue(object : Callback<Unit> {
+                    override fun onResponse(call: Call<Unit>, response: Response<Unit>) {
+                        if (response.isSuccessful) {
+                            Log.d("response", "회원탈퇴 성공${response}")
+                            isSuccess(true)
+                            prefs.reset()
+
+                        } else {
+                            Log.d("response", "회원탈퇴 실패1${response}")
+                            Log.d("response", "회원탈퇴 실패1${response.body()}")
+                            Log.d("response", "회원탈퇴 실패1${response.errorBody()}")
+                            isSuccess(false)
+                        }
+                    }
+
+                    override fun onFailure(call: Call<Unit>, t: Throwable) {
+                        Log.d("disconnection", "회원탈퇴 실패하였습니다..")
+                        Log.d("disconnection", "회원탈퇴 원인 : ${t.message}..")
+                        isSuccess(false)
+                    }
+
+                })
+        } catch (e: Exception) {
+            Log.d("response", "회원탈퇴 아예안됨?")
+            println(e.message)
+        }
+    }
+
     fun signup(
-        request : SignupRequest,
-        isSuccess : (Boolean) -> Unit = {}
+        request: SignupRequest,
+        isSuccess: (Boolean) -> Unit = {}
     ) {
         try {
             Log.d("가입", "signup ==> 회원가입시도")
-            memberApi.signup( request ).enqueue(object : Callback<Unit> {
-                override fun onResponse(call: Call<Unit>, response: Response<Unit>) {
-                    Log.d("response","response")
-                    Log.d("response","${response.code()}")
-                    if(response.isSuccessful) {
+            memberApi.signup(request).enqueue(object : Callback<Unit> {
+                override fun onResponse(
+                    call: Call<Unit>,
+                    response: Response<Unit>
+                ) {
+                    Log.d("response", "response")
+                    Log.d("response", "${response.code()}")
+                    if (response.isSuccessful) {
                         Log.d("success", "회원가입 성공!!!")
 //                         부모 객체에 "성공"이라는 string을 건네줘야한다. 즉 회원가입이 성공했음을 알려야한다. 어떻게??
                         isSuccess(true)
@@ -106,67 +142,68 @@ object MemberService {
     @ExperimentalMaterial3Api
     suspend fun login(
         username: String,
-        password:String,
+        password: String,
         context: Context
-    ) : Boolean {
+    ): Boolean {
 
 
-            Log.d("Start", "login --> 로그인 시도")
-            val response = memberApi.login(
-                LoginRequest(
-                    username = username,
-                    password = password
-                )
+        Log.d("Start", "login --> 로그인 시도")
+        val response = memberApi.login(
+            LoginRequest(
+                username = username,
+                password = password
             )
+        )
 
-            //로그인이 성공하였을경우 -> SUCCESS 200번대
-            if (response.isSuccessful) {
+        //로그인이 성공하였을경우 -> SUCCESS 200번대
+        if (response.isSuccessful) {
 
-                var loginResult = response.body()
-                //sharedPreference에 저장
-                MainActivity.prefs.setString("accessToken", loginResult?.accessToken)
-                MainActivity.prefs.setString("refreshToken", loginResult?.refreshToken)
-                MainActivity.prefs.setString("username",username)
+            var loginResult = response.body()
+            //sharedPreference에 저장
+            MainActivity.prefs.setString("accessToken", loginResult?.accessToken)
+            MainActivity.prefs.setString("refreshToken", loginResult?.refreshToken)
+            MainActivity.prefs.setString("username", username)
 
-                Log.d("login", "[로그인] 성공!")
+            Log.d("login", "[로그인] 성공!")
 
-                return true;
-            }
-            //로그인이 실패하였을 경우 400번대 에러
-            else {
-                val duration = Toast.LENGTH_SHORT
-                var message = ""
+            return true;
+        }
+        //로그인이 실패하였을 경우 400번대 에러
+        else {
+            val duration = Toast.LENGTH_SHORT
+            var message = ""
 
-                val jObjError = JSONObject(response.errorBody()!!.string())
-                val status = jObjError.getString("status")
+            val jObjError = JSONObject(response.errorBody()!!.string())
+            val status = jObjError.getString("status")
 
-                when (status) {
-                    "401" -> {
-                        message = "아이디와 비밀번호를 다시 확인해주세요."
-                    }
-
-                    "403" -> {
-                        message = "회원가입 이메일 인증을 완료해주세요"
-                    }
-                    "404" -> {
-                        message = "가입되지 않은 회원입니다."
-                    }
-
-                    else -> {
-                        message = "내부 서버에 문제가 발생하였습니다. 잠시 후에 다시 시도해주세요"
-                    }
-
+            when (status) {
+                "401" -> {
+                    message = "아이디와 비밀번호를 다시 확인해주세요."
                 }
-                val toast = Toast.makeText(context,message,duration)
-                toast.setGravity(Gravity.TOP, 0, 0)
-                toast.show()
-                return false;
+
+                "403" -> {
+                    message = "회원가입 이메일 인증을 완료해주세요"
+                }
+
+                "404" -> {
+                    message = "가입되지 않은 회원입니다."
+                }
+
+                else -> {
+                    message = "내부 서버에 문제가 발생하였습니다. 잠시 후에 다시 시도해주세요"
+                }
+
             }
+            val toast = Toast.makeText(context, message, duration)
+            toast.setGravity(Gravity.TOP, 0, 0)
+            toast.show()
+            return false;
+        }
     }
 
     fun findId(email: String, context: Context, navController: NavController) {
         try {
-            Log.d("test","아이디 찾기 위해 이메일 보냄")
+            Log.d("test", "아이디 찾기 위해 이메일 보냄")
             memberApi.findId(
                 FindIdRequest(
                     email = email
@@ -174,11 +211,12 @@ object MemberService {
             ).enqueue(object : Callback<FindIdResponseDto> {
                 override fun onResponse(
                     call: Call<FindIdResponseDto>,
-                    response: Response<FindIdResponseDto>) {
+                    response: Response<FindIdResponseDto>
+                ) {
                     Log.d("response", "${response.body()}")
-                    Log.d("response","${response.code()}")
-                    Log.d("response","확인")
-                    Log.d("response","${call}")
+                    Log.d("response", "${response.code()}")
+                    Log.d("response", "확인")
+                    Log.d("response", "${call}")
 //                    retrofit에서 제공하는 response의 isSuccessful값이 true라면 아래 실행
                     if (response.isSuccessful) {
                         Toast.makeText(
@@ -196,6 +234,7 @@ object MemberService {
                         ).show()
                     }
                 }
+
                 //서버 요청이 자체가 실패한 경우 아래 onFailure가 실행된다.
                 override fun onFailure(call: Call<FindIdResponseDto>, t: Throwable) {
                     showDialog("알림", "뭔가 잘못됐나봐요", context, navController)
@@ -206,7 +245,7 @@ object MemberService {
 
             )
 //          try에서 예외가 발생하면 호춯된다.
-        } catch ( e: Exception ) {
+        } catch (e: Exception) {
             Log.d("response", "예외발생")
             showDialog("알림", "뭔가 잘못됐나봐요", context, navController)
         }
@@ -257,17 +296,17 @@ object MemberService {
         }
     }
 
-//    @OptIn(ExperimentalGlideComposeApi::class)
+    //    @OptIn(ExperimentalGlideComposeApi::class)
     @ExperimentalMaterial3Api
-    suspend fun logOut() : Boolean {
-        try{
+    suspend fun logOut(): Boolean {
+        try {
             val response = memberApi.logOut()
             Log.d("response", "로그아웃")
             Log.d("response", "${response.body()}")
             Log.d("response", "${response.code()}")
             MainActivity.prefs.reset()
             return response.code() in 200..300
-        } catch(e: Exception) {
+        } catch (e: Exception) {
             Log.d("fail", "로그아웃 예외 발생")
             return false
         }

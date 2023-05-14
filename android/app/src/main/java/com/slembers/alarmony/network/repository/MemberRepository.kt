@@ -39,10 +39,10 @@ interface MemberRepository {
         @Body registTokenDto: RegistTokenDto
     ): Response<Unit>
 
-    @GET("members")
-    fun getMember(
-        @Header("token") token: String?
-    ): Call<Member>
+//    @GET("members")
+//    fun getMember(
+//        @Header("token") token : String?
+//    ) : Call<Member>
 
     @POST("members/login")
     suspend fun login(
@@ -80,7 +80,7 @@ interface MemberRepository {
     ): Response<GetMyInfoDto>
 
 
-    @DELETE("member")
+    @DELETE("members")
     fun signOut(
     ): Call<Unit>
 

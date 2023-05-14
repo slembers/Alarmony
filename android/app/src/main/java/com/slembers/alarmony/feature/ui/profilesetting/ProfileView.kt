@@ -5,6 +5,9 @@ import android.net.Uri
 import android.app.Activity
 import android.content.Intent
 import android.util.Log
+import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -40,11 +43,13 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
+import com.slembers.alarmony.MainActivity
 import com.slembers.alarmony.feature.screen.MemberActivity
 import com.slembers.alarmony.network.repository.MemberService
 import com.slembers.alarmony.feature.ui.common.AnimationRotation
 import com.slembers.alarmony.feature.ui.common.ImageUploader
 import com.slembers.alarmony.network.repository.MemberService.logOut
+import com.slembers.alarmony.network.repository.MemberService.signout
 import com.slembers.alarmony.util.UriUtil.uriToMultiPart
 import com.slembers.alarmony.util.showToast
 import kotlinx.coroutines.CoroutineScope
@@ -69,6 +74,13 @@ fun ProfileView(navController: NavController = rememberNavController()) {
     val mySelectedUri = remember { mutableStateOf<Uri>(Uri.EMPTY) }
     // 로딩화면을 보여주는 변수
     val loading = remember { mutableStateOf(false) }
+
+    val launcher = rememberLauncherForActivityResult(
+        ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            Log.d("AlarmListScreen","[알람목록] Activity 이동성공")
+        }
+    }
 
     fun changeNickname(changeName: String) {
         CoroutineScope(Dispatchers.IO).launch {
@@ -241,7 +253,19 @@ fun ProfileView(navController: NavController = rememberNavController()) {
                 Text(text = "로그아웃 |")
             }
 
-            TextButton(onClick = { /* 아이디 찾기 버튼 클릭 시 처리할 동작 */ }) {
+            TextButton(onClick =  { signout()
+            {isSuccess ->
+                if (isSuccess) {
+                    Log.d("response","회원탈퇴 성공~~~")
+                    Toast.makeText(context, "회원탈퇴 성공!", Toast.LENGTH_LONG).show()
+                    val intent = Intent(context, MainActivity::class.java)
+                    launcher.launch(intent)
+                } else {
+                    Log.d("response","회원탈퇴 실패ㅜㅜ")
+                    Toast.makeText(context, "회원탈퇴 실패...", Toast.LENGTH_LONG).show()
+                }
+            }
+            }) {
                 Text(
                     text = "회원탈퇴",
                     style = MaterialTheme.typography.body1.copy(color = Color.Red)
