@@ -8,6 +8,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.navigation.NavController
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.slembers.alarmony.MainActivity
+import com.slembers.alarmony.MainActivity.Companion.prefs
 import com.slembers.alarmony.feature.common.NavItem
 import com.slembers.alarmony.feature.ui.common.showDialog
 import com.slembers.alarmony.model.db.ChangeNicknameRequestDto
