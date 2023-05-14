@@ -28,8 +28,8 @@ fun GroupDetailsBoardBtn(
 ) {
     TextButton(
         colors = ButtonDefaults.buttonColors(
-            contentColor = AlarmisCheck(isCheck, "#00B4D8".toColor(), MaterialTheme.colorScheme.background),
-            containerColor = AlarmisCheck(isCheck, MaterialTheme.colorScheme.background, "#00B4D8".toColor())
+            contentColor = AlarmisCheck(isCheck, "#EDEDED".toColor(),"#000000".toColor().copy(alpha = 0.7f)),
+            containerColor = AlarmisCheck(isCheck, "#00B4D8".toColor(), "#C9C9C9".toColor())
         ),
         onClick = onClick,
         modifier = modifier,

@@ -89,4 +89,8 @@ class GroupViewModel : ViewModel() {
         _volumn.postValue(volume)
     }
 
+    fun updateTimePicker(hour : Int, minute : Int) {
+        _alarmTime.postValue(TimePickerState(hour, minute, false))
+    }
+
 }
