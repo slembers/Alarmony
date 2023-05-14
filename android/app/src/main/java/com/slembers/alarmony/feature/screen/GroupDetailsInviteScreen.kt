@@ -1,18 +1,24 @@
 package com.slembers.alarmony.feature.screen
 
 import android.util.Log
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.AlertDialog
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.outlined.Check
 import androidx.compose.material.icons.outlined.Close
 import androidx.compose.material3.Button
@@ -20,17 +26,24 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -48,6 +61,7 @@ import com.slembers.alarmony.feature.ui.group.GroupBottomButtom
 import com.slembers.alarmony.feature.ui.group.GroupToolBar
 import com.slembers.alarmony.feature.ui.groupInvite.GroupDefalutProfile
 import com.slembers.alarmony.feature.ui.groupInvite.SearchInviteMember
+import com.slembers.alarmony.feature.ui.groupInvite.SearchMember
 import com.slembers.alarmony.model.db.Member
 import com.slembers.alarmony.network.service.GroupService
 import com.slembers.alarmony.viewModel.GroupDetailsViewModel
@@ -67,11 +81,14 @@ fun DetailsInviteScreen(
 ) {
 
     val search : GroupSearchViewModel = viewModel()
+    val searchMembers = search.searchMembers.observeAsState()
     var currentMembers = remember { mutableStateOf<MutableList<Member>>(mutableListOf()) }
     val checkMembers = search.checkedMembers.observeAsState()
+    // 검색 단어 저장 변수
+    var text by remember { mutableStateOf("") }
     // Dialog 관련 상태변수
-    val isClosed = remember { mutableStateOf(false)  }
-    val openDialog = remember { mutableStateOf(true)  }
+    var isClosed by remember { mutableStateOf(false)  }
+    var openDialog by remember { mutableStateOf(true)  }
 
     LaunchedEffect(Unit) {
         val _member = viewModel.updateCurrentMember(alarmId!!)
@@ -89,7 +106,8 @@ fun DetailsInviteScreen(
         bottomBar = {
             GroupBottomButtom(
                 text = "저장",
-                onClick = { isClosed.value = true }
+                enabled = true,
+                onClick = { isClosed = true }
             )
         },
         content = { innerPadding ->
@@ -129,16 +147,101 @@ fun DetailsInviteScreen(
                             }
                         }
                     )
-                    SearchInviteMember(currentMembers = currentMembers.value )
+                    CardBox(
+                        title = { CardTitle(title = "검색") },
+                        content = {
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(
+                                        start = 20.dp,
+                                        top = 0.dp,
+                                        bottom = 10.dp,
+                                        end = 20.dp
+                                    )
+                            ) {
+                                BasicTextField(
+                                    value = text,
+                                    onValueChange = {
+                                        text = it
+                                        search.searchApi(keyword = text)
+                                    },
+                                    singleLine = true,
+                                    textStyle = TextStyle(
+                                        color = Color.Black,
+                                        fontSize = 20.sp,
+                                        fontFamily = FontFamily.Monospace,
+                                        fontWeight = FontWeight.Bold,
+                                        fontStyle = FontStyle.Normal,
+                                    ),
+                                    modifier = Modifier
+                                        .height(50.dp)
+                                        .fillMaxWidth(),
+                                    decorationBox = { innerTextField ->
+                                        Row(
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                                .background(
+                                                    Color(0xffD9D9D9),
+                                                    shape = MaterialTheme.shapes.extraLarge
+                                                )
+                                                .padding(horizontal = 16.dp), // inner padding
+                                            verticalAlignment = Alignment.CenterVertically
+                                        ) {
+                                            Icon(
+                                                imageVector = Icons.Default.Search,
+                                                contentDescription = "Favorite icon",
+                                                tint = Color.DarkGray
+                                            )
+                                            Spacer(modifier = Modifier.width(width = 8.dp))
+                                            if (text.isEmpty()) {
+                                                Text(
+                                                    text = "닉네임을 입력새해주세요.",
+                                                    modifier = Modifier.fillMaxWidth(1f),
+                                                    fontSize = 18.sp,
+                                                    fontWeight = FontWeight.Normal,
+                                                    color = Color.LightGray
+                                                )
+                                            }
+                                            innerTextField()
+                                        }
+                                    }
+                                )
+
+                                LazyColumn() {
+                                    items(searchMembers.value ?: mutableListOf()) {
+                                        val member = Member(
+                                            nickname = it.nickname,
+                                            profileImg = it.profileImg,
+                                            isNew = true
+                                        )
+                                        // 현재 인원에 포함되면 안됨
+                                        if(!currentMembers.value.contains(member)) {
+                                            SearchMember(
+                                                member = it,
+                                                isCheck = checkMembers.value?.contains(member)!!,
+                                                onCheckedChange = {
+                                                    if (checkMembers.value!!.contains(it))
+                                                        search.removeCheckedMember(it)
+                                                    else
+                                                        search.addCurrentMember(it)
+                                                }
+                                            )
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    )
                 }
             )
-            if(isClosed.value) {
-                if (openDialog.value) {
+            if(isClosed) {
+                if (openDialog) {
                     AlertDialog(
                         shape = RoundedCornerShape(20.dp),
                         modifier = Modifier.width(320.dp),
                         onDismissRequest = {
-                            isClosed.value = false
+                            isClosed = false
                         },
                         title = {
                             Column() {
@@ -171,7 +274,7 @@ fun DetailsInviteScreen(
                                     .fillMaxWidth()
                             ) {
                                 Button(
-                                    onClick = { isClosed.value = false },
+                                    onClick = { isClosed = false },
                                     colors = ButtonDefaults.buttonColors(containerColor = "#C93636".toColor())
                                 ) {
                                     Icon(
@@ -184,7 +287,7 @@ fun DetailsInviteScreen(
                                 }
                                 Button(
                                     onClick = {
-                                        openDialog.value = false
+                                        openDialog = false
                                         val members = checkMembers.value?.map {
                                             it.nickname
                                         }?.toList()
