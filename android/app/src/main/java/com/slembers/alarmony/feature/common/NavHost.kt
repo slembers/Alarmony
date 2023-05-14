@@ -23,7 +23,6 @@ import com.slembers.alarmony.feature.screen.AlarmListScreen
 import com.slembers.alarmony.feature.screen.DetailsInviteScreen
 import com.slembers.alarmony.feature.screen.GroupDetailsScreen
 import com.slembers.alarmony.feature.user.AccountMtnc
-import com.slembers.alarmony.feature.user.ProfileSetting
 import com.slembers.alarmony.viewModel.GroupDetailsViewModel
 
 
@@ -53,9 +52,6 @@ fun NavController(
         // 알림 목록 조회 페이지
         composable(route = NavItem.NotiListScreen.route) {
             NotiListScreen(navController)
-        }
-        composable(NavItem.ProfileActivity.route) {
-            ProfileSetting(navController = navController)
         }
 
         composable(NavItem.AccountMtnc.route) {

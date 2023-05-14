@@ -65,10 +65,7 @@ sealed class NavItem (
         route = "signup_screen",
         title = "signup_screen",
         image = Icons.Default.Home)
-    object ProfileActivity : NavItem(
-        route = "profile_screen",
-        title = "profile_screen",
-        image = Icons.Default.Home)
+
     object AccountMtnc : NavItem(
         route = "accountmtnc_screen",
         title = "accountmtnc_screen",
