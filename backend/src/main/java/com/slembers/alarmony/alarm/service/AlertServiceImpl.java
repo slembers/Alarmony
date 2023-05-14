@@ -1,15 +1,15 @@
 package com.slembers.alarmony.alarm.service;
 
+import com.google.firebase.messaging.AndroidConfig;
+import com.google.firebase.messaging.AndroidConfig.Priority;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.Message;
-import com.google.firebase.messaging.Notification;
 import com.slembers.alarmony.alarm.dto.AlarmDetailDto;
 import com.slembers.alarmony.alarm.dto.AlertDto;
 import com.slembers.alarmony.alarm.dto.InviteMemberSetToGroupDto;
 import com.slembers.alarmony.alarm.dto.response.AlarmInviteResponseDto;
 import com.slembers.alarmony.alarm.dto.response.AlertListResponseDto;
 import com.slembers.alarmony.alarm.entity.*;
-import com.slembers.alarmony.alarm.exception.AlarmErrorCode;
 import com.slembers.alarmony.alarm.exception.AlarmRecordErrorCode;
 import com.slembers.alarmony.alarm.exception.AlertErrorCode;
 import com.slembers.alarmony.alarm.exception.MemberAlarmErrorCode;
@@ -304,10 +304,15 @@ public class AlertServiceImpl implements AlertService {
      */
     private void sendAlarmTo(String targetToken, Long alarmId) {
         try {
+            AndroidConfig config = AndroidConfig.builder()
+                .setPriority(Priority.HIGH)
+                .build();
+
             // 메시지 설정
             Message message = Message.builder()
                 .putData("type", "ALARM")
                 .putData("alarmId", String.valueOf(alarmId))
+                .setAndroidConfig(config)
                 .setToken(targetToken)
                 .build();
 
