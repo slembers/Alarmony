@@ -67,8 +67,8 @@ import kotlinx.coroutines.launch
 //사용되지 않아서가 아니라 실험적이고 불안정한 기능이기 때문이다.
 @Composable
 @ExperimentalMaterial3Api
-@Preview(showBackground = true)
-fun LoginScreen(navController: NavController = rememberNavController()) {
+fun LoginScreen(navController: NavController) {
+    Log.d("email", "LoginScreen called")
 //    val checkedState = remember { mutableStateOf(false) }
     val context = LocalContext.current
     val scaffoldState = rememberScaffoldState()
@@ -135,7 +135,7 @@ fun LoginScreen(navController: NavController = rememberNavController()) {
 
                 )
             if (isIdError.value) {
-                Log.d("idError", isIdError.value.toString())
+                Log.d("idError", isIdError.value.toString()+"아디디")
                 Text(
                     text = "영소문, 숫자를 조합해서 입력해주세요.(4~20자) ",
                     color = MaterialTheme.colors.error,
@@ -177,6 +177,7 @@ fun LoginScreen(navController: NavController = rememberNavController()) {
                 isError = isPasswordError.value,
                 )
             if (isPasswordError.value) {
+                Log.d("idError", isPasswordError.value.toString()+"비번")
                 Text(
                     text = "영문, 숫자를 조합해서 입력해주세요. (8-16자) ",
                     color = MaterialTheme.colors.error,
@@ -259,6 +260,7 @@ fun LoginScreen(navController: NavController = rememberNavController()) {
                 colors = ButtonDefaults.textButtonColors(
                     contentColor = Black // Set the font color of the button
                 )
+
             ) {
                 Text(text = "비밀번호 찾기")
             }
@@ -276,7 +278,7 @@ fun mascott(drawing:Int) {
         painter = painterResource(drawing),
         contentDescription = "mascott image",
         modifier = Modifier
-            .padding(top = 130.dp , bottom = 20.dp)
+            .padding(top = 100.dp , bottom = 20.dp)
     )
 
 }
