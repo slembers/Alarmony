@@ -10,7 +10,9 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.slembers.alarmony.model.db.Member
+import com.slembers.alarmony.model.db.SoundItem
 import com.slembers.alarmony.model.db.dto.MemberDto
+import com.slembers.alarmony.util.groupSoundInfos
 import javax.inject.Inject
 
 @ExperimentalMaterial3Api
@@ -23,7 +25,7 @@ class GroupViewModel : ViewModel() {
     private val _currentWeeks = MutableLiveData<MutableMap<String,Boolean>>()
     private val _members = mutableStateListOf<Member>()
     private val _currentMembers = MutableLiveData<MutableList<Member>>()
-    private val _sound = MutableLiveData("노래제목")
+    private val _sound = MutableLiveData("")
     private val _vibrate = MutableLiveData(true)
     private val _volumn = MutableLiveData(7f)
 

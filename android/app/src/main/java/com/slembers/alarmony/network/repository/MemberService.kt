@@ -2,35 +2,42 @@ package com.slembers.alarmony.network.repository
 
 import android.content.Context
 import android.util.Log
+import android.view.Gravity
+import android.widget.Toast
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.navigation.NavController
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.slembers.alarmony.MainActivity
-import com.slembers.alarmony.feature.common.NavItem
 import com.slembers.alarmony.feature.ui.common.showDialog
-import com.slembers.alarmony.model.db.ChangeMyInfoRequest
+import com.slembers.alarmony.model.db.ChangeNicknameRequestDto
 import com.slembers.alarmony.model.db.FindIdRequest
 import com.slembers.alarmony.model.db.FindPasswordRequest
 import com.slembers.alarmony.model.db.LoginRequest
+import com.slembers.alarmony.model.db.ModifyMemberInfoDto
 import com.slembers.alarmony.model.db.RegistTokenDto
 import com.slembers.alarmony.model.db.SignupRequest
+import com.slembers.alarmony.model.db.TokenReissueRequest
 import com.slembers.alarmony.model.db.dto.FindIdResponseDto
 import com.slembers.alarmony.model.db.dto.FindPasswordResponseDto
+import com.slembers.alarmony.model.db.dto.GetMyInfoDto
+import com.slembers.alarmony.model.db.dto.NicknameResponseDto
 import com.slembers.alarmony.model.db.dto.SignupResponseDto
 import com.slembers.alarmony.network.api.AlarmonyServer
+import org.json.JSONObject
+import okhttp3.MultipartBody
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+
 import com.slembers.alarmony.model.db.dto.CheckEmailResponseDto
 import com.slembers.alarmony.model.db.dto.CheckIdResponseDto
 import com.slembers.alarmony.model.db.dto.CheckNicnameResponseDto
-import com.slembers.alarmony.model.db.dto.MyInfoResponse
-import okhttp3.MultipartBody
 
 @ExperimentalMaterial3Api
 @ExperimentalGlideComposeApi
 object MemberService {
     val memberApi = AlarmonyServer().memberApi
+
     suspend fun putRegistTokenAfterSignIn(): Unit {
         Log.d("INFO", "동적으로 가져오는 토큰 정보")
         val token = MainActivity.prefs.getString("registrationToken", "")
@@ -102,65 +109,66 @@ object MemberService {
     @ExperimentalMaterial3Api
     suspend fun login(
         username: String,
-        password: String
+        password: String,
+        context: Context
     ): Boolean {
-        try {
-            Log.d("Start", "login --> 로그인 시도")
-            val response = memberApi.login(
-                LoginRequest(
-                    username = username,
-                    password = password
-                )
+
+
+        Log.d("Start", "login --> 로그인 시도")
+        val response = memberApi.login(
+            LoginRequest(
+                username = username,
+                password = password
             )
+        )
 
-            Log.d("response", "[로그인] code : ${response.code()}")
-            Log.d("response", "[로그인] 결과 : ${response.body()}")
+        //로그인이 성공하였을경우 -> SUCCESS 200번대
+        if (response.isSuccessful) {
+
             var loginResult = response.body()
+            //sharedPreference에 저장
+            MainActivity.prefs.setString("accessToken", loginResult?.accessToken)
+            MainActivity.prefs.setString("refreshToken", loginResult?.refreshToken)
+            MainActivity.prefs.setString("username", username)
 
-            if (response.isSuccessful && response.body() != null) {
+            Log.d("login", "[로그인] 성공!")
 
-                //로그인이 성공했을 경우 로직
-                if (loginResult!!.status == null) {
-
-                    Log.d("response", "[로그인] 성공!")
-                    Log.d("response", "[로그인] access토큰 : ${loginResult?.accessToken}")
-                    Log.d("response", "[로그인] refresh토큰 : ${loginResult?.refreshToken}")
-                    MainActivity.prefs.setString("accessToken", loginResult?.accessToken)
-                    MainActivity.prefs.setString("refreshToken", loginResult?.refreshToken)
-//                    Toast.makeText(context, "정상적으로 로그인에 성공하였습니다.",Toast.LENGTH_SHORT).show()
-                    Log.d("Exit", "login <-- 로그인 종료")
-                    return true
-
-                } else if (loginResult!!.status!! == "401") {
-                    Log.d("response", "[로그인] 비밀번호가 일치하지 않는다.")
-//                    Toast.makeText(context, "비밀번호가 일치하지 않는다.",Toast.LENGTH_SHORT).show()
-                } else if (loginResult!!.status!! == "403") {
-                    Log.d("response", "[로그인] 이메일 정보를 확인해 주세요.")
-//                    Toast.makeText(context, "이메일을 확인해주세요.",Toast.LENGTH_SHORT).show()
-                } else if (loginResult.status!! == "404") {
-                    Log.d("response", "[로그인] 회원이 존재하지 않음.")
-//                    Toast.makeText(context, "회원이 존재하지 않습니다.",Toast.LENGTH_SHORT).show()
-                } else {
-                    Log.d("response", "[로그인] 기타 에러입니다.")
-                }
-            } else {
-                Log.d("response", "[로그인] access토큰 : ${loginResult?.accessToken}")
-                Log.d("response", "[로그인] refresh토큰 : ${loginResult?.refreshToken}")
-                Log.d("response", "[로그인] 로그인에 실패하였습니다.")
-//                Toast.makeText(context, "로그인 정보가 정확하지 않습니다.",Toast.LENGTH_SHORT).show()
-            }
-
-
-        } catch (e: Exception) {
-            Log.i("response", "[로그인] 에러가 발생하여 실패하였습니다..")
-            Log.i("response", "문제 원인 : ${e.message}")
-//            Toast.makeText(context, "에러가 발생하였습니다.",Toast.LENGTH_SHORT).show()
-            println(e.message)
+            return true;
         }
-        return false
+        //로그인이 실패하였을 경우 400번대 에러
+        else {
+            val duration = Toast.LENGTH_SHORT
+            var message = ""
+
+            val jObjError = JSONObject(response.errorBody()!!.string())
+            val status = jObjError.getString("status")
+
+            when (status) {
+                "401" -> {
+                    message = "아이디와 비밀번호를 다시 확인해주세요."
+                }
+
+                "403" -> {
+                    message = "회원가입 이메일 인증을 완료해주세요"
+                }
+
+                "404" -> {
+                    message = "가입되지 않은 회원입니다."
+                }
+
+                else -> {
+                    message = "내부 서버에 문제가 발생하였습니다. 잠시 후에 다시 시도해주세요"
+                }
+
+            }
+            val toast = Toast.makeText(context, message, duration)
+            toast.setGravity(Gravity.TOP, 0, 0)
+            toast.show()
+            return false;
+        }
     }
 
-    fun findId(email: String, context: Context, navController: NavController, ) {
+    fun findId(email: String, context: Context, navController: NavController) {
         try {
             Log.d("test", "아이디 찾기 위해 이메일 보냄")
             memberApi.findId(
@@ -192,7 +200,7 @@ object MemberService {
                 }
 
                 //서버 요청이 자체가 실패한 경우 아래 onFailure가 실행된다.
-                override fun onFailure(call: Call<FindIdResponseDto>, t: Throwable, ) {
+                override fun onFailure(call: Call<FindIdResponseDto>, t: Throwable) {
                     showDialog("알림", "뭔가 잘못됐나봐요", context, navController)
                     Log.d("response", "서버 요청이 실패")
                     Log.d("response", "${t}")
@@ -248,41 +256,18 @@ object MemberService {
 
     //    @OptIn(ExperimentalGlideComposeApi::class)
     @ExperimentalMaterial3Api
-    fun logOut(context: Context, navController: NavController) {
+    suspend fun logOut(): Boolean {
         try {
-            memberApi.logOut().enqueue(object : Callback<Unit> {
-                override fun onResponse(call: Call<Unit>, response: Response<Unit>) {
-                    if (response.isSuccessful) {
-                        Log.d("response", "로그아웃")
-                        Log.d("response", "${response.body()}")
-                        Log.d("response", "${response.code()}")
-                        showDialog("알림", "로그아웃되었어요!", context, navController)
-                        navController.navigate(NavItem.LoginScreen.route)
-                        MainActivity.prefs.reset()
-
-                    } else {
-                        Log.d("response", "로그아웃")
-                        Log.d("response", "${response.body()}")
-                        Log.d("response", "${response}")
-                        Log.d("response", "${response.code()}")
-                        showDialog("알림", "로그아웃실패...", context, navController)
-//                        navController.navigate(NavItem.LoginScreen.route)
-//                        MainActivity.prefs.reset()
-                    }
-                }
-                override fun onFailure(call: Call<Unit>, t: Throwable) {
-                    Log.d("fail", "비밀번호찾기 실패")
-                    showDialog("알림", "뭔가 잘못됐나봐요", context, navController)
-                }
-            })
-
+            val response = memberApi.logOut()
+            Log.d("response", "로그아웃")
+            Log.d("response", "${response.body()}")
+            Log.d("response", "${response.code()}")
+            MainActivity.prefs.reset()
+            return response.code() in 200..300
         } catch (e: Exception) {
             Log.d("fail", "로그아웃 예외 발생")
-            showDialog("알림", "뭔가 잘못됐나봐요", context, navController)
-
+            return false
         }
-
-
 //        fun signOut(context:Context, navController: NavController)
     }
 
@@ -364,90 +349,6 @@ object MemberService {
         }
     }
 
-    fun getMyInfo(
-        context: Context,
-        navController: NavController,
-        username: (String?) -> Unit = {},
-        email: (String?) -> Unit = {},
-        profileImage: (String?) -> Unit = {},
-        nickname: (String?) -> Unit = {},
-
-        ) {
-        try {
-            memberApi.getMyInfo(
-
-            ).enqueue(object : Callback<MyInfoResponse> {
-                override fun onResponse(
-                    call: Call<MyInfoResponse>,
-                    response: Response<MyInfoResponse>
-                ) {
-                    if (response.isSuccessful) {
-                        Log.d("response", "내 프로필 정보 가져오기")
-                        Log.d("response", "내 프로필 정보${response.body()}")
-                        Log.d("response", "내 프로필 정보${response.body()?.username}")
-                        username(response.body()?.username)
-                        email(response.body()?.email)
-                        profileImage(response.body()?.profileImg)
-                        nickname(response.body()?.nickname)
-
-
-                    } else {
-                        Log.d("response", "내 프로필 가져오기 실패")
-                        Log.d("response", "내 프로필 정보${response.body()}")
-
-                        showDialog("알림", "존재하지 않는 회원입니다.", context, navController)
-                        navController.navigateUp()
-
-                    }
-                }
-
-                override fun onFailure(call: Call<MyInfoResponse>, t: Throwable) {
-                    Log.d("fail", "프로필 실패")
-                    showDialog("알림", "뭔가 잘못되었어요...", context, navController)
-                    navController.navigateUp()
-
-                }
-            })
-        } catch (e: Exception) {
-            Log.d("fail", "프로필 불러오기 예외 발생")
-            showDialog("알림", "뭔가 잘못됐나봐요", context, navController)
-            navController.navigateUp()
-
-        }
-    }
-
-    data class MyFormData(
-        val nickname: String = "",
-        val profileImage: MultipartBody.Part? = null
-    )
-
-    fun userProfoileEditSubmit(myFormData: Any) {
-        try {
-            memberApi.userProfoileEditSubmit(
-                myFormData as ChangeMyInfoRequest
-            ).enqueue(object : Callback<Unit> {
-                override fun onResponse(
-                    call: Call<Unit>, response: Response<Unit>
-                ) {
-                    if (response.isSuccessful) {
-                        Log.d("response", "프로필 수정 반응성공")
-                        Log.d("response", "프로필 수정 ${myFormData}")
-                    } else {
-                        Log.d("response", "프로필 수정 반응실패")
-
-                    }
-                }
-
-                override fun onFailure(call: Call<Unit>, t: Throwable) {
-                    Log.d("fail", "실패")
-                }
-            })
-
-        } catch (e: Exception) {
-            Log.d("fail", "실패2")
-        }
-    }
-
     fun checkNickname(
         nickname: String,
         isSuccess: (Boolean) -> Unit = {}
@@ -486,5 +387,111 @@ object MemberService {
 
         }
     }
+
+    /**
+     * 토큰 재발급
+     */
+    suspend fun reissueToken(username: String, refreshToken: String): Boolean {
+
+        Log.d("refresh", "토큰 재발급")
+        // 토큰 재발급 API 호출
+        val response = memberApi.refresh(
+            TokenReissueRequest(
+                grantType = "Bearer",
+                username = username,
+                refreshToken = refreshToken,
+            )
+        )
+        //성공 200~300번
+        //성공 시에는 재발급 받은 토큰을 sharedPreference에 저장한다.
+        if (response.isSuccessful) {
+            Log.d("refresh", "액세스 토큰" + response.body()?.accessToken)
+            Log.d("refresh", "리프레시 토큰" + response.body()?.refreshToken)
+
+            MainActivity.prefs.setString("accessToken", response.body()?.accessToken)
+            MainActivity.prefs.setString("refreshToken", response.body()?.refreshToken)
+
+            return true;
+        } else {
+            //실패 시에는 로그인 만료 메세지를 보내주고 로그아웃 시킨다.
+            return false
+        }
+        //실패 400번
+    }
+
+    fun modifyMemberInfo(
+        nickname: String,
+        imgProfileFile: MultipartBody.Part
+    ) {
+        try {
+            memberApi.modifyMemberInfo(
+                ModifyMemberInfoDto(
+                    nickname = nickname,
+                    imgProfileFile = imgProfileFile
+                )
+            ).enqueue(object : Callback<Unit> {
+                override fun onResponse(
+                    call: Call<Unit>,
+                    response: Response<Unit>
+                ) {
+                    if (response.isSuccessful) {
+                        Log.d("response", " 정보 수정 성공")
+                    } else {
+                        Log.d("response", " 내부 로직에서 실패")
+                    }
+                }
+
+                override fun onFailure(call: Call<Unit>, t: Throwable) {
+                    Log.d("response", "실패 : $t")
+                }
+            })
+        } catch (e: Exception) {
+            Log.d("response", " 실패 : $e")
+        }
+    }
+
+    suspend fun modifyMemberImage(
+        imgProfileFile: MultipartBody.Part
+    ): String? {
+        return try {
+            val imageResponseDto = memberApi.modifyMemberImage(
+                imgProfileFile = imgProfileFile
+            )
+            Log.d("changeImage", "이미지 정보 : ${imageResponseDto.body()}.")
+            imageResponseDto.body()?.profileImgUrl
+        } catch (e: Exception) {
+            Log.d("response", " 이미지 재로딩 실패 : $e")
+            null
+        }
+    }
+
+    suspend fun modifyMemberNickname(
+        changeName: String
+    ): NicknameResponseDto? {
+        return try {
+            val nicknameResponseDto = memberApi.modifyMemberNickname(
+                ChangeNicknameRequestDto(
+                    changeName = changeName
+                )
+            )
+            Log.d("changeName", "닉네임 요청 정보 : ${nicknameResponseDto.body()?.nickname}.")
+            nicknameResponseDto.body()
+        } catch (e: Exception) {
+            Log.d("response", " 닉네임 요청 실패 : $e")
+            null
+        }
+    }
+
+    suspend fun getMyInfo(): GetMyInfoDto? {
+        return try {
+            val myInfo = memberApi.getMyInfo()
+            Log.d("getmyinfo", "내 정보 : ${myInfo.body()}.")
+            myInfo.body()
+        } catch (e: Exception) {
+            Log.d("getmyinfo", "내 정보 가져오기에서 오류가 발생했습니다.")
+            null
+        }
+    }
 }
+
 

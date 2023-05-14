@@ -10,6 +10,7 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.background
 import androidx.compose.foundation.focusable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
@@ -29,6 +30,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.TimeInput
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -57,6 +59,7 @@ import com.slembers.alarmony.feature.common.ui.compose.GroupSubjet
 import com.slembers.alarmony.feature.common.ui.compose.GroupTitle
 import com.slembers.alarmony.feature.common.ui.theme.backgroundColor
 import com.slembers.alarmony.feature.common.ui.theme.toColor
+import com.slembers.alarmony.feature.ui.common.AnimationRotation
 import com.slembers.alarmony.feature.ui.common.CommonDialog
 import com.slembers.alarmony.feature.ui.group.GroupBottomButtom
 import com.slembers.alarmony.feature.ui.group.GroupInvite
@@ -66,6 +69,7 @@ import com.slembers.alarmony.feature.ui.group.GroupTypeButton
 import com.slembers.alarmony.feature.ui.group.GroupVolume
 import com.slembers.alarmony.model.db.dto.MemberDto
 import com.slembers.alarmony.network.service.GroupService
+import com.slembers.alarmony.util.groupSoundInfos
 import com.slembers.alarmony.viewModel.GroupViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -83,6 +87,7 @@ class GroupActivity : AppCompatActivity() {
         setContent {
             val navController : NavHostController = rememberNavController()
             val viewModel by viewModels<GroupViewModel>()
+            viewModel.onChangeSound(groupSoundInfos()[0].soundName)
             NavHost(
                 navController = navController,
                 startDestination = NavItem.Group.route
@@ -127,6 +132,7 @@ fun GroupScreen(
     val soundVolume by viewModel.volumn.observeAsState()
 
     val scrollerState = rememberScrollState()
+    val interaction = remember{ MutableInteractionSource() }
     val context = LocalContext.current
 
     // 초대된 그룹원 확인
@@ -134,6 +140,8 @@ fun GroupScreen(
     Log.d("checked","[그룹생성] 선택한 멤버 : ${checkedMember.toString()}")
     val isClosed = remember { mutableStateOf(false) }
     val alertContext = remember { mutableStateOf("") }
+
+    var loading by remember { mutableStateOf(false) }
 
     Scaffold(
         topBar = {
@@ -146,6 +154,7 @@ fun GroupScreen(
         bottomBar = {
             GroupBottomButtom(
                 text = "저장",
+                enabled = !loading,
                 onClick = {
                     if(title?.isEmpty() == true) {
                         isClosed.value = true
@@ -154,11 +163,12 @@ fun GroupScreen(
                     }
 
                     Log.d("viewmodel:ID","[그룹생성] groupActivity ID : $viewModel")
+                    loading = true
                     CoroutineScope(Dispatchers.Main).launch {
                         val groupId = GroupService.addGroupAlarm(
                             title = title,
                             hour = timePickerState?.hour ?: 7,
-                            minute = timePickerState?.hour ?: 0,
+                            minute = timePickerState?.minute ?: 0,
                             alarmDate = weeks.map {
                                 isWeeks?.getValue(it) ?: false
                             }.toList(),
@@ -192,6 +202,7 @@ fun GroupScreen(
                             }.await()
                             save()
                             if (groupId > 0) (context as Activity).finish()
+                            loading = false
                         }
                     }
                }
@@ -209,7 +220,8 @@ fun GroupScreen(
                     title = { GroupTitle(title = "그룹제목") },
                     content = { GroupSubjet(
                         title = title!!,
-                        onChangeValue = { viewModel.onChangeTitle(it) })
+                        onChangeValue = { viewModel.onChangeTitle(it) },
+                        interactionSource = interaction)
                     }
                 )
                 GroupCard(
@@ -224,7 +236,7 @@ fun GroupScreen(
                                     bottom = 0.dp,
                                     end = 0.dp
                                 )
-                                .focusable(false)
+                                .focusable(true, interaction)
                         )
                     }
                 )
@@ -302,4 +314,7 @@ fun GroupScreen(
             }
         }
     )
+    if(loading) {
+        AnimationRotation()
+    }
 }

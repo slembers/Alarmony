@@ -6,6 +6,7 @@ import android.widget.Toast
 import androidx.core.graphics.convertTo
 import androidx.navigation.NavHostController
 import com.slembers.alarmony.model.db.Group
+import com.slembers.alarmony.model.db.Member
 import com.slembers.alarmony.model.db.Record
 import com.slembers.alarmony.model.db.dto.GroupDto
 import com.slembers.alarmony.model.db.dto.MemberListDto
@@ -200,4 +201,28 @@ object GroupService {
         }
         return false
     }
+
+    suspend fun getGroupMemberList(
+        groupId: Long
+    ) : MutableList<Member> {
+        try {
+            val response = groupApi.getGroupRecord(groupId)
+            val alarmList = response.body()
+            Log.d("getGroup","[알람 상세 초대] 현재 초대 인원 현황 : ${alarmList}")
+            if( alarmList?.alarmList?.isNotEmpty() == true ) {
+                val list = alarmList.alarmList.let {
+                    it.map {
+                        Member(it.nickname,it.profileImg,it.success)
+
+                    }.toMutableList()
+                }
+                return list
+            }
+        } catch( e : Exception) {
+            Log.d("notification","[그룹 알림] 알림 발송 중에 에러가 발생")
+            Log.d("notification","[그룹 알림] 알림 발송 중에 에러 원인 : ${e.message}")
+        }
+        return mutableListOf()
+    }
+
 }

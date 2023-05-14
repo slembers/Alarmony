@@ -1,7 +1,5 @@
 package com.slembers.alarmony.feature.screen
 
-import android.app.Application
-import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.layout.Column
@@ -12,20 +10,23 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.BarChart
 import androidx.compose.material.icons.filled.ExitToApp
+import androidx.compose.material.icons.outlined.GroupAdd
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
@@ -38,6 +39,7 @@ import com.slembers.alarmony.feature.common.CardBox
 import com.slembers.alarmony.feature.common.NavItem
 import com.slembers.alarmony.feature.common.ui.compose.GroupTitle
 import com.slembers.alarmony.feature.common.ui.theme.toColor
+import com.slembers.alarmony.feature.ui.common.AnimationRotation
 import com.slembers.alarmony.feature.ui.common.CommonDialog
 import com.slembers.alarmony.feature.ui.group.GroupToolBar
 import com.slembers.alarmony.feature.ui.groupDetails.GroupDetailsBoard
@@ -48,14 +50,9 @@ import com.slembers.alarmony.viewModel.GroupDetailsViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-
-class GroupDetailsActivity : Fragment() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
-}
 
 @OptIn(ExperimentalCoroutinesApi::class)
 @Preview
@@ -64,6 +61,7 @@ class GroupDetailsActivity : Fragment() {
 @ExperimentalGlideComposeApi
 fun GroupDetailsScreen(
     navController : NavHostController = rememberNavController(),
+    details : GroupDetailsViewModel = viewModel(),
     alarmId: Long? = null
 ) {
 
@@ -74,6 +72,7 @@ fun GroupDetailsScreen(
     }
 
     val alarmDao = AlarmDatabase.getInstance(context).alarmDao()
+    var loading by remember { mutableStateOf(false) }
     val isClosed = remember { mutableStateOf(false) }
     val openDialog = remember { mutableStateOf(true) }
     val alarm = remember{ mutableStateOf<Alarm>(Alarm(
@@ -95,12 +94,6 @@ fun GroupDetailsScreen(
         )
     )}
 
-    var details : GroupDetailsViewModel = viewModel(
-        factory = GroupDetailsViewModel.GroupViewModelFactory(
-            application = context.applicationContext as Application
-        )
-    )
-
     LaunchedEffect(Unit) {
         Log.d("alarmDetails","[알람 상세] 초기화 불러오는 중 ...")
         val repository = AlarmRepository(alarmDao)
@@ -111,6 +104,7 @@ fun GroupDetailsScreen(
         val _record = details.getRecord(alarmId!!)
         Log.d("alarmDetails","[알람 상세] 초기화 불러오는 완료 ...")
         Log.d("alarmDetails","[알람 상세] alarm : $_alarm")
+
         alarm.value = _alarm!!
         record.value = _record
     }
@@ -126,8 +120,20 @@ fun GroupDetailsScreen(
     Scaffold(
         topBar = {
             GroupToolBar(
-                title = NavItem.Group.title,
-                navClick = { navController.popBackStack() }
+                title = NavItem.GroupDetails.title,
+                navClick = { navController.popBackStack() },
+                action = {
+                    if(alarm.value.host) {
+                        IconButton(onClick = { navController.navigate(NavItem.GroupDetailsInvite.route + "/$alarmId") }) {
+                            Icon(
+                                imageVector = Icons.Outlined.GroupAdd,
+                                contentDescription = "groupAdd",
+                                tint = Color.Black,
+                                modifier = Modifier.size(25.dp)
+                            )
+                        }
+                    }
+                }
             )
         },
         containerColor = "#F9F9F9".toColor(),
@@ -145,7 +151,8 @@ fun GroupDetailsScreen(
                 GroupDetailsTitle(alarm.value)
                 GroupDetailsBoard(
                     items = record.value,
-                    groupId = alarmId!!
+                    groupId = alarmId!!,
+                    host = alarm.value.host
                 )
                 CardBox(
                     title = { GroupTitle(
@@ -169,6 +176,7 @@ fun GroupDetailsScreen(
                         contentDescription = null,
                         tint = Color.Red
                     )},
+                    enable = !loading,
                     onClick = { isClosed.value = true }
                 )}
                 )
@@ -180,14 +188,20 @@ fun GroupDetailsScreen(
                     isClosed = isClosed,
                     openDialog = openDialog,
                     accept = {
-                        CoroutineScope(Dispatchers.IO).launch {
+                        loading = true
+                        isClosed.value = false
+                        CoroutineScope(Dispatchers.IO).async {
                             GroupService.deleteGroup(alarmId!!)
                             deleteAlarm(alarmId, context)
                         }
+                        loading = false
                         navController.popBackStack()
                     }
                 )
             }
         }
     )
+    if(loading) {
+        AnimationRotation()
+    }
 }

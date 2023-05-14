@@ -22,6 +22,7 @@ import com.slembers.alarmony.feature.common.ui.compose.GroupDefalutProfile
 import com.slembers.alarmony.feature.common.ui.compose.GroupTitle
 import com.slembers.alarmony.model.db.Member
 import com.slembers.alarmony.model.db.dto.MemberDto
+import kotlinx.serialization.json.JsonNull.content
 
 @Composable
 @ExperimentalMaterial3Api
@@ -33,6 +34,7 @@ fun GroupInvite(
     GroupCard(
         title = { GroupTitle(
             title = NavItem.GroupInvite.title,
+            enable = true,
             content = {
                 Icon(
                     painter = painterResource(id = R.drawable.arrow_forward),

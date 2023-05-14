@@ -4,6 +4,8 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.google.gson.GsonBuilder
 import com.slembers.alarmony.MainActivity
+import com.slembers.alarmony.feature.alarm.AlarmService
+import com.slembers.alarmony.feature.notification.NotiService
 import com.slembers.alarmony.network.repository.GroupRepositroy
 import com.slembers.alarmony.network.repository.MemberRepository
 import com.slembers.alarmony.network.repository.ReportRepository
@@ -13,7 +15,6 @@ import okhttp3.Response
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import retrofit2.create
 
 class AlarmonyServer {
 
@@ -37,6 +38,8 @@ class AlarmonyServer {
         .client(okHttpClient(Appinterceptor()))
         .build()
 
+    val notiApi = retrofit.create(NotiService::class.java)
+    val alarmApi = retrofit.create(AlarmService::class.java)
     val memberApi = retrofit.create(MemberRepository::class.java)
     val groupApi = retrofit.create(GroupRepositroy::class.java)
     val reportApi = retrofit.create(ReportRepository::class.java)

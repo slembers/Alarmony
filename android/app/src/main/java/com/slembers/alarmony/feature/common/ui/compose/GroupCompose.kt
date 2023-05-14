@@ -7,6 +7,8 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.focusable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -71,6 +73,7 @@ import com.slembers.alarmony.feature.common.CardTitle
 import com.slembers.alarmony.feature.common.ui.theme.toColor
 import com.slembers.alarmony.model.db.Member
 import com.slembers.alarmony.viewModel.GroupSearchViewModel
+import kotlinx.serialization.json.JsonNull.content
 import java.util.Locale
 
 @Composable
@@ -104,6 +107,7 @@ fun GroupTitle(
     title : String,
     modifier: Modifier = Modifier,
     content : @Composable() () -> Unit = {},
+    enable : Boolean = false,
     onClick : () -> Unit = {}
 ) {
     Row(
@@ -118,6 +122,7 @@ fun GroupTitle(
                 end = 5.dp
             )
             .clickable(
+                enabled = enable,
                 onClick = onClick
             ),
         verticalAlignment = Alignment.CenterVertically
@@ -150,7 +155,8 @@ fun GroupTitle(
 @ExperimentalGlideComposeApi
 fun GroupSubjet(
     title : String,
-    onChangeValue : (String) -> Unit
+    onChangeValue : (String) -> Unit,
+    interactionSource: MutableInteractionSource
 ) {
 
     OutlinedTextField(
@@ -173,7 +179,8 @@ fun GroupSubjet(
             .border(
                 BorderStroke(1.dp, MaterialTheme.colorScheme.background),
                 MaterialTheme.shapes.extraSmall
-            ),
+            )
+            .focusable(enabled = true, interactionSource = interactionSource),
         singleLine = true
     )
     Divider(
@@ -341,131 +348,5 @@ fun GroupDefalutProfile(
             textAlign = TextAlign.Center,
             fontSize = 10.sp
         )
-    }
-}
-
-@Composable
-@ExperimentalMaterial3Api
-@ExperimentalGlideComposeApi
-fun CurrentInvite(
-    search : GroupSearchViewModel = viewModel(),
-    currentMembers: MutableList<Member> = mutableListOf(),
-) {
-
-    val checkMembers = search.checkedMembers.observeAsState()
-
-    CardBox(
-        title = { CardTitle(title = "초대인원") },
-        content = {
-            LazyRow(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(
-                        start = 20.dp,
-                        top = 5.dp,
-                        bottom = 10.dp,
-                        end = 0.dp
-                    ),
-                userScrollEnabled = true
-            ) {
-
-                items(items = currentMembers) { checked ->
-                    GroupDefalutProfile(
-                        profileImg = checked.profileImg,
-                        nickname = checked.nickname,
-                        newMember = checked.isNew
-                    )
-                }
-
-                items(items = checkMembers.value ?: listOf()) { checked ->
-                    GroupDefalutProfile(
-                        profileImg = checked.profileImg,
-                        nickname = checked.nickname,
-                        newMember = checked.isNew
-                    )
-                }
-            }
-        }
-    )
-}
-
-@Composable
-@ExperimentalMaterial3Api
-@ExperimentalGlideComposeApi
-fun GroupDefalutProfile(
-    profileImg : String? = null,
-    nickname : String = "nothing",
-    newMember : Boolean = true
-) {
-
-    BoxWithConstraints(
-        modifier = Modifier
-            .width(60.dp)
-            .height(70.dp)
-    ) {
-        val maxWidth = this.maxWidth
-        Column(
-            modifier = Modifier
-                .width(maxWidth)
-                .fillMaxHeight()
-                .height(this.maxHeight)
-        ) {
-            Box(
-                modifier = Modifier
-                    .width(maxWidth)
-                    .weight(1f)
-                    .padding(0.dp),
-                content = {
-                    if(profileImg == null) {
-                        Image(
-                            modifier = Modifier
-                                .matchParentSize()
-                                .align(Alignment.Center),
-                            painter = painterResource(id = R.drawable.account_circle),
-                            contentDescription = null)
-                    } else {
-                        AsyncImage(
-                            modifier = Modifier
-                                .matchParentSize()
-                                .align(Alignment.Center),
-                            model = ImageRequest.Builder(LocalContext.current)
-                                .data(profileImg),
-                            contentDescription = nickname)
-                    }
-                    if(newMember) {
-                        Box(
-                            modifier = Modifier
-                                .size(maxWidth / 2)
-                                .align(Alignment.BottomEnd)
-                                .padding(5.dp)
-                        ) {
-                            TextButton(
-                                modifier = Modifier
-                                    .size(maxWidth / 4)
-                                    .align(Alignment.Center),
-                                shape = CircleShape,
-                                colors = ButtonDefaults.buttonColors(
-                                    contentColor = Color.Black,
-                                    containerColor = MaterialTheme.colorScheme.error
-                                ),
-                                content = { Text(
-                                    text = "x",
-                                    color = Color.Black
-                                )},
-                                onClick = { /*TODO*/ }
-                            )
-                        }
-                    }
-                }
-            )
-            Text(
-                text = nickname,
-                modifier = Modifier
-                    .fillMaxWidth(),
-                maxLines = 1,
-                textAlign = TextAlign.Center,
-                fontSize = 10.sp
-            )
-        }
     }
 }

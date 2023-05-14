@@ -47,7 +47,8 @@ fun GroupDetailsBoard(
         "success" to listOf(),
         "failed" to listOf()
     ),
-    groupId: Long = 0
+    groupId: Long = 0,
+    host : Boolean = false
 ) {
     CardBox(
         title = { CardTitle(
@@ -109,6 +110,7 @@ fun GroupDetailsBoard(
                                         nickname = it.nickname,
                                         profile = it.profileImg,
                                         isCheck = it.success,
+                                        host = host,
                                         onClick = {
                                             if(it.success.not()) {
                                                 CoroutineScope(Dispatchers.IO).async {

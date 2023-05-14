@@ -5,11 +5,11 @@ package com.slembers.alarmony.feature.user
 
 
 //통신api
-import android.os.Bundle
+import android.app.Activity
+import android.content.Intent
 import android.util.Log
-import android.widget.Toast
-import androidx.activity.compose.setContent
-import androidx.appcompat.app.AppCompatActivity
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -19,7 +19,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Button
@@ -27,79 +26,41 @@ import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.TextButton
-import androidx.compose.material.TextField
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Color.Companion.Black
-import androidx.compose.ui.graphics.Color.Companion.Green
-import androidx.compose.ui.graphics.Color.Companion.Yellow
-import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color.Companion.Red
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
+import com.slembers.alarmony.MainActivity
 import com.slembers.alarmony.R
 import com.slembers.alarmony.feature.common.NavItem
+import com.slembers.alarmony.feature.ui.common.AnimationRotation
 import com.slembers.alarmony.network.repository.MemberService.login
 import com.slembers.alarmony.network.repository.MemberService.putRegistTokenAfterSignIn
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
-import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.text.input.VisualTransformation
-import androidx.compose.ui.tooling.preview.Preview
-import kotlin.math.log
-
-
-enum class Routes() {
-    Signup,
-    Setting
-}
-
-
-class StartPageActivity : AppCompatActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContent{
-
-            Column(
-                verticalArrangement = Arrangement.Top,
-                horizontalAlignment = Alignment.CenterHorizontally
-            )  {
-
-//                SignupScreen()
-//                Findpswd()
-//                FindId()()
-//                ProfileSetting()
-//                AccountMtnc()
-
-//                LoginScreen()
-//                Navigation()
-
-            }
-        }
-    }
-}
 
 @OptIn(ExperimentalGlideComposeApi::class, ExperimentalComposeUiApi::class)
 //위 @OptIn(ExperimentalGlideComposeApi::class)이 회색으로 나오는 이유는
@@ -126,6 +87,7 @@ fun LoginScreen(navController: NavController = rememberNavController()) {
     var isSuccess = false
     var msg = ""
 
+    var loading by remember { mutableStateOf(false) }
 
     val usernameRegex = "^[a-z0-9]{4,20}$".toRegex()
     val passwordRegex = "^(?=.*[0-9])(?=.*[a-zA-Z])[a-zA-Z\\d]{8,16}\$".toRegex()
@@ -225,46 +187,26 @@ fun LoginScreen(navController: NavController = rememberNavController()) {
 
 
         }
-//아래는 자동로그인 체크박스
-
-//        Row(modifier = Modifier.padding(0.dp)) {
-//            // Checkbox Composable을 사용하여 체크박스 UI를 생성
-//            Checkbox(
-//                checked = checkedState.value,
-//                onCheckedChange = {
-//                    checkedState.value = it
-//                    if (it) {
-////                        prefs.setString("autoLogin", "true")
-////                        prefs.setBoolean("auto_login", true)
-//                      Log.d("체크박스", "자동 로그인 온")
-//                      Log.d("체크박스", "${prefs.getBoolean("auto_login", false)}")
-//                    } else {
-////                        prefs.setBoolean("auto_login", false)
-//                        Log.d("체크박스", "자동 로그인 오프")
-//                        Log.d("체크박스", "${prefs.getBoolean("auto_login", false)}")
-//
-//                    }
-//                }
-//            )
-//            Text(text = "자동 로그인 ")
-//        }
-
-
-
-//        아래는 로그인을 위한 통신로직을 RetrofitClient에서 가져와서 수행
-
         Button(
-//MutableState<String>와 String은 형식이 다르기에 String 값을 보내기 위해 .value를 붙여준다.
             onClick = {
                 Log.d("확인", "${idState.value}, ${passwordState.value} +로그인")
+                loading = true
                 CoroutineScope(Dispatchers.Main).launch {
                     val result = login(
                         username = idState.value,
-                        password = passwordState.value
+                        password = passwordState.value,
+                        context
                     )
-                    putRegistTokenAfterSignIn()
+
                     Log.d("INFO","result : $result")
-                    if(result) navController.navigate(NavItem.AlarmListScreen.route)
+                    if(result) {
+                        putRegistTokenAfterSignIn()
+                        val intent = Intent(context,MainActivity::class.java)
+                        context.startActivity(intent)
+                        (context as Activity).finish()
+                        loading = false
+                    }
+                    loading = false
                 }
             },
             enabled = isFilledId.value && isFilledPassword.value,
@@ -274,7 +216,7 @@ fun LoginScreen(navController: NavController = rememberNavController()) {
                 .clip(RoundedCornerShape(20.dp)),
 
             colors = ButtonDefaults.buttonColors(
-                backgroundColor = Color.Black, // Set the background color of the button
+                backgroundColor = Black, // Set the background color of the button
                 contentColor = Color.White // Set the text color of the buttonl
             )
 
@@ -288,10 +230,9 @@ fun LoginScreen(navController: NavController = rememberNavController()) {
                 .fillMaxWidth(),
             horizontalArrangement = Arrangement.Center
         ) {
-            TextButton(onClick = {
-                navController.navigate(NavItem.Signup.route)
-
-            },
+            TextButton(
+                enabled = !loading,
+                onClick = { navController.navigate(NavItem.Signup.route) },
                 modifier = Modifier.size(width = 120.dp, height = 50.dp),
                 colors = ButtonDefaults.textButtonColors(
                     contentColor = Black // Set the font color of the button
@@ -299,10 +240,9 @@ fun LoginScreen(navController: NavController = rememberNavController()) {
                 Text(text = "회원가입")
 
             }
-            TextButton(onClick = {
-                navController.navigate(NavItem.FindIdActivity.route)
-            },
-
+            TextButton(
+                enabled = !loading,
+                onClick = { navController.navigate(NavItem.FindIdActivity.route) },
                 modifier = Modifier.size(width = 120.dp, height = 50.dp),
                 colors = ButtonDefaults.textButtonColors(
                     contentColor = Black // Set the font color of the button
@@ -312,20 +252,21 @@ fun LoginScreen(navController: NavController = rememberNavController()) {
                 Text(text = "아이디 찾기")
             }
 
-            TextButton(onClick = {
-                navController.navigate(NavItem.FindPswdActivity.route)
-            } ,
+            TextButton(
+                enabled = !loading,
+                onClick = { navController.navigate(NavItem.FindPswdActivity.route) } ,
                 modifier = Modifier.size(width = 120.dp, height = 50.dp),
                 colors = ButtonDefaults.textButtonColors(
                     contentColor = Black // Set the font color of the button
                 )
-
             ) {
                 Text(text = "비밀번호 찾기")
             }
         }
     }
-
+    if(loading) {
+        AnimationRotation()
+    }
 
 }
 

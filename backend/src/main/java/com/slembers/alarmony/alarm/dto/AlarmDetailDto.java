@@ -2,6 +2,7 @@ package com.slembers.alarmony.alarm.dto;
 
 import com.slembers.alarmony.alarm.entity.Alarm;
 import com.slembers.alarmony.global.util.CommonMethods;
+import com.slembers.alarmony.member.entity.Member;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -9,8 +10,13 @@ import lombok.Getter;
 import java.util.List;
 
 @Getter
-@Builder(builderMethodName = "alarmToAlarmDetailBuilder", access = AccessLevel.PRIVATE)
+@Builder(
+        builderMethodName = "alarmToAlarmDetailBuilder",
+        access = AccessLevel.PRIVATE
+)
 public class AlarmDetailDto {
+
+    private boolean host;
 
     private Long alarmId;
 
@@ -28,8 +34,9 @@ public class AlarmDetailDto {
 
     private boolean vibrate;
 
-    public static AlarmDetailDto builder(Alarm alarm) {
+    public static AlarmDetailDto builder(Alarm alarm, Member receiver) {
         return alarmToAlarmDetailBuilder()
+                .host(receiver.equals(alarm.getHost()))
                 .alarmId(alarm.getId())
                 .title(alarm.getTitle())
                 .hour(alarm.getTime().getHour())

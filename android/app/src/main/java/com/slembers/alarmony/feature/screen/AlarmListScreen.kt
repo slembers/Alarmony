@@ -21,7 +21,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.MaterialTheme.colors
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.outlined.Notifications
@@ -41,7 +40,6 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.contentColorFor
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -52,9 +50,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.core.os.bundleOf
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavHost
 import androidx.navigation.NavHostController
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.slembers.alarmony.R
@@ -191,8 +187,8 @@ fun AlarmListScreen(navController : NavHostController) {
                     8,
                     45,
                     listOf(true, true, true, true, true, true, true),
-                    "자장가",
-                    15,
+                    "Piano",
+                    7,
                     true,
                     false
                 )
@@ -200,6 +196,15 @@ fun AlarmListScreen(navController : NavHostController) {
                     Toast.makeText(context, "8초 뒤에 알람이 울립니다.", Toast.LENGTH_SHORT).show()}
                 ) {
                     Text(text = "8초 뒤 울리는 테스트 알람")
+                }
+
+                Button(
+                    onClick = { navController.navigate(NavItem.ReportList.route) },
+                    modifier = Modifier
+                        .padding(5.dp)
+                        .size(90.dp),
+                ) {
+                    Text("관리자 페이지로 이동")
                 }
                 //////////////////
                 LazyColumn{

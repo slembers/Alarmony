@@ -31,24 +31,28 @@ public class CustomLoginFailureHandler  implements AuthenticationFailureHandler 
         } else if (exception instanceof UsernameNotFoundException) {
             log.error("[CustomLoginFailureHandler] 회원이 존재하지 않습니다. ");
             setErrorResponse(request,response,exception.getMessage(),HttpServletResponse.SC_NOT_FOUND,"MEMBER_NOT_FOUND");
+            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
         }else if (exception instanceof DisabledException){
             log.error("[CustomLoginFailureHandler] 로그인 할 권한이 없는유저. ");
             setErrorResponse(request,response,exception.getMessage(),HttpServletResponse.SC_FORBIDDEN,"MEMBER_NOT_PERMIT");
+
         }
     }
 
     private void setErrorResponse(HttpServletRequest request, HttpServletResponse response, String message , int httpServletResponse, String error) throws IOException {
 
         final Map<String, Object> body = new HashMap<>();
+
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+        response.setStatus(httpServletResponse);
+
         body.put("status", httpServletResponse);
         body.put("error",  error);
         body.put("message", message);
         body.put("path", request.getServletPath());
+
         final ObjectMapper mapper = new ObjectMapper();
-        // response 객체에 응답 객체를 넣어줌
         mapper.writeValue(response.getOutputStream(), body);
-        response.setStatus(HttpServletResponse.SC_OK);
 
     }
 }

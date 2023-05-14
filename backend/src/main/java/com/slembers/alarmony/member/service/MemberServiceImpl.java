@@ -10,9 +10,7 @@ import com.slembers.alarmony.member.dto.request.FindMemberIdDto;
 import com.slembers.alarmony.member.dto.request.FindPasswordDto;
 import com.slembers.alarmony.member.dto.request.ReissueTokenDto;
 import com.slembers.alarmony.member.dto.request.SignUpDto;
-import com.slembers.alarmony.member.dto.response.CheckDuplicateDto;
-import com.slembers.alarmony.member.dto.response.MemberResponseDto;
-import com.slembers.alarmony.member.dto.response.TokenResponseDto;
+import com.slembers.alarmony.member.dto.response.*;
 import com.slembers.alarmony.member.entity.AuthorityEnum;
 import com.slembers.alarmony.member.entity.Member;
 import com.slembers.alarmony.member.exception.MemberErrorCode;
@@ -23,6 +21,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.transaction.Transactional;
 import java.io.IOException;
@@ -324,5 +323,62 @@ public class MemberServiceImpl implements MemberService {
     public Member findMemberByNickName(String nickname){
         return memberRepository.findByNickname(nickname)
                 .orElseThrow(() -> new CustomException(MemberErrorCode.MEMBER_NOT_FOUND));
+    }
+
+    /**
+     * 이미지 변경
+     */
+    @Override
+    public ImageResponseDto modifyMemberImage(String username, MultipartFile modifyImage) {
+        Member member = findMemberByUsername(username);
+
+        String key = "";
+        String url = "";
+
+        //변경할 프로필 사진을 제대로 받아온 경우에만 실행
+        if (modifyImage != null) {
+
+            try {
+                key = amazonS3Util.upload(modifyImage, "member");
+            } catch (IOException e) {
+                log.error("S3에 이미지 저장 실패");
+                throw new CustomException(MemberErrorCode.AMAZONS3_ERROR);
+            }
+            //s3에 업로드하여 이미지에 대한 key값을 받아온다.
+            url = amazonS3Util.getFileUrl(key);
+
+            //이미지 프로필 키가 널이 아닐경우에만 s3에서 기존 프로필 이미지를 삭제시킨다.
+            if (member.getProfileKey() != null) {
+                amazonS3Util.delete(member.getProfileKey());
+            }
+
+            member.changeProfileImg(url);
+            member.changeProfileKey(key);
+
+        }
+        memberRepository.save(member);
+
+        return ImageResponseDto.builder().profileImgUrl(member.getProfileImgUrl()).build();
+    }
+
+    /**
+     * 닉네임 변경
+     */
+    @Override
+    public NicknameResponseDto modifyMemberNickname(String currentUsername, String changeName) {
+        CheckDuplicateDto nicknameCheck = checkForDuplicateNickname(changeName);
+
+        Member member = findMemberByUsername(currentUsername);
+        if(nicknameCheck.isDuplicated()) {
+            return NicknameResponseDto.builder()
+                    .success(false)
+                    .nickname(member.getNickname()).build();
+        } else {
+            member.changeNickname(changeName);
+            memberRepository.save(member);
+            return NicknameResponseDto.builder()
+                    .success(true)
+                    .nickname(changeName).build();
+        }
     }
 }
