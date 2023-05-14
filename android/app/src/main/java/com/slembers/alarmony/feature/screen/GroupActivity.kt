@@ -186,7 +186,7 @@ fun GroupScreen(
                 title = NavItem.Group.title,
                 navClick = { (context as Activity).finish() }
             )
-         },
+        },
         containerColor = "#F9F9F9".toColor(),
         bottomBar = {
             GroupBottomButtom(
@@ -242,7 +242,7 @@ fun GroupScreen(
                             loading = false
                         }
                     }
-               }
+                }
             )
         },
         content = { innerPadding ->
