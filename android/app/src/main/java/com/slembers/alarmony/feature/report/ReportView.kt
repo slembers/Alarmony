@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.ContentAlpha.disabled
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
@@ -30,6 +29,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
@@ -56,6 +56,7 @@ fun ReportScreen(navController: NavController = rememberNavController()) {
     var selectedOption by remember { mutableStateOf(options[0]) }
     var smallText by remember { mutableStateOf("") }
     var bigText by remember { mutableStateOf("") }
+    val context = LocalContext.current
 
     Scaffold(
         topBar = {
@@ -77,8 +78,10 @@ fun ReportScreen(navController: NavController = rememberNavController()) {
                     ReportService.createReport(
                         reportType = selectedOption.value,
                         reportedNickname = smallText,
-                        content = bigText
+                        content = bigText,
+                        context = context
                     )
+                    navController.popBackStack()
                 }
             )
         },

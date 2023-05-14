@@ -1,6 +1,8 @@
 package com.slembers.alarmony.network.service
 
+import android.content.Context
 import android.util.Log
+import android.widget.Toast
 import com.slembers.alarmony.model.db.ReportRequestDto
 import com.slembers.alarmony.model.db.dto.ReportDto
 import com.slembers.alarmony.model.db.dto.ReportListDto
@@ -17,7 +19,8 @@ object ReportService {
     fun createReport(
         reportType: String?,
         reportedNickname: String?,
-        content: String?
+        content: String?,
+        context: Context
     ) {
         reportApi.createReport(
             ReportRequestDto(
@@ -31,6 +34,7 @@ object ReportService {
                 response: Response<Unit>
             ) {
                 Log.i("response", "신고 생성 성공")
+                Toast.makeText(context, "신고 내역이 전송되었습니다.", Toast.LENGTH_SHORT).show()
             }
 
             override fun onFailure(call: Call<Unit>, t: Throwable) {
