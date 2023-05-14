@@ -1,14 +1,11 @@
 package com.slembers.alarmony.feature.screen
 
 import android.app.Activity
-import android.app.Application
-import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.foundation.background
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
@@ -46,18 +43,13 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
-import com.slembers.alarmony.MainActivity
-import com.slembers.alarmony.R
 import com.slembers.alarmony.feature.alarm.Alarm
 import com.slembers.alarmony.feature.alarm.AlarmDto
-import com.slembers.alarmony.feature.alarm.AlarmViewModel
-import com.slembers.alarmony.feature.alarm.AlarmViewModelFactory
 import com.slembers.alarmony.feature.alarm.saveAlarm
 import com.slembers.alarmony.feature.common.NavItem
 import com.slembers.alarmony.feature.common.ui.compose.GroupCard
 import com.slembers.alarmony.feature.common.ui.compose.GroupSubjet
 import com.slembers.alarmony.feature.common.ui.compose.GroupTitle
-import com.slembers.alarmony.feature.common.ui.theme.backgroundColor
 import com.slembers.alarmony.feature.common.ui.theme.toColor
 import com.slembers.alarmony.feature.ui.common.AnimationRotation
 import com.slembers.alarmony.feature.ui.common.CommonDialog
@@ -67,8 +59,10 @@ import com.slembers.alarmony.feature.ui.group.GroupSound
 import com.slembers.alarmony.feature.ui.group.GroupToolBar
 import com.slembers.alarmony.feature.ui.group.GroupTypeButton
 import com.slembers.alarmony.feature.ui.group.GroupVolume
+import com.slembers.alarmony.model.db.SoundItem
 import com.slembers.alarmony.model.db.dto.MemberDto
 import com.slembers.alarmony.network.service.GroupService
+import com.slembers.alarmony.util.Sound
 import com.slembers.alarmony.util.groupSoundInfos
 import com.slembers.alarmony.viewModel.GroupViewModel
 import kotlinx.coroutines.CoroutineScope
@@ -76,8 +70,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import kotlin.streams.toList
 
 @ExperimentalMaterial3Api
 @ExperimentalGlideComposeApi
@@ -87,7 +79,8 @@ class GroupActivity : AppCompatActivity() {
         setContent {
             val navController : NavHostController = rememberNavController()
             val viewModel by viewModels<GroupViewModel>()
-            viewModel.onChangeSound(groupSoundInfos()[0].soundName)
+            viewModel.onChangeSound(Sound())
+
             NavHost(
                 navController = navController,
                 startDestination = NavItem.Group.route
@@ -173,7 +166,7 @@ fun GroupScreen(
                                 isWeeks?.getValue(it) ?: false
                             }.toList(),
                             members = members?.map { it.nickname }?.toList(),
-                            soundName = soundName,
+                            soundName = soundName?.soundName,
                             soundVolume = soundVolume,
                             vibrate = vibration
                         )
@@ -191,7 +184,7 @@ fun GroupScreen(
                                                 alarmDate = weeks.map {
                                                     isWeeks?.getValue(it) ?: false
                                                 }.toList(),
-                                                soundName = soundName!!,
+                                                soundName = soundName?.soundName!!,
                                                 soundVolume = soundVolume?.toInt()!!,
                                                 vibrate = vibration!!,
                                                 host = true
@@ -293,7 +286,7 @@ fun GroupScreen(
                 )
                 GroupSound(
                     navController = navController,
-                    sound = soundName,
+                    sound = soundName?.soundName,
                 )
                 GroupTypeButton(
                     isVibrate = vibration ?: true,
