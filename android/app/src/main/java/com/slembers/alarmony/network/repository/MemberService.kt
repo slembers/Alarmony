@@ -65,20 +65,17 @@ object MemberService {
         }
     }
 
-    fun singup(
-        request: SignupRequest,
-        isSuccess: (Boolean) -> Unit = {}
+    fun signup(
+        request : SignupRequest,
+        isSuccess : (Boolean) -> Unit = {}
     ) {
         try {
             Log.d("가입", "signup ==> 회원가입시도")
-            memberApi.signup(request).enqueue(object : Callback<SignupResponseDto> {
-                override fun onResponse(
-                    call: Call<SignupResponseDto>,
-                    response: Response<SignupResponseDto>
-                ) {
-                    Log.d("response", "response")
-                    Log.d("response", "${response.code()}")
-                    if (response.isSuccessful) {
+            memberApi.signup( request ).enqueue(object : Callback<Unit> {
+                override fun onResponse(call: Call<Unit>, response: Response<Unit>) {
+                    Log.d("response","response")
+                    Log.d("response","${response.code()}")
+                    if(response.isSuccessful) {
                         Log.d("success", "회원가입 성공!!!")
 //                         부모 객체에 "성공"이라는 string을 건네줘야한다. 즉 회원가입이 성공했음을 알려야한다. 어떻게??
                         isSuccess(true)
@@ -88,8 +85,7 @@ object MemberService {
                         isSuccess(false)
                     }
                 }
-
-                override fun onFailure(call: Call<SignupResponseDto>, t: Throwable) {
+                override fun onFailure(call: Call<Unit>, t: Throwable) {
                     Log.d("disconnection", "회원가입 실패하였습니다..")
                     Log.d("disconnection", "회원가입 원인 : ${t.message}..")
                     isSuccess(false)

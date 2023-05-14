@@ -13,7 +13,6 @@ import com.slembers.alarmony.model.db.dto.CheckEmailResponseDto
 import com.slembers.alarmony.model.db.dto.FindIdResponseDto
 import com.slembers.alarmony.model.db.dto.FindPasswordResponseDto
 import com.slembers.alarmony.model.db.dto.LoginResponseDto
-import com.slembers.alarmony.model.db.dto.SignupResponseDto
 import retrofit2.Call
 import retrofit2.Response
 import retrofit2.http.Body
@@ -37,42 +36,40 @@ import retrofit2.http.Part
 interface MemberRepository {
     @PUT("members/regist-token")
     suspend fun putRegistToken(
-        @Body registTokenDto : RegistTokenDto
-    ) : Response<Unit>
+        @Body registTokenDto: RegistTokenDto
+    ): Response<Unit>
 
     @GET("members")
     fun getMember(
-        @Header("token") token : String?
-    ) : Call<Member>
+        @Header("token") token: String?
+    ): Call<Member>
 
     @POST("members/login")
     suspend fun login(
-        @Body loginDto : LoginRequest
-    ) : Response<LoginResponseDto>
+        @Body loginDto: LoginRequest
+    ): Response<LoginResponseDto>
 
     @POST("members/refresh")
     suspend fun refresh(
         @Body tokenReissueRequest: TokenReissueRequest
-    ) : Response<TokenReissueResponse>
+    ): Response<TokenReissueResponse>
 
-//    회원가입
     @POST("members/sign-up")
     fun signup(
-        @Body signupDto : SignupRequest
-    ) : Call<SignupResponseDto>
-
+        @Body signupDto: SignupRequest
+    ): Call<Unit>
 
 
     @POST("members/find-id")
     fun findId(
-        @Body findIdDto : FindIdRequest
-    ) : Call<FindIdResponseDto>
+        @Body findIdDto: FindIdRequest
+    ): Call<FindIdResponseDto>
 
 
     @POST("members/find-pw")
     fun findPassword(
-        @Body findPasswordDto : FindPasswordRequest
-    ) : Call<FindPasswordResponseDto>
+        @Body findPasswordDto: FindPasswordRequest
+    ): Call<FindPasswordResponseDto>
 
     @GET("members/logout")
     suspend fun logOut(
@@ -86,6 +83,7 @@ interface MemberRepository {
     @DELETE("member")
     fun signOut(
     ): Call<Unit>
+
 
     @GET("members/check-id")
     fun checkId(@Query("username") username: String): Call<CheckIdResponseDto>
