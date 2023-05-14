@@ -9,10 +9,12 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
@@ -58,17 +60,22 @@ fun MemberDetails(
                     .data(profile)
                     .build(),
                 contentDescription = "ImageRequest example",
-                modifier = Modifier.size(65.dp)
+                modifier = Modifier
+                    .clip(CircleShape)
+                    .size(60.dp)
             )
         } else {
             Image(
                 painter = painterResource(id = R.drawable.baseline_account_circle_24),
                 contentDescription = "ImageRequest example",
-                modifier = Modifier.size(65.dp)
+                modifier = Modifier
+                    .clip(CircleShape)
+                    .size(60.dp)
             )
         }
         Column(
             modifier = Modifier
+                .padding(start = 10.dp)
                 .weight(1f),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
