@@ -91,7 +91,7 @@ fun ReportListScreen(navController: NavController = rememberNavController()) {
                     modifier = Modifier.padding(16.dp)
                 )
             }
-            reportList?.value?.reports?.forEach { item ->
+            reportList.value?.reports?.forEach { item ->
                 Row(
                     modifier = Modifier.clickable {
                         navController.navigate("${NavItem.ReportDetail.route}/${item.reportId}")
