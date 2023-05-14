@@ -6,11 +6,10 @@ import com.slembers.alarmony.member.dto.request.FindMemberIdDto;
 import com.slembers.alarmony.member.dto.request.FindPasswordDto;
 import com.slembers.alarmony.member.dto.request.ReissueTokenDto;
 import com.slembers.alarmony.member.dto.request.SignUpDto;
-import com.slembers.alarmony.member.dto.response.CheckDuplicateDto;
-import com.slembers.alarmony.member.dto.response.MemberResponseDto;
-import com.slembers.alarmony.member.dto.response.TokenResponseDto;
+import com.slembers.alarmony.member.dto.response.*;
 import com.slembers.alarmony.member.entity.Member;
 import com.slembers.alarmony.report.dto.ModifiedMemberInfoDto;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.mail.MessagingException;
 import java.io.IOException;
@@ -86,4 +85,13 @@ public interface MemberService {
 
     Member findMemberByNickName(String nickname);
 
+    /**
+     * 이미지 변경
+     */
+    ImageResponseDto modifyMemberImage(String username, MultipartFile modifyImage);
+
+    /**
+     * 닉네임 변경
+     */
+    NicknameResponseDto modifyMemberNickname(String currentUsername, String changeName);
 }
