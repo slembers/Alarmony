@@ -18,6 +18,9 @@ import com.slembers.alarmony.model.db.ModifyMemberInfoDto
 import com.slembers.alarmony.model.db.RegistTokenDto
 import com.slembers.alarmony.model.db.SignupRequest
 import com.slembers.alarmony.model.db.TokenReissueRequest
+import com.slembers.alarmony.model.db.dto.CheckEmailResponseDto
+import com.slembers.alarmony.model.db.dto.CheckIdResponseDto
+import com.slembers.alarmony.model.db.dto.CheckNicnameResponseDto
 import com.slembers.alarmony.model.db.dto.FindIdResponseDto
 import com.slembers.alarmony.model.db.dto.FindPasswordResponseDto
 import com.slembers.alarmony.model.db.dto.GetMyInfoDto
@@ -29,12 +32,6 @@ import okhttp3.MultipartBody
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-
-import com.slembers.alarmony.model.db.dto.CheckEmailResponseDto
-import com.slembers.alarmony.model.db.dto.CheckIdResponseDto
-import com.slembers.alarmony.model.db.dto.CheckNicnameResponseDto
-import com.slembers.alarmony.network.repository.MemberService.memberApi
-
 @ExperimentalMaterial3Api
 @ExperimentalGlideComposeApi
 object MemberService {
@@ -69,7 +66,7 @@ object MemberService {
 
     fun signout(
         isSuccess: (Boolean) -> Unit = {}
-        
+
     ) {
         try {
             Log.d("response", "signout--화원탈퇴 시도")
@@ -102,18 +99,16 @@ object MemberService {
         }
     }
 
-    fun singup(
+    fun signup(
         request: SignupRequest,
-        context: Context,
-        navController: NavController,
         isSuccess: (Boolean) -> Unit = {}
     ) {
         try {
             Log.d("가입", "signup ==> 회원가입시도")
-            memberApi.signup(request).enqueue(object : Callback<SignupResponseDto> {
+            memberApi.signup(request).enqueue(object : Callback<Unit> {
                 override fun onResponse(
-                    call: Call<SignupResponseDto>,
-                    response: Response<SignupResponseDto>
+                    call: Call<Unit>,
+                    response: Response<Unit>
                 ) {
                     Log.d("response", "response")
                     Log.d("response", "${response.code()}")
@@ -127,8 +122,7 @@ object MemberService {
                         isSuccess(false)
                     }
                 }
-
-                override fun onFailure(call: Call<SignupResponseDto>, t: Throwable) {
+                override fun onFailure(call: Call<Unit>, t: Throwable) {
                     Log.d("disconnection", "회원가입 실패하였습니다..")
                     Log.d("disconnection", "회원가입 원인 : ${t.message}..")
                     isSuccess(false)
@@ -280,7 +274,6 @@ object MemberService {
                         showDialog("알림", "올바른 정보를 입력해 주세요...", context, navController)
                     }
                 }
-
                 override fun onFailure(call: Call<FindPasswordResponseDto>, t: Throwable) {
                     Log.d("fail", "비밀번호찾기 실패")
                     showDialog("알림", "뭔가 잘못됐나봐요", context, navController)
@@ -532,5 +525,4 @@ object MemberService {
         }
     }
 }
-
 

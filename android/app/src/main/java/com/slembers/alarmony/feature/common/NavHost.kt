@@ -30,6 +30,7 @@ import com.slembers.alarmony.viewModel.GroupDetailsViewModel
 @ExperimentalMaterial3Api
 @ExperimentalGlideComposeApi
 fun NavController(
+
     intent: Intent, navController: NavHostController = rememberNavController()
 ) {
 

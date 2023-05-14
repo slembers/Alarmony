@@ -11,7 +11,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.slembers.alarmony.model.db.Member
 import com.slembers.alarmony.model.db.SoundItem
-import com.slembers.alarmony.model.db.dto.MemberDto
+import com.slembers.alarmony.util.Sound
 import com.slembers.alarmony.util.groupSoundInfos
 import javax.inject.Inject
 
@@ -25,9 +25,11 @@ class GroupViewModel : ViewModel() {
     private val _currentWeeks = MutableLiveData<MutableMap<String,Boolean>>()
     private val _members = mutableStateListOf<Member>()
     private val _currentMembers = MutableLiveData<MutableList<Member>>()
-    private val _sound = MutableLiveData("")
+    private val _sound = MutableLiveData(Sound())
+    private val _sound2 = MutableLiveData<Sound>()
     private val _vibrate = MutableLiveData(true)
     private val _volumn = MutableLiveData(7f)
+    private val _playSound = MutableLiveData(0)
 
     init {
         val map = mapOf<String,Boolean>(
@@ -48,7 +50,7 @@ class GroupViewModel : ViewModel() {
     val alarmTime : LiveData<TimePickerState> = _alarmTime
     val currentWeeks : LiveData<MutableMap<String,Boolean>> = _currentWeeks
     val members : LiveData<MutableList<Member>> = _currentMembers
-    val sound : LiveData<String> = _sound
+    val sound : LiveData<Sound> = _sound
     val vibrate : LiveData<Boolean> = _vibrate
     val volumn : LiveData<Float> = _volumn
 
@@ -75,7 +77,7 @@ class GroupViewModel : ViewModel() {
         return _currentWeeks.value!!.getValue(key)
     }
 
-    fun onChangeSound(sound : String) {
+    fun onChangeSound(sound: Sound) {
         _sound.postValue(sound)
     }
 
