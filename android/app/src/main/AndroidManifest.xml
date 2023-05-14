@@ -2,6 +2,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <!--  갤러리 권한  -->
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
     <!-- 서버 연결 설정 -->
     <uses-permission android:name="android.permission.INTERNET" /> <!-- 알람 권한 설정 -->
     <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
