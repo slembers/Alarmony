@@ -64,7 +64,10 @@ fun GroupInvite(
 
                 ) {
                     items(members) { item ->
-                        GroupDefalutProfile(item.nickname)
+                        GroupDefalutProfile(
+                            item.nickname,
+                            item.profileImg
+                        )
                     }
                 }
             }

@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.Checkbox
 import androidx.compose.material.icons.Icons
@@ -31,6 +32,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -180,19 +182,25 @@ fun SearchMember(
                     .data(member.profileImg)
                     .build(),
                 contentDescription = "ImageRequest example",
-                modifier = Modifier.size(65.dp)
+                modifier = Modifier
+                    .clip(CircleShape)
+                    .size(65.dp)
             )
         } else {
             Image(
                 painter = painterResource(id = R.drawable.baseline_account_circle_24),
                 contentDescription = "ImageRequest example",
-                modifier = Modifier.size(65.dp)
+                modifier = Modifier
+                    .clip(CircleShape)
+                    .size(65.dp)
             )
         }
         Text(
             text = member.nickname,
             fontSize = 17.sp,
-            modifier = Modifier.fillMaxWidth(1f)
+            modifier = Modifier
+                .fillMaxWidth(1f)
+                .padding(start = 10.dp)
         )
         Checkbox(
             checked = isCheck,
