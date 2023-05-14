@@ -14,6 +14,6 @@ public class MemberResponseDto {
 
     private String username;
     private String nickname;
-    private String profileImg;
+    private String profileImgUrl;
     private String email;
 }
