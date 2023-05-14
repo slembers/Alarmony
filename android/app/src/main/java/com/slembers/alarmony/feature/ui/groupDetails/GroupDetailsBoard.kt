@@ -81,7 +81,7 @@ fun GroupDetailsBoard(
                 content = {
                     CardDivider()
                     if(items.getValue("success").isEmpty()) {
-                        nothingItem()
+                        nothingItem(content = "아무도 일어나지 않었어요.")
                     } else {
                         LazyColumn(
                             modifier = Modifier.height(200.dp),
@@ -91,6 +91,7 @@ fun GroupDetailsBoard(
                                     MemberDetails(
                                         nickname = it.nickname,
                                         profile = it.profileImg,
+                                        message = "",
                                         isCheck = it.success
                                     )
                                 }
@@ -99,7 +100,7 @@ fun GroupDetailsBoard(
                     }
                     CardDivider()
                     if(items.getValue("failed").isEmpty()) {
-
+                        nothingItem(content = "모두 일어났어요.")
                     } else {
                         LazyColumn(
                             modifier = Modifier.height(200.dp),
@@ -110,6 +111,7 @@ fun GroupDetailsBoard(
                                         nickname = it.nickname,
                                         profile = it.profileImg,
                                         isCheck = it.success,
+                                        message = it.message ?: "No checking..",
                                         host = host,
                                         onClick = {
                                             if(it.success.not()) {
@@ -134,7 +136,9 @@ fun GroupDetailsBoard(
 
 @Preview
 @Composable
-fun nothingItem() {
+fun nothingItem(
+    content: String = ""
+) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -148,7 +152,7 @@ fun nothingItem() {
                 contentDescription = null
             )
             Text(
-                text = "체크한 사람 없음",
+                text = content,
                 modifier = Modifier.weight(1f),
                 textAlign = TextAlign.Center
             )

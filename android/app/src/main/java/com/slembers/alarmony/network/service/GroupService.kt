@@ -150,7 +150,7 @@ object GroupService {
             Log.d("getGroup","[알람 상세] 오늘의 알림 현황 : ${recordList}")
             recordList?.alarmList.let {
                 it?.map {
-                   val temp = Record(it.nickname,it.profileImg,it.success)
+                   val temp = Record(it.nickname,it.profileImg,it.success,it.message)
                     when(temp.success) {
                         true -> successItems.add(temp)
                         else -> failItems.add(temp)
