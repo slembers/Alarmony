@@ -5,9 +5,7 @@ import com.slembers.alarmony.global.security.util.SecurityUtil;
 import com.slembers.alarmony.member.dto.ChangePasswordDto;
 import com.slembers.alarmony.member.dto.MemberInfoDto;
 import com.slembers.alarmony.member.dto.request.*;
-import com.slembers.alarmony.member.dto.response.CheckDuplicateDto;
-import com.slembers.alarmony.member.dto.response.MemberResponseDto;
-import com.slembers.alarmony.member.dto.response.TokenResponseDto;
+import com.slembers.alarmony.member.dto.response.*;
 import com.slembers.alarmony.member.service.EmailVerifyService;
 import com.slembers.alarmony.member.service.MemberService;
 import com.slembers.alarmony.report.dto.ModifiedMemberInfoDto;
@@ -16,6 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.mail.MessagingException;
 import javax.validation.Valid;
@@ -139,6 +138,22 @@ public class MemberController {
     @PatchMapping()
     public ResponseEntity<MemberInfoDto> modifyMemberInfo(@ModelAttribute ModifiedMemberInfoDto modifiedMemberInfoDto) throws IOException {
         return ResponseEntity.ok((memberService.modifyMemberInfo(SecurityUtil.getCurrentUsername(), modifiedMemberInfoDto)));
+    }
+
+    /**
+     * 이미지 변경
+     */
+    @PatchMapping("/image")
+    public ResponseEntity<ImageResponseDto> modifyMemberImage(@ModelAttribute MultipartFile imgProfileFile) {
+        return ResponseEntity.ok(memberService.modifyMemberImage(SecurityUtil.getCurrentUsername(), imgProfileFile));
+    }
+
+    /**
+     * 닉네임 변경
+     */
+    @PostMapping("/nickname")
+    public ResponseEntity<NicknameResponseDto> modifyMemberNickname(@RequestBody @Valid ChangeNicknameRequestDto changeNicknameRequestDto) {
+        return ResponseEntity.ok(memberService.modifyMemberNickname(SecurityUtil.getCurrentUsername(), changeNicknameRequestDto.getChangeName()));
     }
 
     /**
