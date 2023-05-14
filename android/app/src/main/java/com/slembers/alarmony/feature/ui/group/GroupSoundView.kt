@@ -1,4 +1,4 @@
-package com.slembers.alarmony.feature.common.ui.view
+package com.slembers.alarmony.feature.ui.group
 
 import android.media.MediaPlayer
 import android.util.Log
@@ -12,11 +12,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -35,13 +31,11 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.slembers.alarmony.R
 import com.slembers.alarmony.model.db.SoundItem
-import com.slembers.alarmony.util.groupSoundInfos
-import com.slembers.alarmony.viewModel.GroupViewModel
+import com.slembers.alarmony.util.Sound
 
 
 @Composable
@@ -53,8 +47,8 @@ fun soundIconView(
         imageId = R.drawable.play_button
     ),
     onClick : Boolean = false,
-    checkBox : ((String) -> Unit) =  {},
-    chooseAnother : () -> Unit,
+    checkBox : ((SoundItem) -> Unit) =  {},
+    currentPlayer : () -> Unit = {}
 ) {
     var imageResId by remember {mutableStateOf(
         if (soundItem.isPlaying) {
@@ -67,7 +61,6 @@ fun soundIconView(
     val pauseButton = painterResource(id = R.drawable.pause_button)
     fun changeImage() {
         if (!soundItem.isPlaying) {
-            chooseAnother()
             soundItem.isPlaying = true
             soundItem.soundMp3Content?.start()
             soundItem.soundImage = pauseButton
@@ -100,7 +93,7 @@ fun soundIconView(
                     MaterialTheme.colorScheme.primary
             )
             .clickable {
-                checkBox(soundItem.soundName)
+                checkBox(soundItem)
                 Log.i("$soundItem.soundName", "checkbox : ${checkBox.toString()}")
             }
     ) {
@@ -125,44 +118,71 @@ fun soundIconView(
             )
             Image(
                 contentDescription = null,
-                modifier = Modifier.clickable {changeImage()},
-                painter = painterResource(id = imageResId)
+                modifier = Modifier.clickable(onClick = currentPlayer),
+                painter = soundItem.soundImage!!
             )
         }
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SoundChooseGridView(
-    size : Dp = 320.dp,
-    soundItems : List<SoundItem> = groupSoundInfos(),
-    viewModel : GroupViewModel
+fun soundIconView2(
+    soundItem : Sound,
+    onClick : Boolean = false,
+    checkBox : ((Sound) -> Unit) =  {},
+    isPlaySound: Boolean = false,
+    currentPlayer : () -> Unit = {}
 ) {
-    var checkbox by remember { mutableStateOf(soundItems[0].soundName) }
-    val play_button = painterResource(id = R.drawable.play_button)
-    LazyVerticalGrid(
-        modifier = Modifier.width(350.dp),
-        columns = GridCells.Adaptive(minSize = 300.dp),
+    BoxWithConstraints(
+        modifier = Modifier
+            .padding(8.dp)
+            .width(350.dp)
+            .height(90.dp)
+            .shadow(
+                elevation = 5.dp,
+                ambientColor = Color.Black,
+                spotColor = Color.Black,
+                shape = RoundedCornerShape(25.dp)
+            )
+            .clip(MaterialTheme.shapes.medium)
+            .background(
+                if (!onClick)
+                    MaterialTheme.colorScheme.background
+                else
+                    MaterialTheme.colorScheme.primary
+            )
+            .clickable {
+                checkBox(soundItem)
+                Log.i("$soundItem.soundName", "checkbox : ${checkBox.toString()}")
+            }
     ) {
-        items(soundItems) {
-            soundIconView(
-                soundItem = it,
-                onClick = checkbox.equals(it.soundName),
-                checkBox = {
-                    checkbox = it
-                    viewModel.onChangeSound(it)
-                },
-                chooseAnother = {
-                    soundItems.forEach{
-                        if(it.isPlaying) {
-                            Log.d("INFO","${it.soundName} 꺼짐")
-                            it.soundImage = play_button
-                            it.isPlaying = false
-                            it.soundMp3Content?.pause()
-                        }
-                    }
-                }
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(20.dp),
+            horizontalArrangement = Arrangement.SpaceBetween
+        )
+        {
+            Text(
+                text = soundItem?.soundName ?: "Normal",
+                modifier = Modifier
+                    .align(Alignment.CenterVertically),
+                style = TextStyle(
+                    color = Color.Black,
+                    fontSize = 30.sp,
+                    fontFamily = FontFamily.Monospace,
+                    fontWeight = FontWeight.Bold,
+                    fontStyle = FontStyle.Normal
+                ),
+            )
+            Image(
+                contentDescription = null,
+                modifier = Modifier.clickable(onClick = currentPlayer),
+                painter =
+                    if(isPlaySound)
+                        painterResource(id = R.drawable.pause_button)
+                    else
+                        painterResource(id = R.drawable.play_button)
             )
         }
     }

@@ -53,9 +53,6 @@ fun DefaultModifier() : Modifier {
     return Modifier
         .fillMaxWidth()
         .padding(5.dp)
-        .heightIn(
-            minOf(100.dp,100.dp)
-        )
         .border(
             BorderStroke(0.dp, MaterialTheme.colorScheme.background),
             MaterialTheme.shapes.medium
