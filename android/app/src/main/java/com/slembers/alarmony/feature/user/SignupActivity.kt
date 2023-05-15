@@ -4,7 +4,6 @@ package com.slembers.alarmony.feature.user
 import android.annotation.SuppressLint
 import android.util.Log
 import android.widget.Toast
-import androidx.compose.foundation.border
 import androidx.compose.foundation.interaction.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -23,7 +22,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Color.Companion.Black
 import androidx.compose.ui.graphics.Color.Companion.Gray
-import androidx.compose.ui.graphics.Color.Companion.Red
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -36,6 +34,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.slembers.alarmony.feature.common.NavItem
+import com.slembers.alarmony.feature.common.ui.theme.toColor
 import com.slembers.alarmony.model.db.SignupRequest
 import com.slembers.alarmony.network.repository.MemberService.checkEmail
 import com.slembers.alarmony.network.repository.MemberService.checkId
@@ -209,7 +208,8 @@ fun SignupScreen(navController: NavController) {
 /**
  * 아이디
  */
-
+@ExperimentalMaterial3Api
+@ExperimentalGlideComposeApi
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalGlideComposeApi::class)
 @Composable
 fun IdTextField(
@@ -222,38 +222,23 @@ fun IdTextField(
 ) {
     val usernameRegex = "^[a-z0-9]{5,11}$".toRegex()
     TitleText("아이디 *")
-    TextField(
+    androidx.compose.material3.OutlinedTextField(
         value = username,
         onValueChange = {
             onIdChange(it)
-            if (!usernameRegex.matches(it)) {
-                Log.d("email", "새로만든 아이디 창 정규식")
-                isIdError.value = true
-            } else {
-                isIdError.value = false
-            }
+            isIdError.value = !usernameRegex.matches(it)
         },
-        placeholder = { Text("영문, 숫자 5-11자") },
-        colors = TextFieldDefaults.textFieldColors(
-            backgroundColor = Color.White,
-            focusedIndicatorColor = Color.Transparent,
-            unfocusedIndicatorColor = Color.Transparent,
-            errorCursorColor = Color.Transparent,
-            errorIndicatorColor = Color.Transparent,
-            disabledIndicatorColor = Color.Transparent,
-            disabledTextColor = Color.Transparent,
-            cursorColor = Color.Transparent
+        placeholder = { Text("영문, 숫자 조합 5-11자") },
+        colors = androidx.compose.material3.TextFieldDefaults.outlinedTextFieldColors(
+            focusedBorderColor = Black,
+            unfocusedBorderColor = Gray,
+            errorBorderColor = "#EF2B2A".toColor()
         ),
         singleLine = true,
         maxLines = 1,
-        isError = isIdError.value,
+        isError = isIdError.value || !isIdCanUse.value,
         modifier = Modifier
-            .fillMaxWidth()
-            .border(
-                1.dp,
-                if (isIdError.value || !isIdCanUse.value) Red else Gray,
-                shape = RoundedCornerShape(8.dp)
-            ),
+            .fillMaxWidth(),
         keyboardActions = KeyboardActions { },
         keyboardOptions = KeyboardOptions(
             keyboardType = KeyboardType.Email,
@@ -266,8 +251,8 @@ fun IdTextField(
         if (isIdError.value) {
             Log.d("회원", "아이디 정규식이 틀릴때 ")
             ErrorMessageText(
-                message = "아이디는 영문, 숫자를 조합하여 4-20자로 입력해주세요.",
-                color = Red
+                message = "아이디는 영문, 숫자를 조합하여 5-11자로 입력해주세요.",
+                color = "#EF2B2A".toColor()
             )
         } else {
 
@@ -275,13 +260,12 @@ fun IdTextField(
                 if (isDuplicated) {
                     Log.d("회원", "중복된 아이디")
                     message.value = "이미 사용중인 아이디 입니다."
-                    color.value = Red
+                    color.value = "#EF2B2A".toColor()
                     isIdError.value = false
                     isIdCanUse.value = false
                 } else {
                     color.value = Black
                     Log.d("회원", "사용가능  아이디")
-                    // message = "사용 가능한 아이디 입니다."
                     message.value = "사용가능한  아이디 입니다."
                     isIdError.value = false
                     isIdCanUse.value = true
@@ -296,7 +280,9 @@ fun IdTextField(
 /**
  * 비밀번호
  */
-
+@ExperimentalMaterial3Api
+@ExperimentalGlideComposeApi
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalGlideComposeApi::class)
 @Composable
 fun PasswordText(
     password: String,
@@ -306,7 +292,7 @@ fun PasswordText(
 ) {
     val passwordRegex = "^(?=.*[0-9])(?=.*[a-zA-Z])[a-zA-Z\\d]{8,16}\$".toRegex()
     TitleText("비밀번호 *")
-    TextField(
+    androidx.compose.material3.OutlinedTextField(
         value = password,
         onValueChange = {
             onPasswordChange(it)
@@ -319,15 +305,10 @@ fun PasswordText(
             }
         },
         placeholder = { Text("영문, 숫자 조합 최소 8자") },
-        colors = TextFieldDefaults.textFieldColors(
-            backgroundColor = Color.White,
-            focusedIndicatorColor = Color.Transparent,
-            unfocusedIndicatorColor = Color.Transparent,
-            errorCursorColor = Color.Transparent,
-            errorIndicatorColor = Color.Transparent,
-            disabledIndicatorColor = Color.Transparent,
-            disabledTextColor = Color.Transparent,
-            cursorColor = Color.Transparent
+        colors = androidx.compose.material3.TextFieldDefaults.outlinedTextFieldColors(
+            focusedBorderColor = Black,
+            unfocusedBorderColor = Gray,
+            errorBorderColor = "#EF2B2A".toColor()
         ),
         singleLine = true,
         maxLines = 1,
@@ -343,12 +324,7 @@ fun PasswordText(
         },
 
         modifier = Modifier
-            .fillMaxWidth()
-            .border(
-                1.dp,
-                if (isPasswordError.value) Red else Gray,
-                shape = RoundedCornerShape(8.dp)
-            ),
+            .fillMaxWidth(),
         keyboardActions = KeyboardActions { },
         keyboardOptions = KeyboardOptions(
             keyboardType = KeyboardType.Password,
@@ -356,7 +332,7 @@ fun PasswordText(
         ),
     )
     if (isPasswordError.value) {
-        ErrorMessageText(message = "영문, 숫자를 조합하여 8-20자 입력해주세요.", color = Red)
+        ErrorMessageText(message = "영문, 숫자를 조합하여 8-20자 입력해주세요.", color = "#EF2B2A".toColor())
     }
 
 }
@@ -365,7 +341,9 @@ fun PasswordText(
 /**
  * 비밀번호 확인
  */
-
+@ExperimentalMaterial3Api
+@ExperimentalGlideComposeApi
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalGlideComposeApi::class)
 @Composable
 fun PasswordConfirmText(
     password: String,
@@ -374,21 +352,16 @@ fun PasswordConfirmText(
     isPasswordConfirmError: MutableState<Boolean>,
     passwordConfirmVisibility :  MutableState<Boolean>
 ) {
-    TextField(
+    androidx.compose.material3.OutlinedTextField(
         value = passwordConfirm,
         onValueChange = {
             onPasswordConfirmChange(it)
             isPasswordConfirmError.value = password != it
         },
-        colors = TextFieldDefaults.textFieldColors(
-            backgroundColor = Color.White,
-            focusedIndicatorColor = Color.Transparent,
-            unfocusedIndicatorColor = Color.Transparent,
-            errorCursorColor = Color.Transparent,
-            errorIndicatorColor = Color.Transparent,
-            disabledIndicatorColor = Color.Transparent,
-            disabledTextColor = Color.Transparent,
-            cursorColor = Color.Transparent
+        colors = androidx.compose.material3.TextFieldDefaults.outlinedTextFieldColors(
+            focusedBorderColor = Black,
+            unfocusedBorderColor = Gray,
+            errorBorderColor = "#EF2B2A".toColor()
         ),
         placeholder = { Text("비밀번호 재입력") },
         singleLine = true,
@@ -405,13 +378,7 @@ fun PasswordConfirmText(
 
         modifier = Modifier
             .fillMaxWidth()
-            .padding(top = 10.dp)
-            .border(
-                1.dp,
-                if (isPasswordConfirmError.value) Red else Gray,
-                shape = RoundedCornerShape(8.dp)
-            ),
-
+            .padding(top = 10.dp),
         keyboardActions = KeyboardActions { },
         keyboardOptions = KeyboardOptions(
             keyboardType = KeyboardType.Password,
@@ -419,7 +386,7 @@ fun PasswordConfirmText(
         ),
     )
     if (isPasswordConfirmError.value) {
-        ErrorMessageText(message = "비밀번호가 일치하지 않습니다.", color = Red)
+        ErrorMessageText(message = "비밀번호가 일치하지 않습니다.", color = "#EF2B2A".toColor())
     }
 }
 
@@ -427,6 +394,8 @@ fun PasswordConfirmText(
 /**
  * 이메일
  */
+@ExperimentalMaterial3Api
+@ExperimentalGlideComposeApi
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalGlideComposeApi::class)
 @Composable
 fun EmailTextField(
@@ -439,51 +408,36 @@ fun EmailTextField(
 ) {
     val emailRegex = "^[A-Za-z](.*)([@]{1})(.{1,})(\\.)(.{2,})".toRegex()
     TitleText("이메일 *")
-    TextField(
+    androidx.compose.material3.OutlinedTextField(
         value = email,
         onValueChange = {
             onEmailChange(it)
             Log.d("회원", "이메일 입력")
-            if (!emailRegex.matches(it)) {
-                isEmailError.value = true
-            } else {
-                isEmailError.value = false
-            }
+            isEmailError.value = !emailRegex.matches(it)
         },
-        colors = TextFieldDefaults.textFieldColors(
-            backgroundColor = Color.White,
-            focusedIndicatorColor = Color.Transparent,
-            unfocusedIndicatorColor = Color.Transparent,
-            errorCursorColor = Color.Transparent,
-            errorIndicatorColor = Color.Transparent,
-            disabledIndicatorColor = Color.Transparent,
-            disabledTextColor = Color.Transparent,
-            cursorColor = Color.Transparent
+        colors = androidx.compose.material3.TextFieldDefaults.outlinedTextFieldColors(
+            focusedBorderColor = Black,
+            unfocusedBorderColor = Gray,
+            errorBorderColor = "#EF2B2A".toColor()
         ),
         singleLine = true,
         maxLines = 1,
-        isError = isEmailError.value,
+        isError = isEmailError.value || !isEmailCanUse.value,
         modifier = Modifier
-            .fillMaxWidth()
-            .border(
-                1.dp,
-                if (isEmailError.value || !isEmailCanUse.value) Red else Gray,
-                shape = RoundedCornerShape(8.dp)
-            ),
+            .fillMaxWidth(),
         keyboardActions = KeyboardActions { },
         keyboardOptions = KeyboardOptions(
             keyboardType = KeyboardType.Password,
             imeAction = ImeAction.Next
         ),
     )
-    Log.d("eeeeeeeee", "${isEmailError.value}")
     if (email.isNotBlank()) {
 
         if (isEmailError.value) {
             Log.d("회원", "이메일 정규식 통과못함")
             ErrorMessageText(
                 message = "이메일 형식에 맞게 입력해 주세요",
-                color = Red
+                color = "#EF2B2A".toColor()
             )
         } else {
             Log.d("회원", "이메일 정규식 통과")
@@ -491,7 +445,7 @@ fun EmailTextField(
                 if (isDuplicated) {
                     Log.d("email", "사용중인 이메일 입니다.")
                     message.value = "이미 사용중인 이메일 입니다."
-                    color.value = Red
+                    color.value = "#EF2B2A".toColor()
                     isEmailError.value = false
                     isEmailCanUse.value = false
                 } else {
@@ -512,6 +466,8 @@ fun EmailTextField(
 /**
  * 닉네임
  */
+@ExperimentalMaterial3Api
+@ExperimentalGlideComposeApi
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalGlideComposeApi::class)
 @Composable
 fun NicknameText(
@@ -526,39 +482,22 @@ fun NicknameText(
 
     val nicknameRegex = "^[가-힣a-zA-Z0-9]{2,10}\$".toRegex()
     TitleText("닉네임 *")
-    TextField(
+    androidx.compose.material3.OutlinedTextField(
         value = nickname,
         onValueChange = {
             onNicknameChange(it)
-            if (!nicknameRegex.matches(it)) {
-                Log.d("email", "새로만든 이메일 창 정규식")
-                //  onEmailFocusChange(true)
-                isNicknameError.value = true
-            } else {
-                //onEmailFocusChange(false)
-                isNicknameError.value = false
-            }
+            isNicknameError.value = !nicknameRegex.matches(it)
         },
-        colors = TextFieldDefaults.textFieldColors(
-            backgroundColor = Color.White,
-            focusedIndicatorColor = Color.Transparent,
-            unfocusedIndicatorColor = Color.Transparent,
-            errorCursorColor = Color.Transparent,
-            errorIndicatorColor = Color.Transparent,
-            disabledIndicatorColor = Color.Transparent,
-            disabledTextColor = Color.Transparent,
-            cursorColor = Color.Transparent
+        colors = androidx.compose.material3.TextFieldDefaults.outlinedTextFieldColors(
+            focusedBorderColor = Black,
+            unfocusedBorderColor = Gray,
+            errorBorderColor = "#EF2B2A".toColor()
         ),
         singleLine = true,
         maxLines = 1,
-        isError = isNicknameError.value,
+        isError = isNicknameError.value || !isNicknameCanUse.value,
         modifier = Modifier
-            .fillMaxWidth()
-            .border(
-                1.dp,
-                if (isNicknameError.value || !isNicknameCanUse.value) Red else Gray,
-                shape = RoundedCornerShape(8.dp)
-            ),
+            .fillMaxWidth(),
         keyboardActions = KeyboardActions { },
         keyboardOptions = KeyboardOptions(
             keyboardType = KeyboardType.Email,
@@ -579,7 +518,7 @@ fun NicknameText(
                 if (isDuplicated) {
                     Log.d("email", "사용중인 닉네임 입니다.")
                     message.value = "이미 사용중인 닉네임 입니다."
-                    color.value = Red
+                    color.value = "#EF2B2A".toColor()
                     isNicknameError.value = false
                     isNicknameCanUse.value = false
                 } else {
