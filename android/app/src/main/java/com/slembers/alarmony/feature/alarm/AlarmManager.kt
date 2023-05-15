@@ -42,6 +42,21 @@ fun deleteAlarm(alarmId: Long, context: Context) {
     }
     cancelAlarm(alarmId, context)
 }
+
+fun deleteAllAlarms(context : Context) {
+    lateinit var repository: AlarmRepository
+    CoroutineScope(Dispatchers.IO).launch {
+        val alarmDao = AlarmDatabase.getInstance(context).alarmDao()
+        repository = AlarmRepository(alarmDao)
+        val alarms = repository.getAllAlarms()
+        if (alarms != null) {
+            for (alarm in alarms) {
+                repository.deleteAlarm(alarm)
+                cancelAlarm(alarm.alarmId, context)
+            }
+        }
+    }
+}
 fun cancelAlarm(alarmId: Long, context: Context) {
     val alarmManager = context.getSystemService(ALARM_SERVICE) as AlarmManager
     val intent = Intent(context, AlarmReceiver::class.java)

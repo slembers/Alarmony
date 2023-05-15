@@ -22,7 +22,7 @@ object AlarmApi {
 
     fun getAllAlarmsApi(context : Context) {
         val call = alarmApi.getAllAlarms()
-        var alarms : List<AlarmDto>? = null
+        var alarmDtos : List<AlarmDto>? = null
         call.enqueue(object : Callback<getAllAlarmsResponseDto>{
             override fun onResponse(
                 call: Call<getAllAlarmsResponseDto>,
@@ -32,8 +32,8 @@ object AlarmApi {
                     val myResponse = response.body()
                     Log.d("myResponse", myResponse.toString())
                     if (myResponse!!.alarms != null) { // 서버에 알람 목록이 있으면
-                        alarms = myResponse.alarms
-                        for(alarmDto : AlarmDto in alarms!!) {    // Room 알람 목록 저장
+                        alarmDtos = myResponse.alarms
+                        for(alarmDto : AlarmDto in alarmDtos!!) {    // Room 알람 목록 저장
                             saveAlarm(alarmDto, context)
                         }
                         Toast.makeText(

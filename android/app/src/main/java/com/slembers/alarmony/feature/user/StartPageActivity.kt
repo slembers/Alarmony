@@ -54,8 +54,10 @@ import androidx.navigation.compose.rememberNavController
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.slembers.alarmony.MainActivity
 import com.slembers.alarmony.R
+import com.slembers.alarmony.feature.alarm.AlarmApi.getAllAlarmsApi
 import com.slembers.alarmony.feature.common.NavItem
 import com.slembers.alarmony.feature.common.ui.theme.toColor
+import com.slembers.alarmony.feature.notification.NotiApi.getAllNotisApi
 import com.slembers.alarmony.feature.ui.common.AnimationRotation
 import com.slembers.alarmony.network.repository.MemberService.login
 import com.slembers.alarmony.network.repository.MemberService.putRegistTokenAfterSignIn
@@ -186,7 +188,6 @@ fun LoginScreen(navController: NavController) {
                 )
             }
 
-
         }
         Button(
             onClick = {
@@ -198,7 +199,8 @@ fun LoginScreen(navController: NavController) {
                         password = passwordState.value,
                         context
                     )
-
+                    getAllAlarmsApi(context)
+                    getAllNotisApi(context)
                     Log.d("INFO","result : $result")
                     if(result) {
                         putRegistTokenAfterSignIn()
