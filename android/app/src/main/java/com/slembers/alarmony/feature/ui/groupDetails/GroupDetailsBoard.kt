@@ -52,18 +52,18 @@ fun GroupDetailsBoard(
 ) {
     CardBox(
         title = { CardTitle(
-            title = "오늘 알람 기록",
+            title = "오늘의 알람현황",
             content =  {
                 Text(
-                    text = currentDate(),
+                    text = currentDate().format(),
                     style = TextStyle(
                         color = Color.Black,
-                        fontSize = 15.sp,
-                        fontFamily = FontFamily.Monospace,
+                        fontSize = 14.sp,
+                       // fontFamily = FontFamily.Monospace,
                         fontWeight = FontWeight.Bold,
                         fontStyle = FontStyle.Normal
                     ),
-                    modifier = Modifier.padding(end = 10.dp),
+                    modifier = Modifier.padding(end = 13.dp),
                     textAlign = TextAlign.Start
                 )
             }
@@ -81,7 +81,7 @@ fun GroupDetailsBoard(
                 content = {
                     CardDivider()
                     if(items.getValue("success").isEmpty()) {
-                        nothingItem(content = "아무도 일어나지 않었어요.")
+                        nothingItem(content = "오늘 알람을 확인환 인원이 없습니다.")
                     } else {
                         LazyColumn(
                             modifier = Modifier.height(200.dp),
@@ -146,14 +146,14 @@ fun nothingItem(
             .padding(top = 10.dp, bottom = 10.dp),
         verticalAlignment = Alignment.CenterVertically,
         content = {
-            Image(
+        /*    Image(
 //                modifier = Modifier.align(Alignment.Center),
                 painter = painterResource( id = R.drawable.mascot_foreground),
                 contentDescription = null
-            )
+            )*/
             Text(
                 text = content,
-                modifier = Modifier.weight(1f),
+                modifier = Modifier.weight(1f).padding(top = 20.dp , bottom = 20.dp),
                 textAlign = TextAlign.Center
             )
         }
@@ -162,6 +162,6 @@ fun nothingItem(
 
 private fun currentDate() : String {
     val local = LocalDate.now(ZoneId.of("Asia/Seoul"))
-    val dateTimeFormat = DateTimeFormatter.ofPattern("yy/MM/dd")
+    val dateTimeFormat = DateTimeFormatter.ofPattern("M월 d일 E요일")
     return local.format(dateTimeFormat)
 }
