@@ -52,6 +52,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
+import com.slembers.alarmony.feature.common.ui.theme.toColor
 import com.slembers.alarmony.network.repository.MemberService.findId
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
@@ -152,7 +153,8 @@ fun FindEmailTextField(
         colors = androidx.compose.material3.TextFieldDefaults.outlinedTextFieldColors(
             focusedBorderColor = Color.Black,
             unfocusedBorderColor = Color.Gray,
-            errorBorderColor = MaterialTheme.colors.error
+            errorBorderColor = "#EF2B2A".toColor()
+
         ),
         singleLine = true,
         maxLines = 1,
@@ -170,7 +172,7 @@ fun FindEmailTextField(
             Log.d("회원", "이메일 정규식 통과못함")
             ErrorMessageText(
                 message = "이메일 형식에 맞게 입력해 주세요",
-                color =  MaterialTheme.colors.error
+                color = "#EF2B2A".toColor()
             )
         }
     }
@@ -197,7 +199,8 @@ fun FindIdTextField(
         colors = androidx.compose.material3.TextFieldDefaults.outlinedTextFieldColors(
             focusedBorderColor = Color.Black,
             unfocusedBorderColor = Color.Gray,
-            errorBorderColor = MaterialTheme.colors.error
+            errorBorderColor = "#EF2B2A".toColor()
+
         ),
         singleLine = true,
         maxLines = 1,
@@ -214,7 +217,8 @@ fun FindIdTextField(
         if (isIdError.value) {
             ErrorMessageText(
                 message = "아이디는 영문, 숫자를 조합하여 4-20자로 입력해주세요.",
-                color =  MaterialTheme.colors.error
+                color =  "#EF2B2A".toColor()
+
             )
         }
     }
