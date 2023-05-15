@@ -161,7 +161,9 @@ fun GroupScreen(
 ) {
 
     val title by viewModel.title.observeAsState()
-    val timePickerState by viewModel.alarmTime.observeAsState()
+//    val timePickerState by viewModel.alarmTime.observeAsState()
+    val hour by viewModel.hour.observeAsState()
+    val minute by viewModel.minute.observeAsState()
     val isWeeks by viewModel.currentWeeks.observeAsState()
     val weeks = listOf("월","화","수","목","금","토","일")
     val members by viewModel.members.observeAsState()
@@ -231,8 +233,8 @@ fun GroupScreen(
                     CoroutineScope(Dispatchers.Main).launch {
                         val groupId = GroupService.addGroupAlarm(
                             title = title,
-                            hour = timePickerState?.hour ?: 7,
-                            minute = timePickerState?.minute ?: 0,
+                            hour = hour ?: 7,
+                            minute = minute ?: 0,
                             alarmDate = selected,
                             members = members?.map { it.nickname }?.toList(),
                             soundName = soundName?.soundName,
@@ -248,14 +250,14 @@ fun GroupScreen(
                                             Alarm(
                                                 alarmId = groupId,
                                                 title = title!!,
-                                                hour = timePickerState?.hour!!,
-                                                minute = timePickerState?.minute!!,
+                                                hour = hour!!,
+                                                minute = minute!!,
                                                 alarmDate = selected,
                                                 soundName = soundName?.soundName!!,
                                                 soundVolume = soundVolume?.toInt()!!,
                                                 vibrate = vibration!!,
                                                 host = true,
-                                                content = ""
+                                                content = content!!
                                             )
                                         ), context
                                     )
