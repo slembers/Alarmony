@@ -1,9 +1,14 @@
 package com.slembers.alarmony.feature.ui.groupDetails
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -37,12 +42,15 @@ import java.lang.Math.abs
 @ExperimentalMaterial3Api
 @ExperimentalGlideComposeApi
 fun GroupDetailsTitle(
-    alarm : Alarm? = null,
+    alarm : Alarm?= null ,
 ) {
     val week = remember { mutableStateListOf("월","화","수","목","금","토","일",) }
 
     CardBox(
-        title = { CardTitle(title = alarm?.title ?: "제목") },
+        //수정 [3]
+      //  title = { CardTitle(title = alarm?.title ?: "제목") },
+        //title= {Text("알람 시간")},
+        title = { CardTitle(title = "알람시간") },
         content = {
             Column(
                 modifier = Modifier
@@ -55,6 +63,51 @@ fun GroupDetailsTitle(
                     ),
                 content = {
                     CardDivider()
+
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+
+
+                        Column() {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically
+                            )
+                            {
+                                GroupDetailsText(if(alarm?.hour!! in 13..23) "오후" else "오전")
+                                Spacer(modifier = Modifier.width(16.dp)) // 간격을 조정하는 Spacer
+                                GroupDetailsText(text = setTime(alarm.hour, alarm.minute), fontsize = 40.sp)
+                            }
+
+                            LazyRow(
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                                userScrollEnabled = false,
+                                content = {
+                                    itemsIndexed(items = week) { index, item ->
+                                        if (alarm != null) {
+                                            if(alarm.alarmDate.isEmpty()) {
+                                                GroupDetailsText(
+                                                    text = item,
+                                                    color = GroupDetailsWeek(item)
+                                                )
+                                            } else {
+                                                GroupDetailsText(
+                                                    text = item,
+                                                    color = GroupDetailsWeek(item, alarm.alarmDate[index])
+                                                )
+                                            }
+                                        }
+                                    }
+                                }
+                            )
+                        }
+
+
+
+                    }
+
                     Column(
                         modifier = Modifier.padding(
                             start = 20.dp,
@@ -63,28 +116,16 @@ fun GroupDetailsTitle(
                             end = 0.dp
                         ),
                         content = {
-                            GroupDetailsText(if(alarm?.hour!! in 13..23) "오후" else "오전" )
-                            GroupDetailsText(text = setTime(alarm.hour, alarm.minute), fontsize = 50.sp)
-                            LazyRow(
-                                verticalAlignment = Alignment.CenterVertically,
-                                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                                userScrollEnabled = false,
-                                content = {
-                                    itemsIndexed(items = week) { index, item ->
-                                        if(alarm.alarmDate.isEmpty()) {
-                                            GroupDetailsText(
-                                                text = item,
-                                                color = GroupDetailsWeek(item)
-                                            )
-                                        } else {
-                                            GroupDetailsText(
-                                                text = item,
-                                                color = GroupDetailsWeek(item, alarm.alarmDate[index])
-                                            )
-                                        }
-                                    }
-                                }
-                            )
+
+                             //   GroupDetailsText(if(alarm?.hour!! in 13..23) "오후" else "오전" )
+                             //   GroupDetailsText(text = setTime(alarm.hour, alarm.minute), fontsize = 40.sp)
+
+
+
+
+                           // GroupDetailsText(if(alarm?.hour!! in 13..23) "오후" else "오전" )
+                           // GroupDetailsText(text = setTime(alarm.hour, alarm.minute), fontsize = 40.sp)
+
                         }
                     )
                 }
@@ -137,7 +178,7 @@ fun GroupDetailsText(
         style = TextStyle(
             color = color,
             fontSize = fontsize,
-            fontFamily = FontFamily.Monospace,
+          //  fontFamily = FontFamily.Monospace,
             fontWeight = FontWeight.Bold,
             fontStyle = FontStyle.Normal
         ),

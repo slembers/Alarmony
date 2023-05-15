@@ -14,6 +14,7 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
@@ -33,16 +34,15 @@ fun CardTitle(
             text = title,
             style = TextStyle(
                 color = Color.Black,
-                fontSize = 20.sp,
-                fontFamily = FontFamily.Monospace,
+                fontSize = 14.sp,
                 fontWeight = FontWeight.Bold,
                 fontStyle = FontStyle.Normal
             ),
             modifier = Modifier
                 .padding(
                     start = 20.dp,
-                    top = 0.dp,
-                    bottom = 0.dp,
+                    top = 10.dp,
+                    bottom = 7.dp,
                     end = 0.dp
                 )
                 .weight(1f),

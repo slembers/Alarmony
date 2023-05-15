@@ -1,5 +1,9 @@
 package com.slembers.alarmony.member.service;
 
+import com.slembers.alarmony.alarm.entity.MemberAlarm;
+import com.slembers.alarmony.alarm.repository.AlertRepository;
+import com.slembers.alarmony.alarm.repository.MemberAlarmRepository;
+import com.slembers.alarmony.alarm.service.GroupService;
 import com.slembers.alarmony.global.amazons3.AmazonS3Util;
 import com.slembers.alarmony.global.execption.CustomException;
 import com.slembers.alarmony.global.security.jwt.JwtTokenProvider;
@@ -11,11 +15,12 @@ import com.slembers.alarmony.member.dto.request.FindPasswordDto;
 import com.slembers.alarmony.member.dto.request.ReissueTokenDto;
 import com.slembers.alarmony.member.dto.request.SignUpDto;
 import com.slembers.alarmony.member.dto.response.*;
-import com.slembers.alarmony.member.entity.AuthorityEnum;
 import com.slembers.alarmony.member.entity.Member;
 import com.slembers.alarmony.member.exception.MemberErrorCode;
 import com.slembers.alarmony.member.repository.MemberRepository;
 import com.slembers.alarmony.report.dto.ModifiedMemberInfoDto;
+import com.slembers.alarmony.report.repository.ReportRepository;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -36,6 +41,14 @@ public class MemberServiceImpl implements MemberService {
     private final ModelMapper modelMapper;
 
     private final MemberRepository memberRepository;
+
+    private final ReportRepository reportRepository;
+
+    private final AlertRepository alertRepository;
+
+    private final GroupService groupService;
+
+    private final MemberAlarmRepository memberAlarmRepository;
 
     private final EmailVerifyService emailVerifyService;
 
@@ -244,8 +257,23 @@ public class MemberServiceImpl implements MemberService {
     @Transactional
     public void deleteMember(String username) {
         Member member = findMemberByUsername(username);
-        member.modifyAuthority(AuthorityEnum.ROLE_WITHDRAWAL);
-        memberRepository.save(member);
+
+        reportRepository.deleteByReporterId(member.getId());
+        reportRepository.deleteByReportedId(member.getId());
+
+        alertRepository.deleteBySenderId(member.getId());
+        alertRepository.deleteByReceiverId(member.getId());
+
+        List<MemberAlarm> memberAlarmList = memberAlarmRepository.findAllByMember(member);
+        for (MemberAlarm memberAlarm : memberAlarmList) {
+            if (groupService.isGroupOwner(memberAlarm.getAlarm().getId(), member.getUsername())) {
+                groupService.deleteGroup(memberAlarm.getAlarm().getId());
+            } else {
+                groupService.removeMemberByUsername(memberAlarm.getAlarm().getId(),
+                    member.getUsername());
+            }
+        }
+        memberRepository.delete(member);
     }
 
     /**

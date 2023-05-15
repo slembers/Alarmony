@@ -24,8 +24,8 @@ public interface GroupService {
     /**
      * 초대 가능한 멤버 리스트를 반환합니다.
      *
-     * @param groupId 그룹 id
-     * @param keyword 검색할 키워드
+     * @param groupId  그룹 id
+     * @param keyword  검색할 키워드
      * @param username 제외할 멤버의 유저네임
      * @return 초대 가능한 멤버 목록
      */
@@ -53,5 +53,12 @@ public interface GroupService {
      * @param nickname 그룹에서 제외할 멤버 닉네임
      */
     void removeMemberByNickname(Long groupId, String nickname);
+
+    /**
+     * 그룹을 삭제합니다.
+     *
+     * @param groupId 그룹 id
+     */
+    void deleteGroup(Long groupId);
 
 }
