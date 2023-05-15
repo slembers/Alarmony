@@ -13,14 +13,18 @@ import com.slembers.alarmony.model.db.Member
 import com.slembers.alarmony.model.db.SoundItem
 import com.slembers.alarmony.util.Sound
 import com.slembers.alarmony.util.groupSoundInfos
+import java.time.LocalDateTime
+import java.time.LocalTime
 import javax.inject.Inject
 
 @ExperimentalMaterial3Api
 class GroupViewModel : ViewModel() {
 
     private val _title = MutableLiveData("")
-    private val _alarmTime = MutableLiveData(
-        TimePickerState(10,0,false))
+//    private val _alarmTime = MutableLiveData(
+//        TimePickerState(10,0,false))
+    private val _alarmHourTime = MutableLiveData(LocalDateTime.now().hour)
+    private val _alarmMinuteTime = MutableLiveData(LocalDateTime.now().minute)
     private val _alarmWeeks = mutableStateMapOf<String, Boolean>()
     private val _currentWeeks = MutableLiveData<MutableMap<String,Boolean>>()
     private val _members = mutableStateListOf<Member>()
@@ -46,7 +50,9 @@ class GroupViewModel : ViewModel() {
     }
 
     val title : LiveData<String> = _title
-    val alarmTime : LiveData<TimePickerState> = _alarmTime
+//    val alarmTime : LiveData<TimePickerState> = _alarmTime
+    val hour : LiveData<Int> = _alarmHourTime
+    val minute : LiveData<Int> = _alarmMinuteTime
     val currentWeeks : LiveData<MutableMap<String,Boolean>> = _currentWeeks
     val members : LiveData<MutableList<Member>> = _currentMembers
     val sound : LiveData<Sound> = _sound
@@ -90,7 +96,8 @@ class GroupViewModel : ViewModel() {
     }
 
     fun updateTimePicker(hour : Int, minute : Int) {
-        _alarmTime.postValue(TimePickerState(hour, minute, false))
+        _alarmHourTime.postValue(hour)
+        _alarmMinuteTime.postValue(minute)
     }
 
     fun onChangeContent(content : String) {
