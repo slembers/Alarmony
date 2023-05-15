@@ -22,8 +22,9 @@ public interface AlarmRecordRepository extends JpaRepository<AlarmRecord, Long> 
      * @param alarmId  알람 아이디
      * @return 알람 기록 튜플
      */
-    @Query(value = "select * from alarm_record ar join member_alarm ma on ar.member_alarm_id = ma.member_alarm_id " +
-            "where ma.member_id = :memberId and ma.alarm_id = :alarmId", nativeQuery = true)
+    @Query(value = "select * from alarm_record ar "
+        + "join member_alarm ma on ar.member_alarm_id = ma.member_alarm_id "
+        + "where ma.member_id = :memberId and ma.alarm_id = :alarmId", nativeQuery = true)
     Optional<AlarmRecord> findByMemberAndAlarm(Long memberId, Long alarmId);
 
     /**
