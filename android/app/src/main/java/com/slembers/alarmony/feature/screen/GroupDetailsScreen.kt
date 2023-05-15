@@ -84,7 +84,8 @@ fun GroupDetailsScreen(
         soundName =  "Nomal",
         soundVolume =  7,
         vibrate =  true,
-        host = false
+        host = false,
+        content = "임시내용"
     )) }
 
     var memberCnt = 0;

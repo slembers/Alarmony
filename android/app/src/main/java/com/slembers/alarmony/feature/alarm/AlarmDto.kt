@@ -13,7 +13,8 @@ data class AlarmDto(
     @SerializedName("sound_name") val soundName : String,
     @SerializedName("sound_volumn") val soundVolume : Int,
     @SerializedName("vibrate") val vibrate : Boolean,
-    @SerializedName("host") val host : Boolean
+    @SerializedName("host") val host : Boolean,
+    @SerializedName("content") val content : String
 ) {
     companion object {
         fun toDto(alarm: Alarm): AlarmDto {
@@ -26,7 +27,8 @@ data class AlarmDto(
                 alarm.soundName,
                 alarm.soundVolume,
                 alarm.vibrate,
-                alarm.host
+                alarm.host,
+                alarm.content
             )
             return alarmDto
         }

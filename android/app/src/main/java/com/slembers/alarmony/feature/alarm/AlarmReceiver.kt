@@ -44,6 +44,9 @@ class AlarmReceiver : BroadcastReceiver() {
                     if (todayDayOfWeek == -1) todayDayOfWeek = 6
                     if (alarmDto!!.alarmDate[todayDayOfWeek] == false) return@launch // 오늘이 울리는 요일이 아니면 리턴
                 }
+                else {
+                    Log.d("myResponse-snooze", "스누즈리시버")
+                }
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                     context.startForegroundService(newIntent)
                 } else {

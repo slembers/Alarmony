@@ -16,7 +16,8 @@ class Alarm(
     val soundName: String,
     val soundVolume: Int,
     val vibrate: Boolean,
-    val host: Boolean
+    val host: Boolean,
+    val content: String
 ) {
     companion object {
         fun toEntity(alarmDto: AlarmDto): Alarm {
@@ -29,7 +30,8 @@ class Alarm(
                 alarmDto.soundName,
                 alarmDto.soundVolume,
                 alarmDto.vibrate,
-                alarmDto.host
+                alarmDto.host,
+                alarmDto.content
             )
             return alarm
         }

@@ -72,7 +72,7 @@ fun setAlarm(alarmDto: AlarmDto, context: Context) {
     val myPendingIntent : Int = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
         PendingIntent.FLAG_MUTABLE
     } else {
-        PendingIntent.FLAG_UPDATE_CURRENT
+        PendingIntent.FLAG_MUTABLE
     }
     val alarmIntentRTC: PendingIntent =
         PendingIntent.getBroadcast(

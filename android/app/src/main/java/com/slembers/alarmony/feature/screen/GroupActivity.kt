@@ -254,7 +254,8 @@ fun GroupScreen(
                                                 soundName = soundName?.soundName!!,
                                                 soundVolume = soundVolume?.toInt()!!,
                                                 vibrate = vibration!!,
-                                                host = true
+                                                host = true,
+                                                content = ""
                                             )
                                         ), context
                                     )

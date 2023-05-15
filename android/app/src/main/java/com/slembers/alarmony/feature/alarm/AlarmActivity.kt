@@ -206,8 +206,8 @@ fun AlarmScreen(alarmDto : AlarmDto) {
                             val formattedDateTime = dateTime.format(formatter)
                             recordAlarmApi(formattedDateTime, alarmDto.alarmId) // 알람 정지 시 기록 api
                             cancelNotification()
-                            context.finish()
                             goMain(context)
+                            context.finish()
                         },
                         shape = CircleShape,
                         border = BorderStroke(10.dp, "#63B1C2".toColor()),
@@ -340,7 +340,8 @@ fun DefaultView() {
         "자장가",
         15,
         vibrate = true,
-        host = false
+        host = false,
+        content = "장덕팸 미라클 모임 파티입니다."
     )
     AlarmScreen(alarmDto = alarmDto)
 }

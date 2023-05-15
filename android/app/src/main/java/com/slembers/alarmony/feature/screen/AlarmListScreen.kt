@@ -190,7 +190,8 @@ fun AlarmListScreen(navController : NavHostController) {
                     "Piano",
                     7,
                     true,
-                    false
+                    false,
+                    "안수빈 마라탕 매운맛 고문하는 장덕 모임입니다."
                 )
                     saveTestAlarm(alarm999, context)
                     Toast.makeText(context, "8초 뒤에 알람이 울립니다.", Toast.LENGTH_SHORT).show()}
