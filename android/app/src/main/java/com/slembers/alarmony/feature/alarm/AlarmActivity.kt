@@ -4,6 +4,7 @@ import android.app.Activity
 import android.app.KeyguardManager
 import android.app.Notification
 import android.content.Context
+import android.content.Intent
 import android.graphics.Typeface
 import android.icu.util.Calendar
 import android.os.Build
@@ -33,6 +34,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -50,13 +52,19 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
+import com.slembers.alarmony.MainActivity
 import com.slembers.alarmony.feature.alarm.AlarmApi.recordAlarmApi
 import com.slembers.alarmony.feature.alarm.AlarmNoti.cancelNotification
 import com.slembers.alarmony.feature.alarm.AlarmNoti.runNotification
 import com.slembers.alarmony.feature.common.ui.theme.toColor
+import com.slembers.alarmony.feature.screen.MemberActivity
+import com.slembers.alarmony.network.repository.MemberService
+import com.slembers.alarmony.util.PresharedUtil
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
@@ -64,9 +72,12 @@ class AlarmActivity : ComponentActivity() {
     lateinit var repository: AlarmRepository
     lateinit var wakeLock: PowerManager.WakeLock
     lateinit var alarmDto: AlarmDto
-    override fun onCreate(savedInstanceState: Bundle?) {
 
+    @OptIn(ExperimentalMaterial3Api::class, ExperimentalGlideComposeApi::class)
+    override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        MainActivity.prefs = PresharedUtil(application)
+
         val alarmId = intent.getLongExtra("alarmId", -1L)
         Log.d("ForeA1", alarmId.toString())
         val alarmDao = AlarmDatabase.getInstance(this).alarmDao()
@@ -107,6 +118,23 @@ class AlarmActivity : ComponentActivity() {
 
         setContent {
             AlarmScreen(alarmDto!!)
+
+            val access = MainActivity.prefs.getString("accessToken","")
+            val refresh = MainActivity.prefs.getString("refreshToken","")
+            val username = MainActivity.prefs.getString("username","")
+            if( access.isNotBlank() || access.isNotEmpty() ) {
+                Log.d("application start","토큰을 재발급 받으려고 합니다..")
+                LaunchedEffect(Unit) {
+                    withContext(Dispatchers.IO) {
+                        MemberService.reissueToken(username = username, refreshToken = refresh)
+                    }
+                }
+            } else {
+                Log.d("application start","로그인을 시도해야 합니다.")
+                val intent = Intent(this, MemberActivity::class.java)
+                startActivity(intent)
+                finish()
+            }
         }
     }
 
@@ -114,8 +142,8 @@ class AlarmActivity : ComponentActivity() {
         // super.onBackPressed() 뒤로 가기 막기
     }
     override fun onDestroy() {
-        wakeLock.release()
         super.onDestroy()
+        wakeLock.release()
     }
 }
 
@@ -125,7 +153,6 @@ fun AlarmScreen(alarmDto : AlarmDto) {
     val context = LocalContext.current as Activity
     val isClicked5 = remember { mutableStateOf(false)  }
     val isClicked10 = remember { mutableStateOf(false)  }
-    val alarmStartTime = calAlarm(alarmDto)
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         containerColor = "#66D5ED".toColor(),
@@ -179,8 +206,8 @@ fun AlarmScreen(alarmDto : AlarmDto) {
                             val formattedDateTime = dateTime.format(formatter)
                             recordAlarmApi(formattedDateTime, alarmDto.alarmId) // 알람 정지 시 기록 api
                             cancelNotification()
-                            context.finish()
                             goMain(context)
+                            context.finish()
                         },
                         shape = CircleShape,
                         border = BorderStroke(10.dp, "#63B1C2".toColor()),
@@ -313,7 +340,8 @@ fun DefaultView() {
         "자장가",
         15,
         vibrate = true,
-        host = false
+        host = false,
+        content = "장덕팸 미라클 모임 파티입니다."
     )
     AlarmScreen(alarmDto = alarmDto)
 }

@@ -81,8 +81,10 @@ public class AlertServiceImpl implements AlertService {
      *
      * @param alert 알림 객체
      */
-    private boolean sendInviteAlert(Alert alert) {
+    @Transactional
+    public boolean sendInviteAlert(Alert alert) {
         try {
+            alertRepository.save(alert);
             String targetMobile = alert.getReceiver().getRegistrationToken();
             String content = alert.getContent();
             String imageUrl = alert.getSender().getProfileImgUrl();
@@ -99,7 +101,6 @@ public class AlertServiceImpl implements AlertService {
             // 결과 출력
             log.info("초대 메시지 전송 완료: " + response);
             // 알림 메시지를 저장한다.
-            alertRepository.save(alert);
             return true;
         } catch (Exception e) {
             log.error(e.getMessage());
@@ -252,7 +253,7 @@ public class AlertServiceImpl implements AlertService {
 
         try {
             String targetMobile = alert.getReceiver().getRegistrationToken();
-            String imageUrl = alert.getSender().getProfileImgUrl();
+            String imageUrl = alert.getSender() == null ?  null : alert.getSender().getProfileImgUrl();
             // 메시지 설정
             Message message = Message.builder()
                 .putData("alertId", String.valueOf(alert.getId()))

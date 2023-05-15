@@ -19,8 +19,13 @@ class AlarmReceiver : BroadcastReceiver() {
     lateinit var repository: AlarmRepository
     override fun onReceive(context: Context, intent: Intent) {
         val newIntent = Intent(context, AlarmForegroundService::class.java)
-        if (intent.action == BOOT_COMPLETED) {
+        if (intent.action == BOOT_COMPLETED) { // 재부팅 시 알람 다시 세팅
             newIntent.putExtra(OPEN_TYPE, REFRESH)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                context.startForegroundService(newIntent)
+            } else {
+                context.startService(newIntent)
+            }
         } else {
             val alarmId = intent.getLongExtra("alarmId", -1L)
             if (alarmId == -1L) return
@@ -38,6 +43,9 @@ class AlarmReceiver : BroadcastReceiver() {
                     var todayDayOfWeek: Int = calendar.get(Calendar.DAY_OF_WEEK) - 2    // 오늘 요일 구하기
                     if (todayDayOfWeek == -1) todayDayOfWeek = 6
                     if (alarmDto!!.alarmDate[todayDayOfWeek] == false) return@launch // 오늘이 울리는 요일이 아니면 리턴
+                }
+                else {
+                    Log.d("myResponse-snooze", "스누즈리시버")
                 }
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                     context.startForegroundService(newIntent)

@@ -76,6 +76,7 @@ public class AlarmServiceImpl implements AlarmService {
             // 알람을 생성한다.
             alarm = Alarm.builder()
                 .title(createAlarmDto.getTitle())
+                .content(createAlarmDto.getContent())
                 .time(LocalTime.of(createAlarmDto.getHour(), createAlarmDto.getMinute()))
                 .host(groupLeader)
                 .alarmDate(CommonMethods.changeBooleanListToString(createAlarmDto.getAlarmDate()))
@@ -165,7 +166,7 @@ public class AlarmServiceImpl implements AlarmService {
             LocalTime localTime = alarm.getTime();
 
             // 알람 객체를 바로 리턴한다.
-            return new AlarmDto(alarm.getId(), alarm.getTitle(), localTime.getHour(),
+            return new AlarmDto(alarm.getId(), alarm.getTitle(), alarm.getContent(), localTime.getHour(),
                 localTime.getMinute(), alarm.getAlarmDate());
         } catch (Exception e) {
             log.error(e.getMessage());

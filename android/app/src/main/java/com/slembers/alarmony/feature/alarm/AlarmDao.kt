@@ -16,6 +16,9 @@ interface AlarmDao {
     @Query("SELECT * FROM alarms")
     fun getAllAlarms(): LiveData<List<Alarm>>
 
+    @Query("SELECT * FROM alarms")
+    fun getAllAlarms2() : List<Alarm>
+
     @Query("SELECT * FROM alarms WHERE alarmId=:alarmId")
     fun getAlarmById(alarmId: Long): Alarm?
 

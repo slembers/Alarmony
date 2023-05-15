@@ -95,10 +95,14 @@ fun MemberDetails(
                 maxLines = 1
             )*/
         }
-        if(host) {
+        if(host && !isCheck) {
             GroupDetailsBoardBtn(
-                isCheck = isCheck,
+                isCheck = false,
                 onClick = onClick
+            )
+        } else if(isCheck) {
+            GroupDetailsBoardBtn(
+                isCheck = true,
             )
         }
     }
