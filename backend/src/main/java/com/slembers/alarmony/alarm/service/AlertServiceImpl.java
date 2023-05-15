@@ -83,8 +83,6 @@ public class AlertServiceImpl implements AlertService {
      */
     private boolean sendInviteAlert(Alert alert) {
         try {
-            // 알림 메시지를 저장한다.
-            alertRepository.save(alert);
             String targetMobile = alert.getReceiver().getRegistrationToken();
             String content = alert.getContent();
             String imageUrl = alert.getSender().getProfileImgUrl();
@@ -104,8 +102,8 @@ public class AlertServiceImpl implements AlertService {
             String response = FirebaseMessaging.getInstance().send(message);
             // 결과 출력
             log.info("초대 메시지 전송 완료: " + response);
-
-
+            // 알림 메시지를 저장한다.
+            alertRepository.save(alert);
             return true;
         } catch (Exception e) {
             log.error(e.getMessage());
