@@ -193,9 +193,20 @@ fun GroupScreen(
                 text = "저장",
                 enabled = !loading,
                 onClick = {
+
+                    val selected = weeks.map {
+                        isWeeks?.getValue(it) ?: false
+                    }.toList()
+
                     if(title?.isEmpty() == true) {
                         isClosed.value = true
                         alertContext.value = "제목을 입력해주세요."
+                        return@GroupBottomButtom
+                    }
+
+                    if(selected.all { !it }) {
+                        isClosed.value = true
+                        alertContext.value = "요일을 1개이상 선택해주세요."
                         return@GroupBottomButtom
                     }
 
@@ -206,9 +217,7 @@ fun GroupScreen(
                             title = title,
                             hour = timePickerState?.hour ?: 7,
                             minute = timePickerState?.minute ?: 0,
-                            alarmDate = weeks.map {
-                                isWeeks?.getValue(it) ?: false
-                            }.toList(),
+                            alarmDate = selected,
                             members = members?.map { it.nickname }?.toList(),
                             soundName = soundName?.soundName,
                             soundVolume = soundVolume,
@@ -225,9 +234,7 @@ fun GroupScreen(
                                                 title = title!!,
                                                 hour = timePickerState?.hour!!,
                                                 minute = timePickerState?.minute!!,
-                                                alarmDate = weeks.map {
-                                                    isWeeks?.getValue(it) ?: false
-                                                }.toList(),
+                                                alarmDate = selected,
                                                 soundName = soundName?.soundName!!,
                                                 soundVolume = soundVolume?.toInt()!!,
                                                 vibrate = vibration!!,
