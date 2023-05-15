@@ -48,7 +48,7 @@ public interface MemberAlarmRepository extends JpaRepository<MemberAlarm, Long> 
      */
     @Query("SELECT new com.slembers.alarmony.alarm.dto.AlarmListDetailDto( " +
         "CASE WHEN ar.host.id = :memberId THEN true ELSE false END, " +
-        "ar.id, ar.title, hour(ar.time), minute(ar.time), ar.alarmDate, " +
+        "ar.id, ar.title, ar.content, hour(ar.time), minute(ar.time), ar.alarmDate, " +
         "ar.soundName, ar.soundVolume, ar.vibrate ) " +
         "from member_alarm as ma inner join alarm as ar on ma.alarm.id = ar.id " +
         "where ma.member.id = :memberId")

@@ -24,6 +24,9 @@ public class Alarm {
     @Column(name = "title", nullable = false)
     private String title;
 
+    @Column(name = "content")
+    private String content;
+
     @Column(name = "time", nullable = false)
     private LocalTime time;
 

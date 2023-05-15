@@ -17,6 +17,8 @@ public class CreateAlarmDto {
     @NotNull(message = "제목은 필수입니다.")
     private String title;
 
+    private String content;
+
     @Min(value = 0, message = "시간은 0 이상이어야 합니다.")
     @Max(value = 23, message = "시간은 23 이하여야 합니다.")
     private int hour;
