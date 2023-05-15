@@ -456,7 +456,7 @@ object MemberService {
 
             return true;
         } else {
-            //실패 시에는 로그인 만료 메세지를 보내주고 로그아웃 시킨다.
+            logOut()
             return false
         }
         //실패 400번

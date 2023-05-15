@@ -2,6 +2,7 @@ package com.slembers.alarmony.feature.screen
 
 import android.app.Activity
 import android.content.Context.INPUT_METHOD_SERVICE
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.inputmethod.InputMethodManager
@@ -92,7 +93,9 @@ import com.slembers.alarmony.model.db.dto.MemberDto
 import com.slembers.alarmony.network.service.GroupService
 import com.slembers.alarmony.util.DisplayDpUtil
 import com.slembers.alarmony.util.Sound
+import com.slembers.alarmony.util.WifiUtil
 import com.slembers.alarmony.util.groupSoundInfos
+import com.slembers.alarmony.util.showToast
 import com.slembers.alarmony.viewModel.GroupViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -129,6 +132,19 @@ class GroupActivity : AppCompatActivity() {
     override fun onStart() {
         super.onStart()
         Log.d("GroupActivity","[그룹생성] Activity 시작")
+        Log.d("GroupActivity","GroupActivity 시작")
+        val net = WifiUtil.isNetworkConnected(this.application)
+        if(net.not()) {
+            val intent = Intent(this,MemberActivity::class.java)
+            startActivity(intent)
+            finish()
+            showToast(this,"네트워크 연결을 확인해주세요.")
+        }
+        Log.d("wifiUtil","GroupActivity 네트워크 연결상태 확인 : $net")
+    }
+
+    override fun onPause() {
+        super.onPause()
     }
 
     override fun onDestroy() {
@@ -193,9 +209,20 @@ fun GroupScreen(
                 text = "저장",
                 enabled = !loading,
                 onClick = {
+
+                    val selected = weeks.map {
+                        isWeeks?.getValue(it) ?: false
+                    }.toList()
+
                     if(title?.isEmpty() == true) {
                         isClosed.value = true
                         alertContext.value = "제목을 입력해주세요."
+                        return@GroupBottomButtom
+                    }
+
+                    if(selected.all { !it }) {
+                        isClosed.value = true
+                        alertContext.value = "요일을 1개이상 선택해주세요."
                         return@GroupBottomButtom
                     }
 
@@ -206,9 +233,7 @@ fun GroupScreen(
                             title = title,
                             hour = timePickerState?.hour ?: 7,
                             minute = timePickerState?.minute ?: 0,
-                            alarmDate = weeks.map {
-                                isWeeks?.getValue(it) ?: false
-                            }.toList(),
+                            alarmDate = selected,
                             members = members?.map { it.nickname }?.toList(),
                             soundName = soundName?.soundName,
                             soundVolume = soundVolume,
@@ -225,9 +250,7 @@ fun GroupScreen(
                                                 title = title!!,
                                                 hour = timePickerState?.hour!!,
                                                 minute = timePickerState?.minute!!,
-                                                alarmDate = weeks.map {
-                                                    isWeeks?.getValue(it) ?: false
-                                                }.toList(),
+                                                alarmDate = selected,
                                                 soundName = soundName?.soundName!!,
                                                 soundVolume = soundVolume?.toInt()!!,
                                                 vibrate = vibration!!,
