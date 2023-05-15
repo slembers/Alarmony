@@ -7,7 +7,7 @@ import com.slembers.alarmony.feature.alarm.AlarmDto
 
 class NotiDto (
     @SerializedName("noti_id") val notiId : Long,
-    @SerializedName("profile_img") val profileImg : String,
+    @SerializedName("profile_img") var profileImg : String,
     @SerializedName("content") val content : String,
     @SerializedName("type") val type : String
 )  {

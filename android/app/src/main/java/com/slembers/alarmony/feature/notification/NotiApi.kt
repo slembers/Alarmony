@@ -15,7 +15,6 @@ object NotiApi {
 
     fun getAllNotisApi(context : Context) {
         val call = notiApi.getAllNotis()
-        var notis : List<NotiDto>? = null
         call.enqueue(object: Callback<getAllNotisResponseDto> {
             override fun onResponse(
                 call: Call<getAllNotisResponseDto>,
@@ -23,11 +22,13 @@ object NotiApi {
             ) {
                 if (response.isSuccessful) {
                     val myResponse = response.body()
-                    Log.d("myResponse", myResponse.toString())
                     if (myResponse!!.alerts != null) { // 서버에 알림 목록이 있으면
-                        notis = myResponse.alerts
-                        for(noti : NotiDto in notis!!) {    // Room 알림 목록 저장
-                            saveNoti(noti, context)
+                        val notis = myResponse.alerts
+                        for(notiDto : NotiDto in notis!!) {    // Room 알림 목록 저장
+                            if (notiDto.profileImg == null) {
+                                notiDto.profileImg = ""
+                            }
+                            saveNoti(notiDto, context)
                         }
                     }
                 } else {
@@ -48,10 +49,9 @@ object NotiApi {
                 call: Call<InviteResponseDto>,
                 response: Response<InviteResponseDto>
             ) {
-                Log.d("myResponse1", response.toString())
                 if (response.isSuccessful) {
                     val myResponse = response.body()
-                    Log.d("myResponse", myResponse.toString())
+                    Log.d("myResponse_Invite", myResponse.toString())
                     if (myResponse!!.alarm == null) { // 토큰이 유효하지 않으면 alarm에 null 들어옴
                         Toast.makeText(
                             context,
