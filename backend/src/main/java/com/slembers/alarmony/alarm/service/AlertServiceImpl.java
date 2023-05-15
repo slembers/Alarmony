@@ -88,10 +88,6 @@ public class AlertServiceImpl implements AlertService {
             String imageUrl = alert.getSender().getProfileImgUrl();
             // 메시지 설정
             Message message = Message.builder()
-//                .setNotification(Notification.builder()
-//                    .setTitle("Alarmony 그룹 초대 알림")
-//                    .setBody(content)
-//                    .build())
                 .putData("alertId", String.valueOf(alert.getId()))
                 .putData("profileImg", imageUrl == null ? "" : imageUrl)
                 .putData("content", content)
@@ -203,10 +199,10 @@ public class AlertServiceImpl implements AlertService {
         }
 
         return AlarmInviteResponseDto.builder()
-                .alarm(
-                        AlarmDetailDto.builder(alert.getAlarm(), alert.getReceiver()))
-                .message(alert.getAlarm().getTitle() + "의 그룹 초대를 수락하였습니다.")
-                .build();
+            .alarm(
+                AlarmDetailDto.builder(alert.getAlarm(), alert.getReceiver()))
+            .message(alert.getAlarm().getTitle() + "의 그룹 초대를 수락하였습니다.")
+            .build();
     }
 
     /**
@@ -233,7 +229,8 @@ public class AlertServiceImpl implements AlertService {
             log.error(e.getMessage());
             throw new CustomException(AlertErrorCode.ALERT_DELETE_ERROR);
         }
-        return AlarmInviteResponseDto.builder().message(alert.getAlarm().getTitle() + "의 그룹 초대를 거절했습니다.").build();
+        return AlarmInviteResponseDto.builder()
+            .message(alert.getAlarm().getTitle() + "의 그룹 초대를 거절했습니다.").build();
     }
 
     /**
@@ -258,10 +255,6 @@ public class AlertServiceImpl implements AlertService {
             String imageUrl = alert.getSender().getProfileImgUrl();
             // 메시지 설정
             Message message = Message.builder()
-//                .setNotification(Notification.builder()
-//                    .setTitle(title)
-//                    .setBody(alert.getContent())
-//                    .build())
                 .putData("alertId", String.valueOf(alert.getId()))
                 .putData("profileImg", imageUrl == null ? "" : imageUrl)
                 .putData("content", alert.getContent())
@@ -300,7 +293,7 @@ public class AlertServiceImpl implements AlertService {
      * 사용자에게 알람을 보낸다.
      *
      * @param targetToken 목표 기기 토큰
-     * @param alarmId  그룹 아이디
+     * @param alarmId     그룹 아이디
      */
     private void sendAlarmTo(String targetToken, Long alarmId) {
         try {
@@ -326,13 +319,15 @@ public class AlertServiceImpl implements AlertService {
         }
     }
 
-
     /**
      * 알림에 관한 명령이 본인것이 맞는지 확인한다.
+     *
      * @param alert 알림
      */
     private void confirmAlertReceiver(Alert alert) {
         Member member = memberService.findMemberByUsername(SecurityUtil.getCurrentUsername());
-        if (!alert.getReceiver().equals(member)) throw new CustomException(AlertErrorCode.ALERT_MEMBER_NOT_EQUAL);
+        if (!alert.getReceiver().equals(member)) {
+            throw new CustomException(AlertErrorCode.ALERT_MEMBER_NOT_EQUAL);
+        }
     }
 }
