@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -25,6 +26,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.slembers.alarmony.feature.common.ui.compose.GroupCard
+import com.slembers.alarmony.feature.common.ui.theme.toColor
 
 @Composable
 @ExperimentalMaterial3Api
@@ -34,42 +36,5 @@ fun GroupContent(
     onChangeValue : (String) -> Unit,
     interactionSource: MutableInteractionSource
 ) {
-    GroupCard(
-        content = {
-            OutlinedTextField(
-                value = content,
-                onValueChange = onChangeValue,
-                textStyle = TextStyle(
-                    color = Color.Black,
-                    fontSize = 20.sp,
-                    fontFamily = FontFamily.Monospace,
-                    fontStyle = FontStyle.Normal
-                ),
-                modifier = Modifier
-                    .padding(
-                        start = 20.dp,
-                        top = 0.dp,
-                        bottom = 0.dp,
-                        end = 10.dp
-                    )
-                    .fillMaxWidth()
-                    .border(
-                        BorderStroke(1.dp, MaterialTheme.colorScheme.background),
-                        MaterialTheme.shapes.extraSmall
-                    )
-                    .focusable(enabled = true, interactionSource = interactionSource),
-                placeholder = {
-                    if(content.isEmpty()) {
-                        Text(
-                            text = "그룹설명을 작성해주세요..",
-                            modifier = Modifier.fillMaxWidth(1f),
-                            fontSize = 18.sp,
-                            fontWeight = FontWeight.Normal,
-                            color = Color.LightGray
-                        )
-                    }
-                }
-            )
-        }
-    )
+
 }

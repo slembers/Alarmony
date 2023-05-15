@@ -8,6 +8,8 @@ import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.border
+import androidx.compose.foundation.focusable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -27,10 +29,13 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -48,6 +53,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
@@ -90,6 +96,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.time.LocalTime
 
@@ -188,7 +195,8 @@ fun GroupScreen(
                     WindowInsetsSides.Vertical
                 )
             )
-            .imePadding(),
+            .imePadding()
+            .padding(bottom = 20.dp),
         topBar = {
             GroupToolBar(
                 title = NavItem.Group.title,
@@ -265,7 +273,6 @@ fun GroupScreen(
             Column(
                 modifier = Modifier
                     .padding(innerPadding)
-                    .padding(10.dp)
                     .verticalScroll(scrollerState),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
@@ -327,7 +334,7 @@ fun GroupScreen(
                                     .padding(
                                         start = 20.dp,
                                         top = 0.dp,
-                                        bottom = 0.dp,
+                                        bottom = 10.dp,
                                         end = 10.dp
                                     ),
                                 verticalAlignment = Alignment.CenterVertically,
@@ -361,15 +368,84 @@ fun GroupScreen(
                         }
                     }
                 )
-                GroupSubjet(
-                    title = title!!,
-                    onChangeValue = { viewModel.onChangeTitle(it) },
-                    interactionSource = interaction
+                GroupCard(
+                    content = {
+                        OutlinedTextField(
+                            value = title!!,
+                            onValueChange = { viewModel.onChangeTitle(it) },
+                            textStyle = TextStyle(
+                                color = Color.Black,
+                                fontSize = 20.sp,
+                                fontFamily = FontFamily.Monospace,
+                                fontStyle = FontStyle.Normal
+                            ),
+                            modifier = Modifier
+                                .padding(
+                                    start = 20.dp,
+                                    top = 0.dp,
+                                    bottom = 0.dp,
+                                    end = 10.dp
+                                )
+                                .fillMaxWidth(),
+                            singleLine = true,
+                            colors = OutlinedTextFieldDefaults.colors(
+                                focusedBorderColor = "#FFFFFF".toColor().copy(alpha = 0.5f),
+                                unfocusedBorderColor = "#FFFFFF".toColor().copy(alpha = 0.5f)
+                            ),
+                            keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Companion.Done),
+                            placeholder = {
+                                if(title?.isEmpty()!!) {
+                                    Text(
+                                        text = "그룹제목을 입력해주세요.",
+                                        modifier = Modifier.fillMaxWidth(1f),
+                                        fontSize = 18.sp,
+                                        fontWeight = FontWeight.Normal,
+                                        color = Color.LightGray
+                                    )
+                                }
+                            }
+                        )}
                 )
-                GroupContent(
-                    content = content!!,
-                    onChangeValue = { viewModel.onChangeContent(it)},
-                    interactionSource = interaction
+                GroupCard(
+                    content = {
+                        OutlinedTextField(
+                            value = content!!,
+                            onValueChange = { viewModel.onChangeContent(it)},
+                            textStyle = TextStyle(
+                                color = Color.Black,
+                                fontSize = 20.sp,
+                                fontFamily = FontFamily.Monospace,
+                                fontStyle = FontStyle.Normal
+                            ),
+                            colors = OutlinedTextFieldDefaults.colors(
+                                focusedBorderColor = "#FFFFFF".toColor().copy(alpha = 0.5f),
+                                unfocusedBorderColor = "#FFFFFF".toColor().copy(alpha = 0.5f)
+                            ),
+                            modifier = Modifier
+                                .padding(
+                                    start = 20.dp,
+                                    top = 0.dp,
+                                    bottom = 0.dp,
+                                    end = 10.dp
+                                )
+                                .fillMaxWidth()
+                                .border(
+                                    BorderStroke(1.dp, MaterialTheme.colorScheme.background),
+                                    MaterialTheme.shapes.extraSmall
+                                ),
+                            placeholder = {
+                                if(content?.isEmpty()!!) {
+                                    Text(
+                                        text = "그룹설명을 작성해주세요..",
+                                        modifier = Modifier.fillMaxWidth(1f),
+                                        fontSize = 18.sp,
+                                        fontWeight = FontWeight.Normal,
+                                        color = Color.LightGray
+                                    )
+                                }
+                            }
+                        )
+                    }
                 )
                 GroupInvite(
                     navController = navController,
