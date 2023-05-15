@@ -8,6 +8,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
+import android.util.Log
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -90,9 +91,10 @@ fun SnoozeNoti(snoozeType : Int, isClicked : MutableState<Boolean>, context : Ac
                             openDialog.value = false
                             cancelNotification()
                             snoozeMessageApi(text.value, alarmDto.alarmId)
+                            Log.d("myResponse", text.value)
                             setSnoozeAlarm(newContext, alarmDto, snoozeType)
-                            context.finish()
                             goMain(context)
+                            context.finish()
                         },
                         colors = ButtonDefaults.buttonColors(containerColor = "#31AF91".toColor()),
                     ) {
@@ -136,4 +138,5 @@ fun setSnoozeAlarm(context: Context, alarmDto: AlarmDto, snoozeType: Int) {
         PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
         PackageManager.DONT_KILL_APP
     )
+    Log.d("myResponse", "${snoozeType}분 뒤 울리는 스누즈 알람 세팅완료")
 }

@@ -72,15 +72,22 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
             }
 
         } else {
-            val data = remoteMessage.data
-            sendNotification(remoteMessage)
-            val noti = NotiDto(
-                data["alertId"]!!.toLong(),
-                data["profileImg"]!!,
-                data["content"]!!,
-                data["type"]!!
-            )
-            saveNoti(noti, this)
+            Log.d("myResponse", remoteMessage.toString())
+            Log.d("myResponse", remoteMessage.data.toString())
+            if (remoteMessage.data != null) {
+                val data = remoteMessage.data
+                sendNotification(remoteMessage)
+                val noti = NotiDto(
+                    data["alertId"]!!.toLong(),
+                    data["profileImg"]!!,
+                    data["content"]!!,
+                    data["type"]!!
+                )
+                saveNoti(noti, this)
+                Log.d("myResponse", "알림을 전달 받았습니다.")
+            } else {
+                Log.d("myResponse", "알림을 받을 수 없는 상태입니다.")
+            }
         }
     }
 

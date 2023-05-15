@@ -94,6 +94,7 @@ object AlarmNoti {
     }
 
     fun cancelNotification() {
+        Log.d("myResponse-quit", "알람을 끕니다.")
         notificationManager!!.cancel(NotificationID)
         audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, currentVolumn, 0) // 알람 울리기 전 사운드 세팅으로 돌려놓음.
         mediaPlayer.release()

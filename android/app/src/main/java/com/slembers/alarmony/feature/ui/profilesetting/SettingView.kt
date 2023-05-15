@@ -49,8 +49,10 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
+import com.slembers.alarmony.feature.alarm.deleteAllAlarms
 import com.slembers.alarmony.feature.common.NavItem
 import com.slembers.alarmony.feature.common.ui.theme.toColor
+import com.slembers.alarmony.feature.notification.deleteAllNotis
 import com.slembers.alarmony.feature.screen.MemberActivity
 import com.slembers.alarmony.feature.ui.common.AnimationRotation
 import com.slembers.alarmony.network.repository.MemberService
@@ -322,6 +324,8 @@ fun SettingView(
                 onClick = {
                     loading.value = true
                     CoroutineScope(Dispatchers.IO).async {
+                        deleteAllAlarms(context)
+                        deleteAllNotis(context)
                         val result = MemberService.logOut()
                         if (result) {
                             val intent = Intent(context, MemberActivity::class.java)
@@ -331,7 +335,6 @@ fun SettingView(
                         }
                         loading.value = false
                     }
-
                 }
             ) {
                 Text(

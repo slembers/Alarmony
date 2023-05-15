@@ -68,7 +68,8 @@ object NotiApi {
                             myResponse.alarm.soundName,
                             myResponse.alarm.soundVolume,
                             myResponse.alarm.vibrate,
-                            myResponse.alarm.host
+                            myResponse.alarm.host,
+                            myResponse.alarm.content
                         )
                         saveAlarm(alarmDto, context)    // 초대 수락 후 알람객체 반환받아서 저장하기
                         Toast.makeText(
