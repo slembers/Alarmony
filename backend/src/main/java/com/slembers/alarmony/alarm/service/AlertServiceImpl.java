@@ -29,6 +29,7 @@ import com.slembers.alarmony.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
 @Service
@@ -154,6 +155,7 @@ public class AlertServiceImpl implements AlertService {
      *
      * @param alertId 알림 아이디
      */
+    @Transactional
     @Override
     public AlarmInviteResponseDto acceptInvite(Long alertId) {
         Alert alert = alertRepository.findById(alertId)
@@ -185,8 +187,6 @@ public class AlertServiceImpl implements AlertService {
             alarmRecordRepository.save(alarmRecord);
         } catch (Exception e) {
             log.error(e.getMessage());
-            // 알림-기록 추가에 실패하면 알람-멤버도 지워야 한다.
-            memberAlarmRepository.delete(memberAlarm);
             throw new CustomException(AlarmRecordErrorCode.ALARM_RECORD_INPUT_ERRER);
         }
 
@@ -216,6 +216,7 @@ public class AlertServiceImpl implements AlertService {
      *
      * @param alertId 알림 아이디
      */
+    @Transactional
     @Override
     public AlarmInviteResponseDto refuseInvite(Long alertId) {
         Alert alert = alertRepository.findById(alertId)
@@ -243,6 +244,7 @@ public class AlertServiceImpl implements AlertService {
      * @param alert 알림
      * @param title 제목
      */
+    @Transactional
     @Override
     public void sendCustomAlert(Alert alert, String title) {
         // 알림 테이블에도 추가
