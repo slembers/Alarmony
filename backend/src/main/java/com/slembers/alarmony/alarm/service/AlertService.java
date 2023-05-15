@@ -4,6 +4,7 @@ import com.slembers.alarmony.alarm.dto.InviteMemberSetToGroupDto;
 import com.slembers.alarmony.alarm.dto.response.AlarmInviteResponseDto;
 import com.slembers.alarmony.alarm.dto.response.AlertListResponseDto;
 import com.slembers.alarmony.alarm.entity.Alert;
+import java.util.List;
 
 public interface AlertService {
 
@@ -14,6 +15,14 @@ public interface AlertService {
      * @return 초대 성공 인원 수
      */
     int inviteMemberToGroup(InviteMemberSetToGroupDto inviteMemberSetToGroupDto);
+
+    /**
+     * 유저네임 목록을 돌며 해당하는 멤버에게 그룹 삭제 알림을 보낸다.
+     *
+     * @param groupId      그룹 id
+     * @param usernameList 유저네임 목록
+     */
+    void removeMemberFromGroup(Long groupId, List<String> usernameList);
 
     /**
      * 특정 유저의 알림 목록 가져오기
