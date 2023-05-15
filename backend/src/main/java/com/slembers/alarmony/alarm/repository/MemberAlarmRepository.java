@@ -5,6 +5,7 @@ import com.slembers.alarmony.alarm.entity.Alarm;
 import com.slembers.alarmony.alarm.entity.MemberAlarm;
 import com.slembers.alarmony.member.entity.Member;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
@@ -61,5 +62,14 @@ public interface MemberAlarmRepository extends JpaRepository<MemberAlarm, Long> 
      * @return 알람에 속한 멤버 수
      */
     int countByAlarmId(Long alarmId);
+
+    /**
+     * 알람 id와 일치하는 모든 멤버 알람 정보를 삭제한다.
+     *
+     * @param alarmId 알람 id
+     */
+    @Modifying
+    @Query("DELETE FROM member_alarm ma WHERE ma.alarm.id = :alarmId")
+    void deleteByAlarmId(Long alarmId);
 
 }

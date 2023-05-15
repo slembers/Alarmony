@@ -6,6 +6,7 @@ import com.slembers.alarmony.alarm.entity.AlarmRecord;
 import com.slembers.alarmony.alarm.entity.MemberAlarm;
 import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
@@ -61,5 +62,15 @@ public interface AlarmRecordRepository extends JpaRepository<AlarmRecord, Long> 
             + "WHERE ma.alarm.id = :groupId "
             + "ORDER BY CAST(ar.totalWakeUpTime / ar.totalCount AS float) NULLS LAST ")
     List<MemberRankingDto> findMemberRankingsByAlarmId(Long groupId);
+
+    /**
+     * 알람 id와 일치하는 모든 알람 기록을 삭제한다.
+     *
+     * @param alarmId 알람 id
+     */
+    @Modifying
+    @Query("DELETE FROM alarm_record ar WHERE ar.memberAlarm.id IN " +
+        "(SELECT ma.id FROM member_alarm ma WHERE ma.alarm.id = :alarmId)")
+    void deleteByAlarmId(Long alarmId);
 
 }
