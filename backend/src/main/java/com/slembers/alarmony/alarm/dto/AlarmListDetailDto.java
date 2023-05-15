@@ -14,6 +14,8 @@ public class AlarmListDetailDto {
 
     private String title;
 
+    private String content;
+
     private int hour;
 
     private int minute;
@@ -26,10 +28,11 @@ public class AlarmListDetailDto {
 
     private boolean vibrate;
 
-    public AlarmListDetailDto(boolean host ,Long alarmId, String title, int hour, int minute, String alarmDate, String soundName, int soundVolume, boolean vibrate) {
+    public AlarmListDetailDto(boolean host ,Long alarmId, String title, String content, int hour, int minute, String alarmDate, String soundName, int soundVolume, boolean vibrate) {
         this.host = host;
         this.alarmId = alarmId;
         this.title = title;
+        this.content = content;
         this.hour = hour;
         this.minute = minute;
         this.alarmDate = CommonMethods.changeStringToBooleanList(alarmDate);
