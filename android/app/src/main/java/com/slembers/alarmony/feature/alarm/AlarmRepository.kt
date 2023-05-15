@@ -10,6 +10,11 @@ class AlarmRepository(private val alarmDao: AlarmDao) {
         return alarm
     }
 
+    fun getAllAlarms() : List<Alarm>? {
+        val alarms = alarmDao.getAllAlarms2()
+        return alarms
+    }
+
     suspend fun addAlarm(alarm: Alarm) {
         alarmDao.insertAlarm(alarm)
     }

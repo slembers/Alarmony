@@ -26,6 +26,7 @@ fun saveAlarm(alarmDto: AlarmDto, context: Context) {
     val alarm : Alarm = Alarm.toEntity(alarmDto)
     CoroutineScope(Dispatchers.IO).launch {
         repository.addAlarm(alarm)
+        Log.d("myResponse", "${alarmDto.title.toString()} : 알람이 저장 되었습니다. ")
     }
     setAlarm(alarmDto, context)
 }
@@ -90,6 +91,7 @@ fun setAlarm(alarmDto: AlarmDto, context: Context) {
         PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
         PackageManager.DONT_KILL_APP
     )
+    Log.d("myResponse", "${alarmDto.title.toString()} : 알람이 설정 되었습니다. ")
 }
 
 ////////////////////// 테스트 코드입니다 ////////////////////
@@ -151,6 +153,7 @@ fun setTestAlarm(alarmDto: AlarmDto, context: Context) {
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalGlideComposeApi::class)
 fun goMain(context : Context) {
+    Log.d("myResponse", "메인화면으로 이동합니다.")
     val intent = Intent(context, MainActivity::class.java)
     context.startActivity(intent)
 }

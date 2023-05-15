@@ -19,8 +19,13 @@ class AlarmReceiver : BroadcastReceiver() {
     lateinit var repository: AlarmRepository
     override fun onReceive(context: Context, intent: Intent) {
         val newIntent = Intent(context, AlarmForegroundService::class.java)
-        if (intent.action == BOOT_COMPLETED) {
+        if (intent.action == BOOT_COMPLETED) { // 재부팅 시 알람 다시 세팅
             newIntent.putExtra(OPEN_TYPE, REFRESH)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                context.startForegroundService(newIntent)
+            } else {
+                context.startService(newIntent)
+            }
         } else {
             val alarmId = intent.getLongExtra("alarmId", -1L)
             if (alarmId == -1L) return
