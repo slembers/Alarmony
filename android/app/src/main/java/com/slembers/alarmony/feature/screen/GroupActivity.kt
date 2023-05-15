@@ -1,29 +1,23 @@
 package com.slembers.alarmony.feature.screen
 
 import android.app.Activity
-import android.content.Context.INPUT_METHOD_SERVICE
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import android.view.inputmethod.InputMethodManager
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.focusable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
-import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.WindowInsetsSides
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.imePadding
-import androidx.compose.foundation.layout.isImeVisible
 import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -40,27 +34,24 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.TimeInput
-import androidx.compose.material3.windowsizeclass.WindowSizeClass
-import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.input.key.key
-import androidx.compose.ui.input.key.onKeyEvent
-import androidx.compose.ui.layout.ParentDataModifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
-import androidx.core.content.ContextCompat.getSystemService
+import androidx.compose.ui.unit.sp
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
@@ -76,25 +67,23 @@ import com.slembers.alarmony.feature.alarm.AlarmDto
 import com.slembers.alarmony.feature.alarm.saveAlarm
 import com.slembers.alarmony.feature.common.NavItem
 import com.slembers.alarmony.feature.common.ui.compose.GroupCard
-import com.slembers.alarmony.feature.common.ui.compose.GroupSubjet
 import com.slembers.alarmony.feature.common.ui.compose.GroupTitle
-import com.slembers.alarmony.feature.common.ui.theme.textColor
 import com.slembers.alarmony.feature.common.ui.theme.toColor
 import com.slembers.alarmony.feature.ui.common.AnimationRotation
 import com.slembers.alarmony.feature.ui.common.CommonDialog
 import com.slembers.alarmony.feature.ui.group.GroupBottomButtom
+import com.slembers.alarmony.feature.ui.group.GroupContent
 import com.slembers.alarmony.feature.ui.group.GroupInvite
 import com.slembers.alarmony.feature.ui.group.GroupSound
+import com.slembers.alarmony.feature.ui.group.GroupSubjet
 import com.slembers.alarmony.feature.ui.group.GroupToolBar
 import com.slembers.alarmony.feature.ui.group.GroupTypeButton
 import com.slembers.alarmony.feature.ui.group.GroupVolume
-import com.slembers.alarmony.model.db.SoundItem
 import com.slembers.alarmony.model.db.dto.MemberDto
 import com.slembers.alarmony.network.service.GroupService
 import com.slembers.alarmony.util.DisplayDpUtil
 import com.slembers.alarmony.util.Sound
 import com.slembers.alarmony.util.WifiUtil
-import com.slembers.alarmony.util.groupSoundInfos
 import com.slembers.alarmony.util.showToast
 import com.slembers.alarmony.viewModel.GroupViewModel
 import kotlinx.coroutines.CoroutineScope
@@ -110,6 +99,7 @@ class GroupActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         WindowCompat.setDecorFitsSystemWindows(window,false)
+
         setContent {
             val navController : NavHostController = rememberNavController()
             val viewModel by viewModels<GroupViewModel>()
@@ -169,6 +159,7 @@ fun GroupScreen(
     val weeks = listOf("월","화","수","목","금","토","일")
     val members by viewModel.members.observeAsState()
     val soundName by viewModel.sound.observeAsState()
+    val content by viewModel.content.observeAsState()
     val vibration by viewModel.vibrate.observeAsState()
     val soundVolume by viewModel.volumn.observeAsState()
 
@@ -196,7 +187,8 @@ fun GroupScreen(
                 WindowInsets.systemBars.only(
                     WindowInsetsSides.Vertical
                 )
-            ).imePadding(),
+            )
+            .imePadding(),
         topBar = {
             GroupToolBar(
                 title = NavItem.Group.title,
@@ -277,33 +269,31 @@ fun GroupScreen(
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 GroupCard(
-                    title = { GroupTitle(title = "그룹제목") },
-                    content = { GroupSubjet(
-                        title = title!!,
-                        onChangeValue = { viewModel.onChangeTitle(it) },
-                        interactionSource = interaction)
-                    }
-                )
-                GroupCard(
                     title = { GroupTitle(title = "알람시간") },
                     content = {
                         WheelTimePicker(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .heightIn(
-                                    maxOf(200.dp)
+                                    minOf(150.dp)
                                 ),
                             startTime = LocalTime.of(LocalTime.now().hour, LocalTime.now().minute),
                             minTime = LocalTime.of(0,0),
                             maxTime = LocalTime.MAX,
                             timeFormat = TimeFormat.AM_PM,
-                            size = DpSize(displayWidth.dp,200.dp),
-                            rowCount = 5,
-                            textStyle = MaterialTheme.typography.titleLarge,
+                            size = DpSize(displayWidth.dp,150.dp),
+                            rowCount = 3,
+                            textStyle = TextStyle(
+                                color = Color.LightGray,
+                                fontSize = 27.sp,
+                                fontFamily = FontFamily.Monospace,
+                                fontWeight = FontWeight.Bold,
+                                fontStyle = FontStyle.Normal
+                            ),
                             textColor = Color(0xFF000000),
                             selectorProperties = WheelPickerDefaults.selectorProperties(
                                 enabled = true,
-                                shape = RoundedCornerShape(20.dp),
+                                shape = RoundedCornerShape(18.dp),
                                 color = Color(0xFFFFFFFF).copy(alpha = 0.2f),
                                 border = BorderStroke(4.dp, Color(0xFFf1faee))
                             )
@@ -369,6 +359,16 @@ fun GroupScreen(
                             }
                         }
                     }
+                )
+                GroupSubjet(
+                    title = title!!,
+                    onChangeValue = { viewModel.onChangeTitle(it) },
+                    interactionSource = interaction
+                )
+                GroupContent(
+                    content = content!!,
+                    onChangeValue = { viewModel.onChangeContent(it)},
+                    interactionSource = interaction
                 )
                 GroupInvite(
                     navController = navController,
