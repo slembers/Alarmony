@@ -166,8 +166,8 @@ public class AlarmServiceImpl implements AlarmService {
             LocalTime localTime = alarm.getTime();
 
             // 알람 객체를 바로 리턴한다.
-            return new AlarmDto(alarm.getId(), alarm.getTitle(), alarm.getContent(), localTime.getHour(),
-                localTime.getMinute(), alarm.getAlarmDate());
+            return new AlarmDto(alarm.getId(), alarm.getTitle(), alarm.getContent(),
+                localTime.getHour(), localTime.getMinute(), alarm.getAlarmDate());
         } catch (Exception e) {
             log.error(e.getMessage());
             throw new CustomException(AlarmErrorCode.ALARM_GET_ERROR);
@@ -176,12 +176,13 @@ public class AlarmServiceImpl implements AlarmService {
 
     /**
      * 알람 아이디로 알람 객체를 찾아온다.
+     *
      * @param alarmID 알람 아이디
      * @return 알람 객체
      */
     @Override
     public Alarm findAlarmByAlarmId(Long alarmID) {
         return alarmRepository.findById(alarmID)
-                .orElseThrow(() -> new CustomException(AlarmErrorCode.ALARM_NOT_FOUND));
+            .orElseThrow(() -> new CustomException(AlarmErrorCode.ALARM_NOT_FOUND));
     }
 }

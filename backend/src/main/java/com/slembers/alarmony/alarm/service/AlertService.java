@@ -50,18 +50,21 @@ public interface AlertService {
 
     /**
      * 초대 요청을 수락한다.
+     *
      * @param alertId 알림 아이디
      */
     AlarmInviteResponseDto acceptInvite(Long alertId);
 
     /**
      * 초대 요청을 거절한다.
+     *
      * @param alertId 알림 아이디
      */
     AlarmInviteResponseDto refuseInvite(Long alertId);
 
     /**
      * 알림을 커스텀해서 보낸다.
+     *
      * @param alert 알림
      * @param title 제목
      */
