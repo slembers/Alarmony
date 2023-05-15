@@ -31,9 +31,13 @@ object AlarmApi {
                 if (response.isSuccessful) {
                     val myResponse = response.body()
                     Log.d("myResponse_getAllAlarms", myResponse.toString())
-                    if (myResponse!!.alarms.isNotEmpty()) { // 서버에 알람 목록이 있으면
+                    if (myResponse!!.alarms != null) { // 서버에 알람 목록이 있으면
+                        Log.d("myResponse_getAllAlarms", myResponse!!.alarms.toString())
                         alarmDtos = myResponse.alarms
                         for(alarmDto : AlarmDto in alarmDtos!!) {    // Room 알람 목록 저장
+                            if (alarmDto.content == null) { // content UI 미완성 관계로 임시방편
+                                alarmDto.content = "알람 설명이 없습니다."
+                            }
                             saveAlarm(alarmDto, context)
                         }
                         Toast.makeText(

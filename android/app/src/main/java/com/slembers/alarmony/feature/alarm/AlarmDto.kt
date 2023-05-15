@@ -5,16 +5,16 @@ import com.google.gson.annotations.SerializedName
 import kotlinx.android.parcel.Parcelize
 
 data class AlarmDto(
-    @SerializedName("alarm_id") val alarmId : Long,
+    @SerializedName("alarmId") val alarmId : Long,
     @SerializedName("title") val title : String,
     @SerializedName("hour") val hour : Int,
     @SerializedName("minute") val minute : Int,
-    @SerializedName("alarm_date") val alarmDate : List<Boolean>,
-    @SerializedName("sound_name") val soundName : String,
-    @SerializedName("sound_volumn") val soundVolume : Int,
+    @SerializedName("alarmDate") val alarmDate : List<Boolean>,
+    @SerializedName("soundName") val soundName : String,
+    @SerializedName("soundVolume") val soundVolume : Int,
     @SerializedName("vibrate") val vibrate : Boolean,
     @SerializedName("host") val host : Boolean,
-    @SerializedName("content") val content : String
+    @SerializedName("content") var content : String
 ) {
     companion object {
         fun toDto(alarm: Alarm): AlarmDto {
