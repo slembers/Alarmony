@@ -62,7 +62,7 @@ fun MemberDetails(
                 contentDescription = "ImageRequest example",
                 modifier = Modifier
                     .clip(CircleShape)
-                    .size(60.dp)
+                    .size(40.dp)
             )
         } else {
             Image(
@@ -70,7 +70,7 @@ fun MemberDetails(
                 contentDescription = "ImageRequest example",
                 modifier = Modifier
                     .clip(CircleShape)
-                    .size(60.dp)
+                    .size(40.dp)
             )
         }
         Column(
@@ -87,13 +87,13 @@ fun MemberDetails(
                 overflow = TextOverflow.Ellipsis,
                 maxLines = 1
             )
-            Text(
+       /*     Text(
                 text = message,
                 fontSize = 12.sp,
                 modifier = Modifier.fillMaxWidth(),
                 overflow = TextOverflow.Ellipsis,
                 maxLines = 1
-            )
+            )*/
         }
         if(host) {
             GroupDetailsBoardBtn(
