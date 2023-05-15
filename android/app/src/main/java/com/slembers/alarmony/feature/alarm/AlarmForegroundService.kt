@@ -31,6 +31,7 @@ class AlarmForegroundService : Service() {
             Log.e("NullPointException", "intent is null")
             return START_NOT_STICKY
         } else {
+            Log.d("myResponse-AlarmForegroundService", "foregroundservice 동작")
             val alarmDao = AlarmDatabase.getInstance(application).alarmDao()
             repository = AlarmRepository(alarmDao)
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
@@ -80,11 +81,12 @@ class AlarmForegroundService : Service() {
 
     private fun startAlarm(alarmDto: AlarmDto) {
         CoroutineScope(Dispatchers.Main).launch {
+            Log.d("myResponse-startAlarm", "startAlarm 알람 시작")
             val newIntent = Intent(applicationContext, AlarmActivity::class.java)
             newIntent.putExtra("alarmId", alarmDto.alarmId)
             newIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             startActivity(newIntent)
-            delay(2000)
+            delay(5000)
             stopForeground(true)
             stopSelf()
         }
@@ -102,7 +104,7 @@ class AlarmForegroundService : Service() {
         val notificationBuilder = NotificationCompat.Builder(this, channelId)
         val notification = notificationBuilder.setOngoing(true)
             .setSmallIcon(R.mipmap.ic_launcher)
-            .setPriority(NotificationCompat.PRIORITY_MIN)
+            .setPriority(NotificationCompat.PRIORITY_HIGH)
             .setContentTitle("")
             .setContentText(type)
             .setCategory(Notification.CATEGORY_SERVICE)
