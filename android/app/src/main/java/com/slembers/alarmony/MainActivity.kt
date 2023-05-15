@@ -1,38 +1,30 @@
 package com.slembers.alarmony
 
 import android.Manifest
-import android.app.Activity
-import android.content.ContentValues
 import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.PowerManager
-import android.provider.MediaStore
 import android.provider.Settings
 import android.util.Log
-import android.widget.Toast
 import androidx.activity.compose.setContent
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.LaunchedEffect
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContentProviderCompat.requireContext
-import androidx.core.content.ContextCompat
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.gun0912.tedpermission.PermissionListener
 import com.gun0912.tedpermission.normal.TedPermission
 import com.slembers.alarmony.feature.common.NavController
 import com.slembers.alarmony.feature.screen.MemberActivity
-import com.slembers.alarmony.network.repository.MemberService
 import com.slembers.alarmony.network.repository.MemberService.reissueToken
 import com.slembers.alarmony.util.PresharedUtil
+import com.slembers.alarmony.util.WifiUtil
+import com.slembers.alarmony.util.showToast
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -126,4 +118,28 @@ class MainActivity : AppCompatActivity() {
             .setPermissions(Manifest.permission.POST_NOTIFICATIONS)
             .check()
     }
+
+    override fun onStart() {
+        super.onStart()
+        Log.d("MainActiviy","MainActivity 시작")
+        val net = WifiUtil.isNetworkConnected(this.application)
+        if(net.not()) {
+            val intent = Intent(this,MemberActivity::class.java)
+            startActivity(intent)
+            finish()
+            showToast(this,"네트워크 연결을 확인해주세요.")
+        }
+        Log.d("wifiUtil","MainActiviy 네트워크 연결상태 확인 : $net")
+    }
+
+    override fun onPause() {
+        super.onPause()
+        Log.d("MainActiviy","MainActivity 정지")
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        Log.d("MainActiviy","MainActivity 종료")
+    }
+
 }
