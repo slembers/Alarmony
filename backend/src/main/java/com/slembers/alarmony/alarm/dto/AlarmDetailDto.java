@@ -22,6 +22,8 @@ public class AlarmDetailDto {
 
     private String title;
 
+    private String content;
+
     private int hour;
 
     private int minute;
@@ -39,6 +41,7 @@ public class AlarmDetailDto {
                 .host(receiver.equals(alarm.getHost()))
                 .alarmId(alarm.getId())
                 .title(alarm.getTitle())
+                .content(alarm.getContent())
                 .hour(alarm.getTime().getHour())
                 .minute(alarm.getTime().getMinute())
                 .alarmDate(CommonMethods.changeStringToBooleanList(alarm.getAlarmDate()))
