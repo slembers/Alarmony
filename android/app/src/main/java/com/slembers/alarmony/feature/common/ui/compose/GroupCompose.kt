@@ -118,8 +118,8 @@ fun GroupTitle(
             text = title,
             style = TextStyle(
                 color = Color.Black,
-                fontSize = 20.sp,
-                fontFamily = FontFamily.Monospace,
+                fontSize = 15.sp,
+               // fontFamily = FontFamily.Monospace,
                 fontWeight = FontWeight.Bold,
                 fontStyle = FontStyle.Normal
             ),

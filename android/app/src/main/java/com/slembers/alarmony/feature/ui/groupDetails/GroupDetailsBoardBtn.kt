@@ -1,5 +1,6 @@
 package com.slembers.alarmony.feature.ui.groupDetails
 
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Campaign
 import androidx.compose.material.icons.filled.Check
@@ -14,6 +15,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.slembers.alarmony.feature.common.ui.theme.toColor
 import kotlinx.serialization.json.JsonNull.content
@@ -27,19 +29,20 @@ fun GroupDetailsBoardBtn(
     onClick : () -> Unit = {},
 ) {
     TextButton(
+
         colors = ButtonDefaults.buttonColors(
             contentColor = AlarmisCheck(isCheck, "#EDEDED".toColor(),"#000000".toColor().copy(alpha = 0.7f)),
             containerColor = AlarmisCheck(isCheck, "#00B4D8".toColor(), "#C9C9C9".toColor())
         ),
         onClick = onClick,
-        modifier = modifier,
+        modifier = Modifier.size(width = 40.dp, height = 32.dp),
         content = {
             Icon(
                 imageVector = AlarmisCheck(isCheck, Icons.Default.Check, Icons.Default.Campaign),
                 contentDescription = null
             )
             Text(
-                text = AlarmisCheck(isCheck, "일어났어요", "알람보내기"),
+                text = AlarmisCheck(isCheck, "일어났어요", ""),
                 style = TextStyle(
                     fontSize = 12.sp,
                     fontFamily = FontFamily.Monospace,

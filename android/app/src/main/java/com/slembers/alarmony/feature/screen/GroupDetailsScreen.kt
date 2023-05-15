@@ -126,7 +126,8 @@ fun GroupDetailsScreen(
     Scaffold(
         topBar = {
             GroupToolBar(
-                title = NavItem.GroupDetails.title,
+                //title = NavItem.GroupDetails.title, 수정[1]
+                title = alarm.value.title,
                 navClick = { navController.popBackStack() },
                 action = {
                     if(alarm.value.host) {
@@ -166,11 +167,25 @@ fun GroupDetailsScreen(
                         content = { Icon(
                             modifier = Modifier
                                 .padding(end = 10.dp)
-                                .size(30.dp),
+                                .size(15.dp),
                             imageVector = Icons.Filled.BarChart,
                             contentDescription = null
                         )}
                     )}
+                )
+                CardBox( title = { GroupTitle(
+                    title = "그룹 나가기",
+                    content = { Icon(
+                        modifier = Modifier
+                            .padding(end = 10.dp)
+                            .size(15.dp),
+                        imageVector = Icons.Filled.ExitToApp,
+                        contentDescription = null,
+                        tint = Color.Red
+                    )},
+                    enable = !loading,
+                    onClick = { isClosed.value = true }
+                )}
                 )
                 if(!alarm.value.host) {
                     CardBox(title = {
