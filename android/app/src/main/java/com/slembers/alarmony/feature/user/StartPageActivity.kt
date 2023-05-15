@@ -138,10 +138,10 @@ fun LoginScreen(navController: NavController) {
             if (isIdError.value) {
                 Log.d("idError", isIdError.value.toString()+"아디디")
                 Text(
-                    text = "영소문, 숫자를 조합해서 입력해주세요.(5~11자) ",
-                    color = MaterialTheme.colors.error,
+                    text = "영문, 숫자를 조합해서 입력해주세요.(5~11자) ",
+                    color = "#EF2B2A".toColor(),
                     style = MaterialTheme.typography.caption,
-                    modifier = Modifier.padding(start = 16.dp)
+                    modifier = Modifier.padding(start = 18.dp)
                 )
             }
         }
@@ -150,7 +150,6 @@ fun LoginScreen(navController: NavController) {
             OutlinedTextField(
                 value = passwordState.value,
                 onValueChange = { passwordState.value = it
-                  //  isPasswordError.value = !passwordRegex.matches(it)
 
                     if(!passwordRegex.matches(it)){
                         isPasswordError.value = true;
@@ -181,9 +180,9 @@ fun LoginScreen(navController: NavController) {
                 Log.d("idError", isPasswordError.value.toString()+"비번")
                 Text(
                     text = "영문, 숫자를 조합해서 입력해주세요. (8-16자) ",
-                    color = MaterialTheme.colors.error,
+                    color = "#EF2B2A".toColor(),
                     style = MaterialTheme.typography.caption,
-                    modifier = Modifier.padding(start = 16.dp)
+                    modifier = Modifier.padding(start = 18.dp)
                 )
             }
 
