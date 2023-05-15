@@ -45,6 +45,7 @@ import com.slembers.alarmony.R
 import com.slembers.alarmony.network.repository.MemberService
 import com.slembers.alarmony.network.repository.MemberService.findPswd
 
+
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
 @ExperimentalMaterial3Api
@@ -99,7 +100,7 @@ fun Findpswd(navController: NavController) {
                         keyboardType = KeyboardType.Email,
                         imeAction = ImeAction.Next
                     ),
-                    modifier = Modifier
+                    modifier = Mogospdifier
                         .fillMaxWidth()
                 )
 
