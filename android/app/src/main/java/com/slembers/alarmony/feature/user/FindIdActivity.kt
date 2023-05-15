@@ -41,10 +41,15 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Color.Companion.White
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -52,8 +57,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
+import com.slembers.alarmony.feature.common.ui.theme.toColor
 import com.slembers.alarmony.network.repository.MemberService.findId
 
+@OptIn(ExperimentalComposeUiApi::class)
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
 @ExperimentalMaterial3Api
@@ -64,6 +71,18 @@ fun FindId(navController: NavController) {
     val context = LocalContext.current
     val emailRegex = "^[A-Za-z](.*)([@]{1})(.{1,})(\\.)(.{2,})".toRegex()
     var isEmailError = remember { mutableStateOf(false) }
+
+
+    val keyboardController = LocalSoftwareKeyboardController.current
+
+    val localFocusManager = LocalFocusManager.current
+    val keyboardActions = KeyboardActions(
+        onNext = { localFocusManager.moveFocus(FocusDirection.Down) },
+        onDone = {
+            localFocusManager.clearFocus()
+            keyboardController?.hide()
+        }
+    )
 
     Scaffold(
         topBar = {
@@ -84,7 +103,7 @@ fun FindId(navController: NavController) {
                     }
                 },
                 colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = White),
-
+                modifier = Modifier.shadow(3.dp)
                 )
         },
 
@@ -100,6 +119,8 @@ fun FindId(navController: NavController) {
                     email = email, // pass the initial email value here
                     onEmailChange = { email = it },
                     isEmailError = isEmailError,
+                    keyboardActions = keyboardActions,
+                    imeAction = ImeAction.Done
                 )
             }
         },
@@ -131,52 +152,6 @@ fun FindId(navController: NavController) {
 /**
  * 이메일
  */
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-@ExperimentalMaterial3Api
-@ExperimentalGlideComposeApi
-fun FindEmailTextField(
-    email: String,
-    onEmailChange: (String) -> Unit,
-    isEmailError: MutableState<Boolean>,
-) {
-    val emailRegex = "^[A-Za-z](.*)([@]{1})(.{1,})(\\.)(.{2,})".toRegex()
-    TitleText("이메일 *")
-    OutlinedTextField(
-        value = email,
-        onValueChange = {
-            onEmailChange(it)
-            isEmailError.value = !emailRegex.matches(it)
-        },
-        colors = androidx.compose.material3.TextFieldDefaults.outlinedTextFieldColors(
-            focusedBorderColor = Color.Black,
-            unfocusedBorderColor = Color.Gray,
-            errorBorderColor = MaterialTheme.colors.error
-        ),
-        singleLine = true,
-        maxLines = 1,
-        isError = isEmailError.value,
-        modifier = Modifier
-            .fillMaxWidth(),
-        keyboardActions = KeyboardActions { },
-        keyboardOptions = KeyboardOptions(
-            keyboardType = KeyboardType.Email,
-            imeAction = ImeAction.Next
-        ),
-    )
-    if (email.isNotBlank()) {
-        if (isEmailError.value) {
-            Log.d("회원", "이메일 정규식 통과못함")
-            ErrorMessageText(
-                message = "이메일 형식에 맞게 입력해 주세요",
-                color =  MaterialTheme.colors.error
-            )
-        }
-    }
-}
-
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 @ExperimentalMaterial3Api
@@ -185,6 +160,8 @@ fun FindIdTextField(
     username: String,
     onIdChange: (String) -> Unit,
     isIdError: MutableState<Boolean>,
+    keyboardActions: KeyboardActions = KeyboardActions.Default,
+    imeAction: ImeAction = ImeAction.Default,
 ) {
     val usernameRegex = "^[a-z0-9]{5,11}$".toRegex()
     TitleText("아이디 *")
@@ -197,24 +174,26 @@ fun FindIdTextField(
         colors = androidx.compose.material3.TextFieldDefaults.outlinedTextFieldColors(
             focusedBorderColor = Color.Black,
             unfocusedBorderColor = Color.Gray,
-            errorBorderColor = MaterialTheme.colors.error
+            errorBorderColor = "#EF2B2A".toColor()
+
         ),
         singleLine = true,
         maxLines = 1,
         isError = isIdError.value,
         modifier = Modifier
             .fillMaxWidth(),
-        keyboardActions = KeyboardActions { },
+        keyboardActions = keyboardActions,
         keyboardOptions = KeyboardOptions(
             keyboardType = KeyboardType.Email,
-            imeAction = ImeAction.Done
+            imeAction = imeAction
         ),
     )
     if (username.isNotBlank()) {
         if (isIdError.value) {
             ErrorMessageText(
                 message = "아이디는 영문, 숫자를 조합하여 4-20자로 입력해주세요.",
-                color =  MaterialTheme.colors.error
+                color =  "#EF2B2A".toColor()
+
             )
         }
     }

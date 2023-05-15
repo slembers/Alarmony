@@ -249,7 +249,8 @@ fun DefaultView() {
         "자장가",
         15,
         vibrate = true,
-        host = false
+        host = false,
+        content = "장덕동 사는 사람 모여라"
     )
     SendAlarmScreen(alarmDto = alarmDto)
 }

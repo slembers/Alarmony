@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
@@ -22,17 +23,26 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.focus.FocusDirection
+import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -42,19 +52,17 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.slembers.alarmony.R
+import com.slembers.alarmony.feature.common.ui.theme.toColor
 import com.slembers.alarmony.network.repository.MemberService
 import com.slembers.alarmony.network.repository.MemberService.findPswd
 
+
+@OptIn(ExperimentalComposeUiApi::class)
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
 @ExperimentalMaterial3Api
 @ExperimentalGlideComposeApi
 fun Findpswd(navController: NavController) {
-
-    //val context = LocalContext.current
-    // var email = remember { mutableStateOf("") }
-    var ID = remember { mutableStateOf("") }
-    var certnum = remember { mutableStateOf("") }
 
     var email by rememberSaveable { mutableStateOf("") }
     val context = LocalContext.current
@@ -62,89 +70,17 @@ fun Findpswd(navController: NavController) {
     var username by rememberSaveable { mutableStateOf("") }
     var isIdError = remember { mutableStateOf(false) }
 
+    val (focusRequester) = FocusRequester.createRefs()
+    val keyboardController = LocalSoftwareKeyboardController.current
 
-    /*Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text("비밀번호 찾기") },
-                navigationIcon = {
-                    IconButton(onClick = {navController.navigateUp() }) {
-                        Icon(Icons.Filled.ArrowBack, "뒤로가기")
-                    }
-                },
-                backgroundColor = MaterialTheme.colors.primary
-            )
-        },
-        content = {
-            Column (
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-
-                mascott(drawing = R.drawable.mascot_foreground)
-                logo(drawing = R.drawable.alarmony)
-
-
-
-
-
-                TextField(
-
-                    value = ID.value,
-                    onValueChange = {ID.value = it},
-                    label = {Text(text = "아이디")},
-                    keyboardOptions = KeyboardOptions(
-                        keyboardType = KeyboardType.Email,
-                        imeAction = ImeAction.Next
-                    ),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                )
-
-                TextField(
-
-                    value = email.value,
-                    onValueChange = {email.value = it},
-                    label = {Text(text = "이메일")},
-                    keyboardOptions = KeyboardOptions(
-                        keyboardType = KeyboardType.Email,
-                        imeAction = ImeAction.Next
-                    ),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                )
-                TextField(
-
-                    value = certnum.value,
-                    onValueChange = {certnum.value = it},
-                    label = {Text(text = "인증번호")},
-                    keyboardOptions = KeyboardOptions(
-                        keyboardType = KeyboardType.Email,
-                        imeAction = ImeAction.Done
-                    ),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                )
-
-                Button(
-                    onClick = {
-                        Log.d("확인", "비밀번호 찾기")
-                        findPswd(email.value, ID.value, context,navController)
-
-                    }, modifier = Modifier
-                )
-
-                {
-                    Text(text = "비밀번호 찾기")
-                }
-            }
+    val localFocusManager = LocalFocusManager.current
+    val keyboardActions = KeyboardActions(
+        onNext = { localFocusManager.moveFocus(FocusDirection.Down) },
+        onDone = {
+            localFocusManager.clearFocus()
+            keyboardController?.hide()
         }
-
-    )*/
-
-
+    )
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
@@ -164,11 +100,9 @@ fun Findpswd(navController: NavController) {
                     }
                 },
                 colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = Color.White),
-
+                modifier = Modifier.shadow(3.dp)
                 )
         },
-
-
         content = {
             Column(
                 modifier = Modifier
@@ -180,13 +114,17 @@ fun Findpswd(navController: NavController) {
                 FindIdTextField(
                     username = username,
                     onIdChange = { username = it },
-                    isIdError = isIdError
+                    isIdError = isIdError,
+                    keyboardActions = keyboardActions,
+                    imeAction = ImeAction.Next
                 )
 
                 FindEmailTextField(
-                    email = email, // pass the initial email value here
+                    email = email,
                     onEmailChange = { email = it },
                     isEmailError = isEmailError,
+                    keyboardActions = keyboardActions,
+                    imeAction = ImeAction.Done
                 )
             }
         },
@@ -214,3 +152,55 @@ fun Findpswd(navController: NavController) {
 
 }
 
+
+
+/**
+ * 이메일
+ */
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+@ExperimentalMaterial3Api
+@ExperimentalGlideComposeApi
+fun FindEmailTextField(
+    email: String,
+    onEmailChange: (String) -> Unit,
+    isEmailError: MutableState<Boolean>,
+    keyboardActions: KeyboardActions = KeyboardActions.Default,
+    imeAction: ImeAction = ImeAction.Default,
+) {
+    val emailRegex = "^[A-Za-z](.*)([@]{1})(.{1,})(\\.)(.{2,})".toRegex()
+    TitleText("이메일 *")
+    OutlinedTextField(
+        value = email,
+        onValueChange = {
+            onEmailChange(it)
+            isEmailError.value = !emailRegex.matches(it)
+        },
+        colors = TextFieldDefaults.outlinedTextFieldColors(
+            focusedBorderColor = Color.Black,
+            unfocusedBorderColor = Color.Gray,
+            errorBorderColor = "#EF2B2A".toColor()
+
+        ),
+        singleLine = true,
+        maxLines = 1,
+        isError = isEmailError.value,
+        modifier = Modifier
+            .fillMaxWidth(),
+        keyboardActions = keyboardActions,
+        keyboardOptions = KeyboardOptions(
+            keyboardType = KeyboardType.Email,
+            imeAction = imeAction
+        ),
+    )
+    if (email.isNotBlank()) {
+        if (isEmailError.value) {
+            Log.d("회원", "이메일 정규식 통과못함")
+            ErrorMessageText(
+                message = "이메일 형식에 맞게 입력해 주세요",
+                color = "#EF2B2A".toColor()
+            )
+        }
+    }
+}
