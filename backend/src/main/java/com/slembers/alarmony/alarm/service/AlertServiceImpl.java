@@ -253,7 +253,7 @@ public class AlertServiceImpl implements AlertService {
 
         try {
             String targetMobile = alert.getReceiver().getRegistrationToken();
-            String imageUrl = alert.getSender().getProfileImgUrl();
+            String imageUrl = alert.getSender() == null ?  null : alert.getSender().getProfileImgUrl();
             // 메시지 설정
             Message message = Message.builder()
                 .putData("alertId", String.valueOf(alert.getId()))
