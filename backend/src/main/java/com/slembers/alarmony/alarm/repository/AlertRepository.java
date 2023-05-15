@@ -4,6 +4,7 @@ import com.slembers.alarmony.alarm.dto.AlertDto;
 import com.slembers.alarmony.alarm.entity.Alert;
 import com.slembers.alarmony.member.entity.Member;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
@@ -22,4 +23,23 @@ public interface AlertRepository extends JpaRepository<Alert, Long> {
             "on a.sender.id = m.id " +
             "where a.receiver = :receiver ")
     List<AlertDto> findMemberAlertDtos(Member receiver);
+
+    /**
+     * 발신자 id와 일치하는 모든 알림을 삭제한다.
+     *
+     * @param senderId 발신자 id
+     */
+    @Modifying
+    @Query("DELETE FROM alert a WHERE a.sender.id = :senderId")
+    void deleteBySenderId(Long senderId);
+
+    /**
+     * 수신자 id와 일치하는 모든 알림을 삭제한다.
+     *
+     * @param receiverId 수신자 id
+     */
+    @Modifying
+    @Query("DELETE FROM alert a WHERE a.receiver.id = :receiverId")
+    void deleteByReceiverId(Long receiverId);
+
 }

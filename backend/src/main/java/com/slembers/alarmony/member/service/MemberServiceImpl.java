@@ -244,8 +244,23 @@ public class MemberServiceImpl implements MemberService {
     @Transactional
     public void deleteMember(String username) {
         Member member = findMemberByUsername(username);
-        member.modifyAuthority(AuthorityEnum.ROLE_WITHDRAWAL);
-        memberRepository.save(member);
+
+        reportRepository.deleteByReporterId(member.getId());
+        reportRepository.deleteByReportedId(member.getId());
+
+        alertRepository.deleteBySenderId(member.getId());
+        alertRepository.deleteByReceiverId(member.getId());
+
+        List<MemberAlarm> memberAlarmList = memberAlarmRepository.findAllByMember(member);
+        for (MemberAlarm memberAlarm : memberAlarmList) {
+            if (groupService.isGroupOwner(memberAlarm.getAlarm().getId(), member.getUsername())) {
+                groupService.deleteGroup(memberAlarm.getAlarm().getId());
+            } else {
+                groupService.removeMemberByUsername(memberAlarm.getAlarm().getId(),
+                    member.getUsername());
+            }
+        }
+        memberRepository.delete(member);
     }
 
     /**

@@ -19,13 +19,13 @@ import com.slembers.alarmony.alarm.repository.MemberAlarmRepository;
 import com.slembers.alarmony.global.execption.CustomException;
 import com.slembers.alarmony.global.security.util.SecurityUtil;
 import com.slembers.alarmony.member.entity.Member;
+import com.slembers.alarmony.member.exception.MemberErrorCode;
 import com.slembers.alarmony.member.repository.MemberRepository;
 
 import java.util.List;
 
 import java.util.Optional;
 
-import com.slembers.alarmony.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -36,7 +36,6 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class AlertServiceImpl implements AlertService {
 
-    private final MemberService memberService;
     private final MemberRepository memberRepository;
     private final AlertRepository alertRepository;
     private final AlarmService alarmService;
@@ -51,7 +50,8 @@ public class AlertServiceImpl implements AlertService {
     @Override
     public int inviteMemberToGroup(InviteMemberSetToGroupDto inviteMemberSetToGroupDto) {
 
-        Member sender = memberService.findMemberByUsername(inviteMemberSetToGroupDto.getSender());
+        Member sender = memberRepository.findByUsername(inviteMemberSetToGroupDto.getSender())
+            .orElseThrow(() -> new CustomException(MemberErrorCode.MEMBER_NOT_FOUND));
 
         Alarm alarm = alarmService.findAlarmByAlarmId(inviteMemberSetToGroupDto.getGroupId());
 
@@ -59,16 +59,41 @@ public class AlertServiceImpl implements AlertService {
             .map(memberRepository::findByNickname)
             .flatMap(Optional::stream)
             .filter(member -> !memberAlarmRepository.existsByMemberAndAlarm(member, alarm))
-            .map(receiver -> createInviteAlert(receiver, sender, alarm))
-            .filter(this::sendInviteAlert)
+            .map(receiver -> createAlert(receiver, sender, alarm, AlertTypeEnum.INVITE))
+            .filter(this::sendAlert)
             .mapToInt(result -> 1)
             .sum();
     }
 
-    private Alert createInviteAlert(Member receiver, Member sender, Alarm alarm) {
-        String content = String.format("'%s' 그룹 초대입니다.", alarm.getTitle());
+    /**
+     * 유저네임을 돌며 그룹 삭제 메시지를 보낸다.
+     *
+     * @param groupId      그룹 id
+     * @param usernameList 유저네임 리스트
+     */
+    @Override
+    public void removeMemberFromGroup(Long groupId, List<String> usernameList) {
+
+        Alarm alarm = alarmService.findAlarmByAlarmId(groupId);
+
+        usernameList.stream()
+            .map(memberRepository::findByUsername)
+            .flatMap(Optional::stream)
+            .map(receiver -> createAlert(receiver, null, alarm, AlertTypeEnum.DELETE))
+            .forEach(this::sendAlert);
+    }
+
+    private Alert createAlert(Member receiver, Member sender, Alarm alarm, AlertTypeEnum type) {
+        String content;
+        if (type == AlertTypeEnum.INVITE) {
+            content = String.format("'%s' 그룹 초대입니다.", alarm.getTitle());
+        } else if (type == AlertTypeEnum.DELETE) {
+            content = String.format("'%s' 그룹이 삭제되었습니다.", alarm.getTitle());
+        } else {
+            throw new CustomException(AlertErrorCode.ENUM_NOT_ALLOW);
+        }
         return Alert.builder()
-            .type(AlertTypeEnum.INVITE)
+            .type(type)
             .content(content)
             .sender(sender)
             .receiver(receiver)
@@ -77,17 +102,17 @@ public class AlertServiceImpl implements AlertService {
     }
 
     /**
-     * 알림 객체를 받아서 초대 알림을 보낸다.
+     * 알림 객체를 받아서 알림을 보낸다.
      *
      * @param alert 알림 객체
      */
     @Transactional
-    public boolean sendInviteAlert(Alert alert) {
+    public boolean sendAlert(Alert alert) {
         try {
             alertRepository.save(alert);
             String targetMobile = alert.getReceiver().getRegistrationToken();
             String content = alert.getContent();
-            String imageUrl = alert.getSender().getProfileImgUrl();
+            String imageUrl = alert.getSender() == null ? "" : alert.getSender().getProfileImgUrl();
             // 메시지 설정
             Message message = Message.builder()
                 .putData("alertId", String.valueOf(alert.getId()))
@@ -99,7 +124,7 @@ public class AlertServiceImpl implements AlertService {
             // 웹 API 토큰을 가져와서 보냄
             String response = FirebaseMessaging.getInstance().send(message);
             // 결과 출력
-            log.info("초대 메시지 전송 완료: " + response);
+            log.info("메시지 전송 완료: " + response);
             // 알림 메시지를 저장한다.
             return true;
         } catch (Exception e) {
@@ -117,7 +142,8 @@ public class AlertServiceImpl implements AlertService {
      */
     @Override
     public AlertListResponseDto getAlertList(String username) {
-        Member member = memberService.findMemberByUsername(username);
+        Member member = memberRepository.findByUsername(username)
+            .orElseThrow(() -> new CustomException(MemberErrorCode.MEMBER_NOT_FOUND));
         try {
             List<AlertDto> alertDtos = alertRepository.findMemberAlertDtos(member);
             return AlertListResponseDto.builder().alerts(alertDtos).build();
@@ -253,7 +279,7 @@ public class AlertServiceImpl implements AlertService {
 
         try {
             String targetMobile = alert.getReceiver().getRegistrationToken();
-            String imageUrl = alert.getSender() == null ?  null : alert.getSender().getProfileImgUrl();
+            String imageUrl = alert.getSender() == null ? "" : alert.getSender().getProfileImgUrl();
             // 메시지 설정
             Message message = Message.builder()
                 .putData("alertId", String.valueOf(alert.getId()))
@@ -282,7 +308,9 @@ public class AlertServiceImpl implements AlertService {
     public void sendAlarm(Long groupId, String nickname) {
 
         Alarm alarm = alarmService.findAlarmByAlarmId(groupId);
-        Member member = memberService.findMemberByNickName(nickname);
+        Member member = memberRepository.findByNickname(nickname)
+            .orElseThrow(() -> new CustomException(MemberErrorCode.MEMBER_NOT_FOUND));
+
         if (!memberAlarmRepository.existsByMemberAndAlarm(member, alarm)) {
             log.error("멤버 알람 정보가 존재하지 않음");
             throw new CustomException(MemberAlarmErrorCode.MEMBER_ALARM_NOT_FOUND);
@@ -326,7 +354,9 @@ public class AlertServiceImpl implements AlertService {
      * @param alert 알림
      */
     private void confirmAlertReceiver(Alert alert) {
-        Member member = memberService.findMemberByUsername(SecurityUtil.getCurrentUsername());
+
+        Member member = memberRepository.findByUsername(SecurityUtil.getCurrentUsername())
+            .orElseThrow(() -> new CustomException(MemberErrorCode.MEMBER_NOT_FOUND));
         if (!alert.getReceiver().equals(member)) {
             throw new CustomException(AlertErrorCode.ALERT_MEMBER_NOT_EQUAL);
         }

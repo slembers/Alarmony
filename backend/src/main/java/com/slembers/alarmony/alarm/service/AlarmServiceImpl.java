@@ -1,6 +1,5 @@
 package com.slembers.alarmony.alarm.service;
 
-import com.slembers.alarmony.alarm.dto.AlarmDetailDto;
 import com.slembers.alarmony.alarm.dto.AlarmDto;
 import com.slembers.alarmony.alarm.dto.AlarmListDetailDto;
 import com.slembers.alarmony.alarm.dto.CreateAlarmDto;
@@ -17,7 +16,8 @@ import com.slembers.alarmony.alarm.repository.MemberAlarmRepository;
 import com.slembers.alarmony.global.execption.CustomException;
 import com.slembers.alarmony.global.util.CommonMethods;
 import com.slembers.alarmony.member.entity.Member;
-import com.slembers.alarmony.member.service.MemberService;
+import com.slembers.alarmony.member.exception.MemberErrorCode;
+import com.slembers.alarmony.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -34,7 +34,7 @@ public class AlarmServiceImpl implements AlarmService {
 
     private final MemberAlarmRepository memberAlarmRepository;
 
-    private final MemberService memberService;
+    private final MemberRepository memberRepository;
 
     private final AlarmRecordRepository alarmRecordRepository;
 
@@ -46,7 +46,9 @@ public class AlarmServiceImpl implements AlarmService {
      */
     @Override
     public AlarmListResponseDto getAlarmList(String username) {
-        Member member = memberService.findMemberByUsername(username);
+
+        Member member = memberRepository.findByUsername(username)
+            .orElseThrow(() -> new CustomException(MemberErrorCode.MEMBER_NOT_FOUND));
 
         try {
             //멤버의 멤버알람 목록을 가져온다
@@ -68,7 +70,9 @@ public class AlarmServiceImpl implements AlarmService {
      */
     @Override
     public Long createAlarm(String username, CreateAlarmDto createAlarmDto) {
-        Member groupLeader = memberService.findMemberByUsername(username);
+
+        Member groupLeader = memberRepository.findByUsername(username)
+            .orElseThrow(() -> new CustomException(MemberErrorCode.MEMBER_NOT_FOUND));
 
         Alarm alarm;
         // 알람을 생성한다
@@ -135,7 +139,8 @@ public class AlarmServiceImpl implements AlarmService {
     @Override
     public void putAlarmMessage(String username, Long alarmId, String message) {
 
-        Member member = memberService.findMemberByUsername(username);
+        Member member = memberRepository.findByUsername(username)
+            .orElseThrow(() -> new CustomException(MemberErrorCode.MEMBER_NOT_FOUND));
 
         // 멤버 정보와 알람 아이디를 바탕으로 알람 레코드를 가져온다.
         AlarmRecord alarmRecord = alarmRecordRepository.findByMemberAndAlarm(member.getId(),
@@ -166,8 +171,8 @@ public class AlarmServiceImpl implements AlarmService {
             LocalTime localTime = alarm.getTime();
 
             // 알람 객체를 바로 리턴한다.
-            return new AlarmDto(alarm.getId(), alarm.getTitle(), alarm.getContent(), localTime.getHour(),
-                localTime.getMinute(), alarm.getAlarmDate());
+            return new AlarmDto(alarm.getId(), alarm.getTitle(), alarm.getContent(),
+                localTime.getHour(), localTime.getMinute(), alarm.getAlarmDate());
         } catch (Exception e) {
             log.error(e.getMessage());
             throw new CustomException(AlarmErrorCode.ALARM_GET_ERROR);
@@ -176,12 +181,13 @@ public class AlarmServiceImpl implements AlarmService {
 
     /**
      * 알람 아이디로 알람 객체를 찾아온다.
+     *
      * @param alarmID 알람 아이디
      * @return 알람 객체
      */
     @Override
     public Alarm findAlarmByAlarmId(Long alarmID) {
         return alarmRepository.findById(alarmID)
-                .orElseThrow(() -> new CustomException(AlarmErrorCode.ALARM_NOT_FOUND));
+            .orElseThrow(() -> new CustomException(AlarmErrorCode.ALARM_NOT_FOUND));
     }
 }
