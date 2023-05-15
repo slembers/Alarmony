@@ -30,6 +30,7 @@ fun saveAlarm(alarmDto: AlarmDto, context: Context) {
     }
     setAlarm(alarmDto, context)
 }
+
 fun deleteAlarm(alarmId: Long, context: Context) {
     lateinit var repository: AlarmRepository
     CoroutineScope(Dispatchers.IO).launch {
