@@ -26,10 +26,9 @@ class GroupViewModel : ViewModel() {
     private val _members = mutableStateListOf<Member>()
     private val _currentMembers = MutableLiveData<MutableList<Member>>()
     private val _sound = MutableLiveData(Sound())
-    private val _sound2 = MutableLiveData<Sound>()
+    private val _content = MutableLiveData("")
     private val _vibrate = MutableLiveData(true)
     private val _volumn = MutableLiveData(7f)
-    private val _playSound = MutableLiveData(0)
 
     init {
         val map = mapOf<String,Boolean>(
@@ -51,6 +50,7 @@ class GroupViewModel : ViewModel() {
     val currentWeeks : LiveData<MutableMap<String,Boolean>> = _currentWeeks
     val members : LiveData<MutableList<Member>> = _currentMembers
     val sound : LiveData<Sound> = _sound
+    val content : LiveData<String> = _content
     val vibrate : LiveData<Boolean> = _vibrate
     val volumn : LiveData<Float> = _volumn
 
@@ -93,4 +93,7 @@ class GroupViewModel : ViewModel() {
         _alarmTime.postValue(TimePickerState(hour, minute, false))
     }
 
+    fun onChangeContent(content : String) {
+        _content.postValue(content)
+    }
 }

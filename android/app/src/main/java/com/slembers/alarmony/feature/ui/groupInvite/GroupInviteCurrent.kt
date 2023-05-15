@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
@@ -17,8 +18,13 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Remove
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -29,6 +35,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
@@ -62,7 +69,7 @@ fun CurrentInvite(
             .fillMaxWidth()
             .padding(5.dp)
             .heightIn(
-                min(100.dp,100.dp)
+                min(100.dp, 100.dp)
             )
             .border(
                 BorderStroke(0.dp, MaterialTheme.colorScheme.background),
@@ -146,36 +153,38 @@ fun GroupDefalutProfile(
                     } else {
                         AsyncImage(
                             modifier = Modifier
-                                .matchParentSize()
+                                .fillMaxSize()
                                 .clip(CircleShape)
                                 .align(Alignment.Center),
                             model = ImageRequest.Builder(LocalContext.current)
                                 .data(profileImg)
                                 .build(),
-                            contentDescription = nickname)
+                            contentDescription = nickname,
+                            contentScale = ContentScale.Crop,
+                            error = painterResource(id = R.drawable.account_circle)
+                        )
                     }
-                    if(newMember) {
+                    if(!newMember) {
                         Box(
                             modifier = Modifier
                                 .size(maxWidth / 2)
                                 .align(Alignment.BottomEnd)
-                                .padding(5.dp)
                         ) {
-                            TextButton(
+                            IconButton(
                                 modifier = Modifier
                                     .size(maxWidth / 4)
                                     .align(Alignment.Center),
-                                shape = CircleShape,
-                                colors = ButtonDefaults.buttonColors(
-                                    contentColor = Color.Black,
+                                colors = IconButtonDefaults.iconButtonColors(
+                                    contentColor = Color.Red,
                                     containerColor = MaterialTheme.colorScheme.error
                                 ),
-                                content = { Text(
-                                    text = "x",
-                                    color = Color.Black
-                                )
+                                content = { Icon(
+                                    imageVector = Icons.Filled.Remove,
+                                    contentDescription = "그룹퇴출")
                                 },
-                                onClick = { /*TODO*/ }
+                                onClick = {
+
+                                }
                             )
                         }
                     }

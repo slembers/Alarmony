@@ -2,12 +2,9 @@ package com.slembers.alarmony.feature.common.ui.compose
 
 import android.icu.text.SimpleDateFormat
 import android.util.Log
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.border
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.focusable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
@@ -25,10 +22,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -140,55 +135,8 @@ fun GroupTitle(
 @Composable
 @ExperimentalMaterial3Api
 @ExperimentalGlideComposeApi
-fun GroupSubjet(
-    title : String,
-    onChangeValue : (String) -> Unit,
-    interactionSource: MutableInteractionSource
-) {
-
-    OutlinedTextField(
-        value = title!!,
-        onValueChange = onChangeValue,
-        textStyle = TextStyle(
-            color = Color.Black,
-            fontSize = 20.sp,
-            fontFamily = FontFamily.Monospace,
-            fontStyle = FontStyle.Normal
-        ),
-        modifier = Modifier
-            .padding(
-                start = 20.dp,
-                top = 0.dp,
-                bottom = 0.dp,
-                end = 10.dp
-            )
-            .fillMaxWidth()
-            .border(
-                BorderStroke(1.dp, MaterialTheme.colorScheme.background),
-                MaterialTheme.shapes.extraSmall
-            )
-            .focusable(enabled = true, interactionSource = interactionSource),
-        singleLine = true
-    )
-    Divider(
-        color = Color.Black,
-        thickness = 1.dp,
-        modifier = Modifier
-            .padding(
-                start = 20.dp,
-                top = 0.dp,
-                bottom = 10.dp,
-                end = 10.dp
-            )
-            .fillMaxWidth()
-    )
-}
-
-@Composable
-@ExperimentalMaterial3Api
-@ExperimentalGlideComposeApi
 fun GroupCard(
-    title : @Composable() () -> Unit,
+    title : @Composable() () -> Unit = {},
     content: @Composable() () -> Unit = {}
 ) {
 
@@ -198,23 +146,21 @@ fun GroupCard(
         modifier = Modifier
             .fillMaxWidth()
             .padding(5.dp)
-            .border(
-                BorderStroke(0.dp, MaterialTheme.colorScheme.background),
-                MaterialTheme.shapes.medium
-            )
-            .padding(4.dp)
-//            .border(1.dp, Color.Black, MaterialTheme.shapes.medium)
             .shadow(
                 elevation = 5.dp,
                 ambientColor = Color.Black,
                 spotColor = Color.Black,
                 shape = RoundedCornerShape(20.dp)
-            ),
+            )
+            .background(Color.White)
+            .padding(4.dp),
         content = {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 5.dp, bottom = 5.dp),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally,
                 content = {
                     title()
                     content()
