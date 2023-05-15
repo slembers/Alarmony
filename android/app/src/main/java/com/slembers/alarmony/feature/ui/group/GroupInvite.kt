@@ -18,11 +18,9 @@ import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.slembers.alarmony.R
 import com.slembers.alarmony.feature.common.NavItem
 import com.slembers.alarmony.feature.common.ui.compose.GroupCard
-import com.slembers.alarmony.feature.common.ui.compose.GroupDefalutProfile
 import com.slembers.alarmony.feature.common.ui.compose.GroupTitle
+import com.slembers.alarmony.feature.ui.groupInvite.GroupDefalutProfile
 import com.slembers.alarmony.model.db.Member
-import com.slembers.alarmony.model.db.dto.MemberDto
-import kotlinx.serialization.json.JsonNull.content
 
 @Composable
 @ExperimentalMaterial3Api
@@ -65,8 +63,9 @@ fun GroupInvite(
                 ) {
                     items(members) { item ->
                         GroupDefalutProfile(
-                            item.nickname,
-                            item.profileImg
+                            nickname = item.nickname,
+                            profileImg = item.profileImg,
+                            newMember = item.isNew
                         )
                     }
                 }
