@@ -7,7 +7,11 @@ import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Colors
 import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -35,27 +39,34 @@ fun GroupToolBar(
     navClick: () -> Unit = {},
     action: @Composable (RowScope.() -> Unit) = {}
 ) {
-    TopAppBar(
+    CenterAlignedTopAppBar(
         title = { Text(
                 text = title,
                 fontWeight = FontWeight.Bold,
-                fontFamily = notosanskr,
-                modifier = Modifier.padding(5.dp)
+              //  fontFamily = notosanskr,
+              //  modifier = Modifier.padding(5.dp)
             )
         },
         modifier = Modifier
-            .padding(start = 5.dp, end = 5.dp)
             .shadow(
                 elevation = 10.dp,
                 ambientColor = Color.Blue,
                 spotColor = Color.Gray,
             ),
-        navigationIcon = {
+
+        //수정[2]
+   /*     navigationIcon = {
             Icon(
                 painter = painterResource(id = R.drawable.baseline_arrow_back_24),
                 contentDescription = null,
                 modifier = Modifier.clickable(onClick = navClick)
             )
+        },*/
+
+       navigationIcon = {
+            IconButton(onClick =  navClick ) {
+                Icon(Icons.Filled.ArrowBack, "뒤로가기")
+            }
         },
         colors = TopAppBarDefaults.mediumTopAppBarColors(
             containerColor = "#FFFFFF".toColor()),
