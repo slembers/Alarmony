@@ -56,6 +56,18 @@ public interface MemberAlarmRepository extends JpaRepository<MemberAlarm, Long> 
     List<AlarmListDetailDto> getAlarmDtosByMember(Long memberId);
 
     /**
+     * 그룹에 속한 멤버 유저네임 목록을 얻어온다.
+     *
+     * @param groupId 그룹 id
+     * @return 유저네임 목록
+     */
+    @Query("SELECT m.username "
+        + "FROM member_alarm ma "
+        + "JOIN member m ON m.id = ma.member.id "
+        + "WHERE ma.alarm.id = :groupId")
+    List<String> getUsernameByGroupId(Long groupId);
+
+    /**
      * 알람에 속한 멤버 수를 반환한다.
      *
      * @param alarmId 알람 id
