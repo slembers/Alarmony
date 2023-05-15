@@ -5,6 +5,8 @@ import android.annotation.SuppressLint
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -29,7 +31,7 @@ import com.slembers.alarmony.feature.ui.profilesetting.SettingView
 fun AccountMtnc(navController: NavController = rememberNavController()) {
 
     val Notichecked = remember { mutableStateOf(false) }
-
+    val scrollState = rememberScrollState()
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
@@ -47,9 +49,11 @@ fun AccountMtnc(navController: NavController = rememberNavController()) {
         content = { innerPadding ->
             SettingView(
                 navController,
-                Modifier.fillMaxSize()
+                Modifier
+                    .fillMaxSize()
                     .background("#F9F9F9".toColor())
-                    .padding(innerPadding))
+                    .padding(innerPadding)
+                    .verticalScroll(scrollState))
         }
     )
 }
