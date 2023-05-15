@@ -26,7 +26,7 @@ public class GroupServiceImpl implements GroupService {
     private final MemberService memberService;
     private final MemberRepository memberRepository;
     private final AlarmRepository alarmRepository;
-    private final AlarmService alarmService;
+    private final AlertService alertService;
     private final MemberAlarmRepository memberAlarmRepository;
     private final AlarmRecordRepository alarmRecordRepository;
 
@@ -131,6 +131,26 @@ public class GroupServiceImpl implements GroupService {
             .orElseThrow(() -> new CustomException(AlarmErrorCode.MEMBER_NOT_IN_GROUP));
         alarmRecordRepository.deleteByMemberAlarm(memberAlarm);
         memberAlarmRepository.delete(memberAlarm);
+    }
+
+    /**
+     * 그룹을 삭제합니다.
+     *
+     * @param groupId 그룹 id
+     */
+    @Transactional
+    @Override
+    public void deleteGroup(Long groupId) {
+        if (memberAlarmRepository.countByAlarmId(groupId) == 1) {
+            removeHostMember(groupId);
+        } else {
+            List<String> groupUsernameList = memberAlarmRepository.getUsernameByGroupId(groupId);
+            alertService.removeMemberFromGroup(groupId, groupUsernameList);
+            alarmRecordRepository.deleteByAlarmId(groupId);
+            memberAlarmRepository.deleteByAlarmId(groupId);
+            alarmRepository.deleteById(groupId);
+        }
+
     }
 
 }

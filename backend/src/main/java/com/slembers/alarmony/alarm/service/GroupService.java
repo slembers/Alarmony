@@ -54,4 +54,11 @@ public interface GroupService {
      */
     void removeMemberByNickname(Long groupId, String nickname);
 
+    /**
+     * 그룹을 삭제합니다.
+     *
+     * @param groupId 그룹 id
+     */
+    void deleteGroup(Long groupId);
+
 }
