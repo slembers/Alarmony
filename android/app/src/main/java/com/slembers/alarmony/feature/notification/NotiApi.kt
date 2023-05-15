@@ -59,6 +59,12 @@ object NotiApi {
                             Toast.LENGTH_SHORT
                         ).show()
                     } else {
+                        lateinit var contentElse : String
+                        if (myResponse.alarm.content == null) {
+                            contentElse = "알람 상세설명이 없습니다."
+                        } else {
+                            contentElse = myResponse.alarm.content
+                        }
                         val alarmDto = AlarmDto(
                             myResponse!!.alarm.alarmId,
                             myResponse.alarm.title,
@@ -69,7 +75,7 @@ object NotiApi {
                             myResponse.alarm.soundVolume,
                             myResponse.alarm.vibrate,
                             myResponse.alarm.host,
-                            myResponse.alarm.content
+                            contentElse
                         )
                         saveAlarm(alarmDto, context)    // 초대 수락 후 알람객체 반환받아서 저장하기
                         Toast.makeText(

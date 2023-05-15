@@ -106,6 +106,7 @@ fun SnoozeNoti(snoozeType : Int, isClicked : MutableState<Boolean>, context : Ac
     }
 }
 
+
 fun setSnoozeAlarm(context: Context, alarmDto: AlarmDto, snoozeType: Int) {
     val newTime =
         if (snoozeType == 5) {
@@ -119,7 +120,7 @@ fun setSnoozeAlarm(context: Context, alarmDto: AlarmDto, snoozeType: Int) {
     val myPendingIntent : Int = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
         PendingIntent.FLAG_MUTABLE
     } else {
-        PendingIntent.FLAG_UPDATE_CURRENT
+        PendingIntent.FLAG_MUTABLE
     }
     val alarmIntentRTC: PendingIntent =
         PendingIntent.getBroadcast(
