@@ -6,9 +6,11 @@ import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.interaction.*
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -81,7 +83,7 @@ fun SignupScreen(navController: NavController) {
     var isNicknameCanUse = remember { mutableStateOf(true) }
     var nicknameMessageColor = remember { mutableStateOf(Color.Black) }
 
-
+    val scrollerState = rememberScrollState()
 
     Scaffold(
         topBar = {
@@ -95,11 +97,13 @@ fun SignupScreen(navController: NavController) {
                 backgroundColor = MaterialTheme.colors.background
             )
         },
-        content = {
+        content = { innerPadding ->
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(16.dp),
+                    .padding(innerPadding)
+                    .padding(16.dp)
+                    .verticalScroll(scrollerState),
             ) {
                 /** 아이디 **/
                 IdTextField(
