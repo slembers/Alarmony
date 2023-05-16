@@ -345,40 +345,6 @@ fun DrawCircle(alarmDto : AlarmDto =
         )
     )
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    val compositions = (1..9).map {
-        rememberLottieComposition(LottieCompositionSpec.RawRes(getResIdByName("ani_$it", "raw", context))).value
-    }
-    val progresses = compositions.map {
-        animateLottieCompositionAsState(
-            composition = it,
-            iterations = LottieConstants.IterateForever
-        )
-    }
-
-    for (i in compositions.indices) {
-        LottieAnimation(
-            composition = compositions[i],
-            progress = { progresses[i].value },
-        )
-    }
-
-
     Canvas(
         modifier = Modifier.size(300.dp)
     ) {
@@ -440,6 +406,25 @@ fun DrawCircle(alarmDto : AlarmDto =
             canvas.nativeCanvas.drawText(text3, center.x, center.y + 250, paint3)
         }
     }
+
+    val compositions = (1..9).map {
+        rememberLottieComposition(LottieCompositionSpec.RawRes(getResIdByName("ani_$it", "raw", context))).value
+    }
+    val progresses = compositions.map {
+        animateLottieCompositionAsState(
+            composition = it,
+            iterations = LottieConstants.IterateForever
+        )
+    }
+
+    for (i in compositions.indices) {
+        LottieAnimation(
+            composition = compositions[i],
+            progress = { progresses[i].value },
+        )
+    }
+
+
 }
 
 fun DrawScope.drawCircleWithInnerCircle(center: Offset, innerRadius: Float, innerColor: Color) {

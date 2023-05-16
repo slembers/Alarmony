@@ -7,6 +7,6 @@ import android.view.Display
 object DisplayDpUtil {
 
     fun px2dp(px : Int, context : Context) : Float {
-        return px / (context.resources.displayMetrics.densityDpi.toFloat() / DisplayMetrics.DENSITY_DEFAULT)
+        return px / (context.resources.displayMetrics.densityDpi.toFloat() / DisplayMetrics.DENSITY_HIGH)
     }
 }
