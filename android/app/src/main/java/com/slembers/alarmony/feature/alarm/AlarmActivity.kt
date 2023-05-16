@@ -20,6 +20,7 @@ import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Canvas
@@ -180,14 +181,14 @@ fun AlarmScreen(alarmDto : AlarmDto) {
     val isClicked5 = remember { mutableStateOf(false)  }
     val isClicked10 = remember { mutableStateOf(false)  }
     val alarmStartTime = calAlarm(alarmDto)
-    val scrollState = rememberScrollState()
+//    val scrollState = rememberScrollState()
 
     Scaffold(
         modifier = Modifier
             .fillMaxSize()
-            .verticalScroll(scrollState)
+//            .verticalScroll(scrollState)
         ,
-        containerColor = "#66D5ED".toColor(),
+        containerColor = Color.White,
         content = { innerPadding ->
 //            BoxWithConstraints(
 //                modifier = Modifier.fillMaxSize(),
@@ -218,10 +219,11 @@ fun AlarmScreen(alarmDto : AlarmDto) {
                     Button(
                         onClick = { isClicked5.value = true },
                         shape = CircleShape,
+                        border = BorderStroke(2.dp, "#c4b3dc".toColor().copy(alpha= 0.5f)),
                         modifier = Modifier
                             .padding(5.dp)
                             .size(90.dp),
-                        colors = ButtonDefaults.buttonColors("#FFDA8C".toColor())
+                        colors = ButtonDefaults.buttonColors("#d2d5e4".toColor())
                     ) {
                         Text(
                             text = "5분",
@@ -242,11 +244,11 @@ fun AlarmScreen(alarmDto : AlarmDto) {
                             goMain(context)
                         },
                         shape = CircleShape,
-                        border = BorderStroke(10.dp, "#63B1C2".toColor()),
+                        border = BorderStroke(4.dp, "#c4b3dc".toColor().copy(alpha= 0.5f)),
                         modifier = Modifier
                             .padding(5.dp)
                             .size(130.dp),
-                        colors = ButtonDefaults.buttonColors("#FFDA8C".toColor())
+                        colors = ButtonDefaults.buttonColors("#d2d5e4".toColor())
                     ) {
                         Icon(
                             imageVector = Icons.Rounded.Stop,
@@ -258,10 +260,11 @@ fun AlarmScreen(alarmDto : AlarmDto) {
                     Button(
                         onClick = { isClicked10.value = true },
                         shape = CircleShape,
+                        border = BorderStroke(2.dp, "#c4b3dc".toColor().copy(alpha= 0.5f)),
                         modifier = Modifier
                             .padding(5.dp)
                             .size(90.dp),
-                        colors = ButtonDefaults.buttonColors("#FFDA8C".toColor())
+                        colors = ButtonDefaults.buttonColors("#d2d5e4".toColor())
                     ) {
                         Text(
                             text = "10분",
@@ -337,9 +340,14 @@ fun DrawCircle(alarmDto : AlarmDto =
     )
 
     val motionColor by infiniteTransition.animateColor(
-        initialValue = Color.Gray,
-        targetValue = Color.White,
+//        보라색
+        initialValue = "#c4b3dc".toColor(),
+
+//        targetValue = Color.White,
+//      회색
+        targetValue ="#d2d5e4".toColor(),
         animationSpec = infiniteRepeatable(
+//            animation = spring(),
             animation = tween(durationMillis = 1000),
             repeatMode = RepeatMode.Reverse
         )
@@ -407,22 +415,22 @@ fun DrawCircle(alarmDto : AlarmDto =
         }
     }
 
-    val compositions = (1..9).map {
-        rememberLottieComposition(LottieCompositionSpec.RawRes(getResIdByName("ani_$it", "raw", context))).value
-    }
-    val progresses = compositions.map {
-        animateLottieCompositionAsState(
-            composition = it,
-            iterations = LottieConstants.IterateForever
-        )
-    }
-
-    for (i in compositions.indices) {
-        LottieAnimation(
-            composition = compositions[i],
-            progress = { progresses[i].value },
-        )
-    }
+//    val compositions = (1..9).map {
+//        rememberLottieComposition(LottieCompositionSpec.RawRes(getResIdByName("ani_$it", "raw", context))).value
+//    }
+//    val progresses = compositions.map {
+//        animateLottieCompositionAsState(
+//            composition = it,
+//            iterations = LottieConstants.IterateForever
+//        )
+////    }
+//
+//    for (i in compositions.indices) {
+//        LottieAnimation(
+//            composition = compositions[i],
+//            progress = { progresses[i].value },
+//        )
+//    }
 
 
 }
