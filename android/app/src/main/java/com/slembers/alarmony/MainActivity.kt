@@ -1,15 +1,13 @@
 package com.slembers.alarmony
 
 import android.Manifest
-import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
-import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.os.PowerManager
 import android.provider.Settings
 import android.util.Log
+import android.widget.Toast
 import androidx.activity.compose.setContent
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
@@ -28,12 +26,15 @@ import com.slembers.alarmony.util.showToast
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
+
 @ExperimentalMaterial3Api
 @ExperimentalGlideComposeApi
 class MainActivity : AppCompatActivity() {
     companion object {
         lateinit var prefs : PresharedUtil
+
     }
+    private var backpressedTime : Long = 0;
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 //      SharedPreferences 클래스는 앱에 있는 다른 Class보다 먼저 생성되어야함
@@ -58,6 +59,15 @@ class MainActivity : AppCompatActivity() {
             }
             Log.d("myIntent", intent.toString())
             NavController(intent)
+        }
+    }
+
+    override fun onBackPressed() {
+        if (System.currentTimeMillis() > backpressedTime + 2000) {
+            backpressedTime = System.currentTimeMillis()
+            Toast.makeText(this, "\'뒤로\' 버튼을 한번 더 누르시면 종료됩니다.", Toast.LENGTH_SHORT).show()
+        } else if (System.currentTimeMillis() <= backpressedTime + 2000) {
+            finish()
         }
     }
     // 백그라운드 권한 설정
