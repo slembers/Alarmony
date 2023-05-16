@@ -12,6 +12,12 @@ import android.os.PowerManager
 import android.view.WindowManager
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.animation.animateColor
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Arrangement
@@ -31,6 +37,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -51,10 +58,12 @@ import com.slembers.alarmony.MainActivity
 import com.slembers.alarmony.feature.alarm.AlarmDatabase
 import com.slembers.alarmony.feature.alarm.AlarmDto
 import com.slembers.alarmony.feature.alarm.AlarmRepository
+import com.slembers.alarmony.feature.alarm.drawCircleWithInnerCircle
 import com.slembers.alarmony.feature.alarm.goMain
 import com.slembers.alarmony.feature.common.ui.theme.toColor
 import com.slembers.alarmony.feature.sendAlarm.SendAlarmNoti.cancelSendAlarmNotification
 import com.slembers.alarmony.feature.sendAlarm.SendAlarmNoti.runSendAlarmNotification
+import com.slembers.alarmony.util.DisplayDpUtil
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -122,6 +131,7 @@ class SendAlarmActivity : ComponentActivity() {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SendAlarmScreen(alarmDto : AlarmDto) {
+
     val context = LocalContext.current as Activity
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -169,19 +179,54 @@ fun SendAlarmScreen(alarmDto : AlarmDto) {
 
 @Composable
 fun DrawCircle(alarmDto : AlarmDto) {
+    val infiniteTransition = rememberInfiniteTransition()
+    val innerCircle by infiniteTransition.animateFloat(
+        initialValue = 0.2f,
+        targetValue = 0.8f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(durationMillis = 1000),
+            repeatMode = RepeatMode.Reverse
+        )
+    )
+    val context = LocalContext.current
+    val px = LocalContext.current.resources.displayMetrics.widthPixels
+    val width = DisplayDpUtil.px2dp(px,context)
+    val outerRadius = width
+
+    val innerSize by infiniteTransition.animateFloat(
+        initialValue = outerRadius,
+        targetValue = outerRadius - 40f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(durationMillis = 1000),
+            repeatMode = RepeatMode.Reverse
+        )
+    )
+    val motionColor by infiniteTransition.animateColor(
+//        보라색
+        initialValue = "#c4b3dc".toColor(),
+
+//        targetValue = Color.White,
+//      회색
+        targetValue ="#d2d5e4".toColor(),
+        animationSpec = infiniteRepeatable(
+//            animation = spring(),
+            animation = tween(durationMillis = 1000),
+            repeatMode = RepeatMode.Reverse
+        )
+    )
     Canvas(
         modifier = Modifier.size(300.dp)
     ) {
         val outerRadius = size.width / 2
         drawCircle(
-            color = "#EDEDED".toColor().copy(alpha = 0.9f),
-            radius = outerRadius,
+            color = motionColor.copy(alpha = innerCircle - 0.15f),
+            radius = innerSize,
             center = center,
             style = Stroke(width = 20.dp.toPx())
         )
 
-        drawCircleWithInnerCircle(center, outerRadius / 1.04f, "#F3F3F3".toColor().copy(alpha = 0.9f))
-        drawCircleWithInnerCircle(center, outerRadius / 1.2f, Color.White.copy(alpha = 0.9f))
+        drawCircleWithInnerCircle(center, innerSize / 1.04f, motionColor.copy(alpha = innerCircle))
+        drawCircleWithInnerCircle(center, innerSize / 1.2f, Color.White.copy(alpha = 0.9f))
 
         drawIntoCanvas { canvas ->
             val text = "알람 배달"
