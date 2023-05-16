@@ -47,6 +47,7 @@ import com.slembers.alarmony.feature.ui.groupDetails.GroupDetailsBoard
 import com.slembers.alarmony.feature.ui.groupDetails.GroupDetailsTitle
 import com.slembers.alarmony.model.db.Record
 import com.slembers.alarmony.network.service.GroupService
+import com.slembers.alarmony.util.showToast
 import com.slembers.alarmony.viewModel.GroupDetailsViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -89,14 +90,14 @@ fun GroupDetailsScreen(
         content = "임시내용"
     )) }
 
-    var memberCnt = 0
-
     var record = remember{ mutableStateOf<Map<String, List<Record>>>(
         hashMapOf(
             "success" to listOf(),
             "failed" to listOf()
         )
     )}
+
+    var memberCnt by details.memberCnt
 
     LaunchedEffect(Unit) {
         Log.d("alarmDetails","[알람 상세] 초기화 불러오는 중 ...")
@@ -108,9 +109,7 @@ fun GroupDetailsScreen(
         val _record = details.getRecord(alarmId!!)
         Log.d("alarmDetails","[알람 상세] 초기화 불러오는 완료 ...")
         Log.d("alarmDetails","[알람 상세] alarm : $_alarm")
-
-
-        memberCnt = _record["success"]!!.size + _record["failed"]!!.size
+        Log.d("alarmDetails","[알람 상세] alarm : $memberCnt")
 
         alarm.value = _alarm!!
         record.value = _record
@@ -176,33 +175,51 @@ fun GroupDetailsScreen(
                     )}
                 )
                 if(!alarm.value.host) {
-                    CardBox( title = { GroupTitle(
-                        title = "그룹 나가기",
-                        content = { Icon(
-                            modifier = Modifier
-                                .padding(end = 10.dp)
-                                .size(15.dp),
-                            imageVector = Icons.Filled.ExitToApp,
-                            contentDescription = null,
-                            tint = Color.Red
-                        )},
-                        enable = !loading,
-                        onClick = { isClosed.value = true }
-                    )})
-                } else if(alarm.value.host && memberCnt == 1) {
-                    CardBox( title = { GroupTitle(
-                        title = "그룹 나가기",
-                        content = { Icon(
-                            modifier = Modifier
-                                .padding(end = 10.dp)
-                                .size(15.dp),
-                            imageVector = Icons.Filled.ExitToApp,
-                            contentDescription = null,
-                            tint = Color.Red
-                        )},
-                        enable = !loading,
-                        onClick = { isClosed.value = true }
-                    )})
+                    CardBox(title = {
+                        GroupTitle(
+                            title = "그룹 나가기",
+                            content = {
+                                Icon(
+                                    modifier = Modifier
+                                        .padding(end = 10.dp)
+                                        .size(15.dp),
+                                    imageVector = Icons.Filled.ExitToApp,
+                                    contentDescription = null,
+                                    tint = Color.Red
+                                )
+                            },
+                            enable = !loading,
+                            onClick = {
+//                        if(alarm.value.host) {
+//                            val memberCnt = record.value["success"]?.size?.plus(record.value["failed"]?.size!!)
+//                            Log.d("alarmDetails","[알람 상세] 알람 인원 수 : $memberCnt")
+//                            if(memberCnt != 1) {
+//                                showToast(context,"그룹장은 혼자일때만 나갈 수 있습니다.")
+//                                return@GroupTitle
+//                            }
+//                        }
+                                isClosed.value = true
+                            }
+                        )
+                    })
+                } else if(alarm.value.host && memberCnt!! <= 1) {
+                    CardBox(title = {
+                        GroupTitle(
+                            title = "그룹 나가기",
+                            content = {
+                                Icon(
+                                    modifier = Modifier
+                                        .padding(end = 10.dp)
+                                        .size(15.dp),
+                                    imageVector = Icons.Filled.ExitToApp,
+                                    contentDescription = null,
+                                    tint = Color.Red
+                                )
+                            },
+                            enable = !loading,
+                            onClick = { isClosed.value = true }
+                        )
+                    })
                 }
             }
             if(isClosed.value) {
