@@ -56,6 +56,7 @@ import com.slembers.alarmony.feature.notification.deleteAllNotis
 import com.slembers.alarmony.feature.screen.MemberActivity
 import com.slembers.alarmony.feature.ui.common.AnimationRotation
 import com.slembers.alarmony.network.repository.MemberService
+import com.slembers.alarmony.network.repository.MemberService.signout
 import com.slembers.alarmony.util.UriUtil
 import com.slembers.alarmony.util.showToast
 import kotlinx.coroutines.CoroutineScope
@@ -343,7 +344,9 @@ fun SettingView(
                 )
             }
 
-            TextButton(onClick = { /* 아이디 찾기 버튼 클릭 시 처리할 동작 */ }) {
+            TextButton(onClick = {
+                signout()
+            }) {
                 Text(
                     text = "회원탈퇴",
                     style = MaterialTheme.typography.body1.copy(color = Color.Red)

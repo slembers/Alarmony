@@ -67,7 +67,6 @@ object MemberService {
 
     fun signout(
         isSuccess: (Boolean) -> Unit = {}
-
     ) {
         try {
             Log.d("response", "signout--화원탈퇴 시도")
