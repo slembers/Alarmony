@@ -158,7 +158,7 @@ fun SendAlarmScreen(alarmDto : AlarmDto) {
                             goMain(context)
                         },
                         shape = CircleShape,
-                        border = BorderStroke(10.dp, "#63B1C2".toColor()),
+//                        border = BorderStroke(2.dp, "#63B1C2".toColor()),
                         modifier = Modifier
                             .padding(5.dp)
                             .size(130.dp),
@@ -201,9 +201,27 @@ fun DrawCircle(alarmDto : AlarmDto) {
             repeatMode = RepeatMode.Reverse
         )
     )
+    val outterCircle by infiniteTransition.animateFloat(
+        initialValue = 0.3f,
+        targetValue = 0.7f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(durationMillis = 1500),
+            repeatMode = RepeatMode.Reverse
+        )
+    )
+
+    val outterSize by infiniteTransition.animateFloat(
+        initialValue = outerRadius,
+        targetValue = outerRadius + 40f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(durationMillis = 1500),
+            repeatMode = RepeatMode.Reverse
+        )
+    )
+
     val motionColor by infiniteTransition.animateColor(
-//        보라색
-        initialValue = "#c4b3dc".toColor(),
+//        다홍
+        initialValue = "#b32d61".toColor(),
 
 //        targetValue = Color.White,
 //      회색
@@ -214,6 +232,21 @@ fun DrawCircle(alarmDto : AlarmDto) {
             repeatMode = RepeatMode.Reverse
         )
     )
+
+    val motionColor2 by infiniteTransition.animateColor(
+//        회색
+        initialValue = "#d2d5e4".toColor(),
+
+//        targetValue = Color.White,
+//      흰색
+        targetValue = Color.White,
+        animationSpec = infiniteRepeatable(
+//            animation = spring(),
+            animation = tween(durationMillis = 1500),
+            repeatMode = RepeatMode.Reverse
+        )
+    )
+
     Canvas(
         modifier = Modifier.size(300.dp)
     ) {
@@ -225,6 +258,7 @@ fun DrawCircle(alarmDto : AlarmDto) {
             style = Stroke(width = 20.dp.toPx())
         )
 
+        drawCircleWithInnerCircle(center, outterSize / 0.8f, motionColor2.copy(alpha = outterCircle))
         drawCircleWithInnerCircle(center, innerSize / 1.04f, motionColor.copy(alpha = innerCircle))
         drawCircleWithInnerCircle(center, innerSize / 1.2f, Color.White.copy(alpha = 0.9f))
 
