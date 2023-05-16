@@ -11,16 +11,21 @@ import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.MaterialTheme
@@ -49,11 +54,20 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.core.app.ServiceCompat.stopForeground
+import androidx.core.content.ContextCompat.startActivity
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.airbnb.lottie.compose.LottieAnimation
+import com.airbnb.lottie.compose.LottieCompositionSpec
+import com.airbnb.lottie.compose.animateLottieCompositionAsState
+import com.airbnb.lottie.compose.rememberLottieComposition
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
+import com.gun0912.tedpermission.TedPermissionActivity.startActivity
 import com.slembers.alarmony.MainActivity
 import com.slembers.alarmony.R
+import com.slembers.alarmony.feature.alarm.AlarmActivity
+import com.slembers.alarmony.feature.alarm.AlarmDto
 import com.slembers.alarmony.feature.alarm.AlarmApi.getAllAlarmsApi
 import com.slembers.alarmony.feature.common.NavItem
 import com.slembers.alarmony.feature.common.ui.theme.toColor
@@ -63,6 +77,7 @@ import com.slembers.alarmony.network.repository.MemberService.login
 import com.slembers.alarmony.network.repository.MemberService.putRegistTokenAfterSignIn
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalGlideComposeApi::class, ExperimentalComposeUiApi::class)
@@ -94,15 +109,25 @@ fun LoginScreen(navController: NavController) {
 
     val usernameRegex = "^[a-z0-9]{4,20}$".toRegex()
     val passwordRegex = "^(?=.*[0-9])(?=.*[a-zA-Z])[a-zA-Z\\d]{8,16}\$".toRegex()
+    val scrollState = rememberScrollState()
+
+
+
 
     Column(
+        Modifier
+            .verticalScroll(scrollState),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
-
     ) {
-
         mascott(drawing = R.drawable.mascot_foreground)
         logo(drawing = R.drawable.alarmony)
+        Box(
+            modifier = Modifier.fillMaxWidth(),
+            contentAlignment = Alignment.Center
+        ) {
+
+        }
 
         Column {
 
@@ -187,6 +212,7 @@ fun LoginScreen(navController: NavController) {
                     modifier = Modifier.padding(start = 18.dp)
                 )
             }
+
 
         }
         Button(
@@ -276,11 +302,21 @@ fun LoginScreen(navController: NavController) {
 
 @Composable
 fun mascott(drawing:Int) {
+    val context = LocalContext.current
     Image(
         painter = painterResource(drawing),
         contentDescription = "mascott image",
         modifier = Modifier
             .padding(top = 100.dp , bottom = 20.dp)
+            .clickable() {
+                val alarmDto = AlarmDto(
+                    1,"테스트",12,20, listOf(false,false,false,false,false,false,false),"gmlgml",4,true,true,"하하"
+                )
+                val newIntent = Intent(context, AlarmActivity::class.java)
+                newIntent.putExtra("alarmId", alarmDto.alarmId)
+                newIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                context.startActivity(newIntent)
+            }
     )
 
 }
