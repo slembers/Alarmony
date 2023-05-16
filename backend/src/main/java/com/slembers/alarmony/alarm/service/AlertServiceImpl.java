@@ -341,7 +341,7 @@ public class AlertServiceImpl implements AlertService {
 
             // 메시지 설정
             Message message = Message.builder()
-                .putData("type", "ALARM")
+                .putData("type", AlertTypeEnum.ALARM.name())
                 .putData("alarmId", String.valueOf(alarmId))
                 .setAndroidConfig(config)
                 .setToken(targetToken)
