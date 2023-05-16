@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -54,6 +55,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -104,7 +106,7 @@ fun AlarmListScreen(navController : NavHostController) {
                         Text(text = "alarmony",
                             fontWeight = FontWeight.Bold,
                             fontFamily = notosanskr,
-                            modifier = Modifier.padding(5.dp)
+                            modifier = Modifier.padding(20.dp)
                         )
                     }
                 },
@@ -224,6 +226,7 @@ fun AlarmListScreen(navController : NavHostController) {
     )
 }
 
+
 @Composable
 fun MyListItem(
     item : Alarm,
@@ -241,6 +244,7 @@ fun MyListItem(
             )
             .background(Color.White)
             .fillMaxWidth()
+            .wrapContentHeight(Alignment.CenterVertically)
             .clickable { navController.navigate("${NavItem.GroupDetails.route}/${item.alarmId}") },
         shape = RoundedCornerShape(20.dp),
         colors = CardDefaults.cardColors(containerColor = "#FFFFFF".toColor()))
@@ -291,7 +295,7 @@ fun MyListItem(
             }
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.padding(start = 20.dp)
+                modifier = Modifier.padding(start = 20.dp, bottom = 5.dp)
             ) {
                 val myDate = item.alarmDate
                 if (myDate[0] && myDate[1] && myDate[2] && myDate[3] && myDate[4] && !myDate[5] && !myDate[6]) {
@@ -364,3 +368,61 @@ fun BackOnPressed() {
         backPressedTime = System.currentTimeMillis()
     }
 }
+
+
+@Preview
+@Composable
+fun MyListItemPreview() {
+    Card(
+        modifier = Modifier
+            .padding(8.dp)
+            .height(100.dp)
+            .shadow(
+                elevation = 5.dp,
+                ambientColor = Color.Black,
+                spotColor = Color.Black,
+                shape = RoundedCornerShape(20.dp)
+            )
+            .background(Color.White)
+            .fillMaxWidth()
+            .wrapContentHeight(Alignment.CenterVertically),
+        shape = RoundedCornerShape(20.dp),
+        colors = CardDefaults.cardColors(containerColor = "#FFFFFF".toColor())
+    )
+
+    {
+        Column(verticalArrangement = Arrangement.Center) {
+            Row(verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.padding(start = 25.dp)) {
+                Text(
+                    text = "오전",
+                )
+            }
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween,
+                modifier = Modifier
+                    .padding(start = 20.dp, end = 20.dp)
+                    .fillMaxWidth()) {
+                Text(
+                    text = "10 : 30",
+                    fontSize = 30.sp,
+                    fontWeight = FontWeight.Bold,
+                )
+                Text(
+                    text = "장덕모임",
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 20.sp
+                )
+            }
+            Row(
+                modifier = Modifier.padding(start = 20.dp)
+            ) {
+                Text(text = "월 화 수 목 금")
+            }
+        }
+    }
+}
+
+
+

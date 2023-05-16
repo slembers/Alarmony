@@ -3,6 +3,7 @@ package com.slembers.alarmony.feature.ui.profilesetting
 import android.app.Activity
 import android.content.Intent
 import android.net.Uri
+import android.os.Build
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -50,6 +51,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.slembers.alarmony.MainActivity
 import com.slembers.alarmony.feature.alarm.deleteAllAlarms
@@ -60,6 +63,8 @@ import com.slembers.alarmony.feature.screen.MemberActivity
 import com.slembers.alarmony.feature.ui.common.AnimationRotation
 import com.slembers.alarmony.network.repository.MemberService
 import com.slembers.alarmony.util.UriUtil
+import com.slembers.alarmony.util.hasWriteExternalStoragePermission
+import com.slembers.alarmony.util.requestWriteExternalStoragePermission
 import com.slembers.alarmony.util.showToast
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -160,11 +165,22 @@ fun SettingView(
             },
             supportingContent = {
                 Text(
-                    text = "Change your profile Image",
+                    text = "프로필 변경",
                     fontSize = 13.sp,
                     style = MaterialTheme.typography.subtitle2.copy(color = Color.Blue),
                     modifier = Modifier
-                        .clickable { launcher.launch("image/*") },
+                        .clickable {
+                            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                                launcher.launch("image/*")
+                            }
+                            else { // 티라미수 미만 버전은 ExternalStorage 접근권한을 유저한테 요청해야함
+                                if (hasWriteExternalStoragePermission(context)) {
+                                    launcher.launch("image/*")
+                                } else {
+                                    requestWriteExternalStoragePermission()
+                                }
+                            }
+                   },
                 )
             },
             modifier = Modifier.padding(16.dp),
