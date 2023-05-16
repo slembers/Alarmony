@@ -5,6 +5,7 @@ import com.slembers.alarmony.alarm.entity.MemberAlarm;
 import com.slembers.alarmony.alarm.exception.AlarmErrorCode;
 import com.slembers.alarmony.alarm.repository.AlarmRecordRepository;
 import com.slembers.alarmony.alarm.repository.AlarmRepository;
+import com.slembers.alarmony.alarm.repository.AlertRepository;
 import com.slembers.alarmony.alarm.repository.MemberAlarmRepository;
 import com.slembers.alarmony.global.execption.CustomException;
 import com.slembers.alarmony.member.dto.MemberInfoDto;
@@ -25,6 +26,7 @@ public class GroupServiceImpl implements GroupService {
 
     private final MemberRepository memberRepository;
     private final AlarmRepository alarmRepository;
+    private final AlertRepository alertRepository;
     private final AlertService alertService;
     private final MemberAlarmRepository memberAlarmRepository;
     private final AlarmRecordRepository alarmRecordRepository;
@@ -97,6 +99,7 @@ public class GroupServiceImpl implements GroupService {
             .orElseThrow(() -> new CustomException(AlarmErrorCode.MEMBER_NOT_IN_GROUP));
         alarmRecordRepository.deleteByMemberAlarm(memberAlarm);
         memberAlarmRepository.delete(memberAlarm);
+        alertRepository.deleteByAlarmId(groupId);
 
         alarmRepository.delete(alarm);
     }
@@ -155,6 +158,8 @@ public class GroupServiceImpl implements GroupService {
         } else {
             List<String> groupUsernameList = memberAlarmRepository.getUsernameByGroupId(groupId);
             alertService.removeMemberFromGroup(groupId, groupUsernameList);
+
+            alertRepository.deleteByAlarmId(groupId);
             alarmRecordRepository.deleteByAlarmId(groupId);
             memberAlarmRepository.deleteByAlarmId(groupId);
             alarmRepository.deleteById(groupId);
