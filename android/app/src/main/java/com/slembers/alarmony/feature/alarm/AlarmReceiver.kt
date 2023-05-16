@@ -37,12 +37,13 @@ class AlarmReceiver : BroadcastReceiver() {
                 newIntent.putExtra(OPEN_TYPE, FIRE_ALARM)
                 newIntent.putExtra("alarmId", alarmDto.alarmId)
                 val isSnooze = intent.getBooleanExtra("isSnooze", false)
-                if (!isSnooze) { // 스누즈가 아닐 경우
+                if (!isSnooze) { // 스누즈가 아닐 경우 반복 알람을 위한 알람 재등록
                     setAlarm(alarmDto, context)
                     val calendar: Calendar = Calendar.getInstance()
                     var todayDayOfWeek: Int = calendar.get(Calendar.DAY_OF_WEEK) - 2    // 오늘 요일 구하기
                     if (todayDayOfWeek == -1) todayDayOfWeek = 6
                     if (alarmDto!!.alarmDate[todayDayOfWeek] == false) return@launch // 오늘이 울리는 요일이 아니면 리턴
+                    Log.d("myResposne-alarm", "알람리시버")
                 }
                 else {
                     Log.d("myResponse-snooze", "스누즈리시버")
