@@ -54,7 +54,7 @@ fun NavController(
         composable(route = NavItem.NotiListScreen.route) {
             NotiListScreen(navController)
         }
-        //
+        // 알람 프로필 페이지
         composable(NavItem.AccountMtnc.route) {
             AccountMtnc(navController = navController)
         }

@@ -345,7 +345,11 @@ fun SettingView(
             }
 
             TextButton(onClick = {
-                signout()
+                var signout = false
+                signout(isSuccess = {
+                    signout = it
+                })
+                Log.d("SettingView","회원탈퇴 결과 : $signout")
             }) {
                 Text(
                     text = "회원탈퇴",

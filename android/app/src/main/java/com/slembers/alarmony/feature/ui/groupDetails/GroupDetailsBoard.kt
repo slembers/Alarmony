@@ -81,7 +81,7 @@ fun GroupDetailsBoard(
                 content = {
                     CardDivider()
                     if(items.getValue("success").isEmpty()) {
-                        nothingItem(content = "오늘 알람을 확인환 인원이 없습니다.")
+                        nothingItem(content = "오늘 알람을 확인 인원이 없습니다.")
                     } else {
                         LazyColumn(
                             modifier = Modifier.height(200.dp),
