@@ -121,6 +121,25 @@ class AlarmActivity : ComponentActivity() {
                 }
             }
 
+        // 3분 뒤 자동으로 꺼짐
+        CoroutineScope(Dispatchers.IO).launch {
+            timer = Timer()
+            var remainingSec = 180 // 3분
+            timer.scheduleAtFixedRate(object : TimerTask() {
+                override fun run() {
+                    remainingSec -= 1
+                    if (remainingSec == 0) {
+                        timer.cancel()
+                        setSnoozeAlarm(this@AlarmActivity, alarmDto, 5) // 5분뒤 스누즈
+                        cancelNotification()
+                        goMain(this@AlarmActivity)
+                        this@AlarmActivity.finish()
+                    }
+                }
+            }, 1000, 1000) // 1초 뒤 1초에 한번씩 실행
+        }
+
+
         // 강제로 화면 키기
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
             setShowWhenLocked(true)
@@ -172,7 +191,6 @@ class AlarmActivity : ComponentActivity() {
         super.onDestroy()
         timer.cancel()
         wakeLock.release()
-        super.onDestroy()
     }
 }
 //파일의 문자를 식별자로 가져오기 위한 함수
@@ -247,6 +265,7 @@ fun AlarmScreen(alarmDto : AlarmDto) {
                             val formattedDateTime = dateTime.format(formatter)
                             recordAlarmApi(formattedDateTime, alarmDto.alarmId) // 알람 정지 시 기록 api
                             cancelNotification()
+                            timer.cancel()
                             context.finish()
                             goMain(context)
                         },

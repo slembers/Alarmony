@@ -34,7 +34,6 @@ class MainActivity : AppCompatActivity() {
         lateinit var prefs : PresharedUtil
 
     }
-    private var backpressedTime : Long = 0;
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 //      SharedPreferences 클래스는 앱에 있는 다른 Class보다 먼저 생성되어야함
@@ -62,14 +61,6 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    override fun onBackPressed() {
-        if (System.currentTimeMillis() > backpressedTime + 2000) {
-            backpressedTime = System.currentTimeMillis()
-            Toast.makeText(this, "\'뒤로\' 버튼을 한번 더 누르시면 종료됩니다.", Toast.LENGTH_SHORT).show()
-        } else if (System.currentTimeMillis() <= backpressedTime + 2000) {
-            finish()
-        }
-    }
     // 백그라운드 권한 설정
     @RequiresApi(Build.VERSION_CODES.O)
     fun requestAlertPermission() {
