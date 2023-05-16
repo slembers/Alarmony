@@ -27,7 +27,6 @@ import androidx.compose.material.icons.outlined.Notifications
 import androidx.compose.material.icons.outlined.NotificationsActive
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -202,15 +201,6 @@ fun AlarmListScreen(navController : NavHostController) {
 
                 ) {
                     Text(text = "8초 뒤 울리는 테스트 알람")
-                }
-
-                Button(
-                    onClick = { navController.navigate(NavItem.ReportList.route) },
-                    modifier = Modifier
-                        .padding(5.dp)
-                        .size(90.dp),
-                ) {
-                    Text("관리자 페이지로 이동")
                 }
                 //////////////////
                 LazyColumn{

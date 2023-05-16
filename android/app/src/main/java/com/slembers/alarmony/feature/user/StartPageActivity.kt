@@ -71,6 +71,7 @@ import com.slembers.alarmony.feature.alarm.AlarmDto
 import com.slembers.alarmony.feature.alarm.AlarmApi.getAllAlarmsApi
 import com.slembers.alarmony.feature.common.NavItem
 import com.slembers.alarmony.feature.common.ui.theme.toColor
+import com.slembers.alarmony.feature.notification.NotiApi
 import com.slembers.alarmony.feature.notification.NotiApi.getAllNotisApi
 import com.slembers.alarmony.feature.ui.common.AnimationRotation
 import com.slembers.alarmony.network.repository.MemberService.login
@@ -229,7 +230,7 @@ fun LoginScreen(navController: NavController) {
                     getAllNotisApi(context)
                     Log.d("INFO","result : $result")
                     if(result) {
-                        putRegistTokenAfterSignIn()
+                        NotiApi.sendAutoLogoutAndChangeToken()
                         val intent = Intent(context,MainActivity::class.java)
                         context.startActivity(intent)
                         (context as Activity).finish()

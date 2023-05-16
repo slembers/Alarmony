@@ -3,9 +3,18 @@ package com.slembers.alarmony.feature.notification
 import android.content.Context
 import android.util.Log
 import android.widget.Toast
+import androidx.compose.material3.ExperimentalMaterial3Api
+import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
+import com.google.android.gms.tasks.OnCompleteListener
+import com.google.firebase.messaging.FirebaseMessaging
 import com.slembers.alarmony.feature.alarm.AlarmDto
 import com.slembers.alarmony.feature.alarm.saveAlarm
+import com.slembers.alarmony.model.db.CompareRegistTokenRequestDto
 import com.slembers.alarmony.network.api.AlarmonyServer
+import com.slembers.alarmony.network.repository.MemberService
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -129,4 +138,52 @@ object NotiApi {
 
         })
     }
+
+    @OptIn(ExperimentalMaterial3Api::class, ExperimentalGlideComposeApi::class)
+    fun sendAutoLogoutAndChangeToken(){
+        FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
+            if (!task.isSuccessful) {
+                Log.d("등록 토큰", "Fetching FCM registration token failed", task.exception)
+                return@OnCompleteListener
+            }
+
+            // Get new FCM registration token
+            val token = task.result
+            Log.d("등록 토큰",token)
+            if (token.isNotBlank()) {
+                CoroutineScope(Dispatchers.IO).async {
+                    try {
+                        val response = notiApi.sendAutoLogout(
+                            CompareRegistTokenRequestDto(
+                                registToken = token
+                            )
+                        )
+
+                        if (response.isSuccessful) {
+                            if (response.body()?.success == true) {
+                                Log.d("autoLogoutSend", "로그아웃 요청 보냄.")
+                                CoroutineScope(Dispatchers.IO).async {
+                                    MemberService.putRegistTokenAfterSignIn()
+                                }
+                            } else {
+                                Log.d("autoLogoutSend", "본인 로그인.")
+                            }
+                        } else {
+                            Log.d("autoLogoutSend", "로그아웃 실패 요청 보냄.")
+                            CoroutineScope(Dispatchers.IO).async {
+                                MemberService.putRegistTokenAfterSignIn()
+                            }
+                        }
+
+                    } catch (e : Exception) {
+                        Log.e("autoLogoutSend", "오류 발생 : $e")
+                    }
+                }
+            } else {
+                Log.d("등록 토큰", "등록 토큰이 존재하지 않습니다.")
+            }
+        })
+
+    }
+
 }
