@@ -230,8 +230,10 @@ fun AlarmScreen(alarmDto : AlarmDto) {
             Column(
                 modifier = Modifier
                     .fillMaxSize()
+//                        개인
 //                    .background(color = Color.Yellow)
                     .background(color = "#ecddd6".toColor())
+//                        단체
                     .padding(innerPadding),
                 verticalArrangement = Arrangement.Bottom,
                 horizontalAlignment = Alignment.CenterHorizontally,
@@ -278,7 +280,9 @@ fun AlarmScreen(alarmDto : AlarmDto) {
                         modifier = Modifier
                             .padding(5.dp)
                             .size(130.dp),
+//                        개인
                         colors = ButtonDefaults.buttonColors("#dfbacf".toColor())
+//                    단체
                     ) {
                         Icon(
                             imageVector = Icons.Rounded.Stop,
@@ -295,7 +299,9 @@ fun AlarmScreen(alarmDto : AlarmDto) {
                         modifier = Modifier
                             .padding(5.dp)
                             .size(90.dp),
+//                        개인
                         colors = ButtonDefaults.buttonColors("#dfbacf".toColor())
+//                    단체
                     ) {
                         Text(
                             text = "10분",
@@ -389,11 +395,12 @@ fun DrawCircle(alarmDto : AlarmDto =
     )
 
     val motionColor by infiniteTransition.animateColor(
-//        보라색
+//        개인 보라색
         initialValue = "#c095e4".toColor(),
-
+//      단체
 //        targetValue = Color.White,
-//      회색
+//      개인 회색
+//        단체
         targetValue ="#d2d5e4".toColor(),
         animationSpec = infiniteRepeatable(
 //            animation = spring(),
@@ -403,7 +410,7 @@ fun DrawCircle(alarmDto : AlarmDto =
     )
 
     val motionColor2 by infiniteTransition.animateColor(
-//        회색
+//        개인회색
         initialValue = "#d2d5e4".toColor(),
 
 //        targetValue = Color.White,
