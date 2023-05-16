@@ -41,9 +41,10 @@ import androidx.compose.ui.unit.sp
 import com.slembers.alarmony.feature.alarm.AlarmApi.snoozeMessageApi
 import com.slembers.alarmony.feature.alarm.AlarmNoti.cancelNotification
 import com.slembers.alarmony.feature.common.ui.theme.toColor
+import java.util.Timer
 
 @Composable
-fun SnoozeNoti(snoozeType : Int, isClicked : MutableState<Boolean>, context : Activity, alarmDto : AlarmDto) {
+fun SnoozeNoti(snoozeType : Int, isClicked : MutableState<Boolean>, context : Activity, alarmDto : AlarmDto, timer : Timer) {
     val openDialog = remember { mutableStateOf(true)  }
     val newContext = context as Context
     var text = remember { mutableStateOf("") }
@@ -89,6 +90,7 @@ fun SnoozeNoti(snoozeType : Int, isClicked : MutableState<Boolean>, context : Ac
 
                         onClick = {
                             openDialog.value = false
+                            timer.cancel()
                             cancelNotification()
                             snoozeMessageApi(text.value, alarmDto.alarmId)
                             Log.d("myResponse", text.value)
@@ -110,9 +112,9 @@ fun SnoozeNoti(snoozeType : Int, isClicked : MutableState<Boolean>, context : Ac
 fun setSnoozeAlarm(context: Context, alarmDto: AlarmDto, snoozeType: Int) {
     val newTime =
         if (snoozeType == 5) {
-            System.currentTimeMillis() + (5 * 60 * 1000) // 스누즈 5분
+            System.currentTimeMillis() + (5 * 60 * 1000L) // 스누즈 5분
         } else {
-            System.currentTimeMillis() + (10 * 60 * 1000) // 스누즈 10분
+            System.currentTimeMillis() + (10 * 60 * 1000L) // 스누즈 10분
         }
     val intent = Intent(context, AlarmReceiver::class.java)
     intent.putExtra("alarmId", alarmDto.alarmId)

@@ -27,6 +27,8 @@ import androidx.compose.material.icons.outlined.Notifications
 import androidx.compose.material.icons.outlined.NotificationsActive
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonColors
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -181,7 +183,8 @@ fun AlarmListScreen(navController : NavHostController) {
                     ).show()
                 }
                 ////////////////// 테스트용 버튼
-                Button(onClick = { val alarm999 = AlarmDto(
+                Button(onClick = {
+                    val alarm999 = AlarmDto(
                     999L,
                     "장덕모임",
                     8,
@@ -194,7 +197,9 @@ fun AlarmListScreen(navController : NavHostController) {
                     "안수빈 마라탕 매운맛 고문하는 장덕 모임입니다."
                 )
                     saveTestAlarm(alarm999, context)
-                    Toast.makeText(context, "8초 뒤에 알람이 울립니다.", Toast.LENGTH_SHORT).show()}
+                    Toast.makeText(context, "8초 뒤에 알람이 울립니다.", Toast.LENGTH_SHORT).show()},
+                    colors = ButtonDefaults.buttonColors("#7ADBEF".toColor())
+
                 ) {
                     Text(text = "8초 뒤 울리는 테스트 알람")
                 }

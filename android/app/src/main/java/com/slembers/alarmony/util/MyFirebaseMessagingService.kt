@@ -17,6 +17,7 @@ import com.slembers.alarmony.MainActivity
 import com.slembers.alarmony.R
 import com.slembers.alarmony.feature.alarm.AlarmDatabase
 import com.slembers.alarmony.feature.alarm.AlarmDto
+import com.slembers.alarmony.feature.alarm.deleteAlarm
 import com.slembers.alarmony.feature.notification.NotiDto
 import com.slembers.alarmony.feature.sendAlarm.SendAlarmForegroundService
 import com.slembers.alarmony.feature.notification.saveNoti
@@ -52,6 +53,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
         super.onMessageReceived(remoteMessage)
 
+        // 알람 배달
         if (remoteMessage.data?.get("type").equals("ALARM")) {
             Log.i("디버깅", "알람 울려라!!!!!!!!!!!!!!!!!!!!!!!!!!");
             val newIntent = Intent(this, SendAlarmForegroundService::class.java)
@@ -70,7 +72,20 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
                 }
             }
 
-        } else {
+        // 그룹장 회원탈퇴로 인한 그룹삭제
+        } else if (remoteMessage.data?.get("type").equals("DELETE")) {
+            Log.d("myResponse", remoteMessage.toString())
+            Log.d("myResponse", remoteMessage.data.toString())
+            if (remoteMessage.data != null) {
+                val data = remoteMessage.data
+                sendNotification(remoteMessage)
+                val alarmId = data["alarmId"]!!.toLong()
+                deleteAlarm(alarmId, this)
+            }
+        }
+
+        // 나머지 알림
+        else {
             Log.d("myResponse", remoteMessage.toString())
             Log.d("myResponse", remoteMessage.data.toString())
             if (remoteMessage.data != null) {
@@ -92,17 +107,15 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
 
     // 알림 생성 (아이콘, 알림 소리 등)
     private fun sendNotification(remoteMessage: RemoteMessage){
+
+        val MessageType = remoteMessage.data["type"]
+
         // RemoteCode, ID를 고유값으로 지정하여 알림이 개별 표시 되도록 함
         val uniId: Int = (System.currentTimeMillis() / 7).toInt()
         val intent = Intent(this, MainActivity::class.java)
         intent.putExtra("GO", "Noti")
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-        val myPendingIntent : Int = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            PendingIntent.FLAG_MUTABLE
-        } else {
-            PendingIntent.FLAG_UPDATE_CURRENT
-        }
-        val pendingIntent = PendingIntent.getActivity(this, uniId, intent, myPendingIntent)
+        val pendingIntent = PendingIntent.getActivity(this, uniId, intent, PendingIntent.FLAG_MUTABLE)
 
         // 알림 채널 이름
         val channelId = "AlarmonyNotification"
@@ -121,7 +134,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         val notificationManager =
             getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         val notiImfortance =
-            if (remoteMessage.data["type"] == "INVITE") {
+            if (MessageType == "DELETE") {
                 NotificationManager.IMPORTANCE_HIGH
             }
             else {

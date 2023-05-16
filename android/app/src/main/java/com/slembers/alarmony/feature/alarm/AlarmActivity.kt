@@ -80,6 +80,7 @@ class AlarmActivity : ComponentActivity() {
     @OptIn(ExperimentalMaterial3Api::class, ExperimentalGlideComposeApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        Log.d("myResponse_AlarmActive", "알람 액티비티 활성화")
         MainActivity.prefs = PresharedUtil(application)
 
         val alarmId = intent.getLongExtra("alarmId", -1L)
@@ -165,6 +166,7 @@ class AlarmActivity : ComponentActivity() {
     }
     override fun onDestroy() {
         super.onDestroy()
+        timer.cancel()
         wakeLock.release()
     }
 }
@@ -264,10 +266,10 @@ fun AlarmScreen(alarmDto : AlarmDto) {
                 }
             }
             if (isClicked5.value) {
-                SnoozeNoti(5, isClicked5, context, alarmDto)
+                SnoozeNoti(5, isClicked5, context, alarmDto, timer)
             }
             if (isClicked10.value) {
-                SnoozeNoti(10, isClicked10, context, alarmDto)
+                SnoozeNoti(10, isClicked10, context, alarmDto, timer)
             }
         }
     )

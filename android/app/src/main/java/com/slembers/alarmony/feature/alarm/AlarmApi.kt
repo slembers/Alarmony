@@ -40,11 +40,7 @@ object AlarmApi {
                             }
                             saveAlarm(alarmDto, context)
                         }
-                        Toast.makeText(
-                            context,
-                            "알람 불러오기 성공",
-                            Toast.LENGTH_SHORT
-                        ).show()
+                        Log.d("myResponse", "알람을 불러오기 성공.")
                     }
                 } else {
                     Log.e("myResponse", "알람목록 응답 안옴")
