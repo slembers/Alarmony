@@ -132,7 +132,7 @@ fun NotiListScreen(navController: NavController) {
 fun MyNotiItem(item : Noti, mNotiViewModel: NotiViewModel) {
     val context = LocalContext.current
     val isClicked = remember { mutableStateOf(false)  }
-    val profileImage = if (item.profileImg.length > 0) {item.profileImg}
+    val profileImage = if (item.profileImg.length > 4) {item.profileImg}
     else {R.drawable.profiledefault}
     Card(
         modifier = Modifier
