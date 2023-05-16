@@ -42,4 +42,13 @@ public interface AlertRepository extends JpaRepository<Alert, Long> {
     @Query("DELETE FROM alert a WHERE a.receiver.id = :receiverId")
     void deleteByReceiverId(Long receiverId);
 
+    /**
+     * 알람 id와 일치하는 모든 알림을 삭제한다.
+     *
+     * @param alarmId 알람 id
+     */
+    @Modifying
+    @Query("DELETE FROM alert a WHERE a.alarm.id = :alarmId")
+    void deleteByAlarmId(Long alarmId);
+
 }

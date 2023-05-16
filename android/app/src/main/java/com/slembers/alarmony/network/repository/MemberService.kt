@@ -7,6 +7,8 @@ import android.widget.Toast
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.navigation.NavController
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
+import com.google.android.gms.tasks.OnCompleteListener
+import com.google.firebase.messaging.FirebaseMessaging
 import com.slembers.alarmony.MainActivity
 import com.slembers.alarmony.MainActivity.Companion.prefs
 import com.slembers.alarmony.feature.common.NavItem
@@ -26,8 +28,10 @@ import com.slembers.alarmony.model.db.dto.FindIdResponseDto
 import com.slembers.alarmony.model.db.dto.FindPasswordResponseDto
 import com.slembers.alarmony.model.db.dto.GetMyInfoDto
 import com.slembers.alarmony.model.db.dto.NicknameResponseDto
-import com.slembers.alarmony.model.db.dto.SignupResponseDto
 import com.slembers.alarmony.network.api.AlarmonyServer
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import org.json.JSONObject
 import okhttp3.MultipartBody
 import retrofit2.Call
@@ -39,13 +43,23 @@ object MemberService {
     val memberApi = AlarmonyServer().memberApi
 
     suspend fun putRegistTokenAfterSignIn(): Unit {
-        Log.d("INFO", "동적으로 가져오는 토큰 정보")
-        val token = MainActivity.prefs.getString("registrationToken", "")
-        if (token.isNotBlank()) {
-            putRegistToken(token)
-        } else {
-            Log.d("INFO", "등록 토큰이 존재하지 않습니다.")
-        }
+        FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
+            if (!task.isSuccessful) {
+                Log.d("등록 토큰", "Fetching FCM registration token failed", task.exception)
+                return@OnCompleteListener
+            }
+
+            // Get new FCM registration token
+            val token = task.result
+            Log.d("등록 토큰",token)
+            if (token.isNotBlank()) {
+                CoroutineScope(Dispatchers.IO).async {
+                    putRegistToken(token)
+                }
+            } else {
+                Log.d("등록 토큰", "등록 토큰이 존재하지 않습니다.")
+            }
+        })
     }
 
     suspend fun putRegistToken(token: String?) {

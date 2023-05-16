@@ -45,8 +45,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
                 MemberService.putRegistToken(token)
             }
         } else {
-            Log.i("디버깅", "등록된 멤버가 없으니 등록 토큰을 저장합니다 $token");
-            MainActivity.prefs.setString("registrationToken",token)
+            Log.i("디버깅", "등록된 멤버가 없습니다. :  $token");
         }
     }
 
