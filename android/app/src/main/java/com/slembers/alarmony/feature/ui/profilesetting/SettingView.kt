@@ -1,8 +1,10 @@
 package com.slembers.alarmony.feature.ui.profilesetting
+
 import android.app.Activity
 import android.content.Intent
 import android.net.Uri
 import android.util.Log
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.clickable
@@ -49,6 +51,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
+import com.slembers.alarmony.MainActivity
 import com.slembers.alarmony.feature.alarm.deleteAllAlarms
 import com.slembers.alarmony.feature.common.NavItem
 import com.slembers.alarmony.feature.common.ui.theme.toColor
@@ -123,6 +126,14 @@ fun SettingView(
             }
         }
     )
+
+    val exitLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            Log.d("AlarmListScreen", "[알람목록] Activity 이동성공")
+        }
+    }
 
     LaunchedEffect(Unit) {
         val myInfo = MemberService.getMyInfo()
@@ -343,7 +354,36 @@ fun SettingView(
                 )
             }
 
-            TextButton(onClick = { /* 아이디 찾기 버튼 클릭 시 처리할 동작 */ }) {
+            TextButton(
+                enabled = !loading.value,
+                onClick = {
+                    loading.value = true
+                    deleteAllAlarms(context)
+                    deleteAllNotis(context)
+                    CoroutineScope(Dispatchers.IO).async {
+                        MemberService.signout()
+                        { isSuccess ->
+                            if (isSuccess) {
+                                Toast.makeText(
+                                    context,
+                                    "회원탈퇴 성공!",
+                                    Toast.LENGTH_LONG
+                                ).show()
+                                val intent = Intent(context, MemberActivity::class.java)
+                                context.startActivity(intent)
+                                (context as Activity).finish()
+                                exitLauncher.launch(intent)
+                            } else {
+                                Toast.makeText(
+                                    context,
+                                    "회원탈퇴 실패...",
+                                    Toast.LENGTH_LONG
+                                ).show()
+                            }
+                        }
+                        loading.value = false
+                    }
+                }) {
                 Text(
                     text = "회원탈퇴",
                     style = MaterialTheme.typography.body1.copy(color = Color.Red)

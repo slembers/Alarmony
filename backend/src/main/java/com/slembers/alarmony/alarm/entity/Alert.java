@@ -41,4 +41,7 @@ public class Alert {
     @JoinColumn(name = "alarm_id")
     private Alarm alarm;
 
+    public void setAlarm(Alarm alarm) {
+        this.alarm = alarm;
+    }
 }
