@@ -145,7 +145,8 @@ fun GroupCard(
         shape = MaterialTheme.shapes.medium,
         modifier = Modifier
             .fillMaxWidth()
-            .padding(5.dp)
+           // .padding(5.dp)
+            .padding(10.dp)
             .shadow(
                 elevation = 5.dp,
                 ambientColor = Color.Black,

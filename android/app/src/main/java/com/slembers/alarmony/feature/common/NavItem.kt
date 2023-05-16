@@ -12,7 +12,7 @@ sealed class NavItem (
 ) {
     object Group : NavItem(
         route = "group",
-        title = "그룹생성",
+        title = "알람 생성",
         image = Icons.Default.Home
     )
 
