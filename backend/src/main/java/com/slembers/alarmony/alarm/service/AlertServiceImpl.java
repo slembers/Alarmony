@@ -113,18 +113,27 @@ public class AlertServiceImpl implements AlertService {
             String targetMobile = alert.getReceiver().getRegistrationToken();
             String content = alert.getContent();
             String imageUrl = alert.getSender() == null ? "" : alert.getSender().getProfileImgUrl();
+            AndroidConfig config = AndroidConfig.builder()
+                .setPriority(Priority.HIGH)
+                .build();
             // 메시지 설정
             Message message = Message.builder()
                 .putData("alertId", String.valueOf(alert.getId()))
+                .putData("alarmId", String.valueOf(alert.getAlarm().getId()))
                 .putData("profileImg", imageUrl == null ? "" : imageUrl)
                 .putData("content", content)
                 .putData("type", alert.getType().name())
                 .setToken(targetMobile)
+                .setAndroidConfig(config)
                 .build();
             // 웹 API 토큰을 가져와서 보냄
             String response = FirebaseMessaging.getInstance().send(message);
             // 결과 출력
             log.info("메시지 전송 완료: " + response);
+            if (alert.getType().equals(AlertTypeEnum.DELETE)) {
+                alert.setAlarm(null);
+                alertRepository.save(alert);
+            }
             // 알림 메시지를 저장한다.
             return true;
         } catch (Exception e) {
@@ -332,7 +341,7 @@ public class AlertServiceImpl implements AlertService {
 
             // 메시지 설정
             Message message = Message.builder()
-                .putData("type", "ALARM")
+                .putData("type", AlertTypeEnum.ALARM.name())
                 .putData("alarmId", String.valueOf(alarmId))
                 .setAndroidConfig(config)
                 .setToken(targetToken)
