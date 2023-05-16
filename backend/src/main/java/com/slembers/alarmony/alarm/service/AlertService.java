@@ -3,6 +3,7 @@ package com.slembers.alarmony.alarm.service;
 import com.slembers.alarmony.alarm.dto.InviteMemberSetToGroupDto;
 import com.slembers.alarmony.alarm.dto.response.AlarmInviteResponseDto;
 import com.slembers.alarmony.alarm.dto.response.AlertListResponseDto;
+import com.slembers.alarmony.alarm.dto.response.AutoLogoutValidDto;
 import com.slembers.alarmony.alarm.entity.Alert;
 import java.util.List;
 
@@ -77,4 +78,12 @@ public interface AlertService {
      * @param title 제목
      */
     void sendCustomAlert(Alert alert, String title);
+
+    /**
+     * 새로 로그인 할 때 원래 기기에 로그아웃 처리를 요청한다.
+     * @param username 유저이름
+     * @param token 등록트큰
+     * @return 성공 여부
+     */
+    AutoLogoutValidDto sendAutoLogoutAlert(String username, String token);
 }

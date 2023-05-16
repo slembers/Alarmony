@@ -1,8 +1,10 @@
 package com.slembers.alarmony.alarm.controller;
 
+import com.slembers.alarmony.alarm.dto.request.CompareRegistTokenRequestDto;
 import com.slembers.alarmony.alarm.dto.request.ResponseInviteRequestDto;
 import com.slembers.alarmony.alarm.dto.response.AlarmInviteResponseDto;
 import com.slembers.alarmony.alarm.dto.response.AlertListResponseDto;
+import com.slembers.alarmony.alarm.dto.response.AutoLogoutValidDto;
 import com.slembers.alarmony.alarm.exception.AlertErrorCode;
 import com.slembers.alarmony.alarm.service.AlertService;
 import com.slembers.alarmony.global.execption.CustomException;
@@ -65,4 +67,13 @@ public class AlertController {
         }
     }
 
+    /**
+     * 새로 로그인 할 때 원래 기기에 로그아웃 처리를 요청한다.
+     * @param compareRegistTokenRequestDto 요청 객체
+     * @return 성공 여부
+     */
+    @PostMapping("/auto-logout")
+    public ResponseEntity<AutoLogoutValidDto> sendAutoLogoutAlert (@RequestBody CompareRegistTokenRequestDto compareRegistTokenRequestDto) {
+        return ResponseEntity.ok(alertService.sendAutoLogoutAlert(SecurityUtil.getCurrentUsername(), compareRegistTokenRequestDto.getRegistToken()));
+    }
 }

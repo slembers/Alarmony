@@ -9,6 +9,7 @@ import com.slembers.alarmony.alarm.dto.AlertDto;
 import com.slembers.alarmony.alarm.dto.InviteMemberSetToGroupDto;
 import com.slembers.alarmony.alarm.dto.response.AlarmInviteResponseDto;
 import com.slembers.alarmony.alarm.dto.response.AlertListResponseDto;
+import com.slembers.alarmony.alarm.dto.response.AutoLogoutValidDto;
 import com.slembers.alarmony.alarm.entity.*;
 import com.slembers.alarmony.alarm.exception.AlarmRecordErrorCode;
 import com.slembers.alarmony.alarm.exception.AlertErrorCode;
@@ -323,6 +324,48 @@ public class AlertServiceImpl implements AlertService {
             log.error(e.getMessage());
             throw new CustomException(AlertErrorCode.ALERT_INVITE_SEND_ERROR);
         }
+    }
+
+    /**
+     * 새로 로그인 할 때 원래 기기에 로그아웃 처리를 요청한다.
+     * @param username 유저이름
+     * @param token 등록트큰
+     * @return 성공 여부
+     */
+    @Override
+    public AutoLogoutValidDto sendAutoLogoutAlert(String username, String token) {
+        Member member = memberRepository.findByUsername(username)
+                .orElseThrow(() -> new CustomException(MemberErrorCode.MEMBER_NOT_FOUND));
+
+        log.info(member.getRegistrationToken());
+        log.info(token);
+        if(member.getRegistrationToken().isEmpty() || member.getRegistrationToken().equals(token)) {
+            return AutoLogoutValidDto.builder().success(false).build();
+        }
+
+        try {
+            AndroidConfig config = AndroidConfig.builder()
+                    .setPriority(Priority.HIGH)
+                    .build();
+
+            // 메시지 설정
+            Message message = Message.builder()
+                    .putData("type", AlertTypeEnum.AUTO_LOGOUT.name())
+                    .setAndroidConfig(config)
+                    .setToken(member.getRegistrationToken())
+                    .build();
+
+            // 웹 API 토큰을 가져와서 보냄
+            String response = FirebaseMessaging.getInstance().send(message);
+
+            // 결과 출력
+            log.info("Successfully sent message: " + response);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            throw new CustomException(AlertErrorCode.ALERT_SERVER_ERROR);
+        }
+
+        return AutoLogoutValidDto.builder().success(true).build();
     }
 
     /**
