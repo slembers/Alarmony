@@ -1,5 +1,6 @@
 package com.slembers.alarmony.util
 
+import android.app.Activity
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
@@ -19,8 +20,10 @@ import com.slembers.alarmony.feature.alarm.AlarmDatabase
 import com.slembers.alarmony.feature.alarm.AlarmDto
 import com.slembers.alarmony.feature.alarm.deleteAlarm
 import com.slembers.alarmony.feature.notification.NotiDto
+import com.slembers.alarmony.feature.notification.deleteNoti
 import com.slembers.alarmony.feature.sendAlarm.SendAlarmForegroundService
 import com.slembers.alarmony.feature.notification.saveNoti
+import com.slembers.alarmony.feature.screen.MemberActivity
 import com.slembers.alarmony.network.repository.MemberService
 import com.slembers.alarmony.util.Constants.FIRE_ALARM
 import com.slembers.alarmony.util.Constants.OPEN_TYPE
@@ -86,18 +89,10 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
 
         // 나머지 알림
         else {
-            Log.d("myResponse", remoteMessage.toString())
             Log.d("myResponse", remoteMessage.data.toString())
             if (remoteMessage.data != null) {
                 val data = remoteMessage.data
                 sendNotification(remoteMessage)
-                val noti = NotiDto(
-                    data["alertId"]!!.toLong(),
-                    data["profileImg"]!!,
-                    data["content"]!!,
-                    data["type"]!!
-                )
-                saveNoti(noti, this)
                 Log.d("myResponse", "알림을 전달 받았습니다.")
             } else {
                 Log.d("myResponse", "알림을 받을 수 없는 상태입니다.")
@@ -107,8 +102,20 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
 
     // 알림 생성 (아이콘, 알림 소리 등)
     private fun sendNotification(remoteMessage: RemoteMessage){
+        val data = remoteMessage.data
+        val type = data["type"]
+        val alertId = data["alertId"]
+        val profileImg = data["profileImg"]
+        val content = data["content"]
 
-        val MessageType = remoteMessage.data["type"]
+        // 알림 저장
+        val noti = NotiDto(
+            alertId!!.toLong(),
+            profileImg!!,
+            content!!,
+            type!!
+        )
+        saveNoti(noti, this)
 
         // RemoteCode, ID를 고유값으로 지정하여 알림이 개별 표시 되도록 함
         val uniId: Int = (System.currentTimeMillis() / 7).toInt()
@@ -134,7 +141,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         val notificationManager =
             getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         val notiImfortance =
-            if (MessageType == "DELETE") {
+            if (type == "DELETE") {
                 NotificationManager.IMPORTANCE_HIGH
             }
             else {
