@@ -25,6 +25,14 @@ public interface AlertService {
     void removeMemberFromGroup(Long groupId, List<String> usernameList);
 
     /**
+     * 그룹 퇴출 알림을 보낸다.
+     *
+     * @param groupId  그룹 id
+     * @param nickname 닉네임
+     */
+    void sendBanAlert(Long groupId, String nickname);
+
+    /**
      * 특정 유저의 알림 목록 가져오기
      *
      * @param username 아이디
