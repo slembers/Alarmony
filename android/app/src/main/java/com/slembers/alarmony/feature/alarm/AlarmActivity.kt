@@ -24,6 +24,7 @@ import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -229,6 +230,8 @@ fun AlarmScreen(alarmDto : AlarmDto) {
             Column(
                 modifier = Modifier
                     .fillMaxSize()
+//                    .background(color = Color.Yellow)
+                    .background(color = "#ecddd6".toColor())
                     .padding(innerPadding),
                 verticalArrangement = Arrangement.Bottom,
                 horizontalAlignment = Alignment.CenterHorizontally,
@@ -248,11 +251,12 @@ fun AlarmScreen(alarmDto : AlarmDto) {
                             .padding(5.dp)
                             .size(90.dp),
 
-                        colors = ButtonDefaults.buttonColors("#d2d5e4".toColor())
+                        colors = ButtonDefaults.buttonColors("#dfbacf".toColor())
+//                        colors = ButtonDefaults.buttonColors("#a6d6c5".toColor())
                     ) {
                         Text(
                             text = "5분",
-                            color = Color.Black,
+                            color = Color.White,
                             fontWeight = FontWeight.Bold,
                             fontSize =20.sp
                         )
@@ -274,12 +278,13 @@ fun AlarmScreen(alarmDto : AlarmDto) {
                         modifier = Modifier
                             .padding(5.dp)
                             .size(130.dp),
-                        colors = ButtonDefaults.buttonColors("#d2d5e4".toColor())
+                        colors = ButtonDefaults.buttonColors("#dfbacf".toColor())
                     ) {
                         Icon(
                             imageVector = Icons.Rounded.Stop,
                             contentDescription = "Setting",
-                            tint = "#EF2828".toColor(),
+                            tint = "#d670f4".toColor(),
+//                            tint = "#EF2828".toColor(),
                             modifier = Modifier.size(80.dp)
                         )
                     }
@@ -290,11 +295,11 @@ fun AlarmScreen(alarmDto : AlarmDto) {
                         modifier = Modifier
                             .padding(5.dp)
                             .size(90.dp),
-                        colors = ButtonDefaults.buttonColors("#d2d5e4".toColor())
+                        colors = ButtonDefaults.buttonColors("#dfbacf".toColor())
                     ) {
                         Text(
                             text = "10분",
-                            color = Color.Black,
+                            color = Color.White,
                             fontWeight = FontWeight.Bold,
                             fontSize =20.sp
                         )
