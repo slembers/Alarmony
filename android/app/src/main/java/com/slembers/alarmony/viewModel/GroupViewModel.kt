@@ -2,6 +2,7 @@
 
 package com.slembers.alarmony.viewModel
 
+import android.util.Log
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.TimePickerState
 import androidx.compose.runtime.mutableStateListOf
@@ -20,7 +21,7 @@ import javax.inject.Inject
 @ExperimentalMaterial3Api
 class GroupViewModel : ViewModel() {
 
-    private val _title = MutableLiveData("")
+    private var _title = MutableLiveData("")
 //    private val _alarmTime = MutableLiveData(
 //        TimePickerState(10,0,false))
     private val _alarmHourTime = MutableLiveData(LocalDateTime.now().hour)
@@ -61,7 +62,10 @@ class GroupViewModel : ViewModel() {
     val volumn : LiveData<Float> = _volumn
 
     fun onChangeTitle(title : String) {
-        _title.postValue(title)
+
+      // _title.postValue(title) 얘가 한글자씩 더 느림?
+        _title.value = title
+       // Log.d("확인","[뷰모댈] ${_title.value}")
     }
 
     fun addMember(member : Member) {
@@ -101,6 +105,6 @@ class GroupViewModel : ViewModel() {
     }
 
     fun onChangeContent(content : String) {
-        _content.postValue(content)
+        _content.value = content
     }
 }
