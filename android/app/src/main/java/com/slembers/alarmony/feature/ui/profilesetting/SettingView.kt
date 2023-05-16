@@ -183,10 +183,7 @@ fun SettingView(
             },
             headlineContent = { Text("이메일") },
             supportingContent = {
-                Text(
-                    text = email.value,
-                    modifier = Modifier.size(20.dp)
-                )
+                Text(text = email.value,)
             },
             modifier = Modifier,
             colors = ListItemDefaults.colors("#F9F9F9".toColor())
