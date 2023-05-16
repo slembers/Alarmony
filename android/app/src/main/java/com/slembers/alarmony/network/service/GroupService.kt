@@ -225,4 +225,20 @@ object GroupService {
         return mutableListOf()
     }
 
+    suspend fun deleteGroupMember(
+        groupId : Long,
+        nickname : String
+    ) : Boolean {
+        try {
+            val response = groupApi.deleteGroupMember(
+                groupId = groupId,
+                nickname = nickname
+            )
+            return response.code() in 200..299
+        } catch ( e : Exception ) {
+            Log.d("DeleteGroupMember","[그룹 알림] 알림 발송 중에 에러가 발생")
+            Log.d("DeleteGroupMember","[그룹 알림] 알림 발송 중에 에러 원인 : ${e.message}")
+            return false
+        }
+    }
 }

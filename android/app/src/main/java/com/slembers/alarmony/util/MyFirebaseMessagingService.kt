@@ -76,7 +76,8 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
             }
 
         // 그룹장 회원탈퇴로 인한 그룹삭제
-        } else if (remoteMessage.data?.get("type").equals("DELETE")) {
+        } else if (remoteMessage.data?.get("type").equals("DELETE") ||
+                        remoteMessage.data?.get("type").equals("BANN")) {
             Log.d("myResponse", remoteMessage.toString())
             Log.d("myResponse", remoteMessage.data.toString())
             if (remoteMessage.data != null) {
