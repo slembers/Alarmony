@@ -267,7 +267,7 @@ public class MemberServiceImpl implements MemberService {
         List<MemberAlarm> memberAlarmList = memberAlarmRepository.findAllByMember(member);
         for (MemberAlarm memberAlarm : memberAlarmList) {
             if (groupService.isGroupOwner(memberAlarm.getAlarm().getId(), member.getUsername())) {
-                groupService.deleteGroup(memberAlarm.getAlarm().getId());
+                groupService.deleteGroup(memberAlarm.getAlarm().getId(), member.getUsername());
             } else {
                 groupService.removeMemberByUsername(memberAlarm.getAlarm().getId(),
                     member.getUsername());
