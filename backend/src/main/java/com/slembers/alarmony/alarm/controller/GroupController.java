@@ -130,6 +130,7 @@ public class GroupController {
         }
 
         groupService.removeMemberByNickname(groupId, nickname);
+        alertService.sendBanAlert(groupId, nickname);
         return ResponseEntity.noContent().build();
     }
 
