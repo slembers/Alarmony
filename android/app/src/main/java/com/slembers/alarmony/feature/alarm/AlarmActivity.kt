@@ -36,6 +36,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.MaterialTheme.colors
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Stop
 import androidx.compose.material3.Button
@@ -52,6 +53,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Paint
@@ -223,10 +225,11 @@ fun AlarmScreen(alarmDto : AlarmDto) {
                     Button(
                         onClick = { isClicked5.value = true },
                         shape = CircleShape,
-                        border = BorderStroke(2.dp, "#c4b3dc".toColor().copy(alpha= 0.5f)),
+//                        border = BorderStroke(2.dp, "#c4b3dc".toColor().copy(alpha= 0.1f)),
                         modifier = Modifier
                             .padding(5.dp)
                             .size(90.dp),
+
                         colors = ButtonDefaults.buttonColors("#d2d5e4".toColor())
                     ) {
                         Text(
@@ -248,7 +251,7 @@ fun AlarmScreen(alarmDto : AlarmDto) {
                             goMain(context)
                         },
                         shape = CircleShape,
-                        border = BorderStroke(4.dp, "#c4b3dc".toColor().copy(alpha= 0.5f)),
+//                        border = BorderStroke(4.dp, "#c4b3dc".toColor().copy(alpha= 0.1f)),
                         modifier = Modifier
                             .padding(5.dp)
                             .size(130.dp),
@@ -264,7 +267,7 @@ fun AlarmScreen(alarmDto : AlarmDto) {
                     Button(
                         onClick = { isClicked10.value = true },
                         shape = CircleShape,
-                        border = BorderStroke(2.dp, "#c4b3dc".toColor().copy(alpha= 0.5f)),
+//                        border = BorderStroke(2.dp, "#c4b3dc".toColor().copy(alpha= 0.1f)),
                         modifier = Modifier
                             .padding(5.dp)
                             .size(90.dp),
@@ -326,33 +329,65 @@ fun DrawCircle(alarmDto : AlarmDto =
 
     val infiniteTransition = rememberInfiniteTransition()
     val innerCircle by infiniteTransition.animateFloat(
-        initialValue = 0.2f,
-        targetValue = 0.8f,
+        initialValue = 0.4f,
+        targetValue = 0.9f,
         animationSpec = infiniteRepeatable(
-            animation = tween(durationMillis = 1000),
+            animation = tween(durationMillis = 1500),
             repeatMode = RepeatMode.Reverse
         )
     )
+
+    val outterCircle by infiniteTransition.animateFloat(
+        initialValue = 0.3f,
+        targetValue = 0.7f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(durationMillis = 1500),
+            repeatMode = RepeatMode.Reverse
+        )
+    )
+    val outterSize by infiniteTransition.animateFloat(
+        initialValue = outerRadius,
+        targetValue = outerRadius + 40f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(durationMillis = 1500),
+            repeatMode = RepeatMode.Reverse
+        )
+    )
+
 
     val innerSize by infiniteTransition.animateFloat(
         initialValue = outerRadius,
         targetValue = outerRadius - 40f,
         animationSpec = infiniteRepeatable(
-            animation = tween(durationMillis = 1000),
+            animation = tween(durationMillis = 1500),
             repeatMode = RepeatMode.Reverse
         )
     )
 
     val motionColor by infiniteTransition.animateColor(
 //        보라색
-        initialValue = "#c4b3dc".toColor(),
+        initialValue = "#c095e4".toColor(),
 
 //        targetValue = Color.White,
 //      회색
         targetValue ="#d2d5e4".toColor(),
         animationSpec = infiniteRepeatable(
 //            animation = spring(),
-            animation = tween(durationMillis = 1000),
+            animation = tween(durationMillis = 1500),
+            repeatMode = RepeatMode.Reverse
+        )
+    )
+
+    val motionColor2 by infiniteTransition.animateColor(
+//        회색
+        initialValue = "#d2d5e4".toColor(),
+
+//        targetValue = Color.White,
+//      흰색
+        targetValue = Color.White,
+        animationSpec = infiniteRepeatable(
+//            animation = spring(),
+            animation = tween(durationMillis = 1500),
             repeatMode = RepeatMode.Reverse
         )
     )
@@ -368,8 +403,9 @@ fun DrawCircle(alarmDto : AlarmDto =
             style = Stroke(width = 20.dp.toPx())
         )
 
+        drawCircleWithInnerCircle(center, outterSize / 0.8f, motionColor2.copy(alpha = outterCircle))
         drawCircleWithInnerCircle(center, innerSize / 1.04f, motionColor.copy(alpha = innerCircle))
-        drawCircleWithInnerCircle(center, innerSize / 1.2f, Color.White.copy(alpha = 0.9f))
+        drawCircleWithInnerCircle(center, innerSize / 1.2f, Color.White.copy(alpha = 0.95f))
 
         drawIntoCanvas { canvas ->
             val text = "${hour}:${minute}"
