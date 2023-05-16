@@ -64,8 +64,9 @@ public interface MemberAlarmRepository extends JpaRepository<MemberAlarm, Long> 
     @Query("SELECT m.username "
         + "FROM member_alarm ma "
         + "JOIN member m ON m.id = ma.member.id "
-        + "WHERE ma.alarm.id = :groupId")
-    List<String> getUsernameByGroupId(Long groupId);
+        + "WHERE ma.alarm.id = :groupId "
+        + "AND m.username <> :hostUsername")
+    List<String> getUsernameByGroupIdWithoutHost(Long groupId, String hostUsername);
 
     /**
      * 알람에 속한 멤버 수를 반환한다.

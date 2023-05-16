@@ -83,12 +83,30 @@ public class AlertServiceImpl implements AlertService {
             .forEach(this::sendAlert);
     }
 
+    /**
+     * 그룹 퇴출 알림을 보낸다.
+     *
+     * @param groupId  그룹 id
+     * @param nickname 닉네임
+     */
+    @Transactional
+    public void sendBanAlert(Long groupId, String nickname) {
+
+        Alarm alarm = alarmService.findAlarmByAlarmId(groupId);
+        Member receiver = memberRepository.findByNickname(nickname)
+            .orElseThrow(() -> new CustomException(MemberErrorCode.MEMBER_NOT_FOUND));
+
+        sendAlert(createAlert(receiver, null, alarm, AlertTypeEnum.BANN));
+    }
+
     private Alert createAlert(Member receiver, Member sender, Alarm alarm, AlertTypeEnum type) {
         String content;
         if (type == AlertTypeEnum.INVITE) {
             content = String.format("'%s' 그룹 초대입니다.", alarm.getTitle());
         } else if (type == AlertTypeEnum.DELETE) {
             content = String.format("'%s' 그룹이 삭제되었습니다.", alarm.getTitle());
+        } else if (type == AlertTypeEnum.BANN) {
+            content = String.format("'%s' 그룹에서 퇴출되었습니다.", alarm.getTitle());
         } else {
             throw new CustomException(AlertErrorCode.ENUM_NOT_ALLOW);
         }

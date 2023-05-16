@@ -171,5 +171,7 @@ fun setTestAlarm(alarmDto: AlarmDto, context: Context) {
 fun goMain(context : Context) {
     Log.d("myResponse", "메인화면으로 이동합니다.")
     val intent = Intent(context, MainActivity::class.java)
+    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+
     context.startActivity(intent)
 }

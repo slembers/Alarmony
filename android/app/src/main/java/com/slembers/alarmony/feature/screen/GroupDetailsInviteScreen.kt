@@ -1,5 +1,7 @@
 package com.slembers.alarmony.feature.screen
 
+import android.app.Activity
+import android.content.Intent
 import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -41,6 +43,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
@@ -80,6 +83,7 @@ fun DetailsInviteScreen(
     alarmId : Long? = -1
 ) {
 
+    val context = LocalContext.current
     val search : GroupSearchViewModel = viewModel()
     val searchMembers = search.searchMembers.observeAsState()
     var currentMembers = remember { mutableStateOf<MutableList<Member>>(mutableListOf()) }
@@ -88,6 +92,7 @@ fun DetailsInviteScreen(
     var text by remember { mutableStateOf("") }
     // Dialog 관련 상태변수
     var isClosed by remember { mutableStateOf(false)  }
+    var isDelete by remember { mutableStateOf(false) }
     var openDialog by remember { mutableStateOf(true)  }
 
     LaunchedEffect(Unit) {
@@ -133,6 +138,7 @@ fun DetailsInviteScreen(
                                     GroupDefalutProfile(
                                         profileImg = checked.profileImg,
                                         nickname = checked.nickname,
+                                        groupId = alarmId!!,
                                         newMember = checked.isNew
                                     )
                                 }
@@ -319,3 +325,4 @@ fun DetailsInviteScreen(
         }
     )
 }
+

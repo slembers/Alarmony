@@ -37,6 +37,7 @@ import com.slembers.alarmony.feature.ui.group.GroupToolBar
 import com.slembers.alarmony.feature.ui.group.soundIconView
 import com.slembers.alarmony.feature.ui.group.soundIconView2
 import com.slembers.alarmony.model.db.SoundItem
+import com.slembers.alarmony.util.DisplayDpUtil
 import com.slembers.alarmony.util.Sound
 import com.slembers.alarmony.util.groupSoundInfos
 import com.slembers.alarmony.viewModel.GroupSoundViewModel
@@ -45,7 +46,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 var player : MediaPlayer? = null
-
+val size : Int = 350
 @Composable
 @ExperimentalMaterial3Api
 @ExperimentalGlideComposeApi
@@ -72,6 +73,9 @@ fun SoundScreen(
     val currentSound by viewModel.sound.observeAsState()
     var playSound by remember { mutableStateOf("") }
 
+    val px = context.resources.displayMetrics.widthPixels
+    val count = DisplayDpUtil.px2dp(px,context) / size
+
     Log.d("group","[그룸소리] 로그를 확인하기 위함 : ${list.value}")
     Log.d("group","[그룸소리] 미디어 플레이어 : $player")
 
@@ -93,8 +97,8 @@ fun SoundScreen(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 LazyVerticalGrid(
-                    modifier = Modifier.width(350.dp),
-                    columns = GridCells.Adaptive(minSize = 300.dp),
+                    modifier = Modifier.fillMaxSize(),
+                    columns = GridCells.Adaptive(minSize = size.dp),
                 ) {
                     items(list.value ?: listOf()) {
                         soundIconView2(

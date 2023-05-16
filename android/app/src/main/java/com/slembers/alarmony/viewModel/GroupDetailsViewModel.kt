@@ -27,9 +27,10 @@ class GroupDetailsViewModel (
 ) : ViewModel() {
 
     private val repository : AlarmRepository
-    private val _members : MutableState<MutableList<Member>> = mutableStateOf(mutableListOf())
-    private val _currentMembers : MutableLiveData<MutableList<Member>> =
-        MutableLiveData(mutableListOf())
+    private val _members : MutableState<Int?> = mutableStateOf(0)
+
+    val memberCnt : MutableState<Int?>
+        get() = _members
 
     init {
         Log.d("groupViewModel","VIewModel 초기화!!")
@@ -40,6 +41,7 @@ class GroupDetailsViewModel (
     suspend fun getRecord(alarmId : Long) : Map<String, List<Record>> = suspendCoroutine { continuation ->
         viewModelScope.launch {
             val result = GroupService.getGroupRecord(alarmId)
+            _members.value = result["success"]?.size?.plus(result["failed"]!!.size)
             continuation.resume(result)
         }
     }
@@ -51,18 +53,11 @@ class GroupDetailsViewModel (
         }
     }
 
-    val members : LiveData<MutableList<Member>>
-        get() = _currentMembers
-
     suspend fun updateCurrentMember(alarmId: Long) : MutableList<Member> = suspendCoroutine { continuation ->
         viewModelScope.launch {
             val result = GroupService.getGroupMemberList(alarmId)
             continuation.resume(result)
         }
-    }
-
-    fun deleteCurrentMember() {
-
     }
 
     class GroupViewModelFactory(
@@ -77,7 +72,4 @@ class GroupDetailsViewModel (
         }
     }
 
-    override fun onCleared() {
-        super.onCleared()
-    }
 }

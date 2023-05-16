@@ -50,4 +50,10 @@ interface GroupRepositroy {
         @Path("nickname") nickname : String
     ) : Response<Unit>
 
+    @DELETE("groups/{groupId}/members/{nickname}")
+    suspend fun deleteGroupMember(
+        @Path("groupId") groupId : Long,
+        @Path("nickname") nickname : String
+    ) : Response<Unit>
+
 }

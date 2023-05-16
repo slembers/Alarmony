@@ -112,9 +112,15 @@ object NotiApi {
                 if (response.isSuccessful) {
                     deleteNoti(alertId, context)
                     // 서버에서 알림 삭제 성공시, Room 에서도 알림을 삭제함
-                    Log.d("myResponse", "알림 삭제 성공.")
-                } else {
-                    Log.e("myResponse", "알림 삭제에 실패했습니다.")
+                    Log.d("myResponse-deleteNoti", "알림 삭제 성공.")
+                }
+                else if (response.code() == 404) {
+                    deleteNoti(alertId, context)
+                    // 서버에서 이미 삭제된 알림, Room 에서도 알림을 삭제함
+                    Log.d("myResponse-deleteNoti(noServer)", "알림 삭제 성공.")
+                }
+                 else {
+                    Log.e("myResponse-deleteNoti", "알림 삭제에 실패했습니다.")
                 }
             }
             override fun onFailure(call: Call<Unit>, t: Throwable) {
