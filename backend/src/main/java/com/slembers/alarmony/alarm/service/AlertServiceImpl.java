@@ -116,6 +116,7 @@ public class AlertServiceImpl implements AlertService {
             // 메시지 설정
             Message message = Message.builder()
                 .putData("alertId", String.valueOf(alert.getId()))
+                .putData("alarmId", String.valueOf(alert.getAlarm().getId()))
                 .putData("profileImg", imageUrl == null ? "" : imageUrl)
                 .putData("content", content)
                 .putData("type", alert.getType().name())
@@ -125,6 +126,10 @@ public class AlertServiceImpl implements AlertService {
             String response = FirebaseMessaging.getInstance().send(message);
             // 결과 출력
             log.info("메시지 전송 완료: " + response);
+            if (alert.getType().equals(AlertTypeEnum.DELETE)) {
+                alert.setAlarm(null);
+                alertRepository.save(alert);
+            }
             // 알림 메시지를 저장한다.
             return true;
         } catch (Exception e) {
