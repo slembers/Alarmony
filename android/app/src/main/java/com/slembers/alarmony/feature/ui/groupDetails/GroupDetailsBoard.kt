@@ -75,8 +75,8 @@ fun GroupDetailsBoard(
                     .padding(
                         start = 20.dp,
                         top = 0.dp,
-                        bottom = 10.dp,
-                        end = 10.dp
+                        bottom = 0.dp,
+                        end = 20.dp
                     ),
                 content = {
                     CardDivider()

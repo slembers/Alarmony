@@ -24,6 +24,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.slembers.alarmony.R
@@ -43,8 +44,8 @@ fun GroupToolBar(
         title = { Text(
                 text = title,
                 fontWeight = FontWeight.Bold,
-              //  fontFamily = notosanskr,
-              //  modifier = Modifier.padding(5.dp)
+                fontSize = 17.sp
+
             )
         },
         modifier = Modifier
