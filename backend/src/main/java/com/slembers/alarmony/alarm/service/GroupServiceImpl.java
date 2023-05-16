@@ -152,11 +152,12 @@ public class GroupServiceImpl implements GroupService {
      */
     @Transactional
     @Override
-    public void deleteGroup(Long groupId) {
+    public void deleteGroup(Long groupId, String hostUsername) {
         if (memberAlarmRepository.countByAlarmId(groupId) == 1) {
             removeHostMember(groupId);
         } else {
-            List<String> groupUsernameList = memberAlarmRepository.getUsernameByGroupId(groupId);
+            List<String> groupUsernameList = memberAlarmRepository.getUsernameByGroupIdWithoutHost(
+                groupId, hostUsername);
             alertService.removeMemberFromGroup(groupId, groupUsernameList);
 
             alertRepository.deleteByAlarmId(groupId);

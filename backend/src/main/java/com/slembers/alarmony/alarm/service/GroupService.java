@@ -58,7 +58,8 @@ public interface GroupService {
      * 그룹을 삭제합니다.
      *
      * @param groupId 그룹 id
+     * @param hostUsername    host 유저네임
      */
-    void deleteGroup(Long groupId);
+    void deleteGroup(Long groupId, String hostUsername);
 
 }
