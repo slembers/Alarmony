@@ -12,6 +12,10 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -38,15 +42,17 @@ fun MemberDetails(
     nickname : String = "Alarmony",
     message : String = "체크하지 않았어요...",
     isCheck : Boolean = false,
-    onClick : () -> Unit = {},
-    host : Boolean = false
+    host : Boolean = false,
+    alarmId : Long = 0
 ) {
+
+    var onAlarm by remember { mutableStateOf( true ) }
 
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween,
         modifier = Modifier
-            .padding(start = 2.dp, end = 20.dp, top = 3.dp, bottom = 1.dp)
+            .padding(start = 2.dp, end = 2.dp, top = 3.dp, bottom = 1.dp)
             .fillMaxWidth()
             .wrapContentHeight()
             .heightIn(
@@ -85,25 +91,36 @@ fun MemberDetails(
         ) {
             Text(
                 text = nickname,
-                fontSize = 17.sp,
+                fontSize = 14.sp,
                 modifier = Modifier.fillMaxWidth(),
                 overflow = TextOverflow.Ellipsis,
                 maxLines = 1
             )
-       /*     Text(
-                text = message,
-                fontSize = 12.sp,
-                modifier = Modifier.fillMaxWidth(),
-                overflow = TextOverflow.Ellipsis,
-                maxLines = 1
-            )*/
+            if(message.isNotBlank()){
+                Text(
+                    text = message,
+                    fontSize = 10.sp,
+                    modifier = Modifier.fillMaxWidth(),
+                    overflow = TextOverflow.Ellipsis,
+                    maxLines = 1
+                )
+            }
+
         }
-        if(host && !isCheck) {
+        if(host && onAlarm && !isCheck) {
             GroupDetailsBoardBtn(
                 isCheck = false,
-                onClick = onClick
+                onClick = {
+                    onAlarm = false
+                    CoroutineScope(Dispatchers.IO).async {
+                        GroupService.notification(
+                            alarmId,
+                            nickname
+                        )
+                    }
+                }
             )
-        } else if(isCheck) {
+        } else if(!host && isCheck){
             GroupDetailsBoardBtn(
                 isCheck = true,
             )

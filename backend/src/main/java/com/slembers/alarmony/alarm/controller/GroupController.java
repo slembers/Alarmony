@@ -11,6 +11,9 @@ import com.slembers.alarmony.alarm.service.AlertService;
 import com.slembers.alarmony.global.execption.CustomException;
 import com.slembers.alarmony.global.security.util.SecurityUtil;
 import com.slembers.alarmony.member.dto.MemberInfoDto;
+
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -140,11 +143,12 @@ public class GroupController {
      * @param groupId 그룹 id
      * @return 알람 기록
      */
-    @GetMapping("/{group-id}/records")
+    @GetMapping("/{group-id}/records/{today-datetime}")
     public ResponseEntity<Map<String, Object>> getTodayAlarmRecords(
-        @PathVariable(name = "group-id") Long groupId) {
+            @PathVariable(name = "group-id") Long groupId, @PathVariable(name = "today-datetime") String todayDateTime) {
 
-        List<AlarmRecordDto> alarmList = alarmRecordService.getTodayAlarmRecords(groupId);
+        List<AlarmRecordDto> alarmList = alarmRecordService.getTodayAlarmRecords(
+                groupId, LocalDateTime.parse(todayDateTime,DateTimeFormatter.ISO_DATE_TIME));
 
         Map<String, Object> map = new HashMap<>();
         map.put("alarmList", alarmList);

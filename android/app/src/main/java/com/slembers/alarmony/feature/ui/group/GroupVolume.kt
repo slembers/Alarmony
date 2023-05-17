@@ -53,7 +53,7 @@ fun GroupVolume(
             enabled = true,
             colors = SliderDefaults.colors(
                 thumbColor = MaterialTheme.colorScheme.background,
-                activeTrackColor = "#00B4D8".toColor()
+                activeTrackColor = "#7DC3F2".toColor()
             ),
             modifier = Modifier.weight(0.4f)
         )

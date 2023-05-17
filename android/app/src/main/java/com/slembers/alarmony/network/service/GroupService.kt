@@ -22,6 +22,8 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.http.POST
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import javax.annotation.meta.When
 import kotlin.streams.toList
 
@@ -146,7 +148,10 @@ object GroupService {
             Log.d("getGroup","[알람 상세] 오늘의 알림 검색..")
             var successItems : MutableList<Record> = mutableListOf()
             var failItems : MutableList<Record> = mutableListOf()
-            val recordList = groupApi.getGroupRecord(groupId).body()
+            val dateTime = LocalDateTime.now()
+            val formatter = DateTimeFormatter.ISO_DATE_TIME
+            val formattedDateTime = dateTime.format(formatter)
+            val recordList = groupApi.getGroupRecord(groupId, formattedDateTime).body()
             Log.d("getGroup","[알람 상세] 오늘의 알림 현황 : ${recordList}")
             recordList?.alarmList.let {
                 it?.map {
@@ -206,7 +211,10 @@ object GroupService {
         groupId: Long
     ) : MutableList<Member> {
         try {
-            val response = groupApi.getGroupRecord(groupId)
+            val dateTime = LocalDateTime.now()
+            val formatter = DateTimeFormatter.ISO_DATE_TIME
+            val formattedDateTime = dateTime.format(formatter)
+            val response = groupApi.getGroupRecord(groupId, formattedDateTime)
             val alarmList = response.body()
             Log.d("getGroup","[알람 상세 초대] 현재 초대 인원 현황 : ${alarmList}")
             if( alarmList?.alarmList?.isNotEmpty() == true ) {

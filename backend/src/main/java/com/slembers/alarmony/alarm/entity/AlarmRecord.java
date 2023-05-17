@@ -2,6 +2,7 @@ package com.slembers.alarmony.alarm.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicInsert;
@@ -14,6 +15,7 @@ import java.time.LocalTime;
 
 @Entity(name = "alarm_record")
 @Builder
+@Getter
 @NoArgsConstructor
 @AllArgsConstructor
 @DynamicInsert
@@ -64,9 +66,10 @@ public class AlarmRecord {
         this.message = "";
         this.totalCount++;
         this.successCount++;
-        this.todayAlarmRecord = recordTime;
         long seconds = Duration.between(alarmTime,recordTime.toLocalTime()).toSeconds();
         totalWakeUpTime += seconds < 0 ? 86400 + seconds : seconds;
+        // TODO : 서버 시간이 9시간이 다르기 때문에 저장하기 전에는 9시간을 빼주어야 한다. (추후 수정 필요)
+        this.todayAlarmRecord = recordTime.minusHours(9);
 
     }
 
@@ -74,12 +77,15 @@ public class AlarmRecord {
      * 알람 종료 실패로 기록한다.
      * @param alarmTime 알람 시간
      */
-    public void recordFailed(LocalTime alarmTime) {
+    public void recordFailed(LocalTime alarmTime, LocalDateTime recordTime) {
         this.message = "";
         // 최대 스누즈 시간 일단 30분으로 설정
         long maxSnooze = 3600;
         this.totalCount++;
-        this.todayAlarmRecord = LocalDateTime.of(LocalDate.now(),alarmTime.plusSeconds(maxSnooze));
+        this.todayAlarmRecord = LocalDateTime.of(
+                LocalDate.of(recordTime.getYear(),recordTime.getMonth(),recordTime.getDayOfMonth()),
+                alarmTime.plusSeconds(maxSnooze)
+        );
         totalWakeUpTime += maxSnooze;
 
     }

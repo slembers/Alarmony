@@ -2,16 +2,20 @@ package com.slembers.alarmony.feature.screen
 
 import android.util.Log
 import android.widget.Toast
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.BarChart
 import androidx.compose.material.icons.filled.ExitToApp
 import androidx.compose.material.icons.outlined.GroupAdd
+import androidx.compose.material.icons.outlined.GroupRemove
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -55,6 +59,10 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
 
 @OptIn(ExperimentalCoroutinesApi::class)
 @Preview
@@ -131,14 +139,30 @@ fun GroupDetailsScreen(
                 navClick = { navController.popBackStack() },
                 action = {
                     if(alarm.value.host) {
-                        IconButton(onClick = { navController.navigate(NavItem.GroupDetailsInvite.route + "/$alarmId") }) {
-                            Icon(
-                                imageVector = Icons.Outlined.GroupAdd,
-                                contentDescription = "groupAdd",
-                                tint = Color.Black,
-                                modifier = Modifier.size(25.dp)
-                            )
+                        Row(
+                            modifier = Modifier.wrapContentWidth(),
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
+                            if(memberCnt!! >= 2) {
+//                                IconButton(onClick = {  }) {
+//                                    Icon(
+//                                        imageVector = Icons.Outlined.GroupRemove,
+//                                        contentDescription = "groupeXile",
+//                                        tint = Color.Red,
+//                                        modifier = Modifier.size(25.dp)
+//                                    )
+//                                }
+                            }
+                            IconButton(onClick = { navController.navigate(NavItem.GroupDetailsInvite.route + "/$alarmId") }) {
+                                Icon(
+                                    imageVector = Icons.Outlined.GroupAdd,
+                                    contentDescription = "groupAdd",
+                                    tint = Color.Black,
+                                    modifier = Modifier.size(25.dp)
+                                )
+                            }
                         }
+
                     }
                 }
             )
@@ -156,24 +180,32 @@ fun GroupDetailsScreen(
                     ),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
+
+                /** 알람 시간 **/
                 GroupDetailsTitle(alarm.value)
+                /** 오늘의 현황 **/
                 GroupDetailsBoard(
                     items = record.value,
                     groupId = alarmId!!,
-                    host = alarm.value.host
+                    host = alarm.value.host && currentDay(alarm.value)
                 )
-                CardBox(
-                    title = { GroupTitle(
-                        title = "그룹원 통계",
-                        content = { Icon(
-                            modifier = Modifier
-                                .padding(end = 10.dp)
-                                .size(15.dp),
-                            imageVector = Icons.Filled.BarChart,
-                            contentDescription = null
-                        )}
-                    )}
-                )
+//                CardBox(
+//                    title = { GroupTitle(
+//                        title = "그룹원 통계",
+//                        content = { Icon(
+//                            modifier = Modifier
+//                                .padding(end = 10.dp)
+//                                .size(15.dp),
+//                            imageVector = Icons.Filled.BarChart,
+//                            contentDescription = null
+//                        )},
+//                        enable = true,
+//                        onClick = {
+//                            Log.d("통계","진입했습니다.")
+//                            navController.navigate(route = NavItem.GroupDetailsMembers.route + "/$alarmId")
+//                        }
+//                    )}
+//                )
                 if(!alarm.value.host) {
                     CardBox(title = {
                         GroupTitle(
@@ -244,5 +276,46 @@ fun GroupDetailsScreen(
     )
     if(loading) {
         AnimationRotation()
+    }
+}
+
+private fun currentDay(alarm : Alarm?) : Boolean {
+
+    val hour = alarm!!.hour
+    val minute = alarm!!.minute
+    val day = alarm!!.alarmDate
+
+    Log.d("","현재시간 : ${alarm.hour} : ${alarm.minute}")
+    Log.d("","현재주간 : ${alarm.alarmDate}")
+    
+    val local = LocalDateTime.now(ZoneId.of("Asia/Seoul"))
+    Log.d("","현재시간 : $local")
+    val hf = local.format(DateTimeFormatter.ofPattern("HH")).toInt()
+    val mf = local.format(DateTimeFormatter.ofPattern("mm")).toInt()
+    val df = local.format(DateTimeFormatter.ofPattern("E"))
+
+    Log.d("","현재시간 : $hf : $mf : $df")
+
+    // 현재날짜와 배열의 인덱스가 false면 불허
+    when(df) {
+        "월" -> if(!day[0]) return false
+        "화" -> if(!day[1]) return false
+        "수" -> if(!day[2]) return false
+        "목" -> if(!day[3]) return false
+        "금" -> if(!day[4]) return false
+        "토" -> if(!day[5]) return false
+        "일" -> if(!day[6]) return false
+    }
+    
+    // 시간이 작으면 알람보내기 불용
+    if( hf > hour ) {
+        return true
+    } else {
+        // 시간이 같다면 분이 넘어야 허용
+        if( hf == hour ) {
+            return mf >= minute
+        } else { // 시간이 넘으면 허용
+            return false
+        }
     }
 }

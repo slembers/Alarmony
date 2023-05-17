@@ -8,6 +8,15 @@ import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
+
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.keyframes
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -43,6 +52,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.contentColorFor
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
@@ -52,6 +62,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -72,6 +83,12 @@ import com.slembers.alarmony.feature.common.ui.theme.notosanskr
 import com.slembers.alarmony.feature.common.ui.theme.toColor
 import com.slembers.alarmony.feature.notification.NotiViewModel
 import com.slembers.alarmony.feature.notification.NotiViewModelFactory
+import com.slembers.alarmony.feature.user.BackOnPressed
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+
 
 @ExperimentalGlideComposeApi
 @OptIn(ExperimentalMaterial3Api::class)
@@ -92,17 +109,22 @@ fun AlarmListScreen(navController : NavHostController) {
             Log.d("AlarmListScreen","[알람목록] Activity 이동성공")
         }
     }
+
+
     BackOnPressed()
     Scaffold(
         topBar = {
             TopAppBar(
                 title = {
                     Row(verticalAlignment = Alignment.CenterVertically) {
-                        Image(
-                            painter = painterResource(id = R.drawable.mas),
-                            contentDescription = "character",
-                            modifier = Modifier.size(30.dp)
-                        )
+//                        Image(
+//                            painter = painterResource(id = R.drawable.mas),
+//                            contentDescription = "character",
+//                            modifier = Modifier
+//                                .size(30.dp)
+//
+//                        )
+                        ShakingImage()
                         Text(text = "alarmony",
                             fontWeight = FontWeight.Bold,
                             fontFamily = notosanskr,
@@ -158,7 +180,7 @@ fun AlarmListScreen(navController : NavHostController) {
                     launcher.launch(intent)
                 },
                 shape = CircleShape,
-                containerColor = "#00B4D8".toColor(),
+                containerColor = "#7EBFEB".toColor(),
                 modifier = Modifier
                     .offset(y = -50.dp)
                     .size(60.dp)
@@ -190,7 +212,7 @@ fun AlarmListScreen(navController : NavHostController) {
                     ).show()
                 }
                 ////////////////// 테스트용 버튼
-                Button(onClick = {
+           /*     Button(onClick = {
                     val alarm999 = AlarmDto(
                     999L,
                     "장덕모임",
@@ -198,18 +220,18 @@ fun AlarmListScreen(navController : NavHostController) {
                     45,
                     listOf(true, true, true, true, true, true, true),
                     "Piano",
-                    7,
-                    true,
+                    0,
+                    false,
                     false,
                     "안수빈 마라탕 매운맛 고문하는 장덕 모임입니다."
                 )
                     saveTestAlarm(alarm999, context)
                     Toast.makeText(context, "8초 뒤에 알람이 울립니다.", Toast.LENGTH_SHORT).show()},
-                    colors = ButtonDefaults.buttonColors("#7ADBEF".toColor())
+                    colors = ButtonDefaults.buttonColors("#00C3FF".toColor())
 
                 ) {
                     Text(text = "8초 뒤 울리는 테스트 알람")
-                }
+                }*/
                 //////////////////
                 LazyColumn{
                     items(alarms.size) {model ->
@@ -350,6 +372,44 @@ fun MyListItem(
     }
 }
 
+@Composable
+fun ShakingImage() {
+    var isShaking by remember { mutableStateOf(false) }
+
+    val shakeAnimation by animateFloatAsState(
+        targetValue = if (isShaking) 30f else 0f,
+        animationSpec = tween ( durationMillis = 500 )
+    )
+    val imageRes = if (shakeAnimation in 20f..40f) {
+        // 기울기가 20~40도 사이일 때 이미지를 변경합니다.
+        R.drawable.winklemas2
+    } else {
+        // 기울기가 다른 각도일 때는 원래 이미지를 사용합니다.
+        R.drawable.mas
+    }
+
+    Image(
+        painter = painterResource(id = imageRes),
+        contentDescription = "character",
+        modifier = Modifier
+            .size(40.dp)
+            .clickable {
+//                잠시 기다린 후에 애니메이션 실행
+                CoroutineScope(Dispatchers.Default).launch {
+                    delay(400)
+                }
+                isShaking = !isShaking
+                CoroutineScope(Dispatchers.Default).launch {
+                    delay(500)
+                    isShaking = !isShaking
+                }
+                }
+            .graphicsLayer(rotationZ = shakeAnimation)
+    )
+}
+
+
+
 // 뒤로가기 두 번 누르면 나가짐
 @Composable
 fun BackOnPressed() {
@@ -368,6 +428,8 @@ fun BackOnPressed() {
         backPressedTime = System.currentTimeMillis()
     }
 }
+
+
 
 
 @Preview

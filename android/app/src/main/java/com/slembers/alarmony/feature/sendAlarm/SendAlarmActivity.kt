@@ -9,6 +9,7 @@ import android.icu.util.Calendar
 import android.os.Build
 import android.os.Bundle
 import android.os.PowerManager
+import android.util.Log
 import android.view.WindowManager
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -78,6 +79,7 @@ class SendAlarmActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
 
         super.onCreate(savedInstanceState)
+        Log.d("myResponse", "sendAlarmActivity 실행")
         val alarmId = intent.getLongExtra("alarmId", -1L)
         val alarmDao = AlarmDatabase.getInstance(this).alarmDao()
         CoroutineScope(Dispatchers.IO).launch {
@@ -140,7 +142,7 @@ fun SendAlarmScreen(alarmDto : AlarmDto) {
         content = { innerPadding ->
             Column(
                 modifier = Modifier
-                    .background(color = "#ecddd6".toColor())
+                    .background(Color.White)
                     .fillMaxSize()
                     .padding(innerPadding),
                 verticalArrangement = Arrangement.Bottom,
@@ -156,7 +158,7 @@ fun SendAlarmScreen(alarmDto : AlarmDto) {
                     Button(
                         onClick = {
                             cancelSendAlarmNotification()
-                            context.finish()
+                            context.finishAffinity()
                             goMain(context)
                         },
                         shape = CircleShape,
@@ -164,12 +166,12 @@ fun SendAlarmScreen(alarmDto : AlarmDto) {
                         modifier = Modifier
                             .padding(5.dp)
                             .size(130.dp),
-                        colors = ButtonDefaults.buttonColors("#66D5ED".toColor())
+                        colors = ButtonDefaults.buttonColors("#7DC3F2".toColor())
                     ) {
                         Icon(
                             imageVector = Icons.Rounded.Stop,
                             contentDescription = "Setting",
-                            tint = "#EF2828".toColor(),
+                            tint = "#ff8f82".toColor(),
                             modifier = Modifier.size(80.dp)
                         )
                     }

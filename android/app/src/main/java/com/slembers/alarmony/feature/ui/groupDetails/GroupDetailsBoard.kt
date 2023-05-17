@@ -3,8 +3,10 @@ package com.slembers.alarmony.feature.ui.groupDetails
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
@@ -29,6 +31,7 @@ import com.slembers.alarmony.R
 import com.slembers.alarmony.feature.common.CardBox
 import com.slembers.alarmony.feature.common.CardDivider
 import com.slembers.alarmony.feature.common.CardTitle
+import com.slembers.alarmony.feature.common.ui.theme.toColor
 import com.slembers.alarmony.model.db.Record
 import com.slembers.alarmony.network.service.GroupService
 import kotlinx.coroutines.CoroutineScope
@@ -63,7 +66,7 @@ fun GroupDetailsBoard(
                         fontWeight = FontWeight.Bold,
                         fontStyle = FontStyle.Normal
                     ),
-                    modifier = Modifier.padding(end = 13.dp),
+                    modifier = Modifier.padding(end = 15.dp),
                     textAlign = TextAlign.Start
                 )
             }
@@ -79,12 +82,12 @@ fun GroupDetailsBoard(
                         end = 20.dp
                     ),
                 content = {
-                    CardDivider()
+                    CardDivider(color = "#989898".toColor())
                     if(items.getValue("success").isEmpty()) {
-                        nothingItem(content = "오늘 알람을 확인 인원이 없습니다.")
+                        nothingItem(content = "알람을 확인한 인원이 없습니다.")
                     } else {
                         LazyColumn(
-                            modifier = Modifier.height(200.dp),
+                            modifier = Modifier.heightIn(30.dp,540.dp),
                             horizontalAlignment = Alignment.CenterHorizontally,
                             content = {
                                 items(items.getValue("success")) {
@@ -98,12 +101,12 @@ fun GroupDetailsBoard(
                             }
                         )
                     }
-                    CardDivider()
+                    CardDivider(color = "#E9E9E9".toColor())
                     if(items.getValue("failed").isEmpty()) {
-                        nothingItem(content = "모두 일어났어요.")
+                        nothingItem(content = "모든 인원이 알람을 확인하였습니다.")
                     } else {
                         LazyColumn(
-                            modifier = Modifier.height(200.dp),
+                            modifier = Modifier.heightIn(30.dp,540.dp),
                             horizontalAlignment = Alignment.CenterHorizontally,
                             content = {
                                 items(items.getValue("failed")) {
@@ -111,18 +114,9 @@ fun GroupDetailsBoard(
                                         nickname = it.nickname,
                                         profile = it.profileImg,
                                         isCheck = it.success,
-                                        message = it.message ?: "No checking..",
+                                        message = it.message ?: "",
                                         host = host,
-                                        onClick = {
-                                            if(it.success.not()) {
-                                                CoroutineScope(Dispatchers.IO).async {
-                                                    GroupService.notification(
-                                                        groupId,
-                                                        it.nickname
-                                                    )
-                                                }
-                                            }
-                                        }
+                                        alarmId = groupId
                                     )
                                 }
                             }
@@ -143,7 +137,7 @@ fun nothingItem(
         modifier = Modifier
             .fillMaxWidth()
             .wrapContentHeight()
-            .padding(top = 10.dp, bottom = 10.dp),
+            .padding(top = 30.dp, bottom = 30.dp),
         verticalAlignment = Alignment.CenterVertically,
         content = {
         /*    Image(

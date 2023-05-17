@@ -1,9 +1,12 @@
 package com.slembers.alarmony.feature.ui.profilesetting
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageInfo
 import android.net.Uri
 import android.os.Build
+import android.provider.Settings
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -13,6 +16,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -22,19 +26,16 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
-import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.ListItem
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.TextButton
-import androidx.compose.material.icons.filled.ColorLens
+import androidx.compose.material.icons.filled.Badge
 import androidx.compose.material.icons.filled.Email
-import androidx.compose.material.icons.filled.Flag
+import androidx.compose.material.icons.filled.Face
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Notifications
-import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Report
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -47,20 +48,24 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.app.NotificationManagerCompat
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
-import com.slembers.alarmony.MainActivity
+import com.gun0912.tedpermission.PermissionListener
+import com.gun0912.tedpermission.normal.TedPermission
 import com.slembers.alarmony.R
 import com.slembers.alarmony.feature.alarm.deleteAllAlarms
+import com.slembers.alarmony.feature.common.CardBox
+import com.slembers.alarmony.feature.common.CardDivider
+import com.slembers.alarmony.feature.common.CardTitle
 import com.slembers.alarmony.feature.common.NavItem
 import com.slembers.alarmony.feature.common.ui.theme.toColor
 import com.slembers.alarmony.feature.notification.deleteAllNotis
@@ -91,6 +96,7 @@ fun SettingView(
     // 이메일과 닉네임 정보를 가지고 있는 상태 변수
     val username = remember { mutableStateOf("아이디") }
     val nickname = remember { mutableStateOf("닉네임") }
+    val curNickname = remember { mutableStateOf("닉네임") }
     val email = remember { mutableStateOf("xxxx@naver.com") }
     // 프로필 이미지를 가지고 있는 상태 변수
     val profileImage = remember { mutableStateOf("") }
@@ -105,11 +111,16 @@ fun SettingView(
     }
 
     fun changeNickname(changeName: String) {
+        isEditMode.value = false
+        if(changeName == curNickname.value){
+            showToast(context, "현재 닉네임과 같습니다.")
+            return
+        }
         CoroutineScope(Dispatchers.IO).launch {
-            isEditMode.value = !isEditMode.value
             val result = MemberService.modifyMemberNickname(changeName.trim('"'))
             if (result?.success == true) {
                 showToast(context, "닉네임이 변경되었습니다.")
+                curNickname.value = changeName
             } else {
                 showToast(context, "닉네임이 이미 사용중입니다.")
                 nickname.value = result?.nickname.toString()
@@ -148,6 +159,7 @@ fun SettingView(
     LaunchedEffect(Unit) {
         val myInfo = MemberService.getMyInfo()
         username.value = myInfo?.username.toString()
+        curNickname.value = myInfo?.nickname.toString()
         nickname.value = myInfo?.nickname.toString()
         profileImage.value = myInfo?.profileImgUrl.toString()
         email.value = myInfo?.email.toString()
@@ -156,211 +168,317 @@ fun SettingView(
     Column(
         modifier = modifier,
     ) {
-        ListItem(
-            leadingContent = {
-                Box(
+        CardBox(
+            title = { CardTitle(title = "프로필 설정") },
+            content = {
+                Column(
                     modifier = Modifier
-                        .size(100.dp)
-                        .clip(CircleShape)
-                ) {
-                    AsyncImage(
-                        model = ImageRequest.Builder(LocalContext.current)
-                            .data(
-                                if (profileImage.value.length > 4) {
-                                    profileImage.value
-                                } else {
-                                    R.drawable.profiledefault
-                                }
-                            )
-                            .build(),
-                        contentDescription = "ImageRequest example",
-                        modifier = Modifier.fillMaxWidth(),
-                        contentScale = ContentScale.Crop
-                    )
-                }
-            },
-            headlineContent = {
-                Text(
-                    text = username.value,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 30.sp,
-//                        modifier = Modifier.padding(top = 25.dp)
-                )
-            },
-            supportingContent = {
-                Text(
-                    text = "프로필 변경",
-                    fontSize = 13.sp,
-                    style = MaterialTheme.typography.subtitle2.copy(color = Color.Blue),
-                    modifier = Modifier
-                        .clickable {
-                            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                                launcher.launch("image/*")
-                            }
-                            else { // 티라미수 미만 버전은 ExternalStorage 접근권한을 유저한테 요청해야함
-                                if (hasWriteExternalStoragePermission(context)) {
-                                    launcher.launch("image/*")
-                                } else {
-                                    requestWriteExternalStoragePermission()
-                                }
-                            }
-                   },
-                )
-            },
-            modifier = Modifier.padding(16.dp),
-            colors = ListItemDefaults.colors("#F9F9F9".toColor())
-        )
-
-        Divider()
-
-        ListItem(
-            leadingContent = {
-                Icon(
-                    Icons.Default.Email,
-                    contentDescription = "Email",
-                    Modifier.size(40.dp)
-                )
-            },
-            headlineContent = { Text("이메일") },
-            supportingContent = {
-                Text(text = email.value,)
-            },
-            modifier = Modifier,
-            colors = ListItemDefaults.colors("#F9F9F9".toColor())
-        )
-
-        Divider()
-
-        ListItem(
-            leadingContent = {
-                Icon(
-                    Icons.Default.Person,
-                    contentDescription = "Nickname",
-                    Modifier.size(40.dp)
-                )
-            },
-            headlineContent = { Text("닉네임 변경하기") },
-            supportingContent = {
-                // 닉네임
-                if (isEditMode.value) {
-                    // 수정 모드일 경우 TextField를 보여준다.
-                    OutlinedTextField(
-                        value = nickname.value,
-                        onValueChange = {
-                            nickname.value = it
-                            if (it.endsWith("\n")) {
-                                nickname.value = nickname.value.trim()
-                                changeNickname(nickname.value)
-                            }
-                        },
-                        modifier = Modifier.fillMaxWidth(),
-                        keyboardOptions = KeyboardOptions(
-                            keyboardType = KeyboardType.Password,
-                            imeAction = ImeAction.Done
+//                        .fillMaxWidth()
+                        .padding(
+                            start = 20.dp,
+                            top = 0.dp,
+                            bottom = 0.dp,
+                            end = 20.dp
                         ),
-                        keyboardActions = KeyboardActions(
-                            onDone = {
-                                changeNickname(nickname.value)
-                            }
-                        )
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    CardDivider(color = Color(0xff9A9A9A))
 
-                    )
-                } else {
-                    // 수정 모드가 아닐 경우 Text를 보여준다.
+                    /** 이미지 정보 **/
                     Row(
-                        verticalAlignment = Alignment.Bottom
+                        modifier = Modifier
+                            .padding(10.dp),
+                        verticalAlignment = Alignment.CenterVertically,
                     ) {
-                        androidx.compose.material.Text(
-                            text = "current : ${nickname.value}",
-//                                style = MaterialTheme.typography.subtitle2.copy(color = Color.Blue),
-                            modifier = Modifier.clickable {
-                                isEditMode.value = !isEditMode.value
-                                if (!isEditMode.value) {
-                                    Log.d(
-                                        "upload",
-                                        mySelectedUri.value.toString()
-                                    )
-                                    // 수정 모드를 끝낼 때 서버에 닉네임 변경 요청을 보내는 로직
-                                }
+                        Row(
+                            horizontalArrangement = Arrangement.Start
+                        ) {
+                            Spacer(modifier = Modifier.size(20.dp))
+                            Box(
+                                modifier = Modifier
+                                    .size(90.dp)
+                                    .clip(CircleShape)
+                            ) {
+                                AsyncImage(
+                                    model = ImageRequest.Builder(LocalContext.current)
+                                        .data(
+                                            if (profileImage.value.length > 4) {
+                                                profileImage.value
+                                            } else {
+                                                R.drawable.profiledefault
+                                            }
+                                        )
+                                        .build(),
+                                    contentDescription = "ImageRequest example",
+                                    modifier = Modifier.fillMaxWidth(),
+                                    contentScale = ContentScale.Crop
+                                )
                             }
-                        )
+                        }
+                        Column(
+                            horizontalAlignment = Alignment.Start,
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Text(
+                                text = "프로필 변경하기",
+                                fontSize = 17.sp,
+                                style = MaterialTheme.typography.subtitle2.copy(color = Color.Blue),
+                                modifier = Modifier
+                                    .padding(20.dp)
+                                    .clickable {
+                                        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                                            launcher.launch("image/*")
+                                        }
+                                        else { // 티라미수 미만 버전은 ExternalStorage 접근권한을 유저한테 요청해야함
+                                            if (hasWriteExternalStoragePermission(context)) {
+                                                launcher.launch("image/*")
+                                            } else {
+                                                requestWriteExternalStoragePermission()
+                                            }
+                                        }
+                               },
+                            )
+                        }
                     }
                 }
-            },
-            modifier = Modifier
-                .clickable(onClick = { isEditMode.value = !isEditMode.value }),
-            colors = ListItemDefaults.colors("#F9F9F9".toColor())
+            }
         )
 
-        Divider()
+        CardBox(
+            title = { CardTitle(title = "계정 정보") },
+            content = {
 
-        ListItem(
-            leadingContent = {
-                Icon(
-                    Icons.Default.ColorLens,
-                    contentDescription = "Theme",
-                    Modifier.size(40.dp)
-                )
-            },
-            headlineContent = { Text("테마 설정") },
-            supportingContent = { Text("Change the app theme.") },
-            modifier = Modifier
-                .clickable(onClick = {/* TODO */ }),
-            colors = ListItemDefaults.colors("#F9F9F9".toColor())
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(
+                            start = 20.dp,
+                            top = 0.dp,
+                            bottom = 0.dp,
+                            end = 20.dp
+                        ),
+                ) {
+                    CardDivider(color = Color(0xff9A9A9A))
+
+                    /** 아이디 **/
+                    Row(
+                        modifier = Modifier
+                            .padding(5.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        Row(
+                            horizontalArrangement = Arrangement.Start
+                        ) {
+                            Icon(
+                                Icons.Default.Badge,
+                                contentDescription = "ID",
+                                Modifier.size(30.dp)
+                            )
+                        }
+                        Spacer(modifier = Modifier.size(15.dp))
+                        Column(
+                            horizontalAlignment = Alignment.Start
+                        ) {
+                            Text("아이디",)
+                            Text(text = username.value,)
+                        }
+                    }
+                    CardDivider(color = "#E9E9E9".toColor())
+
+
+                    /** 닉네임 변경하기 **/
+                    Row(
+                        modifier = Modifier
+                            .padding(5.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        Row(
+                            horizontalArrangement = Arrangement.Start
+                        ) {
+                            Icon(
+                                Icons.Default.Face,
+                                contentDescription = "Nickname",
+                                Modifier.size(30.dp)
+                            )
+                        }
+                        Spacer(modifier = Modifier.size(15.dp))
+                        Column(
+                            horizontalAlignment = Alignment.Start
+                        ) {
+                            Text("닉네임",)
+                            // 닉네임
+                            if (isEditMode.value) {
+                                // 수정 모드일 경우 TextField를 보여준다.
+                                OutlinedTextField(
+                                    value = nickname.value,
+                                    onValueChange = {
+                                        nickname.value = it
+                                        if (it.endsWith("\n")) {
+                                            nickname.value = nickname.value.trim()
+                                            changeNickname(nickname.value)
+                                        }
+                                    },
+                                    modifier = Modifier.padding(5.dp).fillMaxWidth(),
+                                    keyboardOptions = KeyboardOptions(
+                                        keyboardType = KeyboardType.Password,
+                                        imeAction = ImeAction.Done
+                                    ),
+                                    keyboardActions = KeyboardActions(
+                                        onDone = {
+                                            changeNickname(nickname.value)
+                                        }
+                                    )
+
+                                )
+                            } else {
+                                // 수정 모드가 아닐 경우 Text를 보여준다.
+                                Row(
+                                    verticalAlignment = Alignment.Bottom,
+                                ) {
+                                    Text(
+                                        text = nickname.value,
+                                    )
+                                    Text(
+                                        text = "    변경하기",
+                                        style = MaterialTheme.typography.subtitle2.copy(color = Color.Blue),
+                                        modifier = Modifier
+                                            .clickable {isEditMode.value = true}
+                                    )
+                                }
+                            }
+                        }
+                    }
+                    CardDivider(color = "#E9E9E9".toColor())
+
+
+                    /** 이메일 **/
+                    Row(
+                        modifier = Modifier
+                            .padding(5.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        Row(
+                            horizontalArrangement = Arrangement.Start
+                        ) {
+                            Icon(
+                                Icons.Default.Email,
+                                contentDescription = "Email",
+                                Modifier.size(30.dp)
+                            )
+                        }
+                        Spacer(modifier = Modifier.size(15.dp))
+                        Column(
+                            horizontalAlignment = Alignment.Start
+                        ) {
+                        Text("이메일",)
+                        Text(text = email.value,)
+                        }
+                    }
+                }
+            }
         )
 
-        Divider()
+        CardBox(
+            title = { CardTitle(title = "앱 설정") },
+            content = {
 
-        ListItem(
-            leadingContent = {
-                Icon(
-                    Icons.Default.Info,
-                    contentDescription = "App Info",
-                    Modifier.size(40.dp)
-                )
-            },
-            headlineContent = { Text("어플리케이션 정보") },
-            supportingContent = { Text("View app version and build number") },
-            modifier = Modifier
-                .clickable(onClick = {/* TODO */ }),
-            colors = ListItemDefaults.colors("#F9F9F9".toColor())
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(
+                            start = 20.dp,
+                            top = 0.dp,
+                            bottom = 0.dp,
+                            end = 20.dp
+                        ),
+                ) {
+                    CardDivider(color = Color(0xff9A9A9A))
+
+                    /** 어플리케이션 정보 **/
+                    Row(
+                        modifier = Modifier
+                            .padding(5.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        Row(
+                            horizontalArrangement = Arrangement.Start
+                        ) {
+                            Icon(
+                                Icons.Default.Info,
+                                contentDescription = "App Info",
+                                Modifier.size(30.dp)
+                            )
+                        }
+                        Spacer(modifier = Modifier.size(15.dp))
+                        Column(
+                            horizontalAlignment = Alignment.Start
+                        ) {
+                            Text("어플리케이션 정보",)
+//                            Text("Current version : 1.0")
+                            Text("Current version : " + getVersionInfo(context))
+                        }
+                    }
+                    CardDivider(color = "#E9E9E9".toColor())
+
+
+                    /** 푸쉬 알림 설정 **/
+                    Row(
+                        modifier = Modifier
+                            .padding(5.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        Row(
+                            horizontalArrangement = Arrangement.Start
+                        ) {
+                            Icon(
+                                Icons.Default.Notifications,
+                                contentDescription = "Push Notification",
+                                Modifier.size(30.dp)
+                            )
+                        }
+                        Spacer(modifier = Modifier.size(15.dp))
+                        Column(
+                            horizontalAlignment = Alignment.Start
+                        ) {
+                            Text("푸쉬 알림 설정",)
+                            Text("알림 설정 변경하기",
+                                style = MaterialTheme.typography.subtitle2.copy(color = Color.Blue),
+                                modifier = Modifier
+                                    .clickable(onClick = { moveToPushAlertSetting(context) })
+                            )
+                        }
+                    }
+                    CardDivider(color = "#E9E9E9".toColor())
+
+
+                    /** 신고하기 **/
+                    Row(
+                        modifier = Modifier
+                            .padding(5.dp)
+                            .clickable(onClick = { navController.navigate(NavItem.ReportPage.route) }),
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        Row(
+                            horizontalArrangement = Arrangement.Start
+                        ) {
+                            Icon(
+                                Icons.Default.Report,
+                                contentDescription = "Report",
+                                Modifier.size(30.dp)
+                            )
+                        }
+                        Spacer(modifier = Modifier.size(15.dp))
+                        Column(
+                            horizontalAlignment = Alignment.Start
+                        ) {
+                            Text("신고하기",)
+                            Text("Report inappropriate content")
+//                            Text("Current version : " + getVersionInfo(context))
+                        }
+                    }
+                }
+            }
         )
-
-        Divider()
-
-        ListItem(
-            leadingContent = {
-                Icon(
-                    Icons.Default.Notifications,
-                    contentDescription = "Push Notifications",
-                    Modifier.size(40.dp)
-                )
-            },
-            headlineContent = { Text("푸쉬 알림 설정") },
-            supportingContent = { Text("current : " + if(pushAlert.value) "ON" else "OFF" ) },
-            modifier = Modifier
-                .clickable(onClick = {pushAlert.value = !pushAlert.value}),
-            colors = ListItemDefaults.colors("#F9F9F9".toColor())
-        )
-
-        Divider()
-
-        ListItem(
-            leadingContent = {
-                Icon(
-                    Icons.Default.Flag,
-                    contentDescription = "Report",
-                    Modifier.size(40.dp)
-                )
-            },
-            headlineContent = { Text("신고하기") },
-            supportingContent = { Text("Report inappropriate content") },
-            modifier = Modifier
-                .clickable(onClick = { navController.navigate(NavItem.ReportPage.route) }),
-            colors = ListItemDefaults.colors("#F9F9F9".toColor())
-        )
-
-        Divider()
 
         Row(
             modifier = Modifier.fillMaxSize(),
@@ -387,7 +505,7 @@ fun SettingView(
             ) {
                 Text(
                     text = "로그아웃 |",
-                    style = MaterialTheme.typography.body1.copy(color = Color.Blue)
+                    style = MaterialTheme.typography.body1.copy(color = Color.Gray)
                 )
             }
 
@@ -423,7 +541,7 @@ fun SettingView(
                 }) {
                 Text(
                     text = "회원탈퇴",
-                    style = MaterialTheme.typography.body1.copy(color = Color.Red)
+                    style = MaterialTheme.typography.body1.copy(color = Color.Gray)
                 )
             }
         }
@@ -431,4 +549,19 @@ fun SettingView(
     if (loading.value) {
         AnimationRotation()
     }
+}
+
+fun getVersionInfo(context : Context) : String {
+    val info: PackageInfo = context.packageManager.getPackageInfo(context.packageName, 0)
+    return info.versionName
+}
+
+fun isNoticeable(context : Context) : Boolean {
+    return NotificationManagerCompat.from(context).areNotificationsEnabled()
+}
+
+fun moveToPushAlertSetting(context : Context) {
+    val intent = Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS)
+    intent.putExtra(Settings.EXTRA_APP_PACKAGE, context.packageName)
+    context.startActivity(intent)
 }

@@ -32,7 +32,7 @@ fun GroupDetailsBoardBtn(
 
         colors = ButtonDefaults.buttonColors(
             contentColor = AlarmisCheck(isCheck, "#EDEDED".toColor(),"#000000".toColor().copy(alpha = 0.7f)),
-            containerColor = AlarmisCheck(isCheck, "#00B4D8".toColor(), "#C9C9C9".toColor())
+            containerColor = AlarmisCheck(isCheck, "#5EC96B".toColor(), "#DF4C42".toColor())
         ),
         onClick = onClick,
         modifier = Modifier.size(width = 40.dp, height = 32.dp),
@@ -45,7 +45,6 @@ fun GroupDetailsBoardBtn(
                 text = AlarmisCheck(isCheck, "일어났어요", ""),
                 style = TextStyle(
                     fontSize = 12.sp,
-                    fontFamily = FontFamily.Monospace,
                     fontWeight = FontWeight.Bold,
                 ),
                 maxLines = 1

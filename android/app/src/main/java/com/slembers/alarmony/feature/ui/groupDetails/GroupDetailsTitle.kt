@@ -62,7 +62,7 @@ fun GroupDetailsTitle(
                         end = 20.dp
                     ),
                 content = {
-                    CardDivider()
+                    CardDivider(color = Color(0xff9A9A9A))
 
                     Box(
                         modifier = Modifier.fillMaxSize(),
@@ -191,13 +191,13 @@ private fun GroupDetailsWeek(
     ischeck : Boolean = false
 ) : Color {
     return when (word) {
-        "월" -> if(ischeck) Color.Black.copy(alpha = 1f) else Color.Black.copy(alpha = 0.4f)
-        "화" -> if(ischeck) Color.Black.copy(alpha = 1f) else Color.Black.copy(alpha = 0.4f)
-        "수" -> if(ischeck) Color.Black.copy(alpha = 1f) else Color.Black.copy(alpha = 0.4f)
-        "목" -> if(ischeck) Color.Black.copy(alpha = 1f) else Color.Black.copy(alpha = 0.4f)
-        "금" -> if(ischeck) Color.Black.copy(alpha = 1f) else Color.Black.copy(alpha = 0.4f)
-        "토" -> if(ischeck) Color.Red.copy(alpha = 1f) else Color.Red.copy(alpha = 0.4f)
-        "일" -> if(ischeck) Color.Red.copy(alpha = 1f) else Color.Red.copy(alpha = 0.4f)
+        "월" -> if(ischeck) Color.Black.copy(alpha = 1f) else Color.Black.copy(alpha = 0.2f)
+        "화" -> if(ischeck) Color.Black.copy(alpha = 1f) else Color.Black.copy(alpha = 0.2f)
+        "수" -> if(ischeck) Color.Black.copy(alpha = 1f) else Color.Black.copy(alpha = 0.2f)
+        "목" -> if(ischeck) Color.Black.copy(alpha = 1f) else Color.Black.copy(alpha = 0.2f)
+        "금" -> if(ischeck) Color.Black.copy(alpha = 1f) else Color.Black.copy(alpha = 0.2f)
+        "토" -> if(ischeck) Color.Red.copy(alpha = 1f) else Color.Red.copy(alpha = 0.2f)
+        "일" -> if(ischeck) Color.Red.copy(alpha = 1f) else Color.Red.copy(alpha = 0.2f)
         else -> {Color.Black}
     }
 }

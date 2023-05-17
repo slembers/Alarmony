@@ -5,11 +5,10 @@ import com.slembers.alarmony.alarm.dto.AlarmEndRecordDto;
 import com.slembers.alarmony.alarm.dto.MemberRankingDto;
 import com.slembers.alarmony.alarm.entity.Alarm;
 import com.slembers.alarmony.alarm.entity.AlarmRecord;
-import com.slembers.alarmony.alarm.exception.AlarmErrorCode;
 import com.slembers.alarmony.alarm.exception.AlarmRecordErrorCode;
 import com.slembers.alarmony.alarm.repository.AlarmRecordRepository;
-import com.slembers.alarmony.alarm.repository.AlarmRepository;
 import com.slembers.alarmony.global.execption.CustomException;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import com.slembers.alarmony.member.entity.Member;
@@ -34,8 +33,9 @@ public class AlarmRecordServiceImpl implements AlarmRecordService {
      * @return 알람 기록
      */
     @Override
-    public List<AlarmRecordDto> getTodayAlarmRecords(Long groupId) {
-        return alarmRecordRepository.findTodayAlarmRecordsByAlarmId(groupId);
+    public List<AlarmRecordDto> getTodayAlarmRecords(Long groupId, LocalDateTime todayTime) {
+        // TODO : 서버와 9시간 차이나기 때문에 오늘 알람 기록 조회시에도 9시간을 빼주어야 한다. (추후 수정해야 함)
+        return alarmRecordRepository.findTodayAlarmRecordsByAlarmId(groupId, todayTime.minusHours(9));
     }
 
     /**
@@ -63,12 +63,12 @@ public class AlarmRecordServiceImpl implements AlarmRecordService {
             .orElseThrow(() -> new CustomException(AlarmRecordErrorCode.ALARM_RECORD_NOT_EXIST));
 
         Alarm alarm = alarmService.findAlarmByAlarmId(alarmEndRecordDto.getAlarmId());
-
+        // 서버와 9시간 차이가 나기 때문에 9시간을 빼준다.
         try {
             if (alarmEndRecordDto.isSuccess()) {
                 alarmRecord.recordSuccess(alarm.getTime(), alarmEndRecordDto.getDatetime());
             } else {
-                alarmRecord.recordFailed(alarm.getTime());
+                alarmRecord.recordFailed(alarm.getTime(), alarmEndRecordDto.getDatetime());
             }
             alarmRecordRepository.save(alarmRecord);
         } catch (Exception e) {

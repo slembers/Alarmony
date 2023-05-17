@@ -8,9 +8,11 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
@@ -34,6 +36,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.slembers.alarmony.R
+import com.slembers.alarmony.feature.common.ui.theme.toColor
 import com.slembers.alarmony.model.db.SoundItem
 import com.slembers.alarmony.util.Sound
 
@@ -134,10 +137,10 @@ fun soundIconView2(
     currentPlayer : () -> Unit = {}
 ) {
     BoxWithConstraints(
-        modifier = Modifier
+        modifier = Modifier.fillMaxSize()
             .padding(8.dp)
-            .width(350.dp)
-            .height(90.dp)
+            /*.width(350.dp)
+            .height(40.dp)*/
             .shadow(
                 elevation = 5.dp,
                 ambientColor = Color.Black,
@@ -147,9 +150,9 @@ fun soundIconView2(
             .clip(MaterialTheme.shapes.medium)
             .background(
                 if (!onClick)
-                    MaterialTheme.colorScheme.background
+                    "#FFFFFF".toColor()
                 else
-                    MaterialTheme.colorScheme.primary
+                    "#E9E9E9".toColor()
             )
             .clickable {
                 checkBox(soundItem)
@@ -160,7 +163,8 @@ fun soundIconView2(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(20.dp),
-            horizontalArrangement = Arrangement.SpaceBetween
+            horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically,
         )
         {
             Text(
@@ -169,15 +173,15 @@ fun soundIconView2(
                     .align(Alignment.CenterVertically),
                 style = TextStyle(
                     color = Color.Black,
-                    fontSize = 30.sp,
-                    fontFamily = FontFamily.Monospace,
+                    fontSize = 20.sp,
+                   // fontFamily = FontFamily.Monospace,
                     fontWeight = FontWeight.Bold,
                     fontStyle = FontStyle.Normal
                 ),
             )
             Image(
                 contentDescription = null,
-                modifier = Modifier.clickable(onClick = currentPlayer),
+                modifier = Modifier.clickable(onClick = currentPlayer).size(width = 25.dp, height = 25.dp),
                 painter =
                     if(isPlaySound)
                         painterResource(id = R.drawable.pause_button)
