@@ -70,7 +70,7 @@ import com.slembers.alarmony.feature.common.NavItem
 import com.slembers.alarmony.feature.common.ui.theme.toColor
 import com.slembers.alarmony.feature.notification.deleteAllNotis
 import com.slembers.alarmony.feature.screen.MemberActivity
-import com.slembers.alarmony.feature.ui.common.AnimationRotation
+import com.slembers.alarmony.feature.ui.common.BouncingAnimation
 import com.slembers.alarmony.network.repository.MemberService
 import com.slembers.alarmony.util.UriUtil
 import com.slembers.alarmony.util.hasWriteExternalStoragePermission
@@ -547,7 +547,7 @@ fun SettingView(
         }
     }
     if (loading.value) {
-        AnimationRotation()
+        BouncingAnimation()
     }
 }
 

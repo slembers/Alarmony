@@ -99,7 +99,7 @@ import com.slembers.alarmony.feature.common.NavItem
 import com.slembers.alarmony.feature.common.ui.compose.GroupCard
 import com.slembers.alarmony.feature.common.ui.compose.GroupTitle
 import com.slembers.alarmony.feature.common.ui.theme.toColor
-import com.slembers.alarmony.feature.ui.common.AnimationRotation
+import com.slembers.alarmony.feature.ui.common.BouncingAnimation
 import com.slembers.alarmony.feature.ui.common.CommonDialog
 import com.slembers.alarmony.feature.ui.group.GroupBottomButtom
 import com.slembers.alarmony.feature.ui.group.GroupContent
@@ -587,6 +587,6 @@ fun GroupScreen(
         }
     )
     if (loading) {
-        AnimationRotation()
+        BouncingAnimation()
     }
 }
