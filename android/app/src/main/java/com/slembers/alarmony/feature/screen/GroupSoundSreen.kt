@@ -104,7 +104,9 @@ fun SoundScreen(
                         soundIconView2(
                             soundItem = it,
                             onClick = it.soundName == currentSound?.soundName,
-                            checkBox = { viewModel.onChangeSound(it) },
+                            checkBox = {
+                                viewModel.onChangeSound(it)
+                                navController.popBackStack()},
                             isPlaySound = playSound == it.soundName,
                             currentPlayer = {
                                 // 현재 플레이한 음악이라면

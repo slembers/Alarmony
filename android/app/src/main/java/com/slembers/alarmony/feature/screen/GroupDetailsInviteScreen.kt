@@ -136,18 +136,13 @@ fun DetailsInviteScreen(
 
                                 items(items = currentMembers.value ) { checked ->
                                     GroupDefalutProfile(
-                                        profileImg = checked.profileImg,
-                                        nickname = checked.nickname,
-                                        groupId = alarmId!!,
-                                        newMember = checked.isNew
+                                        member = checked,
                                     )
                                 }
 
                                 items(items = checkMembers.value ?: listOf()) { checked ->
                                     GroupDefalutProfile(
-                                        profileImg = checked.profileImg,
-                                        nickname = checked.nickname,
-                                        newMember = checked.isNew
+                                        member = checked,
                                     )
                                 }
                             }
@@ -225,12 +220,11 @@ fun DetailsInviteScreen(
                                         if(!currentMembers.value.contains(member)) {
                                             SearchMember(
                                                 member = it,
-                                                isCheck = checkMembers.value?.contains(member)!!,
                                                 onCheckedChange = {
                                                     if (checkMembers.value!!.contains(it))
                                                         search.removeCheckedMember(it)
                                                     else
-                                                        search.addCurrentMember(it)
+                                                        search.addCheckedMember(it)
                                                 }
                                             )
                                         }

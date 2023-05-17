@@ -61,13 +61,13 @@ import com.slembers.alarmony.viewModel.GroupViewModel
 @ExperimentalMaterial3Api
 @ExperimentalGlideComposeApi
 fun SearchInviteMember(
-    viewModel: GroupViewModel = viewModel(),
+    search: GroupSearchViewModel = viewModel(),
     currentMembers: MutableList<Member> = mutableListOf()
 ) {
 
     var text by remember { mutableStateOf("") }
-    val search: GroupSearchViewModel = viewModel()
     val searchMembers = search.searchMembers.observeAsState()
+    val checkMembers by search.checkedMembers.observeAsState()
 
     CardBox(
         title = { CardTitle(title = "검색") },
@@ -135,19 +135,20 @@ fun SearchInviteMember(
                         val member = Member(
                             nickname = it.nickname,
                             profileImg = it.profileImg,
-                            isNew = true
+                            isNew = false
                         )
-                        // 현재 인원에 포함되면 안됨
-                        SearchMember(
-                            member = it,
-                            isCheck = currentMembers.contains(member),
-                            onCheckedChange = {
-                                if (currentMembers.contains(it))
-                                    viewModel.removeMember(it)
-                                else
-                                    viewModel.addMember(it)
-                            }
-                        )
+                        if(!checkMembers!!.contains(member) && !currentMembers.contains(member)) {
+                            // 현재 인원에 포함되면 안됨 && 체크되어 있지 않아야함
+                            SearchMember(
+                                member = it,
+                                onCheckedChange = {
+                                    if (currentMembers.contains(it))
+                                        search.removeCheckedMember(it)
+                                    else
+                                        search.addCheckedMember(it)
+                                }
+                            )   
+                        }
                     }
                 }
             }
@@ -158,7 +159,6 @@ fun SearchInviteMember(
 @Composable
 fun SearchMember(
     member : MemberDto = MemberDto(nickname = "임시유저", profileImg = null),
-    isCheck : Boolean = false,
     onCheckedChange : (Member) -> Unit,
 ) {
 
@@ -171,7 +171,8 @@ fun SearchMember(
             .clickable {
                 val checked = Member(
                     member.nickname,
-                    member.profileImg
+                    member.profileImg,
+                    false
                 )
                 onCheckedChange(checked)
             }
@@ -204,16 +205,6 @@ fun SearchMember(
             modifier = Modifier
                 .fillMaxWidth(1f)
                 .padding(start = 10.dp)
-        )
-        Checkbox(
-            checked = isCheck,
-            onCheckedChange = {
-                val checked = Member(
-                    member.nickname,
-                    member.profileImg
-                )
-                onCheckedChange(checked)
-            }
         )
     }
 }
