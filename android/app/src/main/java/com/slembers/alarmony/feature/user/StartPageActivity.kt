@@ -133,8 +133,6 @@ fun LoginScreen(navController: NavController) {
         }
 
         Column {
-
-
             OutlinedTextField(
                 value = idState.value,
                 onValueChange = {
