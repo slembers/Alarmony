@@ -451,7 +451,8 @@ fun GroupScreen(
                 )
                 GroupInvite(
                     navController = navController,
-                    members = members ?: mutableListOf()
+                    members = members ?: mutableListOf(),
+                    viewModel = viewModel
                 )
                 GroupSound(
                     navController = navController,

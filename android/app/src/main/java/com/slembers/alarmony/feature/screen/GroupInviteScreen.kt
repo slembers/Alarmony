@@ -69,7 +69,7 @@ fun InviteScreen(
     viewModel : GroupViewModel = viewModel()
 ) {
 
-    val saerch : GroupSearchViewModel = viewModel()
+    val search : GroupSearchViewModel = viewModel()
     val currentMembers = viewModel.members.observeAsState()
     var openDialog by remember { mutableStateOf(false) }
 
@@ -79,7 +79,11 @@ fun InviteScreen(
                 title = NavItem.GroupInvite.title,
                 navClick = { navController.popBackStack() },
                 action = {
-                    TextButton(onClick = { openDialog = true}) {
+                    TextButton(onClick = {
+                        if(!search.checkedMembers.value!!.isEmpty()) {
+                            openDialog = true
+                        }
+                    }) {
                         Text(
                             text = "완료",
                             style = TextStyle(
@@ -98,11 +102,11 @@ fun InviteScreen(
                 modifier = Modifier.padding(innerPadding),
                 content = {
                     CurrentInvite(
-                        search = saerch,
+                        search = search,
                         currentMembers = currentMembers.value ?: mutableListOf()
                     )
                     SearchInviteMember(
-                        search = saerch,
+                        search = search,
                         currentMembers = currentMembers.value ?: mutableListOf()
                     )
                 }
@@ -163,7 +167,7 @@ fun InviteScreen(
                             Button(
                                 onClick = {
                                     openDialog = false
-                                    val checkedMembers = saerch.checkedMembers.value
+                                    val checkedMembers = search.checkedMembers.value
                                     checkedMembers?.map {
                                         it.isNew = true
                                         viewModel.addMember(it)
