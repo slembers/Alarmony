@@ -33,6 +33,7 @@ import androidx.navigation.compose.rememberNavController
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.slembers.alarmony.R
 import com.slembers.alarmony.feature.common.NavItem
+import com.slembers.alarmony.feature.common.ui.theme.toColor
 import com.slembers.alarmony.feature.ui.group.GroupToolBar
 import com.slembers.alarmony.feature.ui.group.soundIconView
 import com.slembers.alarmony.feature.ui.group.soundIconView2
@@ -89,10 +90,12 @@ fun SoundScreen(
                 }
             )
         },
+        containerColor = "#F9F9F9".toColor(),
         content = {
                 innerPadding ->
             Column( modifier = Modifier
                 .padding(innerPadding)
+                .padding(10.dp)
                 .fillMaxSize(),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
