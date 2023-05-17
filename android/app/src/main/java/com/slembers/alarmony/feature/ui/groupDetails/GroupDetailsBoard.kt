@@ -114,16 +114,7 @@ fun GroupDetailsBoard(
                                         isCheck = it.success,
                                         message = it.message ?: "No checking..",
                                         host = host,
-                                        onClick = {
-                                            if(it.success.not()) {
-                                                CoroutineScope(Dispatchers.IO).async {
-                                                    GroupService.notification(
-                                                        groupId,
-                                                        it.nickname
-                                                    )
-                                                }
-                                            }
-                                        }
+                                        alarmId = groupId
                                     )
                                 }
                             }

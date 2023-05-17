@@ -130,13 +130,6 @@ fun DetailsInviteScreen(
             )
         },
         containerColor = "#F9F9F9".toColor(),
-        bottomBar = {
-            GroupBottomButtom(
-                text = "저장",
-                enabled = true,
-                onClick = { isClosed = true }
-            )
-        },
         content = { innerPadding ->
             Column(
                 modifier = Modifier.padding(innerPadding).padding(10.dp),
