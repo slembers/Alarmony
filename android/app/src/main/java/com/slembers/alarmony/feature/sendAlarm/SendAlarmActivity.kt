@@ -140,7 +140,7 @@ fun SendAlarmScreen(alarmDto : AlarmDto) {
         content = { innerPadding ->
             Column(
                 modifier = Modifier
-                    .background(color = "#ecddd6".toColor())
+                    .background(Color.White)
                     .fillMaxSize()
                     .padding(innerPadding),
                 verticalArrangement = Arrangement.Bottom,
@@ -164,12 +164,12 @@ fun SendAlarmScreen(alarmDto : AlarmDto) {
                         modifier = Modifier
                             .padding(5.dp)
                             .size(130.dp),
-                        colors = ButtonDefaults.buttonColors("#66D5ED".toColor())
+                        colors = ButtonDefaults.buttonColors("#7ADBEF".toColor())
                     ) {
                         Icon(
                             imageVector = Icons.Rounded.Stop,
                             contentDescription = "Setting",
-                            tint = "#EF2828".toColor(),
+                            tint = "#ff8f82".toColor(),
                             modifier = Modifier.size(80.dp)
                         )
                     }
@@ -222,12 +222,8 @@ fun DrawCircle(alarmDto : AlarmDto) {
     )
 
     val motionColor by infiniteTransition.animateColor(
-//        다홍
-        initialValue = "#b32d61".toColor(),
-
-//        targetValue = Color.White,
-//      회색
-        targetValue ="#d2d5e4".toColor(),
+        initialValue = "#0f5e9c".toColor(),
+        targetValue ="#2389da".toColor(),
         animationSpec = infiniteRepeatable(
 //            animation = spring(),
             animation = tween(durationMillis = 1000),
@@ -236,11 +232,7 @@ fun DrawCircle(alarmDto : AlarmDto) {
     )
 
     val motionColor2 by infiniteTransition.animateColor(
-//        회색
-        initialValue = "#d2d5e4".toColor(),
-
-//        targetValue = Color.White,
-//      흰색
+        initialValue = "#1ca3ec".toColor(),
         targetValue = Color.White,
         animationSpec = infiniteRepeatable(
 //            animation = spring(),
@@ -254,7 +246,7 @@ fun DrawCircle(alarmDto : AlarmDto) {
     ) {
         val outerRadius = size.width / 2
         drawCircle(
-            color = motionColor.copy(alpha = innerCircle - 0.15f),
+            color = Color.White.copy(alpha = innerCircle - 0.15f),
             radius = innerSize,
             center = center,
             style = Stroke(width = 20.dp.toPx())
