@@ -8,6 +8,8 @@ package com.slembers.alarmony.feature.user
 import android.app.Activity
 import android.content.Intent
 import android.util.Log
+import android.widget.Toast
+import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
@@ -114,7 +116,7 @@ fun LoginScreen(navController: NavController) {
 
 
 
-
+    BackOnPressed()
     Column(
         Modifier
             .verticalScroll(scrollState),
@@ -308,10 +310,19 @@ fun mascott(drawing:Int) {
         painter = painterResource(drawing),
         contentDescription = "mascott image",
         modifier = Modifier
-            .padding(top = 100.dp , bottom = 20.dp)
+            .padding(top = 100.dp, bottom = 20.dp)
             .clickable() {
                 val alarmDto = AlarmDto(
-                    1,"테스트",12,20, listOf(false,false,false,false,false,false,false),"gmlgml",4,true,true,"하하"
+                    1,
+                    "테스트",
+                    12,
+                    20,
+                    listOf(false, false, false, false, false, false, false),
+                    "gmlgml",
+                    4,
+                    true,
+                    true,
+                    "하하"
                 )
                 val newIntent = Intent(context, AlarmActivity::class.java)
                 newIntent.putExtra("alarmId", alarmDto.alarmId)
@@ -330,4 +341,22 @@ fun logo(drawing:Int) {
                     .padding( bottom = 20.dp)
     )
 
+}
+
+@Composable
+fun BackOnPressed() {
+    val context = LocalContext.current
+    var backPressedState by remember { mutableStateOf(true) }
+    var backPressedTime = 0L
+
+    BackHandler(enabled = backPressedState) {
+        if(System.currentTimeMillis() - backPressedTime <= 2000L) {
+            // 앱 종료
+            (context as Activity).finish()
+        } else {
+            backPressedState = true
+            Toast.makeText(context, "한 번 더 누르시면 앱이 종료됩니다.", Toast.LENGTH_SHORT).show()
+        }
+        backPressedTime = System.currentTimeMillis()
+    }
 }
