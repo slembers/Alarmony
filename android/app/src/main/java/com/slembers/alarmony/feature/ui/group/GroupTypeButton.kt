@@ -49,14 +49,14 @@ fun GroupTypeButton(
     ) {
         Row(horizontalArrangement = Arrangement.Start) {
             Text(
-                "타입",
+                "진동 여부",
                 textAlign = TextAlign.Start
 
             )
         }
         Spacer(modifier = Modifier.weight(1f))
 
-        BoxWithConstraints(
+      /*  BoxWithConstraints(
             modifier = Modifier.fillMaxHeight(),
             contentAlignment = Alignment.Center,
         ) {
@@ -66,7 +66,7 @@ fun GroupTypeButton(
                     .size(this.maxHeight)
                     .align(Alignment.Center)
                     .clip(CircleShape)
-                    .background("#00B4D8".toColor())
+                    .background("#7DC3F2".toColor())
             ) {
                 Image(
                     modifier = Modifier.align(Alignment.Center),
@@ -74,7 +74,7 @@ fun GroupTypeButton(
                     contentDescription = null
                 )
             }
-        }
+        }*/
 
         BoxWithConstraints(
             modifier = Modifier.fillMaxHeight(),
@@ -83,14 +83,14 @@ fun GroupTypeButton(
             Box(
                 modifier = Modifier
                     .padding(2.dp)
-                    .size(this.maxHeight)
+                    .size(35.dp)
                     .align(Alignment.Center)
                     .clip(CircleShape)
                     .background(
                         if (isVibrate)
-                            "#00B4D8".toColor()
+                            "#7DC3F2".toColor()
                         else
-                            MaterialTheme.colorScheme.background
+                            "#dcdcdc".toColor()
                     )
                     .clickable {
                         viewModel.onChangeVibrate(!isVibrate)
