@@ -122,7 +122,7 @@ fun SearchOneMember(
             )
         } else {
             Image(
-                painter = painterResource(id = R.drawable.baseline_account_circle_24),
+                painter = painterResource(id = R.drawable.baseline_account_circle_48),
                 contentDescription = "ImageRequest example",
                 modifier = Modifier
                     .size(65.dp)

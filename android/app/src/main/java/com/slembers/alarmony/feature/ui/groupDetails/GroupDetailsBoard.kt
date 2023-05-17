@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
@@ -85,7 +86,10 @@ fun GroupDetailsBoard(
                         nothingItem(content = "오늘 알람을 확인 인원이 없습니다.")
                     } else {
                         LazyColumn(
-                            modifier = Modifier.height(200.dp),
+                            modifier = Modifier.heightIn(
+                                minOf(100.dp),
+                                maxOf(700.dp)
+                            ),
                             horizontalAlignment = Alignment.CenterHorizontally,
                             content = {
                                 items(items.getValue("success")) {

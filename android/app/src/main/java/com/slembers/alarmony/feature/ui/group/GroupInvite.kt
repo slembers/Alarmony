@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -43,7 +44,6 @@ import com.slembers.alarmony.R
 import com.slembers.alarmony.feature.common.NavItem
 import com.slembers.alarmony.feature.common.ui.compose.GroupCard
 import com.slembers.alarmony.feature.common.ui.compose.GroupTitle
-import com.slembers.alarmony.feature.ui.groupInvite.GroupDefalutProfile
 import com.slembers.alarmony.model.db.Member
 import com.slembers.alarmony.viewModel.GroupViewModel
 
@@ -70,31 +70,27 @@ fun GroupInvite(
         )
         },
         content = {
-            BoxWithConstraints(
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                LazyRow(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(
-                            start = 20.dp,
-                            top = 0.dp,
-                            bottom = 0.dp,
-                            end = 20.dp
-                        ),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(4.dp),
-                    userScrollEnabled = true
+            LazyRow(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(
+                        start = 20.dp,
+                        top = 0.dp,
+                        bottom = 0.dp,
+                        end = 20.dp
+                    ),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(4.dp),
+                userScrollEnabled = true
 
-                ) {
-                    items(members) { item ->
-                        GroupInviteMember(
-                            member = item,
-                            cancel = {
-                                viewModel.removeMember(it)
-                            }
-                        )
-                    }
+            ) {
+                items(members) { item ->
+                    GroupInviteMember(
+                        member = item,
+                        cancel = {
+                            viewModel.removeMember(it)
+                        }
+                    )
                 }
             }
         }
@@ -111,7 +107,7 @@ fun GroupInviteMember(
     BoxWithConstraints(
         modifier = Modifier
             .width(60.dp)
-            .height(70.dp)
+            .height(74.dp)
     ) {
         val maxWidth = this.maxWidth
         Column(
@@ -126,39 +122,28 @@ fun GroupInviteMember(
                     .weight(1f)
                     .padding(0.dp),
                 content = {
-//                    if(member?.profileImg == null) {
-//                        Image(
-//                            modifier = Modifier
-//                                .matchParentSize()
-//                                .align(Alignment.Center),
-//                            painter = painterResource(id = R.drawable.baseline_account_circle_24),
-//                            contentDescription = null)
-//                    } else {
-//                        AsyncImage(
-//                            modifier = Modifier
-//                                .fillMaxSize()
-//                                .clip(CircleShape)
-//                                .align(Alignment.Center),
-//                            model = ImageRequest.Builder(LocalContext.current)
-//                                .data(member.profileImg)
-//                                .build(),
-//                            contentDescription = member.nickname,
-//                            contentScale = ContentScale.Crop,
-//                            error = painterResource(id = R.drawable.baseline_account_circle_24)
-//                        )
-//                    }
-                    AsyncImage(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .clip(CircleShape)
-                            .align(Alignment.Center),
-                        model = ImageRequest.Builder(LocalContext.current)
-                            .data(member?.profileImg)
-                            .build(),
-                        contentDescription = member?.nickname,
-                        contentScale = ContentScale.Crop,
-                        error = painterResource(id = R.drawable.baseline_account_circle_24)
-                    )
+                    if(member?.profileImg == null) {
+                        Image(
+                            modifier = Modifier
+                                .matchParentSize()
+                                .align(Alignment.Center),
+                            painter = painterResource(id = R.drawable.baseline_account_circle_48),
+                            contentDescription = null)
+                    } else {
+                        AsyncImage(
+                            modifier = Modifier
+                                .padding(4.dp)
+                                .fillMaxSize()
+                                .clip(CircleShape)
+                                .align(Alignment.Center),
+                            model = ImageRequest.Builder(LocalContext.current)
+                                .data(member.profileImg)
+                                .build(),
+                            contentDescription = member.nickname,
+                            contentScale = ContentScale.Crop,
+                            error = painterResource(id = R.drawable.baseline_account_circle_48)
+                        )
+                    }
                     if(member!!.isNew) {
                         Box(
                             modifier = Modifier
