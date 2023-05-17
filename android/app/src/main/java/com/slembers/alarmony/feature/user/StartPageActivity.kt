@@ -155,7 +155,7 @@ fun LoginScreen(navController: NavController) {
                 ),
                 label = { Text("아이디") },
                 keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Email,
+                    keyboardType = KeyboardType.Password,
                     imeAction = ImeAction.Next
                 ),
                 modifier = Modifier
