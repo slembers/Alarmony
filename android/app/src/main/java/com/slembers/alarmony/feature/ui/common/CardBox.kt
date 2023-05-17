@@ -53,10 +53,11 @@ fun DefaultModifier() : Modifier {
     return Modifier
         .fillMaxWidth()
         .padding(5.dp)
-        .border(
+            //[CardBox 흰색 배경 제거 수정 5-17]
+       /* .border(
             BorderStroke(0.dp, MaterialTheme.colorScheme.background),
             MaterialTheme.shapes.medium
-        )
+        )*/
         .padding(4.dp)
 //            .border(1.dp, Color.Black, MaterialTheme.shapes.medium)
         .shadow(
