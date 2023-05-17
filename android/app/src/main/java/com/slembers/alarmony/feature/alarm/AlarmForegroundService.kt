@@ -77,7 +77,7 @@ class AlarmForegroundService : Service() {
             Log.d("myResponse-startAlarm", "startAlarm 알람 시작")
             val newIntent = Intent(applicationContext, AlarmActivity::class.java)
             newIntent.putExtra("alarmId", alarmId)
-            newIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            newIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
             startActivity(newIntent)
             delay(2000)
             stopForeground(true)

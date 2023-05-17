@@ -95,8 +95,8 @@ fun SnoozeNoti(snoozeType : Int, isClicked : MutableState<Boolean>, context : Ac
                             snoozeMessageApi(text.value, alarmDto.alarmId)
                             Log.d("myResponse", text.value)
                             setSnoozeAlarm(newContext, alarmDto, snoozeType)
+                            context.finishAffinity()
                             goMain(context)
-                            context.finish()
                         },
                         colors = ButtonDefaults.buttonColors(containerColor = "#31AF91".toColor()),
                     ) {
@@ -112,7 +112,7 @@ fun SnoozeNoti(snoozeType : Int, isClicked : MutableState<Boolean>, context : Ac
 fun setSnoozeAlarm(context: Context, alarmDto: AlarmDto, snoozeType: Int) {
     val newTime =
         if (snoozeType == 5) {
-            System.currentTimeMillis() + (5 * 60 * 1000L) // 스누즈 5분
+            System.currentTimeMillis() + (5 *  60 * 1000L) // 스누즈 5분
         } else {
             System.currentTimeMillis() + (10 * 60 * 1000L) // 스누즈 10분
         }

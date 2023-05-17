@@ -101,13 +101,10 @@ class AlarmActivity : ComponentActivity() {
     lateinit var alarmDto: AlarmDto
     @OptIn(ExperimentalMaterial3Api::class, ExperimentalGlideComposeApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
-
         super.onCreate(savedInstanceState)
         Log.d("myResponse_AlarmActive", "알람 액티비티 활성화")
         MainActivity.prefs = PresharedUtil(application)
-
         val alarmId = intent.getLongExtra("alarmId", -1L)
-        Log.d("ForeA1", alarmId.toString())
         val alarmDao = AlarmDatabase.getInstance(this).alarmDao()
         CoroutineScope(Dispatchers.IO).launch {
             repository = AlarmRepository(alarmDao)
@@ -115,6 +112,7 @@ class AlarmActivity : ComponentActivity() {
             alarmDto = AlarmDto.toDto(alarm!!)
             runNotification(application, alarmDto!!)
         }
+
         wakeLock =
             (getSystemService(Context.POWER_SERVICE) as PowerManager).run {
                 newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "MyApp::MyWakelockTag").apply {
@@ -134,7 +132,7 @@ class AlarmActivity : ComponentActivity() {
                         setSnoozeAlarm(this@AlarmActivity, alarmDto, 5) // 5분뒤 스누즈
                         cancelNotification()
                         goMain(this@AlarmActivity)
-                        this@AlarmActivity.finish()
+                        this@AlarmActivity.finishAffinity()
                     }
                 }
             }, 1000, 1000) // 1초 뒤 1초에 한번씩 실행
@@ -179,7 +177,11 @@ class AlarmActivity : ComponentActivity() {
             } else {
                 Log.d("application start","로그인을 시도해야 합니다.")
                 val intent = Intent(this, MemberActivity::class.java)
-                startActivity(intent)
+                try {
+                    startActivity(intent)
+                } catch (e: Exception) {
+                    Log.e("myResponse", "Failed to start activity: ${e.message}")
+                }
                 finish()
             }
         }
@@ -256,7 +258,7 @@ fun AlarmScreen(alarmDto : AlarmDto) {
                             .padding(5.dp)
                             .size(90.dp),
 //                        colors = ButtonDefaults.buttonColors(Color.White)
-                        colors = ButtonDefaults.buttonColors("#7ADBEF".toColor())
+                        colors = ButtonDefaults.buttonColors("#7DC3F2".toColor())
 //                        colors = ButtonDefaults.buttonColors("#a6d6c5".toColor())
                     ) {
                         Text(
@@ -264,7 +266,7 @@ fun AlarmScreen(alarmDto : AlarmDto) {
                             color = Color.White,
 //                            color = Color.Black,
                             fontWeight = FontWeight.Bold,
-                            fontSize =20.sp
+                            fontSize =19.sp
                         )
                     }
 
@@ -277,7 +279,7 @@ fun AlarmScreen(alarmDto : AlarmDto) {
                             recordAlarmApi(formattedDateTime, alarmDto.alarmId) // 알람 정지 시 기록 api
                             cancelNotification()
                             timer.cancel()
-                            context.finish()
+                            context.finishAffinity()
                             goMain(context)
                         },
                         shape = CircleShape,
@@ -288,7 +290,7 @@ fun AlarmScreen(alarmDto : AlarmDto) {
 //                        개인
 //                        colors = ButtonDefaults.buttonColors("#dfbacf".toColor())
 //                    단체
-                        colors = ButtonDefaults.buttonColors("#7ADBEF".toColor())
+                        colors = ButtonDefaults.buttonColors("#7DC3F2".toColor())
 
                     ) {
                         Icon(
@@ -314,7 +316,7 @@ fun AlarmScreen(alarmDto : AlarmDto) {
 //                        개인
 //                        colors = ButtonDefaults.buttonColors("#dfbacf".toColor())
 //                    단체
-                        colors = ButtonDefaults.buttonColors("#7ADBEF".toColor())
+                        colors = ButtonDefaults.buttonColors("#7DC3F2".toColor())
 
                     ) {
                         Text(
@@ -322,7 +324,7 @@ fun AlarmScreen(alarmDto : AlarmDto) {
                             color = Color.White,
 //                            color = Color.Black,
                             fontWeight = FontWeight.Bold,
-                            fontSize =20.sp
+                            fontSize =19.sp
                         )
                     }
                 }

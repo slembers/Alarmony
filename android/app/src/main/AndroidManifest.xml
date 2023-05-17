@@ -50,13 +50,13 @@
 
         <activity
             android:name=".feature.alarm.AlarmActivity"
-            android:exported="false"
+            android:exported="true"
             android:label="@string/title_activity_alarm"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
         <activity
             android:name=".feature.sendAlarm.SendAlarmActivity"
             android:exported="false"
-            android:label="@string/title_activity_alarm"
+            android:label="SendAlarmActivity"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
         <activity
             android:name=".MainActivity"

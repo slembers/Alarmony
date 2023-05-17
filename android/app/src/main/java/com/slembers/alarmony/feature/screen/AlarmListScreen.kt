@@ -220,8 +220,8 @@ fun AlarmListScreen(navController : NavHostController) {
                     45,
                     listOf(true, true, true, true, true, true, true),
                     "Piano",
-                    7,
-                    true,
+                    0,
+                    false,
                     false,
                     "안수빈 마라탕 매운맛 고문하는 장덕 모임입니다."
                 )
