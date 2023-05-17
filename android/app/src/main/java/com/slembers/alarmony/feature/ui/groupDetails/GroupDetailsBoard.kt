@@ -29,6 +29,7 @@ import com.slembers.alarmony.R
 import com.slembers.alarmony.feature.common.CardBox
 import com.slembers.alarmony.feature.common.CardDivider
 import com.slembers.alarmony.feature.common.CardTitle
+import com.slembers.alarmony.feature.common.ui.theme.toColor
 import com.slembers.alarmony.model.db.Record
 import com.slembers.alarmony.network.service.GroupService
 import kotlinx.coroutines.CoroutineScope
@@ -63,7 +64,7 @@ fun GroupDetailsBoard(
                         fontWeight = FontWeight.Bold,
                         fontStyle = FontStyle.Normal
                     ),
-                    modifier = Modifier.padding(end = 13.dp),
+                    modifier = Modifier.padding(end = 15.dp),
                     textAlign = TextAlign.Start
                 )
             }
@@ -79,7 +80,7 @@ fun GroupDetailsBoard(
                         end = 20.dp
                     ),
                 content = {
-                    CardDivider()
+                    CardDivider(color = "#989898".toColor())
                     if(items.getValue("success").isEmpty()) {
                         nothingItem(content = "오늘 알람을 확인 인원이 없습니다.")
                     } else {
@@ -98,7 +99,7 @@ fun GroupDetailsBoard(
                             }
                         )
                     }
-                    CardDivider()
+                    CardDivider(color = "#E9E9E9".toColor())
                     if(items.getValue("failed").isEmpty()) {
                         nothingItem(content = "모두 일어났어요.")
                     } else {

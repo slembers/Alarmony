@@ -335,7 +335,7 @@ fun GroupScreen(
                                     end = 20.dp
                                 ),
                         ) {
-                            CardDivider()
+                            CardDivider(color = Color(0xff9A9A9A))
                             WheelTimePicker(
                                 modifier = Modifier
                                     .fillMaxWidth()
@@ -457,7 +457,7 @@ fun GroupScreen(
                                     end = 20.dp
                                 ),
                         ) {
-                            CardDivider()
+                            CardDivider(color = Color(0xff9A9A9A))
                             Row(
                                 modifier = Modifier
                                     .padding(5.dp),
@@ -502,7 +502,7 @@ fun GroupScreen(
 
                                 )
                             }
-                            CardDivider()
+                            CardDivider(color = "#E9E9E9".toColor())
                             /** 알람 소개 **/
                             Row(
                                 modifier = Modifier
@@ -548,7 +548,7 @@ fun GroupScreen(
 
                                 )
                             }
-                            CardDivider()
+                            CardDivider(color = "#E9E9E9".toColor())
 
 
 
@@ -556,12 +556,12 @@ fun GroupScreen(
                                 volume = soundVolume ?: 7f,
                                 setVolume = { viewModel.onChangeVolume(it) }
                             )
-                            CardDivider()
+                            CardDivider(color = "#E9E9E9".toColor())
                             GroupSound(
                                 navController = navController,
                                 sound = soundName?.soundName,
                             )
-                            CardDivider()
+                            CardDivider(color = "#E9E9E9".toColor())
                             GroupTypeButton(
                                 isVibrate = vibration ?: true,
                                 viewModel = viewModel
