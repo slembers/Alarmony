@@ -69,6 +69,7 @@ public class AlarmRecordServiceImpl implements AlarmRecordService {
             } else {
                 alarmRecord.recordFailed(alarm.getTime(), alarmEndRecordDto.getDatetime());
             }
+            log.info("저장한 시간 : {}",alarmRecord.getTodayAlarmRecord());
             alarmRecordRepository.save(alarmRecord);
         } catch (Exception e) {
             log.error(e.getMessage());
