@@ -180,13 +180,17 @@ fun GroupDetailsScreen(
                     ),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
+
+                /** 알람 시간 **/
                 GroupDetailsTitle(alarm.value)
+                /** 오늘의 현황 **/
                 GroupDetailsBoard(
                     items = record.value,
                     groupId = alarmId!!,
                     host = alarm.value.host && currentDay(alarm.value)
                 )
-                CardBox(
+                /** 그룹원 초대 주석 **/
+         /*       CardBox(
                     title = { GroupTitle(
                         title = "그룹원 통계",
                         content = { Icon(
@@ -197,7 +201,7 @@ fun GroupDetailsScreen(
                             contentDescription = null
                         )}
                     )}
-                )
+                )*/
                 if(!alarm.value.host) {
                     CardBox(title = {
                         GroupTitle(
