@@ -115,7 +115,7 @@ fun SignupScreen(navController: NavController) {
                     .fillMaxWidth()
                     .wrapContentSize(Alignment.Center),
                     fontWeight = FontWeight.Bold,
-                    fontSize = 17.sp)
+                    fontSize = 20.sp)
                         },
                 navigationIcon = {
                     IconButton(onClick = { navController.navigateUp() }) {

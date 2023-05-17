@@ -14,11 +14,14 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.AlertDialog
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.outlined.ArrowBack
 import androidx.compose.material.icons.outlined.ArrowBackIos
 import androidx.compose.material.icons.outlined.Check
 import androidx.compose.material.icons.outlined.Close
@@ -26,6 +29,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -79,36 +83,32 @@ fun NotiListScreen(navController: NavController) {
     val notis = mNotiViewModel.readAllData.observeAsState(listOf()).value
     Scaffold(
         topBar = {
-            TopAppBar(
+            CenterAlignedTopAppBar(
                 title = {
                     Text(text = "알림",
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .wrapContentSize(Alignment.Center),
                         fontWeight = FontWeight.Bold,
-                        fontFamily = notosanskr,
-                        modifier = Modifier.padding(5.dp)
+                        fontSize = 20.sp
                     )
                 },
                 navigationIcon = {
-                    IconButton(onClick = { navController.popBackStack() }) {
-                        Icon(
-                            imageVector = Icons.Outlined.ArrowBackIos,
-                            contentDescription = "Notification",
-                            tint = Color.Black,
-                            modifier = Modifier.size(25.dp)
-                        )
+                    androidx.compose.material.IconButton(onClick = { navController.navigateUp() }) {
+                        androidx.compose.material.Icon(Icons.Filled.ArrowBack, "뒤로가기")
                     }
                 },
                 modifier = Modifier.shadow(
-                    elevation = 10.dp,
-                    ambientColor = Color.Blue,
-                    spotColor = Color.Gray,
+                    elevation = 3.dp,
+                  //  ambientColor = Color.Blue,
+                  //  spotColor = Color.Gray,
 
                     ),
+                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = Color.White),
 
-                colors = TopAppBarDefaults.mediumTopAppBarColors(
-                    containerColor = "#FFFFFF".toColor()
-                ),
 
             )
+
         },
         content = { innerPadding ->
             Column(
