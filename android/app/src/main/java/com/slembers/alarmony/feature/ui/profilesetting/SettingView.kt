@@ -274,7 +274,7 @@ fun SettingView(
                             Icon(
                                 Icons.Default.Badge,
                                 contentDescription = "ID",
-                                Modifier.size(35.dp)
+                                Modifier.size(30.dp)
                             )
                         }
                         Spacer(modifier = Modifier.size(15.dp))
@@ -300,7 +300,7 @@ fun SettingView(
                             Icon(
                                 Icons.Default.Face,
                                 contentDescription = "Nickname",
-                                Modifier.size(35.dp)
+                                Modifier.size(30.dp)
                             )
                         }
                         Spacer(modifier = Modifier.size(15.dp))
@@ -322,7 +322,7 @@ fun SettingView(
                                     },
                                     modifier = Modifier.padding(5.dp).fillMaxWidth(),
                                     keyboardOptions = KeyboardOptions(
-                                        keyboardType = KeyboardType.Email,
+                                        keyboardType = KeyboardType.Password,
                                         imeAction = ImeAction.Done
                                     ),
                                     keyboardActions = KeyboardActions(
@@ -365,7 +365,7 @@ fun SettingView(
                             Icon(
                                 Icons.Default.Email,
                                 contentDescription = "Email",
-                                Modifier.size(35.dp)
+                                Modifier.size(30.dp)
                             )
                         }
                         Spacer(modifier = Modifier.size(15.dp))
@@ -408,7 +408,7 @@ fun SettingView(
                             Icon(
                                 Icons.Default.Info,
                                 contentDescription = "App Info",
-                                Modifier.size(35.dp)
+                                Modifier.size(30.dp)
                             )
                         }
                         Spacer(modifier = Modifier.size(15.dp))
@@ -435,7 +435,7 @@ fun SettingView(
                             Icon(
                                 Icons.Default.Notifications,
                                 contentDescription = "Push Notification",
-                                Modifier.size(35.dp)
+                                Modifier.size(30.dp)
                             )
                         }
                         Spacer(modifier = Modifier.size(15.dp))
@@ -466,7 +466,7 @@ fun SettingView(
                             Icon(
                                 Icons.Default.Report,
                                 contentDescription = "Report",
-                                Modifier.size(35.dp)
+                                Modifier.size(30.dp)
                             )
                         }
                         Spacer(modifier = Modifier.size(15.dp))

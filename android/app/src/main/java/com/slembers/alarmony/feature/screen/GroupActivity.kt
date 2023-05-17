@@ -549,9 +549,6 @@ fun GroupScreen(
                                 )
                             }
                             CardDivider(color = "#E9E9E9".toColor())
-
-
-
                             GroupVolume(
                                 volume = soundVolume ?: 7f,
                                 setVolume = { viewModel.onChangeVolume(it) }
