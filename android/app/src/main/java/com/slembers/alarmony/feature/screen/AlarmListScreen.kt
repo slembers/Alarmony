@@ -212,7 +212,7 @@ fun AlarmListScreen(navController : NavHostController) {
                     ).show()
                 }
                 ////////////////// 테스트용 버튼
-           /*     Button(onClick = {
+                Button(onClick = {
                     val alarm999 = AlarmDto(
                     999L,
                     "장덕모임",
@@ -231,7 +231,7 @@ fun AlarmListScreen(navController : NavHostController) {
 
                 ) {
                     Text(text = "8초 뒤 울리는 테스트 알람")
-                }*/
+                }
                 //////////////////
                 LazyColumn{
                     items(alarms.size) {model ->
