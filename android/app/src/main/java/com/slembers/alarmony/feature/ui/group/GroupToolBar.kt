@@ -44,8 +44,7 @@ fun GroupToolBar(
         title = { Text(
                 text = title,
                 fontWeight = FontWeight.Bold,
-                fontSize = 17.sp
-
+                fontSize = 20.sp
             )
         },
         modifier = Modifier
