@@ -421,9 +421,9 @@ fun GroupScreen(
                                                 containerColor =
                                                 viewModel.getIsWeek(item).let {
                                                     if (it) {
-                                                        "#91B4D8".toColor()
+                                                        "#7DC3F2".toColor()
                                                     } else {
-                                                        MaterialTheme.colorScheme.background
+                                                        "#dcdcdc".toColor()
                                                     }
                                                 }
                                             ),

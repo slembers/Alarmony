@@ -37,7 +37,7 @@ fun GroupBottomButtom(
                     .fillMaxWidth()
                     .fillMaxHeight()
                     .background(
-                        "#00B4D8".toColor(),
+                        "#7DC3F2".toColor(),
                         MaterialTheme.shapes.extraSmall
                     ),
                 onClick = onClick,
