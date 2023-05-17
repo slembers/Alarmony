@@ -110,7 +110,7 @@ fun LoginScreen(navController: NavController) {
 
     var loading by remember { mutableStateOf(false) }
 
-    val usernameRegex = "^[a-z0-9]{4,20}$".toRegex()
+    val usernameRegex = "^[a-z0-9]{5,11}$".toRegex()
     val passwordRegex = "^(?=.*[0-9])(?=.*[a-zA-Z])[a-zA-Z\\d]{8,16}\$".toRegex()
     val scrollState = rememberScrollState()
 
@@ -209,7 +209,7 @@ fun LoginScreen(navController: NavController) {
             if (isPasswordError.value) {
                 Log.d("idError", isPasswordError.value.toString()+"비번")
                 Text(
-                    text = "영문, 숫자를 조합해서 입력해주세요. (8-16자) ",
+                    text = "영문, 숫자를 조합해서 입력해주세요.(8-16자) ",
                     color = "#EF2B2A".toColor(),
                     style = MaterialTheme.typography.caption,
                     modifier = Modifier.padding(start = 18.dp)
