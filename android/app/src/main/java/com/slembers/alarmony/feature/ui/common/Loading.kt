@@ -43,7 +43,7 @@ fun AnimationRotation() {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center)
     {
-        val image = painterResource(id = R.drawable.mascot_foreground)
+        val image = painterResource(id = R.drawable.mascot_home)
         Image(painter = image, modifier = Modifier.rotate(angle), contentDescription = null)
     }
 }
