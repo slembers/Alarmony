@@ -5,6 +5,7 @@ import android.content.Intent
 import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -18,6 +19,7 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.AlertDialog
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
@@ -48,6 +50,8 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -82,7 +86,6 @@ fun DetailsInviteScreen(
     viewModel : GroupDetailsViewModel = viewModel(),
     alarmId : Long? = -1
 ) {
-
     val context = LocalContext.current
     val search : GroupSearchViewModel = viewModel()
     val searchMembers = search.searchMembers.observeAsState()
@@ -94,13 +97,16 @@ fun DetailsInviteScreen(
     var isClosed by remember { mutableStateOf(false)  }
     var isDelete by remember { mutableStateOf(false) }
     var openDialog by remember { mutableStateOf(true)  }
+    val keyboardOptions = KeyboardOptions(
+        keyboardType = KeyboardType.Password,
+        imeAction = ImeAction.Done,
+        //    capitalization = KeyboardCapitalization.Sentences
+    )
 
     LaunchedEffect(Unit) {
         val _member = viewModel.updateCurrentMember(alarmId!!)
         currentMembers.value = _member
     }
-
-
     Scaffold(
         topBar = {
             GroupToolBar(
@@ -108,6 +114,7 @@ fun DetailsInviteScreen(
                 navClick = { navController.popBackStack() }
             )
         },
+        containerColor = "#F9F9F9".toColor(),
         bottomBar = {
             GroupBottomButtom(
                 text = "저장",
@@ -117,7 +124,8 @@ fun DetailsInviteScreen(
         },
         content = { innerPadding ->
             Column(
-                modifier = Modifier.padding(innerPadding),
+                modifier = Modifier.padding(innerPadding).padding(10.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
                 content = {
                     CardBox(
                         title = { CardTitle(title = "초대인원") },
@@ -142,7 +150,6 @@ fun DetailsInviteScreen(
                                         newMember = checked.isNew
                                     )
                                 }
-
                                 items(items = checkMembers.value ?: listOf()) { checked ->
                                     GroupDefalutProfile(
                                         profileImg = checked.profileImg,
@@ -161,7 +168,7 @@ fun DetailsInviteScreen(
                                     .fillMaxWidth()
                                     .padding(
                                         start = 20.dp,
-                                        top = 0.dp,
+                                        top = 10.dp,
                                         bottom = 10.dp,
                                         end = 20.dp
                                     )
@@ -175,14 +182,15 @@ fun DetailsInviteScreen(
                                     singleLine = true,
                                     textStyle = TextStyle(
                                         color = Color.Black,
-                                        fontSize = 20.sp,
-                                        fontFamily = FontFamily.Monospace,
+                                        fontSize = 14.sp,
+                                       // fontFamily = FontFamily.Monospace,
                                         fontWeight = FontWeight.Bold,
                                         fontStyle = FontStyle.Normal,
                                     ),
                                     modifier = Modifier
-                                        .height(50.dp)
+                                        .height(40.dp)
                                         .fillMaxWidth(),
+                                    keyboardOptions = keyboardOptions,
                                     decorationBox = { innerTextField ->
                                         Row(
                                             modifier = Modifier
@@ -199,17 +207,25 @@ fun DetailsInviteScreen(
                                                 contentDescription = "Favorite icon",
                                                 tint = Color.DarkGray
                                             )
-                                            Spacer(modifier = Modifier.width(width = 8.dp))
+                                          //  Spacer(modifier = Modifier.width(width = 8.dp))
+
+                                            Box(
+                                                modifier = Modifier
+                                                    .padding(start = 10.dp) // margin left and right
+                                                    .fillMaxWidth()
+                                                    .padding(horizontal = 10.dp), // inner padding
+                                            ) {
                                             if (text.isEmpty()) {
                                                 Text(
-                                                    text = "닉네임을 입력새해주세요.",
+                                                    text = "닉네임을 입력해주세요.",
                                                     modifier = Modifier.fillMaxWidth(1f),
-                                                    fontSize = 18.sp,
+                                                    fontSize = 14.sp,
                                                     fontWeight = FontWeight.Normal,
                                                     color = Color.LightGray
                                                 )
                                             }
                                             innerTextField()
+                                        }
                                         }
                                     }
                                 )
