@@ -34,7 +34,8 @@ public class AlarmRecordServiceImpl implements AlarmRecordService {
      */
     @Override
     public List<AlarmRecordDto> getTodayAlarmRecords(Long groupId, LocalDateTime todayTime) {
-        return alarmRecordRepository.findTodayAlarmRecordsByAlarmId(groupId, todayTime);
+        // TODO : 서버와 9시간 차이나기 때문에 오늘 알람 기록 조회시에도 9시간을 빼주어야 한다. (추후 수정해야 함)
+        return alarmRecordRepository.findTodayAlarmRecordsByAlarmId(groupId, todayTime.minusHours(9));
     }
 
     /**
