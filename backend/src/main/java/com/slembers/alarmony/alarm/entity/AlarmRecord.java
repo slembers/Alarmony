@@ -2,6 +2,7 @@ package com.slembers.alarmony.alarm.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicInsert;
@@ -14,6 +15,7 @@ import java.time.LocalTime;
 
 @Entity(name = "alarm_record")
 @Builder
+@Getter
 @NoArgsConstructor
 @AllArgsConstructor
 @DynamicInsert
