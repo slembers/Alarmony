@@ -144,7 +144,7 @@ fun GroupDetailsScreen(
                             verticalAlignment = Alignment.CenterVertically,
                         ) {
                             if(memberCnt!! >= 2) {
-//                                IconButton(onClick = { navController.navigate(NavItem.GroupDetailsInvite.route + "/$alarmId") }) {
+//                                IconButton(onClick = {  }) {
 //                                    Icon(
 //                                        imageVector = Icons.Outlined.GroupRemove,
 //                                        contentDescription = "groupeXile",
@@ -189,19 +189,23 @@ fun GroupDetailsScreen(
                     groupId = alarmId!!,
                     host = alarm.value.host && currentDay(alarm.value)
                 )
-                /** 그룹원 초대 주석 **/
-         /*       CardBox(
-                    title = { GroupTitle(
-                        title = "그룹원 통계",
-                        content = { Icon(
-                            modifier = Modifier
-                                .padding(end = 10.dp)
-                                .size(15.dp),
-                            imageVector = Icons.Filled.BarChart,
-                            contentDescription = null
-                        )}
-                    )}
-                )*/
+//                CardBox(
+//                    title = { GroupTitle(
+//                        title = "그룹원 통계",
+//                        content = { Icon(
+//                            modifier = Modifier
+//                                .padding(end = 10.dp)
+//                                .size(15.dp),
+//                            imageVector = Icons.Filled.BarChart,
+//                            contentDescription = null
+//                        )},
+//                        enable = true,
+//                        onClick = {
+//                            Log.d("통계","진입했습니다.")
+//                            navController.navigate(route = NavItem.GroupDetailsMembers.route + "/$alarmId")
+//                        }
+//                    )}
+//                )
                 if(!alarm.value.host) {
                     CardBox(title = {
                         GroupTitle(

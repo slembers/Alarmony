@@ -100,4 +100,11 @@ sealed class NavItem (
         title = "알람초대",
         image = Icons.Default.ArrowForwardIos
     )
+
+    object GroupDetailsMembers : NavItem(
+        route = "GroupMembersDetails",
+        title = "알람통계",
+        image = Icons.Default.ArrowForwardIos
+    )
+    
 }

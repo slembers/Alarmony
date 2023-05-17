@@ -542,6 +542,7 @@ object MemberService {
         return try {
             val myInfo = memberApi.getMyInfo()
             Log.d("getmyinfo", "내 정보 : ${myInfo.body()}.")
+            MainActivity.prefs.setString("nickname",myInfo.body()?.nickname)
             myInfo.body()
         } catch (e: Exception) {
             Log.d("getmyinfo", "내 정보 가져오기에서 오류가 발생했습니다.")
