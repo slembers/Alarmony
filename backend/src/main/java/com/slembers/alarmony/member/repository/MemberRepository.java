@@ -67,7 +67,7 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
             + "LEFT OUTER JOIN member_alarm  ma ON m.id = ma.member.id AND (ma.alarm.id IS NULL OR ma.alarm.id = :groupId) "
             + "WHERE m.id <> :memberId "
             + "AND ma.member.id IS NULL "
-            + "AND (m.nickname LIKE CONCAT('%', :keyword, '%') OR m.email LIKE CONCAT('%', :keyword, '%')) "
+            + "AND m.nickname LIKE CONCAT('%', :keyword, '%')  "
             + "ORDER BY "
             + "CASE WHEN m.nickname = :keyword THEN 0 "
             + "WHEN m.nickname LIKE CONCAT(:keyword, '%') THEN 1 "

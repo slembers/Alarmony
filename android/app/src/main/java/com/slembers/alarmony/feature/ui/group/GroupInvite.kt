@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -37,7 +38,7 @@ fun GroupInvite(
                 Icon(
                     painter = painterResource(id = R.drawable.arrow_forward),
                     contentDescription = null,
-                    modifier = Modifier.padding(2.dp)
+                    modifier = Modifier.padding(2.dp).size(14.dp)
                 )
             },
             onClick = { navController.navigate( route = NavItem.GroupInvite.route ) }
@@ -54,7 +55,7 @@ fun GroupInvite(
                             start = 20.dp,
                             top = 0.dp,
                             bottom = 0.dp,
-                            end = 10.dp
+                            end = 20.dp
                         ),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(2.dp),

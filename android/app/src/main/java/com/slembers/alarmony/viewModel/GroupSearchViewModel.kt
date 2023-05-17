@@ -28,6 +28,7 @@ class GroupSearchViewModel(
         keyword : String,
         groupId : String? = null,
     ) {
+        if (keyword.isEmpty() || keyword.trim().isEmpty()) return
         GroupService.searchMember(
             keyword, groupId
         ) { _SearchMember.value = it?.memberList as MutableList<MemberDto>? }

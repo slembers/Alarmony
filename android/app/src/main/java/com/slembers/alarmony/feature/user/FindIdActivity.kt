@@ -94,7 +94,7 @@ fun FindId(navController: NavController) {
                             .fillMaxWidth()
                             .wrapContentSize(Alignment.Center),
                         fontWeight = FontWeight.Bold,
-                        fontSize = 17.sp
+                        fontSize = 20.sp
                     )
                 },
                 navigationIcon = {
@@ -184,7 +184,7 @@ fun FindIdTextField(
             .fillMaxWidth(),
         keyboardActions = keyboardActions,
         keyboardOptions = KeyboardOptions(
-            keyboardType = KeyboardType.Email,
+            keyboardType = KeyboardType.Password,
             imeAction = imeAction
         ),
     )

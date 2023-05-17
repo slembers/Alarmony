@@ -115,7 +115,7 @@ fun SignupScreen(navController: NavController) {
                     .fillMaxWidth()
                     .wrapContentSize(Alignment.Center),
                     fontWeight = FontWeight.Bold,
-                    fontSize = 17.sp)
+                    fontSize = 20.sp)
                         },
                 navigationIcon = {
                     IconButton(onClick = { navController.navigateUp() }) {
@@ -287,7 +287,7 @@ fun IdTextField(
             .fillMaxWidth(),
         keyboardActions = keyboardActions,
         keyboardOptions = KeyboardOptions(
-            keyboardType = KeyboardType.Email,
+            keyboardType = KeyboardType.Password,
             imeAction = imeAction
         ),
     )
@@ -297,7 +297,7 @@ fun IdTextField(
         if (isIdError.value) {
             Log.d("회원", "아이디 정규식이 틀릴때 ")
             ErrorMessageText(
-                message = "아이디는 영문, 숫자를 조합하여 5-11자로 입력해주세요.",
+                message = "영문, 숫자를 조합해서 입력해주세요.(5~11자)",
                 color = "#EF2B2A".toColor()
             )
         } else {
@@ -312,7 +312,7 @@ fun IdTextField(
                 } else {
                     color.value = Black
                     Log.d("회원", "사용가능  아이디")
-                    message.value = "사용가능한  아이디 입니다."
+                    message.value = "사용가능한 아이디 입니다."
                     isIdError.value = false
                     isIdCanUse.value = true
                 }
@@ -380,7 +380,7 @@ fun PasswordText(
         ),
     )
     if (isPasswordError.value) {
-        ErrorMessageText(message = "영문, 숫자를 조합하여 8-20자 입력해주세요.", color = "#EF2B2A".toColor())
+        ErrorMessageText(message = "영문, 숫자를 조합해서 입력해주세요.(8-16자)", color = "#EF2B2A".toColor())
     }
 
 }
@@ -504,7 +504,6 @@ fun EmailTextField(
                 } else {
                     color.value = Black
                     Log.d("email", "사용가능한 이메일 입니다.")
-                    // message = "사용 가능한 아이디 입니다."
                     message.value = "사용가능한 이메일 입니다."
                     isEmailError.value = false
                     isEmailCanUse.value = true
@@ -555,7 +554,7 @@ fun NicknameText(
             .fillMaxWidth(),
         keyboardActions = keyboardActions,
         keyboardOptions = KeyboardOptions(
-            keyboardType = KeyboardType.Email,
+            keyboardType = KeyboardType.Password,
             imeAction = imeAction
         ),
     )
@@ -564,7 +563,7 @@ fun NicknameText(
         if (isNicknameError.value) {
 
             ErrorMessageText(
-                message = "닉네임은 특수문자를 제외하고 2자-10자 로 입력해주세요.",
+                message = "닉네임은 특수문자를 제외하고 입력해주세요.(2-10자)",
                 color = MaterialTheme.colors.error
             )
         } else {
