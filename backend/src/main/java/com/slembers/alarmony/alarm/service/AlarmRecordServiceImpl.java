@@ -62,16 +62,15 @@ public class AlarmRecordServiceImpl implements AlarmRecordService {
             .orElseThrow(() -> new CustomException(AlarmRecordErrorCode.ALARM_RECORD_NOT_EXIST));
 
         Alarm alarm = alarmService.findAlarmByAlarmId(alarmEndRecordDto.getAlarmId());
-        log.info("받은 시간 : {}",alarmEndRecordDto.getDatetime());
+        // 서버와 9시간 차이가 나기 때문에 9시간을 빼준다.
+        LocalDateTime toServerTime = alarmEndRecordDto.getDatetime().minusHours(9);
         try {
             if (alarmEndRecordDto.isSuccess()) {
-                alarmRecord.recordSuccess(alarm.getTime(), alarmEndRecordDto.getDatetime());
+                alarmRecord.recordSuccess(alarm.getTime(), toServerTime);
             } else {
-                alarmRecord.recordFailed(alarm.getTime(), alarmEndRecordDto.getDatetime());
+                alarmRecord.recordFailed(alarm.getTime(), toServerTime);
             }
-            log.info("저장한 시간 : {}",alarmRecord.getTodayAlarmRecord());
             alarmRecordRepository.save(alarmRecord);
-            log.info("저장한 후 시간 : {}",alarmRecord.getTodayAlarmRecord());
         } catch (Exception e) {
             log.error(e.getMessage());
             throw new CustomException(AlarmRecordErrorCode.ALARM_RECORD_RECORD_ERROR);
