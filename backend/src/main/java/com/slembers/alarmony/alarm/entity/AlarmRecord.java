@@ -66,9 +66,10 @@ public class AlarmRecord {
         this.message = "";
         this.totalCount++;
         this.successCount++;
-        this.todayAlarmRecord = recordTime;
         long seconds = Duration.between(alarmTime,recordTime.toLocalTime()).toSeconds();
         totalWakeUpTime += seconds < 0 ? 86400 + seconds : seconds;
+        // 서버 시간이 9시간이 다르기 때문에 저장하기 전에는 9시간을 빼주어야 한다.
+        this.todayAlarmRecord = recordTime.minusHours(9);
 
     }
 
