@@ -186,22 +186,23 @@ fun GroupDetailsScreen(
                     groupId = alarmId!!,
                     host = alarm.value.host && currentDay(alarm.value)
                 )
-                CardBox(
-                    title = { GroupTitle(
-                        title = "그룹원 통계",
-                        content = { Icon(
-                            modifier = Modifier
-                                .padding(end = 10.dp)
-                                .size(15.dp),
-                            imageVector = Icons.Filled.BarChart,
-                            contentDescription = null
-                        )},
-                        onClick = {
-                            Log.d("통계","진입했습니다.")
-                            navController.navigate(NavItem.GroupDetailsMembers.route + "/$alarmId")
-                        }
-                    )}
-                )
+//                CardBox(
+//                    title = { GroupTitle(
+//                        title = "그룹원 통계",
+//                        content = { Icon(
+//                            modifier = Modifier
+//                                .padding(end = 10.dp)
+//                                .size(15.dp),
+//                            imageVector = Icons.Filled.BarChart,
+//                            contentDescription = null
+//                        )},
+//                        enable = true,
+//                        onClick = {
+//                            Log.d("통계","진입했습니다.")
+//                            navController.navigate(route = NavItem.GroupDetailsMembers.route + "/$alarmId")
+//                        }
+//                    )}
+//                )
                 if(!alarm.value.host) {
                     CardBox(title = {
                         GroupTitle(
