@@ -7,7 +7,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -18,11 +18,13 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.Checkbox
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Remove
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -40,7 +42,6 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
@@ -57,7 +58,6 @@ import com.slembers.alarmony.feature.common.CardTitle
 import com.slembers.alarmony.model.db.Member
 import com.slembers.alarmony.model.db.dto.MemberDto
 import com.slembers.alarmony.viewModel.GroupSearchViewModel
-import com.slembers.alarmony.viewModel.GroupViewModel
 
 
 @OptIn(ExperimentalComposeUiApi::class)
@@ -195,40 +195,38 @@ fun SearchMember(
                 )
                 onCheckedChange(checked)
             }
-    )
-    {
-//        if(member.profileImg != null ) {
-//            AsyncImage(
-//                model = ImageRequest.Builder(LocalContext.current)
-//                    .data(member.profileImg)
-//                    .build(),
-//                contentDescription = "ImageRequest example",
-//                modifier = Modifier
-//                    .clip(CircleShape)
-//                    .size(50.dp),
-//                contentScale = ContentScale.Crop,
-//                error = painterResource(id = R.drawable.baseline_account_circle_24)
-//            )
-//        }
-//        else {
-//            Image(
-//                painter = painterResource(id = R.drawable.baseline_account_circle_24),
-//                contentDescription = "ImageRequest example",
-//                modifier = Modifier
-//                    .clip(CircleShape)
-//                    .size(65.dp)
-//            )
-//        }
-        AsyncImage(
-            model = ImageRequest.Builder(LocalContext.current)
-                .data(member.profileImg)
-                .build(),
-            contentDescription = "ImageRequest example",
+    ) {
+        Box(
             modifier = Modifier
-                .clip(CircleShape)
-                .size(48.dp),
-            contentScale = ContentScale.Crop,
-            error = painterResource(id = R.drawable.baseline_account_circle_24)
+                .size(50.dp)
+                .padding(0.dp),
+            content = {
+                if(member.profileImg != null ) {
+                    AsyncImage(
+                        model = ImageRequest.Builder(LocalContext.current)
+                            .data(member.profileImg)
+                            .build(),
+                        contentDescription = "ImageRequest example",
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(4.dp)
+                            .clip(CircleShape)
+                            .align(Alignment.Center),
+                        contentScale = ContentScale.Crop,
+                        error = painterResource(id = R.drawable.baseline_account_circle_48)
+                    )
+                }
+                else {
+                    Image(
+                        painter = painterResource(id = R.drawable.baseline_account_circle_48),
+                        contentDescription = "ImageRequest example",
+                        modifier = Modifier
+                            .clip(CircleShape)
+                            .align(Alignment.Center)
+                            .fillMaxSize()
+                    )
+                }
+            }
         )
         Text(
             text = member.nickname,

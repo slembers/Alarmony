@@ -264,6 +264,7 @@ fun AlarmScreen(alarmDto : AlarmDto) {
                         Text(
                             text = "5분",
                             color = Color.White,
+                            maxLines = 1,
 //                            color = Color.Black,
                             fontWeight = FontWeight.Bold,
                             fontSize =19.sp
@@ -322,6 +323,7 @@ fun AlarmScreen(alarmDto : AlarmDto) {
                         Text(
                             text = "10분",
                             color = Color.White,
+                            maxLines = 1,
 //                            color = Color.Black,
                             fontWeight = FontWeight.Bold,
                             fontSize =19.sp

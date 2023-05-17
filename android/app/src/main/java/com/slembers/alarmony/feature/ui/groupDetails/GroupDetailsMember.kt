@@ -2,8 +2,10 @@ package com.slembers.alarmony.feature.ui.groupDetails
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
@@ -33,7 +35,7 @@ import com.slembers.alarmony.network.service.GroupService
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
-import kotlin.math.max
+import kotlinx.serialization.json.JsonNull.content
 
 @Preview
 @Composable
@@ -59,29 +61,39 @@ fun MemberDetails(
                 minOf(50.dp),
                 maxOf(80.dp)
             )
-    )
-    {
-        if(profile != null ) {
-            AsyncImage(
-                model = ImageRequest.Builder(LocalContext.current)
-                    .data(profile)
-                    .build(),
-                contentDescription = "ImageRequest example",
-                contentScale = ContentScale.Crop,
-                error = painterResource(id = R.drawable.account_circle),
-                modifier = Modifier
-                    .clip(CircleShape)
-                    .size(40.dp)
-            )
-        } else {
-            Image(
-                painter = painterResource(id = R.drawable.baseline_account_circle_24),
-                contentDescription = "ImageRequest example",
-                modifier = Modifier
-                    .clip(CircleShape)
-                    .size(40.dp)
-            )
-        }
+    ) {
+        Box(
+            modifier = Modifier
+                .size(60.dp)
+                .padding(0.dp),
+            content = {
+                if(profile != null ) {
+                    AsyncImage(
+                        model = ImageRequest.Builder(LocalContext.current)
+                            .data(profile)
+                            .build(),
+                        contentDescription = "ImageRequest example",
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(4.dp)
+                            .clip(CircleShape)
+                            .align(Alignment.Center),
+                        contentScale = ContentScale.Crop,
+                        error = painterResource(id = R.drawable.baseline_account_circle_48)
+                    )
+                }
+                else {
+                    Image(
+                        painter = painterResource(id = R.drawable.baseline_account_circle_48),
+                        contentDescription = "ImageRequest example",
+                        modifier = Modifier
+                            .clip(CircleShape)
+                            .align(Alignment.Center)
+                            .fillMaxSize()
+                    )
+                }
+            }
+        )
         Column(
             modifier = Modifier
                 .padding(start = 10.dp)

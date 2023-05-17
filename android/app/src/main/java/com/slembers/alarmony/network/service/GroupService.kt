@@ -151,6 +151,7 @@ object GroupService {
             val dateTime = LocalDateTime.now()
             val formatter = DateTimeFormatter.ISO_DATE_TIME
             val formattedDateTime = dateTime.format(formatter)
+            Log.d("getGroup","[알람 상세] 오늘의 알림 현황 : ${formattedDateTime}")
             val recordList = groupApi.getGroupRecord(groupId, formattedDateTime).body()
             Log.d("getGroup","[알람 상세] 오늘의 알림 현황 : ${recordList}")
             recordList?.alarmList.let {

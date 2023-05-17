@@ -11,7 +11,6 @@ import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -55,14 +54,12 @@ import androidx.navigation.NavController
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.slembers.alarmony.MainActivity
 import com.slembers.alarmony.R
-import com.slembers.alarmony.feature.alarm.AlarmActivity
 import com.slembers.alarmony.feature.alarm.AlarmApi.getAllAlarmsApi
-import com.slembers.alarmony.feature.alarm.AlarmDto
 import com.slembers.alarmony.feature.common.NavItem
 import com.slembers.alarmony.feature.common.ui.theme.toColor
 import com.slembers.alarmony.feature.notification.NotiApi
 import com.slembers.alarmony.feature.notification.NotiApi.getAllNotisApi
-import com.slembers.alarmony.feature.ui.common.AnimationRotation
+import com.slembers.alarmony.feature.ui.common.BouncingAnimation
 import com.slembers.alarmony.network.repository.MemberService.getMyInfo
 import com.slembers.alarmony.network.repository.MemberService.login
 import kotlinx.coroutines.CoroutineScope
@@ -109,8 +106,8 @@ fun LoginScreen(navController: NavController) {
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        mascott(drawing = R.drawable.mascot_home)
-        logo(drawing = R.drawable.alarmony)
+        mascott(drawing = R.drawable.mas)
+        logo(drawing = R.drawable.alarmony2)
         Box(
             modifier = Modifier.fillMaxWidth(),
             contentAlignment = Alignment.Center
@@ -286,7 +283,7 @@ fun LoginScreen(navController: NavController) {
         }
     }
     if(loading) {
-        AnimationRotation()
+        BouncingAnimation()
     }
 
 }
@@ -299,6 +296,7 @@ fun mascott(drawing:Int) {
         contentDescription = "mascott image",
         modifier = Modifier
             .padding(top = 100.dp, bottom = 20.dp)
+            .size(120.dp)
 
     )
 
@@ -306,7 +304,7 @@ fun mascott(drawing:Int) {
 
 @Composable
 fun logo(drawing:Int) {
-    Image(painter = painterResource(id = R.drawable.alarmony),
+    Image(painter = painterResource(id = R.drawable.alarmony2),
         contentDescription = "mascott image",
                 modifier = Modifier
                     .padding( bottom = 20.dp)

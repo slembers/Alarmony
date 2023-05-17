@@ -2,7 +2,6 @@ package com.slembers.alarmony.feature.screen
 
 import android.util.Log
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -13,7 +12,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -36,7 +34,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.min
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
@@ -51,18 +48,8 @@ import com.slembers.alarmony.feature.common.CardTitle
 import com.slembers.alarmony.feature.common.NavItem
 import com.slembers.alarmony.feature.common.ui.theme.toColor
 import com.slembers.alarmony.feature.ui.group.GroupToolBar
-import com.slembers.alarmony.feature.ui.groupDetails.GroupDetailsBoardBtn
-import com.slembers.alarmony.feature.ui.groupInvite.CurrentInvite
-import com.slembers.alarmony.feature.ui.groupInvite.GroupDefalutProfile
-import com.slembers.alarmony.feature.ui.groupInvite.SearchInviteMember
-import com.slembers.alarmony.feature.ui.groupInvite.SearchMember
 import com.slembers.alarmony.model.db.Member
-import com.slembers.alarmony.network.service.GroupService
 import com.slembers.alarmony.viewModel.GroupDetailsViewModel
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
-import kotlinx.serialization.json.JsonNull.content
 
 @Composable
 @ExperimentalMaterial3Api
@@ -154,7 +141,7 @@ fun GroupMembers(
             )
         } else {
             Image(
-                painter = painterResource(id = R.drawable.baseline_account_circle_24),
+                painter = painterResource(id = R.drawable.baseline_account_circle_48),
                 contentDescription = "ImageRequest example",
                 modifier = Modifier
                     .clip(CircleShape)

@@ -125,7 +125,7 @@ fun AlarmListScreen(navController : NavHostController) {
 //
 //                        )
                         ShakingImage()
-                        Text(text = "alarmony",
+                        Text(text = "Alarmony",
                             fontWeight = FontWeight.Bold,
                             fontFamily = notosanskr,
                             modifier = Modifier.padding(20.dp)
@@ -382,7 +382,7 @@ fun ShakingImage() {
     )
     val imageRes = if (shakeAnimation in 20f..40f) {
         // 기울기가 20~40도 사이일 때 이미지를 변경합니다.
-        R.drawable.winklemas2
+        R.drawable.mas
     } else {
         // 기울기가 다른 각도일 때는 원래 이미지를 사용합니다.
         R.drawable.mas
