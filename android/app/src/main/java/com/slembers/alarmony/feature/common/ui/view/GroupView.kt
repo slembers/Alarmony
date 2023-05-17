@@ -339,7 +339,7 @@ fun GroupDefalutProfileView() {
                 .align(Alignment.TopCenter)
                 .size(this.maxWidth)
                 .padding(0.dp),
-            painter = painterResource(id = R.drawable.baseline_account_circle_24),
+            painter = painterResource(id = R.drawable.baseline_account_circle_48),
             contentDescription = null)
         Text(
             text = "Sample01",

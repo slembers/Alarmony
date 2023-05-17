@@ -39,7 +39,6 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -52,7 +51,6 @@ import com.slembers.alarmony.feature.common.CardTitle
 import com.slembers.alarmony.model.db.Member
 import com.slembers.alarmony.model.db.dto.MemberDto
 import com.slembers.alarmony.viewModel.GroupSearchViewModel
-import com.slembers.alarmony.viewModel.GroupViewModel
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
@@ -168,7 +166,7 @@ fun SearchMember(
             )
         } else {
             Image(
-                painter = painterResource(id = R.drawable.baseline_account_circle_24),
+                painter = painterResource(id = R.drawable.baseline_account_circle_48),
                 contentDescription = "ImageRequest example",
                 modifier = Modifier.size(65.dp)
             )
