@@ -115,7 +115,8 @@ fun CurrentInvite(
                         bottom = 10.dp,
                         end = 0.dp
                     ),
-                userScrollEnabled = true
+                userScrollEnabled = true,
+                horizontalArrangement = Arrangement.spacedBy(5.dp)
             ) {
 
                 items(items = currentMembers) { checked ->

@@ -4,7 +4,7 @@ import com.google.gson.annotations.SerializedName
 data class Member(
     val nickname : String = "",
     val profileImg : String? = null,
-    var isNew : Boolean = true
+    var isNew : Boolean = false
 ) {
     override fun equals(other: Any?): Boolean {
         return if(other is Member) {
