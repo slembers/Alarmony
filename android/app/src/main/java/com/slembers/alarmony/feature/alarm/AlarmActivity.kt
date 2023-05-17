@@ -235,7 +235,7 @@ fun AlarmScreen(alarmDto : AlarmDto) {
                     .background(color = "#ecddd6".toColor())
 
 //                        단체
-                         .background(Color.White)
+                    .background(Color.White)
 
                     .padding(innerPadding),
                 verticalArrangement = Arrangement.Bottom,
@@ -339,7 +339,7 @@ fun AlarmScreen(alarmDto : AlarmDto) {
 @Composable
 fun DrawCircle(alarmDto : AlarmDto =
                    AlarmDto(1,"",1,1,
-    listOf(false,false,false,false,false,false,false),"Normal",1,true,false,"히히")
+                       listOf(false,false,false,false,false,false,false),"Normal",1,true,false,"히히")
 ) {
 
     val hour = if (alarmDto.hour.toString().length == 1) { "0" + alarmDto.hour.toString() }

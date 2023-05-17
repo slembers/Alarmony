@@ -123,7 +123,7 @@ fun LoginScreen(navController: NavController) {
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        mascott(drawing = R.drawable.mascot_foreground)
+        mascott(drawing = R.drawable.mascot_home)
         logo(drawing = R.drawable.alarmony)
         Box(
             modifier = Modifier.fillMaxWidth(),
@@ -309,24 +309,7 @@ fun mascott(drawing:Int) {
         contentDescription = "mascott image",
         modifier = Modifier
             .padding(top = 100.dp, bottom = 20.dp)
-            .clickable() {
-                val alarmDto = AlarmDto(
-                    1,
-                    "테스트",
-                    12,
-                    20,
-                    listOf(false, false, false, false, false, false, false),
-                    "gmlgml",
-                    4,
-                    true,
-                    true,
-                    "하하"
-                )
-                val newIntent = Intent(context, AlarmActivity::class.java)
-                newIntent.putExtra("alarmId", alarmDto.alarmId)
-                newIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                context.startActivity(newIntent)
-            }
+
     )
 
 }
