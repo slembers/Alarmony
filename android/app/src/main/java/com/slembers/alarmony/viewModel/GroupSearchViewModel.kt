@@ -34,7 +34,7 @@ class GroupSearchViewModel(
         ) { _SearchMember.value = it?.memberList as MutableList<MemberDto>? }
     }
 
-    fun addCurrentMember(member : Member) {
+    fun addCheckedMember(member : Member) {
         _members.add(member)
         _CheckedMember.postValue(_members)
     }

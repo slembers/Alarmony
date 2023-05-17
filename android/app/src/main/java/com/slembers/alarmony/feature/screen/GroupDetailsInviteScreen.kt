@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -33,6 +34,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -55,6 +57,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.min
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
@@ -89,13 +92,12 @@ fun DetailsInviteScreen(
     val context = LocalContext.current
     val search : GroupSearchViewModel = viewModel()
     val searchMembers = search.searchMembers.observeAsState()
-    var currentMembers = remember { mutableStateOf<MutableList<Member>>(mutableListOf()) }
+    var currentMembers by remember { mutableStateOf<MutableList<Member>>(mutableListOf()) }
     val checkMembers = search.checkedMembers.observeAsState()
     // 검색 단어 저장 변수
     var text by remember { mutableStateOf("") }
     // Dialog 관련 상태변수
     var isClosed by remember { mutableStateOf(false)  }
-    var isDelete by remember { mutableStateOf(false) }
     var openDialog by remember { mutableStateOf(true)  }
     val keyboardOptions = KeyboardOptions(
         keyboardType = KeyboardType.Password,
@@ -105,13 +107,26 @@ fun DetailsInviteScreen(
 
     LaunchedEffect(Unit) {
         val _member = viewModel.updateCurrentMember(alarmId!!)
-        currentMembers.value = _member
+        currentMembers = _member
     }
     Scaffold(
         topBar = {
             GroupToolBar(
                 title = NavItem.GroupInvite.title,
-                navClick = { navController.popBackStack() }
+                navClick = { navController.popBackStack() },
+                action = {
+                    TextButton(onClick = { isClosed = true }) {
+                        Text(
+                            text = "완료",
+                            style = TextStyle(
+                                color = Color.Black,
+                                fontSize = 14.sp,
+                                fontWeight = FontWeight.Bold,
+                                fontStyle = FontStyle.Normal
+                            )
+                        )
+                    }
+                }
             )
         },
         containerColor = "#F9F9F9".toColor(),
@@ -138,23 +153,20 @@ fun DetailsInviteScreen(
                                         top = 5.dp,
                                         bottom = 10.dp,
                                         end = 0.dp
-                                    ),
+                                    )
+                                    .heightIn( min(50.dp, 50.dp) ),
                                 userScrollEnabled = true
                             ) {
 
-                                items(items = currentMembers.value ) { checked ->
+                                items(items = currentMembers ) { checked ->
                                     GroupDefalutProfile(
-                                        profileImg = checked.profileImg,
-                                        nickname = checked.nickname,
-                                        groupId = alarmId!!,
-                                        newMember = checked.isNew
+                                        member = checked,
                                     )
                                 }
                                 items(items = checkMembers.value ?: listOf()) { checked ->
                                     GroupDefalutProfile(
-                                        profileImg = checked.profileImg,
-                                        nickname = checked.nickname,
-                                        newMember = checked.isNew
+                                        member = checked,
+                                        cancel = { search.removeCheckedMember(it) }
                                     )
                                 }
                             }
@@ -238,15 +250,14 @@ fun DetailsInviteScreen(
                                             isNew = true
                                         )
                                         // 현재 인원에 포함되면 안됨
-                                        if(!currentMembers.value.contains(member)) {
+                                        if(!currentMembers.contains(member) && !checkMembers.value!!.contains(member)) {
                                             SearchMember(
                                                 member = it,
-                                                isCheck = checkMembers.value?.contains(member)!!,
                                                 onCheckedChange = {
                                                     if (checkMembers.value!!.contains(it))
                                                         search.removeCheckedMember(it)
                                                     else
-                                                        search.addCurrentMember(it)
+                                                        search.addCheckedMember(it)
                                                 }
                                             )
                                         }
@@ -309,10 +320,8 @@ fun DetailsInviteScreen(
                                 }
                                 Button(
                                     onClick = {
-                                        openDialog = false
-                                        val members = checkMembers.value?.map {
-                                            it.nickname
-                                        }?.toList()
+                                        openDialog = false // 팝업창 닫기
+                                        val members = checkMembers.value?.map { it.nickname }?.toList()
                                         CoroutineScope(Dispatchers.IO).async {
                                             GroupService.groupApi.addMembers(
                                                 groupId = alarmId,
