@@ -7,7 +7,9 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -113,22 +115,20 @@ fun CurrentInvite(
                         bottom = 10.dp,
                         end = 0.dp
                     ),
-                userScrollEnabled = true
+                userScrollEnabled = true,
+                horizontalArrangement = Arrangement.spacedBy(5.dp)
             ) {
 
                 items(items = currentMembers) { checked ->
                     GroupDefalutProfile(
-                        profileImg = checked.profileImg,
-                        nickname = checked.nickname,
-                        newMember = checked.isNew,
+                        member = checked
                     )
                 }
 
                 items(items = checkMembers.value ?: listOf()) { checked ->
                     GroupDefalutProfile(
-                        profileImg = checked.profileImg,
-                        nickname = checked.nickname,
-                        newMember = checked.isNew
+                        member = checked,
+                        cancel = { search.removeCheckedMember(it) }
                     )
                 }
             }
@@ -140,18 +140,13 @@ fun CurrentInvite(
 @ExperimentalMaterial3Api
 @ExperimentalGlideComposeApi
 fun GroupDefalutProfile(
-    profileImg : String? = null,
-    nickname : String = "nothing",
-    groupId : Long = 0,
-    newMember : Boolean = true
+    member : Member? = Member(),
+    cancel : (Member) -> Unit = {}
 ) {
-
-    var openDialog by remember { mutableStateOf(false) }
-
     BoxWithConstraints(
         modifier = Modifier
-            .width(60.dp)
-            .height(70.dp)
+            .width(48.dp)
+            .height(60.dp)
     ) {
         val maxWidth = this.maxWidth
         Column(
@@ -166,28 +161,40 @@ fun GroupDefalutProfile(
                     .weight(1f)
                     .padding(0.dp),
                 content = {
-                    if(profileImg == null) {
-                        Image(
-                            modifier = Modifier
-                                .matchParentSize()
-                                .align(Alignment.Center),
-                            painter = painterResource(id = R.drawable.account_circle),
-                            contentDescription = null)
-                    } else {
-                        AsyncImage(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .clip(CircleShape)
-                                .align(Alignment.Center),
-                            model = ImageRequest.Builder(LocalContext.current)
-                                .data(profileImg)
-                                .build(),
-                            contentDescription = nickname,
-                            contentScale = ContentScale.Crop,
-                            error = painterResource(id = R.drawable.account_circle)
-                        )
-                    }
-                    if(!newMember) {
+//                    if(member?.profileImg == null) {
+//                        Image(
+//                            modifier = Modifier
+//                                .matchParentSize()
+//                                .align(Alignment.Center),
+//                            painter = painterResource(id = R.drawable.baseline_account_circle_24),
+//                            contentDescription = null)
+//                    } else {
+//                        AsyncImage(
+//                            modifier = Modifier
+//                                .fillMaxSize()
+//                                .clip(CircleShape)
+//                                .align(Alignment.Center),
+//                            model = ImageRequest.Builder(LocalContext.current)
+//                                .data(member.profileImg)
+//                                .build(),
+//                            contentDescription = member.nickname,
+//                            contentScale = ContentScale.Crop,
+//                            error = painterResource(id = R.drawable.baseline_account_circle_24)
+//                        )
+//                    }
+                    AsyncImage(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .clip(CircleShape)
+                            .align(Alignment.Center),
+                        model = ImageRequest.Builder(LocalContext.current)
+                            .data(member?.profileImg)
+                            .build(),
+                        contentDescription = member?.nickname,
+                        contentScale = ContentScale.Crop,
+                        error = painterResource(id = R.drawable.baseline_account_circle_24)
+                    )
+                    if(!member!!.isNew) {
                         Box(
                             modifier = Modifier
                                 .size(maxWidth / 2)
@@ -205,14 +212,14 @@ fun GroupDefalutProfile(
                                     imageVector = Icons.Filled.Remove,
                                     contentDescription = "그룹퇴출")
                                 },
-                                onClick = { openDialog = true }
+                                onClick = { cancel(member) }
                             )
                         }
                     }
                 }
             )
             Text(
-                text = nickname,
+                text = member!!.nickname,
                 modifier = Modifier
                     .fillMaxWidth(),
                 maxLines = 1,
@@ -220,82 +227,5 @@ fun GroupDefalutProfile(
                 fontSize = 10.sp
             )
         }
-    }
-    if(openDialog) {
-        AlertDialog(
-            shape = RoundedCornerShape(20.dp),
-            modifier = Modifier.heightIn(
-                min(100.dp,100.dp)
-            ),
-            onDismissRequest = {
-                openDialog = false
-            },
-            title = {
-                Column() {
-                    Text(
-                        modifier = Modifier.fillMaxWidth(),
-                        text = "그룹퇴출",
-                        fontWeight = FontWeight.Bold,
-                        textAlign = TextAlign.Center,
-                        fontSize = 25.sp
-                    )
-                    Divider(
-                        modifier = Modifier
-                            .alpha(0.3f)
-                            .padding(top = 10.dp, bottom = 5.dp, start = 5.dp, end = 5.dp)
-                            .clip(shape = RoundedCornerShape(10.dp)),
-                        thickness = 2.dp,
-                        color = Color.Gray)
-                    Text(
-                        modifier = Modifier.fillMaxWidth(),
-                        color = Color.Gray,
-                        text = "$nickname 를 퇴출하시겠어요?",
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 20.sp,
-                        textAlign = TextAlign.Center)
-                }
-            },
-            buttons = {
-                Row(
-                    horizontalArrangement = Arrangement.SpaceEvenly,
-                    modifier = Modifier
-                        .padding(20.dp)
-                        .fillMaxWidth()
-                ) {
-                    Button(
-                        onClick = { openDialog = false },
-                        colors = ButtonDefaults.buttonColors(containerColor = "#C93636".toColor())
-                    ) {
-                        Icon(
-                            imageVector = Icons.Outlined.Close,
-                            contentDescription = "Notification",
-                            tint = Color.White,
-                            modifier = Modifier.size(25.dp)
-                        )
-                        Text(text = "취소")
-                    }
-                    Button(
-                        onClick = {
-                            openDialog = false
-                            CoroutineScope(Dispatchers.IO).async {
-                                GroupService.deleteGroupMember(
-                                    groupId = groupId,
-                                    nickname = nickname
-                                )
-                            }
-                        },
-                        colors = ButtonDefaults.buttonColors(containerColor = "#31AF91".toColor()),
-                    ) {
-                        Icon(
-                            imageVector = Icons.Outlined.Check,
-                            contentDescription = "Notification",
-                            tint = Color.White,
-                            modifier = Modifier.size(25.dp)
-                        )
-                        Text("수락")
-                    }
-                }
-            }
-        )
     }
 }

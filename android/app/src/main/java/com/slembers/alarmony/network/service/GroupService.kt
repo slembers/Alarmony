@@ -212,7 +212,7 @@ object GroupService {
             if( alarmList?.alarmList?.isNotEmpty() == true ) {
                 val list = alarmList.alarmList.let {
                     it.map {
-                        Member(it.nickname,it.profileImg,it.success)
+                        Member(it.nickname,it.profileImg,true)
 
                     }.toMutableList()
                 }

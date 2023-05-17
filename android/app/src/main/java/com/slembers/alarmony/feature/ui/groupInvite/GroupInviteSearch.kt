@@ -65,7 +65,7 @@ import com.slembers.alarmony.viewModel.GroupViewModel
 @ExperimentalMaterial3Api
 @ExperimentalGlideComposeApi
 fun SearchInviteMember(
-    viewModel: GroupViewModel = viewModel(),
+    search: GroupSearchViewModel = viewModel(),
     currentMembers: MutableList<Member> = mutableListOf()
 ) {
 
@@ -75,8 +75,8 @@ fun SearchInviteMember(
     //    capitalization = KeyboardCapitalization.Sentences
     )
     var text by remember { mutableStateOf("") }
-    val search: GroupSearchViewModel = viewModel()
     val searchMembers = search.searchMembers.observeAsState()
+    val checkMembers by search.checkedMembers.observeAsState()
 
     CardBox(
         title = { CardTitle(title = "검색") },
@@ -147,24 +147,27 @@ fun SearchInviteMember(
 
                 )
 
-                LazyColumn() {
+                LazyColumn(
+                    verticalArrangement = Arrangement.spacedBy(5.dp)
+                ) {
                     items(searchMembers.value ?: mutableListOf()) {
                         val member = Member(
                             nickname = it.nickname,
                             profileImg = it.profileImg,
-                            isNew = true
+                            isNew = false
                         )
-                        // 현재 인원에 포함되면 안됨
-                        SearchMember(
-                            member = it,
-                            isCheck = currentMembers.contains(member),
-                            onCheckedChange = {
-                                if (currentMembers.contains(it))
-                                    viewModel.removeMember(it)
-                                else
-                                    viewModel.addMember(it)
-                            }
-                        )
+                        if(!checkMembers!!.contains(member) && !currentMembers.contains(member)) {
+                            // 현재 인원에 포함되면 안됨 && 체크되어 있지 않아야함
+                            SearchMember(
+                                member = it,
+                                onCheckedChange = {
+                                    if (currentMembers.contains(it))
+                                        search.removeCheckedMember(it)
+                                    else
+                                        search.addCheckedMember(it)
+                                }
+                            )   
+                        }
                     }
                 }
             }
@@ -175,7 +178,6 @@ fun SearchInviteMember(
 @Composable
 fun SearchMember(
     member : MemberDto = MemberDto(nickname = "임시유저", profileImg = null),
-    isCheck : Boolean = false,
     onCheckedChange : (Member) -> Unit,
 ) {
 
@@ -188,49 +190,52 @@ fun SearchMember(
             .clickable {
                 val checked = Member(
                     member.nickname,
-                    member.profileImg
+                    member.profileImg,
+                    false
                 )
                 onCheckedChange(checked)
             }
     )
     {
-        if(member.profileImg != null ) {
-            AsyncImage(
-                model = ImageRequest.Builder(LocalContext.current)
-                    .data(member.profileImg)
-                    .build(),
-                contentDescription = "ImageRequest example",
-                modifier = Modifier
-                    .clip(CircleShape)
-                    .size(65.dp),
-                contentScale = ContentScale.Crop,
-                error = painterResource(id = R.drawable.account_circle)
-            )
-        } else {
-            Image(
-                painter = painterResource(id = R.drawable.baseline_account_circle_24),
-                contentDescription = "ImageRequest example",
-                modifier = Modifier
-                    .clip(CircleShape)
-                    .size(65.dp)
-            )
-        }
+//        if(member.profileImg != null ) {
+//            AsyncImage(
+//                model = ImageRequest.Builder(LocalContext.current)
+//                    .data(member.profileImg)
+//                    .build(),
+//                contentDescription = "ImageRequest example",
+//                modifier = Modifier
+//                    .clip(CircleShape)
+//                    .size(50.dp),
+//                contentScale = ContentScale.Crop,
+//                error = painterResource(id = R.drawable.baseline_account_circle_24)
+//            )
+//        }
+//        else {
+//            Image(
+//                painter = painterResource(id = R.drawable.baseline_account_circle_24),
+//                contentDescription = "ImageRequest example",
+//                modifier = Modifier
+//                    .clip(CircleShape)
+//                    .size(65.dp)
+//            )
+//        }
+        AsyncImage(
+            model = ImageRequest.Builder(LocalContext.current)
+                .data(member.profileImg)
+                .build(),
+            contentDescription = "ImageRequest example",
+            modifier = Modifier
+                .clip(CircleShape)
+                .size(48.dp),
+            contentScale = ContentScale.Crop,
+            error = painterResource(id = R.drawable.baseline_account_circle_24)
+        )
         Text(
             text = member.nickname,
             fontSize = 17.sp,
             modifier = Modifier
                 .fillMaxWidth(1f)
                 .padding(start = 10.dp)
-        )
-        Checkbox(
-            checked = isCheck,
-            onCheckedChange = {
-                val checked = Member(
-                    member.nickname,
-                    member.profileImg
-                )
-                onCheckedChange(checked)
-            }
         )
     }
 }

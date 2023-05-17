@@ -575,7 +575,8 @@ fun GroupScreen(
                  */
                 GroupInvite(
                     navController = navController,
-                    members = members ?: mutableListOf()
+                    members = members ?: mutableListOf(),
+                    viewModel = viewModel
                 )
             }
             if (isClosed.value) {
