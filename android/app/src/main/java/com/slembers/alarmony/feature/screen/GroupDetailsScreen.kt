@@ -180,7 +180,10 @@ fun GroupDetailsScreen(
                     ),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
+
+                /** 알람 시간 **/
                 GroupDetailsTitle(alarm.value)
+                /** 오늘의 현황 **/
                 GroupDetailsBoard(
                     items = record.value,
                     groupId = alarmId!!,
