@@ -196,7 +196,7 @@ fun GroupScreen(
     val title by viewModel.title.observeAsState()
 
 
-   var title2 = remember { mutableStateOf("") }
+    var title2 = remember { mutableStateOf("") }
 //    val timePickerState by viewModel.alarmTime.observeAsState()
     val hour by viewModel.hour.observeAsState()
     val minute by viewModel.minute.observeAsState()
@@ -213,7 +213,7 @@ fun GroupScreen(
     val context = LocalContext.current
 
     var alarmTitle by remember { mutableStateOf(title ?: "") }
-    var alarmContent  by remember { mutableStateOf(content ?: "") }
+    var alarmContent by remember { mutableStateOf(content ?: "") }
 
     // 초대된 그룹원 확인
     val checkedMember =
@@ -370,18 +370,6 @@ fun GroupScreen(
                                 viewModel.updateTimePicker(snappedTime.hour, snappedTime.minute)
                             }
                         } // 알람 시간 CardBox
-
-//                        TimeInput(
-//                            state = timePickerState!!,
-//                            modifier = Modifier
-//                                .padding(
-//                                    start = 20.dp,
-//                                    top = 10.dp,
-//                                    bottom = 0.dp,
-//                                    end = 0.dp
-//                                )
-//                                .focusable(true, interaction)
-//                        )
                     }
                 )
                 CardBox(
@@ -452,7 +440,6 @@ fun GroupScreen(
                     }
                 ) //요일 선택 카드 박스
 
-
                 /**
                  * 알람 설정 Card
                  */
@@ -486,8 +473,9 @@ fun GroupScreen(
                                 BasicTextField(value = alarmTitle,
                                     onValueChange = {
                                         alarmTitle = it
-                                        Log.d("확인","[생성화면] ${alarmTitle}")
-                                        viewModel.onChangeTitle(it)},
+                                        Log.d("확인", "[생성화면] ${alarmTitle}")
+                                        viewModel.onChangeTitle(it)
+                                    },
                                     Modifier.fillMaxWidth(),
                                     singleLine = true,
                                     decorationBox = { innerTextField ->
@@ -495,7 +483,10 @@ fun GroupScreen(
                                             modifier = Modifier
                                                 .padding(start = 22.dp) // margin left and right
                                                 .fillMaxWidth()
-                                                .padding(horizontal = 10.dp, vertical = 12.dp), // inner padding
+                                                .padding(
+                                                    horizontal = 10.dp,
+                                                    vertical = 12.dp
+                                                ), // inner padding
                                         ) {
                                             if (alarmTitle.isEmpty()) {
                                                 Text(
@@ -511,12 +502,7 @@ fun GroupScreen(
 
                                 )
                             }
-                            /*  GroupVolume(
-                                  volume = soundVolume ?: 7f,
-                                  setVolume = { viewModel.onChangeVolume(it) }
-                              )*/
                             CardDivider()
-
                             /** 알람 소개 **/
                             Row(
                                 modifier = Modifier
@@ -533,8 +519,9 @@ fun GroupScreen(
                                 BasicTextField(value = alarmContent,
                                     onValueChange = {
                                         alarmContent = it
-                                        Log.d("확인","[생성화면] ${alarmContent}")
-                                        viewModel.onChangeContent(it)},
+                                        Log.d("확인", "[생성화면] ${alarmContent}")
+                                        viewModel.onChangeContent(it)
+                                    },
                                     Modifier.fillMaxWidth(),
                                     singleLine = true,
                                     decorationBox = { innerTextField ->
@@ -542,7 +529,10 @@ fun GroupScreen(
                                             modifier = Modifier
                                                 .padding(start = 10.dp) // margin left and right
                                                 .fillMaxWidth()
-                                                .padding(horizontal = 10.dp, vertical = 12.dp), // inner padding
+                                                .padding(
+                                                    horizontal = 10.dp,
+                                                    vertical = 12.dp
+                                                ), // inner padding
                                         ) {
                                             if (alarmContent.isEmpty()) {
                                                 Text(
@@ -581,172 +571,12 @@ fun GroupScreen(
                     }
                 )
                 /**
-                 * ???
-                 */
-    /*            CardBox(
-                    title = { CardTitle(title = "???") },
-                    content = {
-                        Column(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(
-                                    start = 20.dp,
-                                    top = 0.dp,
-                                    bottom = 0.dp,
-                                    end = 20.dp
-                                ),
-                        ) {
-                            CardDivider()
-                            Row(
-                                modifier = Modifier
-                                    .padding(5.dp),
-                                verticalAlignment = Alignment.CenterVertically,
-                            ) {
-                                Row(horizontalArrangement = Arrangement.Start) {
-                                    Text(
-                                        "알람명",
-                                        textAlign = TextAlign.Start
-                                    )
-                                }
-                                Spacer(modifier = Modifier.weight(1f))
-                                BasicTextField(value = alarmTitle,
-                                    onValueChange = {
-                                        alarmTitle = it
-                                        Log.d("확인","[생성화면] ${alarmTitle}")
-                                        viewModel.onChangeTitle(it)},
-                                    Modifier.fillMaxWidth(),
-                                    singleLine = true,
-                                    decorationBox = { innerTextField ->
-                                        Box(
-                                            modifier = Modifier
-                                                .padding(start = 22.dp) // margin left and right
-                                                .fillMaxWidth()
-                                                .padding(horizontal = 10.dp, vertical = 12.dp), // inner padding
-                                        ) {
-                                            if (alarmTitle.isEmpty()) {
-                                                Text(
-                                                    text = "알람명",
-                                                    fontSize = 14.sp,
-                                                    fontWeight = FontWeight.Normal,
-                                                    color = Color.LightGray
-                                                )
-                                            }
-                                            innerTextField()
-                                        }
-                                    }
-
-                                )
-                            }
-                            *//*  GroupVolume(
-                                  volume = soundVolume ?: 7f,
-                                  setVolume = { viewModel.onChangeVolume(it) }
-                              )*//*
-                            CardDivider()
-
-
-
-
-
-                            *//*   GroupSound(
-                                   navController = navController,
-                                   sound = soundName?.soundName,
-                               )*//*
-                            //CardDivider()
-
-                            *//** 초대하기 **//*
-
-                            *//*   GroupTypeButton(
-                                   isVibrate = vibration ?: true,
-                                   viewModel = viewModel
-                               )*//*
-                        }
-                    }
-                )
-*/
-
-
-                /*
-                                GroupCard(
-                                    content = {
-
-                                    }
-                                )*/
-
-                /** 알람 설명 **/
-
-        /*        GroupCard(
-                    content = {
-                        OutlinedTextField(
-                            value = content!!,
-                            onValueChange = { viewModel.onChangeContent(it) },
-                            textStyle = TextStyle(
-                                color = Color.Black,
-                                fontSize = 20.sp,
-                                fontFamily = FontFamily.Monospace,
-                                fontStyle = FontStyle.Normal
-                            ),
-                            colors = OutlinedTextFieldDefaults.colors(
-                                focusedBorderColor = "#FFFFFF".toColor().copy(alpha = 0.5f),
-                                unfocusedBorderColor = "#FFFFFF".toColor()
-                                    .copy(alpha = 0.5f)
-                            ),
-                            modifier = Modifier
-                                .padding(
-                                    start = 20.dp,
-                                    top = 0.dp,
-                                    bottom = 0.dp,
-                                    end = 10.dp
-                                )
-                                .fillMaxWidth()
-                                .border(
-                                    BorderStroke(
-                                        1.dp,
-                                        MaterialTheme.colorScheme.background
-                                    ),
-                                    MaterialTheme.shapes.extraSmall
-                                ),
-                            placeholder = {
-                                if (content?.isEmpty()!!) {
-                                    Text(
-                                        text = "그룹설명을 작성해주세요..",
-                                        modifier = Modifier.fillMaxWidth(1f),
-                                        fontSize = 18.sp,
-                                        fontWeight = FontWeight.Normal,
-                                        color = Color.LightGray
-                                    )
-                                }
-                            }
-                        )
-                    }
-                )*/
-
-
-                /**
                  * 그룹초대
                  */
                 GroupInvite(
                     navController = navController,
                     members = members ?: mutableListOf()
                 )
-
-
-                /*   GroupSound(
-                       navController = navController,
-                       sound = soundName?.soundName,
-                   )*/
-
-
-                /*     GroupTypeButton(
-                         isVibrate = vibration ?: true,
-                         viewModel = viewModel
-                     )*/
-
-                /*
-                      GroupVolume(
-                          volume = soundVolume ?: 7f,
-                          setVolume = { viewModel.onChangeVolume(it) }
-                      )*/
-
             }
             if (isClosed.value) {
                 CommonDialog(
@@ -761,59 +591,4 @@ fun GroupScreen(
     if (loading) {
         AnimationRotation()
     }
-}
-
-@Composable
-fun SimpleTextField(
-    value: String,
-    onValueChange: (String) -> Unit,
-    modifier: Modifier = Modifier,
-    enabled: Boolean = true,
-    readOnly: Boolean = false,
-    textStyle: TextStyle = LocalTextStyle.current,
-    leadingIcon: @Composable (() -> Unit)? = null,
-    trailingIcon: @Composable (() -> Unit)? = null,
-    visualTransformation: VisualTransformation = VisualTransformation.None,
-    keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
-    keyboardActions: KeyboardActions = KeyboardActions(),
-    singleLine: Boolean = false,
-    maxLines: Int = Int.MAX_VALUE,
-    interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
-    placeholderText: String = "",
-    fontSize: Dp = 15.dp,
-    onTextLayout: (TextLayoutResult) -> Unit = {},
-    cursorBrush: Brush = SolidColor(Color.Black),
-) {
-    BasicTextField(modifier = modifier
-        .fillMaxWidth(),
-        value = value,
-        onValueChange = onValueChange,
-        singleLine = singleLine,
-        maxLines = maxLines,
-        enabled = enabled,
-        readOnly = readOnly,
-        interactionSource = interactionSource,
-        textStyle = textStyle,
-        visualTransformation = visualTransformation,
-        keyboardOptions = keyboardOptions,
-        keyboardActions = keyboardActions,
-        onTextLayout = onTextLayout,
-        cursorBrush = cursorBrush,
-        decorationBox = { innerTextField ->
-            Row(
-                modifier,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                if (leadingIcon != null) leadingIcon()
-                Box(Modifier.weight(1f)) {
-                    if (value.isEmpty()) Text(
-                        placeholderText,
-                        style = textStyle
-                    )
-                    innerTextField()
-                }
-                if (trailingIcon != null) trailingIcon()
-            }
-        }
-    )
 }
