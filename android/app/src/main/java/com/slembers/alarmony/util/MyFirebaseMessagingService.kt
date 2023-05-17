@@ -1,6 +1,5 @@
 package com.slembers.alarmony.util
 
-import android.app.Activity
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
@@ -18,12 +17,12 @@ import com.slembers.alarmony.MainActivity
 import com.slembers.alarmony.R
 import com.slembers.alarmony.feature.alarm.AlarmDatabase
 import com.slembers.alarmony.feature.alarm.AlarmDto
+import com.slembers.alarmony.feature.alarm.deleteAllAlarms
 import com.slembers.alarmony.feature.alarm.deleteAlarm
 import com.slembers.alarmony.feature.notification.NotiDto
-import com.slembers.alarmony.feature.notification.deleteNoti
+import com.slembers.alarmony.feature.notification.deleteAllNotis
 import com.slembers.alarmony.feature.sendAlarm.SendAlarmForegroundService
 import com.slembers.alarmony.feature.notification.saveNoti
-import com.slembers.alarmony.feature.screen.MemberActivity
 import com.slembers.alarmony.network.repository.MemberService
 import com.slembers.alarmony.util.Constants.FIRE_ALARM
 import com.slembers.alarmony.util.Constants.OPEN_TYPE
@@ -56,6 +55,15 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
         super.onMessageReceived(remoteMessage)
 
+        MainActivity.prefs = PresharedUtil(application)
+        Log.d("파이어베이스","메시지 도착함")
+        Log.d("remoteMessage", remoteMessage.toString())
+        Log.d("remoteMessage", remoteMessage.data.toString())
+
+        if (MainActivity.prefs == null || MainActivity.prefs.getString("accessToken","").isBlank()) {
+            Log.d("LOGOUTED","로그아웃 상태라 FCM 요청이 거절되었습니다.")
+            return
+        }
         // 알람 배달
         if (remoteMessage.data?.get("type").equals("ALARM")) {
             Log.i("디버깅", "알람 울려라!!!!!!!!!!!!!!!!!!!!!!!!!!");
@@ -75,8 +83,31 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
                 }
             }
 
-        // 그룹장 회원탈퇴로 인한 그룹삭제
-        } else if (remoteMessage.data?.get("type").equals("DELETE") ||
+
+        } else if (remoteMessage.data?.get("type").equals("AUTO_LOGOUT")) {
+            Log.d("자동로그아웃", "분기 입장");
+            remoteMessage.data["content"] = "다른 기기에서 로그인하여 로그아웃 처리 되었습니다."
+//            sendNotification(remoteMessage)
+            sendDeletedNotification(remoteMessage)
+            CoroutineScope(Dispatchers.IO).launch {
+                val context = this@MyFirebaseMessagingService
+                Log.d("자동로그아웃", "자동 로그아웃되야 함");
+                showToast(context,"다른 기기에서 접속하여 로그아웃 처리됩니다.")
+                deleteAllAlarms(context)
+                deleteAllNotis(context)
+                val result = MemberService.logOut()
+                if (result) {
+                    val intent = Intent(applicationContext, MainActivity::class.java)
+                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                    applicationContext.startActivity(intent)
+
+//                    loading.value = false
+                }
+//                loading.value = false
+            }
+        }
+
+        else if (remoteMessage.data?.get("type").equals("DELETE") ||
                         remoteMessage.data?.get("type").equals("BANN")) {
             Log.d("myResponse", remoteMessage.toString())
             Log.d("myResponse", remoteMessage.data.toString())
@@ -148,6 +179,39 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
             else {
                 NotificationManager.IMPORTANCE_DEFAULT
             }
+        // 오레오 버전 이후에는 채널이 필요
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
+            val channel = NotificationChannel(channelId, "Notice", notiImfortance)
+            notificationManager.createNotificationChannel(channel)
+        }
+        // 알림 생성
+        notificationManager.notify(uniId, notificationBuilder.build())
+    }
+    private fun sendDeletedNotification(remoteMessage: RemoteMessage){
+        // RemoteCode, ID를 고유값으로 지정하여 알림이 개별 표시 되도록 함
+        val uniId: Int = (System.currentTimeMillis() / 7).toInt()
+        val intent = Intent(this, MainActivity::class.java)
+        intent.putExtra("GO", "Noti")
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+        val pendingIntent = PendingIntent.getActivity(this, uniId, intent, PendingIntent.FLAG_MUTABLE)
+
+        // 알림 채널 이름
+        val channelId = "AlarmonyNotification"
+        // 알림 소리
+        val notiUrl = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
+
+        // 알림에 대한 UI 정보와 작업을 지정
+        val notificationBuilder = NotificationCompat.Builder(this, channelId)
+            .setSmallIcon(R.drawable.mas)     // 아이콘 설정
+            .setContentTitle("alarmony")     // 제목
+            .setContentText(remoteMessage.data["content"].toString())     // 메시지 내용
+            .setAutoCancel(true)
+            .setSound(notiUrl)     // 알림 소리
+            .setContentIntent(pendingIntent)       // 알림 실행 시 Intent
+
+        val notificationManager =
+            getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        val notiImfortance = NotificationManager.IMPORTANCE_HIGH
         // 오레오 버전 이후에는 채널이 필요
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
             val channel = NotificationChannel(channelId, "Notice", notiImfortance)

@@ -13,6 +13,7 @@ import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import com.slembers.alarmony.R
+import com.slembers.alarmony.feature.alarm.AlarmActivity
 import com.slembers.alarmony.feature.alarm.AlarmDatabase
 import com.slembers.alarmony.feature.alarm.AlarmDto
 import com.slembers.alarmony.feature.alarm.AlarmRepository
@@ -23,41 +24,32 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class SendAlarmForegroundService : Service() {
-    private lateinit var repository: AlarmRepository
     override fun onBind(intent: Intent): IBinder? {
         return null
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int) : Int {
-        if (intent == null) {
-            Log.e("NullPointException", "intent is null")
-            return START_NOT_STICKY
-        } else {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
-                startForeground(
-                    intent.getStringExtra(
-                        Constants.OPEN_TYPE
-                    )!!
-                ) else
-                startForeground(
-                    1,
-                    Notification()
-                )
-            val alarmId = intent.getLongExtra("alarmId", -1L)
-            CoroutineScope(Dispatchers.IO).launch {
-                val alarmDao = AlarmDatabase.getInstance(application).alarmDao()
-                repository = AlarmRepository(alarmDao)
-                val alarm = repository.findAlarm(alarmId = alarmId)
-                val alarmDto = AlarmDto.toDto(alarm!!)
-                startAlarm(alarmDto!!)
-            }
-            return START_STICKY
-        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
+            startForeground(
+                intent!!.getStringExtra(
+                    Constants.OPEN_TYPE
+                )!!
+            ) else
+            startForeground(
+                1,
+                Notification()
+            )
+        val alarmId = intent!!.getLongExtra("alarmId", -1L)
+        startAlarm(alarmId)
+        return START_STICKY
     }
-    private fun startAlarm(alarmDto: AlarmDto) {
+
+    private fun startAlarm(alarmId: Long) {
         CoroutineScope(Dispatchers.Main).launch {
-            val newIntent = Intent(applicationContext, SendAlarmActivity::class.java)
-            newIntent.putExtra("alarmId", alarmDto.alarmId)
+            Log.d("myResponse-startSendAlarm", "startSendAlarm 알람 시작")
+            val newIntent = Intent(applicationContext, AlarmActivity::class.java)
+            newIntent.putExtra("alarmId", alarmId)
             newIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             startActivity(newIntent)
             delay(2000)

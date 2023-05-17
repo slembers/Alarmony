@@ -63,7 +63,7 @@ fun GroupInvite(
                 Icon(
                     painter = painterResource(id = R.drawable.arrow_forward),
                     contentDescription = null,
-                    modifier = Modifier.padding(2.dp)
+                    modifier = Modifier.padding(2.dp).size(14.dp)
                 )
             },
             onClick = { navController.navigate( route = NavItem.GroupInvite.route ) }
@@ -80,7 +80,7 @@ fun GroupInvite(
                             start = 20.dp,
                             top = 0.dp,
                             bottom = 0.dp,
-                            end = 10.dp
+                            end = 20.dp
                         ),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(2.dp),

@@ -91,7 +91,7 @@ fun Findpswd(navController: NavController) {
                             .fillMaxWidth()
                             .wrapContentSize(Alignment.Center),
                         fontWeight = FontWeight.Bold,
-                        fontSize = 17.sp
+                        fontSize = 20.sp
                     )
                 },
                 navigationIcon = {
@@ -190,7 +190,7 @@ fun FindEmailTextField(
             .fillMaxWidth(),
         keyboardActions = keyboardActions,
         keyboardOptions = KeyboardOptions(
-            keyboardType = KeyboardType.Email,
+            keyboardType = KeyboardType.Password,
             imeAction = imeAction
         ),
     )

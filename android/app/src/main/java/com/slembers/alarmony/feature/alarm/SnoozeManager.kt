@@ -122,7 +122,7 @@ fun setSnoozeAlarm(context: Context, alarmDto: AlarmDto, snoozeType: Int) {
     val myPendingIntent : Int = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
         PendingIntent.FLAG_MUTABLE
     } else {
-        PendingIntent.FLAG_MUTABLE
+        PendingIntent.FLAG_UPDATE_CURRENT
     }
     val alarmIntentRTC: PendingIntent =
         PendingIntent.getBroadcast(

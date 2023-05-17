@@ -3,18 +3,21 @@ package com.slembers.alarmony.feature.ui.profilesetting
 import android.app.Activity
 import android.content.Intent
 import android.net.Uri
+import android.os.Build
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.ExperimentalMaterialApi
@@ -40,7 +43,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
@@ -50,8 +55,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.slembers.alarmony.MainActivity
+import com.slembers.alarmony.R
 import com.slembers.alarmony.feature.alarm.deleteAllAlarms
 import com.slembers.alarmony.feature.common.NavItem
 import com.slembers.alarmony.feature.common.ui.theme.toColor
@@ -60,6 +68,8 @@ import com.slembers.alarmony.feature.screen.MemberActivity
 import com.slembers.alarmony.feature.ui.common.AnimationRotation
 import com.slembers.alarmony.network.repository.MemberService
 import com.slembers.alarmony.util.UriUtil
+import com.slembers.alarmony.util.hasWriteExternalStoragePermission
+import com.slembers.alarmony.util.requestWriteExternalStoragePermission
 import com.slembers.alarmony.util.showToast
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -148,7 +158,26 @@ fun SettingView(
     ) {
         ListItem(
             leadingContent = {
-                ProfileImageView(profileImage = profileImage.value)
+                Box(
+                    modifier = Modifier
+                        .size(100.dp)
+                        .clip(CircleShape)
+                ) {
+                    AsyncImage(
+                        model = ImageRequest.Builder(LocalContext.current)
+                            .data(
+                                if (profileImage.value.length > 4) {
+                                    profileImage.value
+                                } else {
+                                    R.drawable.profiledefault
+                                }
+                            )
+                            .build(),
+                        contentDescription = "ImageRequest example",
+                        modifier = Modifier.fillMaxWidth(),
+                        contentScale = ContentScale.Crop
+                    )
+                }
             },
             headlineContent = {
                 Text(
@@ -160,11 +189,22 @@ fun SettingView(
             },
             supportingContent = {
                 Text(
-                    text = "Change your profile Image",
+                    text = "프로필 변경",
                     fontSize = 13.sp,
                     style = MaterialTheme.typography.subtitle2.copy(color = Color.Blue),
                     modifier = Modifier
-                        .clickable { launcher.launch("image/*") },
+                        .clickable {
+                            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                                launcher.launch("image/*")
+                            }
+                            else { // 티라미수 미만 버전은 ExternalStorage 접근권한을 유저한테 요청해야함
+                                if (hasWriteExternalStoragePermission(context)) {
+                                    launcher.launch("image/*")
+                                } else {
+                                    requestWriteExternalStoragePermission()
+                                }
+                            }
+                   },
                 )
             },
             modifier = Modifier.padding(16.dp),
@@ -183,10 +223,7 @@ fun SettingView(
             },
             headlineContent = { Text("이메일") },
             supportingContent = {
-                Text(
-                    text = email.value,
-                    modifier = Modifier.size(20.dp)
-                )
+                Text(text = email.value,)
             },
             modifier = Modifier,
             colors = ListItemDefaults.colors("#F9F9F9".toColor())
