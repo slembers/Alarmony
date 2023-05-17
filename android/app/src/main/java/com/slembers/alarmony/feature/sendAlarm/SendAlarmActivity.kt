@@ -9,6 +9,7 @@ import android.icu.util.Calendar
 import android.os.Build
 import android.os.Bundle
 import android.os.PowerManager
+import android.util.Log
 import android.view.WindowManager
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -78,6 +79,7 @@ class SendAlarmActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
 
         super.onCreate(savedInstanceState)
+        Log.d("myResponse", "sendAlarmActivity 실행")
         val alarmId = intent.getLongExtra("alarmId", -1L)
         val alarmDao = AlarmDatabase.getInstance(this).alarmDao()
         CoroutineScope(Dispatchers.IO).launch {
@@ -156,7 +158,7 @@ fun SendAlarmScreen(alarmDto : AlarmDto) {
                     Button(
                         onClick = {
                             cancelSendAlarmNotification()
-                            context.finish()
+                            context.finishAffinity()
                             goMain(context)
                         },
                         shape = CircleShape,
@@ -164,7 +166,7 @@ fun SendAlarmScreen(alarmDto : AlarmDto) {
                         modifier = Modifier
                             .padding(5.dp)
                             .size(130.dp),
-                        colors = ButtonDefaults.buttonColors("#7ADBEF".toColor())
+                        colors = ButtonDefaults.buttonColors("#7DC3F2".toColor())
                     ) {
                         Icon(
                             imageVector = Icons.Rounded.Stop,
@@ -222,8 +224,12 @@ fun DrawCircle(alarmDto : AlarmDto) {
     )
 
     val motionColor by infiniteTransition.animateColor(
-        initialValue = "#0f5e9c".toColor(),
-        targetValue ="#2389da".toColor(),
+//        다홍
+        initialValue = "#b32d61".toColor(),
+
+//        targetValue = Color.White,
+//      회색
+        targetValue ="#d2d5e4".toColor(),
         animationSpec = infiniteRepeatable(
 //            animation = spring(),
             animation = tween(durationMillis = 1000),
@@ -232,7 +238,11 @@ fun DrawCircle(alarmDto : AlarmDto) {
     )
 
     val motionColor2 by infiniteTransition.animateColor(
-        initialValue = "#1ca3ec".toColor(),
+//        회색
+        initialValue = "#d2d5e4".toColor(),
+
+//        targetValue = Color.White,
+//      흰색
         targetValue = Color.White,
         animationSpec = infiniteRepeatable(
 //            animation = spring(),
@@ -246,7 +256,7 @@ fun DrawCircle(alarmDto : AlarmDto) {
     ) {
         val outerRadius = size.width / 2
         drawCircle(
-            color = Color.White.copy(alpha = innerCircle - 0.15f),
+            color = motionColor.copy(alpha = innerCircle - 0.15f),
             radius = innerSize,
             center = center,
             style = Stroke(width = 20.dp.toPx())

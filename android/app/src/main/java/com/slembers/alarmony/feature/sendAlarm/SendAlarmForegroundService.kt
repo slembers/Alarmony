@@ -48,9 +48,9 @@ class SendAlarmForegroundService : Service() {
     private fun startAlarm(alarmId: Long) {
         CoroutineScope(Dispatchers.Main).launch {
             Log.d("myResponse-startSendAlarm", "startSendAlarm 알람 시작")
-            val newIntent = Intent(applicationContext, AlarmActivity::class.java)
+            val newIntent = Intent(applicationContext, SendAlarmActivity::class.java)
             newIntent.putExtra("alarmId", alarmId)
-            newIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            newIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
             startActivity(newIntent)
             delay(2000)
             stopForeground(true)
