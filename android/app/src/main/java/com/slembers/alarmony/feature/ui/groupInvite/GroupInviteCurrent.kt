@@ -144,8 +144,8 @@ fun GroupDefalutProfile(
 ) {
     BoxWithConstraints(
         modifier = Modifier
-            .width(60.dp)
-            .height(70.dp)
+            .width(48.dp)
+            .height(60.dp)
     ) {
         val maxWidth = this.maxWidth
         Column(
@@ -160,27 +160,39 @@ fun GroupDefalutProfile(
                     .weight(1f)
                     .padding(0.dp),
                 content = {
-                    if(member?.profileImg == null) {
-                        Image(
-                            modifier = Modifier
-                                .matchParentSize()
-                                .align(Alignment.Center),
-                            painter = painterResource(id = R.drawable.baseline_account_circle_24),
-                            contentDescription = null)
-                    } else {
-                        AsyncImage(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .clip(CircleShape)
-                                .align(Alignment.Center),
-                            model = ImageRequest.Builder(LocalContext.current)
-                                .data(member.profileImg)
-                                .build(),
-                            contentDescription = member.nickname,
-                            contentScale = ContentScale.Crop,
-                            error = painterResource(id = R.drawable.baseline_account_circle_24)
-                        )
-                    }
+//                    if(member?.profileImg == null) {
+//                        Image(
+//                            modifier = Modifier
+//                                .matchParentSize()
+//                                .align(Alignment.Center),
+//                            painter = painterResource(id = R.drawable.baseline_account_circle_24),
+//                            contentDescription = null)
+//                    } else {
+//                        AsyncImage(
+//                            modifier = Modifier
+//                                .fillMaxSize()
+//                                .clip(CircleShape)
+//                                .align(Alignment.Center),
+//                            model = ImageRequest.Builder(LocalContext.current)
+//                                .data(member.profileImg)
+//                                .build(),
+//                            contentDescription = member.nickname,
+//                            contentScale = ContentScale.Crop,
+//                            error = painterResource(id = R.drawable.baseline_account_circle_24)
+//                        )
+//                    }
+                    AsyncImage(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .clip(CircleShape)
+                            .align(Alignment.Center),
+                        model = ImageRequest.Builder(LocalContext.current)
+                            .data(member?.profileImg)
+                            .build(),
+                        contentDescription = member?.nickname,
+                        contentScale = ContentScale.Crop,
+                        error = painterResource(id = R.drawable.baseline_account_circle_24)
+                    )
                     if(!member!!.isNew) {
                         Box(
                             modifier = Modifier

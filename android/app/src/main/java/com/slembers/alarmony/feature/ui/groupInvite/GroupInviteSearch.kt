@@ -130,7 +130,9 @@ fun SearchInviteMember(
                     }
                 )
 
-                LazyColumn() {
+                LazyColumn(
+                    verticalArrangement = Arrangement.spacedBy(5.dp)
+                ) {
                     items(searchMembers.value ?: mutableListOf()) {
                         val member = Member(
                             nickname = it.nickname,
@@ -178,27 +180,39 @@ fun SearchMember(
             }
     )
     {
-        if(member.profileImg != null ) {
-            AsyncImage(
-                model = ImageRequest.Builder(LocalContext.current)
-                    .data(member.profileImg)
-                    .build(),
-                contentDescription = "ImageRequest example",
-                modifier = Modifier
-                    .clip(CircleShape)
-                    .size(65.dp),
-                contentScale = ContentScale.Crop,
-                error = painterResource(id = R.drawable.account_circle)
-            )
-        } else {
-            Image(
-                painter = painterResource(id = R.drawable.baseline_account_circle_24),
-                contentDescription = "ImageRequest example",
-                modifier = Modifier
-                    .clip(CircleShape)
-                    .size(65.dp)
-            )
-        }
+//        if(member.profileImg != null ) {
+//            AsyncImage(
+//                model = ImageRequest.Builder(LocalContext.current)
+//                    .data(member.profileImg)
+//                    .build(),
+//                contentDescription = "ImageRequest example",
+//                modifier = Modifier
+//                    .clip(CircleShape)
+//                    .size(50.dp),
+//                contentScale = ContentScale.Crop,
+//                error = painterResource(id = R.drawable.baseline_account_circle_24)
+//            )
+//        }
+//        else {
+//            Image(
+//                painter = painterResource(id = R.drawable.baseline_account_circle_24),
+//                contentDescription = "ImageRequest example",
+//                modifier = Modifier
+//                    .clip(CircleShape)
+//                    .size(65.dp)
+//            )
+//        }
+        AsyncImage(
+            model = ImageRequest.Builder(LocalContext.current)
+                .data(member.profileImg)
+                .build(),
+            contentDescription = "ImageRequest example",
+            modifier = Modifier
+                .clip(CircleShape)
+                .size(48.dp),
+            contentScale = ContentScale.Crop,
+            error = painterResource(id = R.drawable.baseline_account_circle_24)
+        )
         Text(
             text = member.nickname,
             fontSize = 17.sp,
