@@ -34,9 +34,10 @@ interface GroupRepositroy {
         @Body members : HashMap<String, List<String>>
     ) : Response<Unit>
 
-    @GET("groups/{groupId}/records")
+    @GET("groups/{groupId}/records/{todayDateTime}")
     suspend fun getGroupRecord(
-        @Path("groupId") groupId : Long
+        @Path("groupId") groupId : Long,
+        @Path("todayDateTime") todayDateTime : String,
     ) : Response<RecordListDto>
 
     @DELETE("groups/{groupId}")

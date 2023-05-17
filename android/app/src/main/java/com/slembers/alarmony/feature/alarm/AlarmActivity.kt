@@ -273,6 +273,7 @@ fun AlarmScreen(alarmDto : AlarmDto) {
                             val dateTime = LocalDateTime.now()
                             val formatter = DateTimeFormatter.ISO_DATE_TIME
                             val formattedDateTime = dateTime.format(formatter)
+                            Log.d("RecordTime",formattedDateTime)
                             recordAlarmApi(formattedDateTime, alarmDto.alarmId) // 알람 정지 시 기록 api
                             cancelNotification()
                             timer.cancel()

@@ -74,12 +74,15 @@ public class AlarmRecord {
      * 알람 종료 실패로 기록한다.
      * @param alarmTime 알람 시간
      */
-    public void recordFailed(LocalTime alarmTime) {
+    public void recordFailed(LocalTime alarmTime, LocalDateTime recordTime) {
         this.message = "";
         // 최대 스누즈 시간 일단 30분으로 설정
         long maxSnooze = 3600;
         this.totalCount++;
-        this.todayAlarmRecord = LocalDateTime.of(LocalDate.now(),alarmTime.plusSeconds(maxSnooze));
+        this.todayAlarmRecord = LocalDateTime.of(
+                LocalDate.of(recordTime.getYear(),recordTime.getMonth(),recordTime.getDayOfMonth()),
+                alarmTime.plusSeconds(maxSnooze)
+        );
         totalWakeUpTime += maxSnooze;
 
     }

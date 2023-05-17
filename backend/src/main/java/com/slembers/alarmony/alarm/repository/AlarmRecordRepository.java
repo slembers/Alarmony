@@ -4,6 +4,7 @@ import com.slembers.alarmony.alarm.dto.AlarmRecordDto;
 import com.slembers.alarmony.alarm.dto.MemberRankingDto;
 import com.slembers.alarmony.alarm.entity.AlarmRecord;
 import com.slembers.alarmony.alarm.entity.MemberAlarm;
+import java.time.LocalDateTime;
 import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -41,13 +42,13 @@ public interface AlarmRecordRepository extends JpaRepository<AlarmRecord, Long> 
      * @return 알람 기록
      */
     @Query("SELECT new com.slembers.alarmony.alarm.dto.AlarmRecordDto(m.nickname, m.profileImgUrl, "
-        + "CASE WHEN DATE(ar.todayAlarmRecord) = DATE(NOW()) THEN true ELSE false END, "
-        + "CASE WHEN DATE(ar.todayAlarmRecord) <> DATE(NOW()) THEN ar.message ELSE NULL END) "
+        + "CASE WHEN DATE(ar.todayAlarmRecord) = DATE(:todayTime) THEN true ELSE false END, "
+        + "CASE WHEN DATE(ar.todayAlarmRecord) <> DATE(:todayTime) THEN ar.message ELSE NULL END) "
         + "FROM member_alarm AS ma "
         + "INNER JOIN member AS m ON ma.member.id = m.id "
         + "LEFT JOIN alarm_record AS ar ON ma.id = ar.memberAlarm.id "
         + "WHERE ma.alarm.id = :groupId")
-    List<AlarmRecordDto> findTodayAlarmRecordsByAlarmId(Long groupId);
+    List<AlarmRecordDto> findTodayAlarmRecordsByAlarmId(Long groupId, LocalDateTime todayTime);
 
     /**
      * 알람 랭킹 기록을 얻어온다.
