@@ -4,13 +4,18 @@ import android.app.Application
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.AlertDialog
 import androidx.compose.material.icons.Icons
@@ -40,9 +45,12 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -124,7 +132,7 @@ fun NotiListScreen(navController: NavController) {
 fun MyNotiItem(item : Noti, mNotiViewModel: NotiViewModel) {
     val context = LocalContext.current
     val isClicked = remember { mutableStateOf(false)  }
-    val profileImage = if (item.profileImg.length > 0) {item.profileImg}
+    val profileImage = if (item.profileImg.length > 4) {item.profileImg}
     else {R.drawable.profiledefault}
     Card(
         modifier = Modifier
@@ -153,20 +161,29 @@ fun MyNotiItem(item : Noti, mNotiViewModel: NotiViewModel) {
     {
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween,
             modifier = Modifier
                 .padding(start = 2.dp, end = 20.dp, top = 3.dp, bottom = 1.dp)
                 .fillMaxWidth()) {
-            AsyncImage(
-                model = ImageRequest.Builder(LocalContext.current)
-                    .data(profileImage)
-                    .build(),
-                contentDescription = "ImageRequest example",
-                modifier = Modifier.size(65.dp)
-            )
+            Box(
+                modifier = Modifier
+                    .size(65.dp)
+                    .clip(CircleShape)
+            ) {
+                AsyncImage(
+                    model = ImageRequest.Builder(LocalContext.current)
+                        .data(profileImage)
+                        .build(),
+                    contentDescription = "ImageRequest example",
+                    modifier = Modifier.fillMaxWidth(),
+                    contentScale = ContentScale.Crop
+                )
+            }
+            Spacer(modifier = Modifier.width(10.dp  ))
             Text(
                 text = item.content,
-                fontSize = 17.sp
+                fontSize = 17.sp,
+//                maxLines = 1,
+//                overflow = TextOverflow.Ellipsis
             )
         }
         if (isClicked.value) {
@@ -254,6 +271,60 @@ fun GroupNoti(item : Noti, isClicked : MutableState<Boolean>, mNotiViewModel : N
                 }
             }
         )
+    }
+}
+
+
+
+
+@Preview
+@Composable
+fun MyNotiItemPreview() {
+    val profileImage = R.drawable.profiledefault
+    Card(
+        modifier = Modifier
+            .padding(8.dp)
+            .height(70.dp)
+            .shadow(
+                elevation = 5.dp,
+                ambientColor = Color.Black,
+                spotColor = Color.Black,
+                shape = RoundedCornerShape(50.dp)
+            )
+            .background(Color.White)
+            .fillMaxWidth(),
+        shape = RoundedCornerShape(50.dp),
+        colors = CardDefaults.cardColors(containerColor = "#FFFFFF".toColor()))
+
+    {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier
+                .padding(start = 2.dp, end = 20.dp, top = 3.dp, bottom = 1.dp)
+                .fillMaxWidth()) {
+            Box(
+                modifier = Modifier
+                    .size(65.dp)
+                    .clip(CircleShape)
+            ) {
+                AsyncImage(
+                    model = ImageRequest.Builder(LocalContext.current)
+                        .data(profileImage)
+                        .build(),
+                    contentDescription = "ImageRequest example",
+                    modifier = Modifier.size(100.dp)
+                        .clip(CircleShape)
+                )
+            }
+            Spacer(modifier = Modifier.width(10.dp  ))
+            Text(
+                text = "타요님이 그룹 초대를 수락하셨습니다",
+                fontSize = 16.sp,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
+        }
+
     }
 }
 
