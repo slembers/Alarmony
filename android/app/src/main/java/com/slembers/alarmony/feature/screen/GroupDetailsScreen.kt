@@ -144,14 +144,14 @@ fun GroupDetailsScreen(
                             verticalAlignment = Alignment.CenterVertically,
                         ) {
                             if(memberCnt!! >= 2) {
-                                IconButton(onClick = {  }) {
-                                    Icon(
-                                        imageVector = Icons.Outlined.GroupRemove,
-                                        contentDescription = "groupeXile",
-                                        tint = Color.Red,
-                                        modifier = Modifier.size(25.dp)
-                                    )
-                                }
+//                                IconButton(onClick = {  }) {
+//                                    Icon(
+//                                        imageVector = Icons.Outlined.GroupRemove,
+//                                        contentDescription = "groupeXile",
+//                                        tint = Color.Red,
+//                                        modifier = Modifier.size(25.dp)
+//                                    )
+//                                }
                             }
                             IconButton(onClick = { navController.navigate(NavItem.GroupDetailsInvite.route + "/$alarmId") }) {
                                 Icon(
