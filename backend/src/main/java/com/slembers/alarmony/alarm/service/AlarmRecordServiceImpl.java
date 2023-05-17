@@ -71,6 +71,7 @@ public class AlarmRecordServiceImpl implements AlarmRecordService {
             }
             log.info("저장한 시간 : {}",alarmRecord.getTodayAlarmRecord());
             alarmRecordRepository.save(alarmRecord);
+            log.info("저장한 후 시간 : {}",alarmRecord.getTodayAlarmRecord());
         } catch (Exception e) {
             log.error(e.getMessage());
             throw new CustomException(AlarmRecordErrorCode.ALARM_RECORD_RECORD_ERROR);
