@@ -9,8 +9,6 @@ RUN gradle clean build -x test --parallel
 
 FROM openjdk:11-slim
 
-RUN apk add tzdata
-
 COPY --from=builder /build/build/libs/alarmony-0.0.1-SNAPSHOT.jar .
 
 EXPOSE 5000
