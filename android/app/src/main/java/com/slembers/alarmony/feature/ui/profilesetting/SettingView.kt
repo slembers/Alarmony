@@ -168,11 +168,9 @@ fun SettingView(
     Column(
         modifier = modifier,
     ) {
-
         CardBox(
             title = { CardTitle(title = "프로필 설정") },
             content = {
-
                 Column(
                     modifier = Modifier
 //                        .fillMaxWidth()
