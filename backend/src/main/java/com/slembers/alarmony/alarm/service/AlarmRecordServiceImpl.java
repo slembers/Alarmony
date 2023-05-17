@@ -63,12 +63,11 @@ public class AlarmRecordServiceImpl implements AlarmRecordService {
 
         Alarm alarm = alarmService.findAlarmByAlarmId(alarmEndRecordDto.getAlarmId());
         // 서버와 9시간 차이가 나기 때문에 9시간을 빼준다.
-        LocalDateTime toServerTime = alarmEndRecordDto.getDatetime().minusHours(9);
         try {
             if (alarmEndRecordDto.isSuccess()) {
-                alarmRecord.recordSuccess(alarm.getTime(), toServerTime);
+                alarmRecord.recordSuccess(alarm.getTime(), alarmEndRecordDto.getDatetime());
             } else {
-                alarmRecord.recordFailed(alarm.getTime(), toServerTime);
+                alarmRecord.recordFailed(alarm.getTime(), alarmEndRecordDto.getDatetime());
             }
             alarmRecordRepository.save(alarmRecord);
         } catch (Exception e) {
