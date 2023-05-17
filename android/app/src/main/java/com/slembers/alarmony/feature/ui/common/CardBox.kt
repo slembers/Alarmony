@@ -69,15 +69,14 @@ fun DefaultModifier() : Modifier {
 }
 
 @Composable
-fun CardDivider() {
+fun CardDivider(
+    color: Color
+) {
     Divider(
         thickness = 1.dp,
         modifier = Modifier
             .fillMaxWidth()
-            .height(1.dp)
-            .background(
-                color = Color(0xff9A9A9A),
-                shape = MaterialTheme.shapes.extraSmall
-            )
+            .height(1.dp),
+        color = color
     )
 }
