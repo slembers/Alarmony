@@ -21,6 +21,7 @@ import com.slembers.alarmony.feature.report.ReportListScreen
 import com.slembers.alarmony.feature.report.ReportScreen
 import com.slembers.alarmony.feature.screen.AlarmListScreen
 import com.slembers.alarmony.feature.screen.DetailsInviteScreen
+import com.slembers.alarmony.feature.screen.GroupDetailsMemberScreen
 import com.slembers.alarmony.feature.screen.GroupDetailsScreen
 import com.slembers.alarmony.feature.user.AccountMtnc
 import com.slembers.alarmony.viewModel.GroupDetailsViewModel
@@ -110,6 +111,23 @@ fun NavController(
                 alarmId = alarmId
             )
         }
+
+        composable(
+            route = NavItem.GroupDetailsMembers.route + "/{alarmId}",
+            arguments = listOf(
+                navArgument("alarmId") {
+                    type = NavType.LongType
+                }
+            )
+        ) { entry ->
+            val alarmId = entry.arguments?.getLong("alarmId")
+            GroupDetailsMemberScreen(
+                navController = navController,
+                details = details,
+                alarmId = alarmId
+            )
+        }
+
     }
 
     val screen: String? = intent.getStringExtra("GO")

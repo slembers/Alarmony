@@ -144,14 +144,14 @@ fun GroupDetailsScreen(
                             verticalAlignment = Alignment.CenterVertically,
                         ) {
                             if(memberCnt!! >= 2) {
-//                                IconButton(onClick = { navController.navigate(NavItem.GroupDetailsInvite.route + "/$alarmId") }) {
-//                                    Icon(
-//                                        imageVector = Icons.Outlined.GroupRemove,
-//                                        contentDescription = "groupeXile",
-//                                        tint = Color.Red,
-//                                        modifier = Modifier.size(25.dp)
-//                                    )
-//                                }
+                                IconButton(onClick = {  }) {
+                                    Icon(
+                                        imageVector = Icons.Outlined.GroupRemove,
+                                        contentDescription = "groupeXile",
+                                        tint = Color.Red,
+                                        modifier = Modifier.size(25.dp)
+                                    )
+                                }
                             }
                             IconButton(onClick = { navController.navigate(NavItem.GroupDetailsInvite.route + "/$alarmId") }) {
                                 Icon(
@@ -195,7 +195,11 @@ fun GroupDetailsScreen(
                                 .size(15.dp),
                             imageVector = Icons.Filled.BarChart,
                             contentDescription = null
-                        )}
+                        )},
+                        onClick = {
+                            Log.d("통계","진입했습니다.")
+                            navController.navigate(NavItem.GroupDetailsMembers.route + "/$alarmId")
+                        }
                     )}
                 )
                 if(!alarm.value.host) {
