@@ -125,7 +125,7 @@ fun AlarmListScreen(navController : NavHostController) {
 //
 //                        )
                         ShakingImage()
-                        Text(text = "alarmony",
+                        Text(text = "Alarmony",
                             fontWeight = FontWeight.Bold,
                             fontFamily = notosanskr,
                             modifier = Modifier.padding(20.dp)

@@ -54,7 +54,7 @@ fun MemberDetails(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween,
         modifier = Modifier
-            .padding(start = 2.dp, end = 20.dp, top = 3.dp, bottom = 1.dp)
+            .padding(start = 2.dp, end = 2.dp, top = 3.dp, bottom = 1.dp)
             .fillMaxWidth()
             .wrapContentHeight()
             .heightIn(
@@ -103,18 +103,21 @@ fun MemberDetails(
         ) {
             Text(
                 text = nickname,
-                fontSize = 17.sp,
+                fontSize = 14.sp,
                 modifier = Modifier.fillMaxWidth(),
                 overflow = TextOverflow.Ellipsis,
                 maxLines = 1
             )
-       /*     Text(
-                text = message,
-                fontSize = 12.sp,
-                modifier = Modifier.fillMaxWidth(),
-                overflow = TextOverflow.Ellipsis,
-                maxLines = 1
-            )*/
+            if(message.isNotBlank()){
+                Text(
+                    text = message,
+                    fontSize = 10.sp,
+                    modifier = Modifier.fillMaxWidth(),
+                    overflow = TextOverflow.Ellipsis,
+                    maxLines = 1
+                )
+            }
+
         }
         if(host && onAlarm && !isCheck) {
             GroupDetailsBoardBtn(

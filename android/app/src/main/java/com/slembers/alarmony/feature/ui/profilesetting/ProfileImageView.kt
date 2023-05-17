@@ -18,7 +18,7 @@ fun ProfileImageView (
 ){
     if (profileImage.isEmpty() || profileImage == "null") {
         Image(
-            painter = painterResource(R.drawable.mascot_foreground),
+            painter = painterResource(R.drawable.mas),
             contentDescription = "Profile Image",
             modifier = Modifier
                 .size(80.dp)

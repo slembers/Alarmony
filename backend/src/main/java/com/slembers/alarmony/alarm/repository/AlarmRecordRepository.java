@@ -43,7 +43,8 @@ public interface AlarmRecordRepository extends JpaRepository<AlarmRecord, Long> 
      */
     @Query("SELECT new com.slembers.alarmony.alarm.dto.AlarmRecordDto(m.nickname, m.profileImgUrl, "
         + "CASE WHEN DATE(ar.todayAlarmRecord) = DATE(:todayTime) THEN true ELSE false END, "
-        + "CASE WHEN DATE(ar.todayAlarmRecord) <> DATE(:todayTime) THEN ar.message ELSE NULL END) "
+        + "CASE WHEN ar.todayAlarmRecord IS NULL OR DATE(ar.todayAlarmRecord) <> DATE(:todayTime) "
+        + "THEN ar.message ELSE NULL END) "
         + "FROM member_alarm AS ma "
         + "INNER JOIN member AS m ON ma.member.id = m.id "
         + "LEFT JOIN alarm_record AS ar ON ma.id = ar.memberAlarm.id "

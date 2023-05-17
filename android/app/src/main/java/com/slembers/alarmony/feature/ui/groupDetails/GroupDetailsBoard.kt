@@ -3,6 +3,7 @@ package com.slembers.alarmony.feature.ui.groupDetails
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
@@ -83,13 +84,10 @@ fun GroupDetailsBoard(
                 content = {
                     CardDivider(color = "#989898".toColor())
                     if(items.getValue("success").isEmpty()) {
-                        nothingItem(content = "오늘 알람을 확인 인원이 없습니다.")
+                        nothingItem(content = "알람을 확인한 인원이 없습니다.")
                     } else {
                         LazyColumn(
-                            modifier = Modifier.heightIn(
-                                minOf(100.dp),
-                                maxOf(700.dp)
-                            ),
+                            modifier = Modifier.heightIn(30.dp,540.dp),
                             horizontalAlignment = Alignment.CenterHorizontally,
                             content = {
                                 items(items.getValue("success")) {
@@ -105,10 +103,10 @@ fun GroupDetailsBoard(
                     }
                     CardDivider(color = "#E9E9E9".toColor())
                     if(items.getValue("failed").isEmpty()) {
-                        nothingItem(content = "모두 일어났어요.")
+                        nothingItem(content = "모든 인원이 알람을 확인하였습니다.")
                     } else {
                         LazyColumn(
-                            modifier = Modifier.height(200.dp),
+                            modifier = Modifier.heightIn(30.dp,540.dp),
                             horizontalAlignment = Alignment.CenterHorizontally,
                             content = {
                                 items(items.getValue("failed")) {
@@ -116,7 +114,7 @@ fun GroupDetailsBoard(
                                         nickname = it.nickname,
                                         profile = it.profileImg,
                                         isCheck = it.success,
-                                        message = it.message ?: "No checking..",
+                                        message = it.message ?: "",
                                         host = host,
                                         alarmId = groupId
                                     )
@@ -139,7 +137,7 @@ fun nothingItem(
         modifier = Modifier
             .fillMaxWidth()
             .wrapContentHeight()
-            .padding(top = 10.dp, bottom = 10.dp),
+            .padding(top = 30.dp, bottom = 30.dp),
         verticalAlignment = Alignment.CenterVertically,
         content = {
         /*    Image(
