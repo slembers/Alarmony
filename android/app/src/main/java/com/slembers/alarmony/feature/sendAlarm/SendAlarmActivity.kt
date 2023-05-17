@@ -20,6 +20,7 @@ import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -139,6 +140,7 @@ fun SendAlarmScreen(alarmDto : AlarmDto) {
         content = { innerPadding ->
             Column(
                 modifier = Modifier
+                    .background(color = "#ecddd6".toColor())
                     .fillMaxSize()
                     .padding(innerPadding),
                 verticalArrangement = Arrangement.Bottom,
