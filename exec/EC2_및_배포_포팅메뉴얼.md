@@ -4,28 +4,27 @@ EC2 환경에 접속하여 Docker를 설치합니다. Docker를 이용하여 Bac
 
 </br>
 
-
 ## 원격 서버 접속 및 관리자 권한 접속 
 </br>
 
- SSH (Secure Shell)을 사용하여 원격 서버에 연결하는 명령어 입니다.
+- SSH (Secure Shell)을 사용하여 원격 서버에 연결하는 명령어 입니다.
 
 ```
 ssh -i {SSH 키 파일} ubuntu(사용자이름)@{SSH로 연결하려는 서버의 주소}
 ```
 
- root계정의 암호를 변경
+- root계정의 암호를 변경
 
 ```
 sudo passwd root
 ```
 
- 관리자 권한으로 접속
+- 관리자 권한으로 접속
 
 ```
 su
 ```
-
+---
 ## Docker 설치 
 </br>
 
@@ -53,6 +52,7 @@ $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev
 $ sudo apt-get update
 $ sudo apt-get install docker-ce docker-ce-cli containerd.io
 ```
+---
 
 ## SSL 인증서 발급 (with letsencryp)
 </br>
@@ -64,50 +64,56 @@ $ sudo apt-get install docker-ce docker-ce-cli containerd.io
 $ sudo apt-get install letsencrypt
 ```
 
-- letsencrypt를 설치한 후 해당 도메인에 ssl 인증서를 발급받야하 합니다.
+- letsencrypt를 설치한 후 해당 도메인에 ssl 인증서를 발급받아야 합니다.
 - 해당 명령어를 입력후 .pem 키 발급이 완료됩니다. 발급된키는 `/etc/letsencrypt/live/{도메인}/` 에서 확인할 수 있습니다.
 
 ```
 $ letsencrypt certonly --standalone -d {도메인}
 ```
+---
 
-## Mysql 설치
+## MySQL 설치
 </br>
 
 
 - 설치
 
-```java
+```
 docker run --name mysql-container -e MYSQL_ROOT_PASSWORD=<비밀번호> -d -p 3308:3308 mysql:8.0.30
 ```
 
 - 계정 생성 및 권한 부여
 
-<aside>
-📢 Docker 컨테이너 내부에 있는 MㅛSQL 서버에 접속하고, 데이터베이스와 사용자를 생성하는 명령어입니다
 
-</aside>
+```
+//mysql 컨테이너 접속
+docker exec -it mysql(컨테이너 이름) bash  
 
-```java
-docker exec -it mysql(컨테이너 이름) bash  //mysql-container접속
+//MYSQL 로그인
+mysql -uroot -p 
 
-mysql -uroot -p  //MYSQL 로그인
-create user {계정명}@'%' identified by {비밀번호} //새로운 사용자 생성
-create database alarmony //DB 생성
-GRANT ALL privileges ON alarmony.* TO {계정명}; //alarmony 데이터 베이스에 대한 모든 권한을 {사용자}에게 부여
+//새로운 사용자 생성
+create user {계정명}@'%' identified by {비밀번호} 
+
+//DB 생성
+create database alarmony 
+
+//alarmony 데이터 베이스에 대한 모든 권한을 {사용자}에게 부여
+GRANT ALL privileges ON alarmony.* TO {계정명}; 
 ```
 
-### Redis 설치
+---
 
-: 도커를 이용하여 컨테이너화 하여 사용하였습니다. 회원의  JWT 을 관리하기 위하여 사용하였습니다.
+## Redis 설치 (JWT 관리)
+</br>
 
-- 설치
+- 설치 (주의: 비밀번호를  지정해주지 않으면 크롤러봇이 redis에 접근하여 데이터를 훼손시킬 수 있으므로 비밀번호를  반드시 지정합니다.)
 
 ```java
 docker run -d -p 6379:6379 --name redis redis:6.2.5 --requirepass "{패스워드명}"
 ```
 
-비밀번호를  지정해주지 않으면 크롤러봇이 redis에 접근하여 데이터를 훼손시킬 수 있으므로 비밀번호를  반드시 지정합니다.
+
 
 - Redis 접속하기
 
@@ -118,25 +124,28 @@ redis-cli  //redis 접속
 AUTH {비밀번호}
 
 ```
+---  
 
-### 젠킨스 설치
+## Jenkins 설치
 
-Docker를 이용하여 jenkins를 컨테이너화
+</br>
 
 - 설치
 
-```java
-//설치
+```
+
 docker run --name jenkins -d -p 젠킨스접속포트번호:8080 -v /home/ubuntu/추가경로:/var/jenkins_home -v /var/run/docker.sock:/var/run/docker.sock -u root jenkins/jenkins:lts
-//시작
+
 docker start jenkins
 ```
 
-### Jenkins 설정
+---
+
+## Jenkins 설정
 
 - 접속하기
 
-```java
+```
 http://k8c205.p.ssafy.io:8000
 ```
 
@@ -305,7 +314,7 @@ feature/*"와 같이 여러 분기를 일치시켜 "feature/"로 시작하는 �
 
 - PipeLine 작성
 
-```java
+```
 pipeline {
     agent any
     
