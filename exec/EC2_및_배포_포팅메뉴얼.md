@@ -13,7 +13,7 @@
 
 [7.Jenkins 설정](#jenkins-설정)  
 
-   - [7-1.Git Lab & Jekins 연동](#git-lab--jenkins-연동하기)  
+   - [7-1.Git Lab과 Jekins 연동](#git-lab과-jenkins-연동하기)   
 
    - [7-2.Pipeline 만들기](#jenkins-pipeline-만들기)
 
@@ -224,7 +224,7 @@ apt-get update
 apt-get install docker-ce docker-ce-cli containerd.io docker-compose-plugin
 ```
 
-### Git Lab & Jenkins 연동하기
+### Git Lab과 Jenkins 연동하기
 
 - Git lab Project Acess Token 발급
 <img src='image/ec2_2.png'> 
@@ -240,7 +240,7 @@ apt-get install docker-ce docker-ce-cli containerd.io docker-compose-plugin
 <img src='image/ec2_3.png'> 
 
 ```
- Dashboard → Jenkins 관리 > System 들어가서 Gitlab 설정 
+Dashboard → Jenkins 관리 > System 들어가서 Gitlab 설정 
 
 Gitlab Project Access Token 값을 가지고 Gitlab Connections를 설정합니다.
 
@@ -258,10 +258,9 @@ Add를 누르면 다음과 같이 나온다.
 <img src='image/ec2_5.png'> 
 
 ```
-
-- `API token` : Gitlab에서 발급한 API token 값을 넣습니다.
-- `ID` :  이 보안설정값의 이름을 부여합니다.
-- `Description` : 설명란 입니다.
+- API token : Gitlab에서 발급한 API token 값을 넣습니다.
+- ID :  이 보안설정값의 이름을 부여합니다.
+- Description : 설명란 입니다.
 ```
 
  이후 TestConnection을 눌러 테스트
@@ -269,7 +268,7 @@ Add를 누르면 다음과 같이 나온다.
 <img src='image/ec2_13.PNG'> 
 
 ```
-`Success` 문구가 떴다면 정상적으로 연동이 되었다는 것을 의미합니다.
+"Success" 문구가 떴다면 정상적으로 연동이 되었다는 것을 의미합니다.
 ```
 
 ### Jenkins Pipeline 만들기
@@ -282,8 +281,8 @@ Add를 누르면 다음과 같이 나온다.
 ```
 생성 후에 다음 페이지로 넘어가서 설정하여 봅시다.
 
-현재 GitLab Connetion을 보면 앞서서 Dashboard → Jenkins 관리 > System 들어가서 Gitlab 설정을 했기 때문에 ,
-자동으로 해당  설정한 Connection으로 바로 연결이 됩니다
+현재 GitLab Connetion을 보면 앞서서 Dashboard → Jenkins 관리 > System 들어가서 Gitlab 설정을 했기 때문에,
+자동으로 해당  설정한 Connection으로 바로 연결이 됩니다.
 
 ```
 
@@ -292,44 +291,34 @@ Add를 누르면 다음과 같이 나온다.
 - Build Triggers 설정
 
 ```
-Build Triggers(빌드 트리거) 설정은 젠킨스에서 빌드 작업이 자동으로 시작되는 조건을 설정하는 기능입니다. 
+Build Triggers설정은 Jenkins 빌드 작업이 자동으로 시작되는 조건을 설정하는 기능입니다. 
 이 설정을 통해 특정 이벤트가 발생했을 때 빌드가 자동으로 실행되도록 할 수 있습니다.
 ```
 
 <img src='image/ec2_8.png'> 
 
 ```
- **`Build when a change is pushed to GitLab. GitLab webhook URL: [http://k8c205.p.ssafy.io:8000/project/{item이름}](http://j8c209.p.ssafy.io:8080/project/{item이름})`**
-
-- 이는 변경 사항이 GitLab에 푸시될 때 빌드는 연결된 GitLab 리포지토리에 새로운 커밋이나 변경 사항이 푸시될 때마다 Jenkins가 자동으로 빌드를 트리거해야 함을 의미합니다.
-- 제공된 GitLab 웹후크 URL "[http://k8c205.p.ssafy.io:8000/project/{itemname}](http://j8c209.p.ssafy.io:8080/project/%7Bitemname%7D)
- "는 GitLab이 Jenkins에게 새 이벤트를 알리는 데 사용할 URL입니다. 따라서 이 값을  Gitlab WebHook을 만들어 줄 때 사용하겠습니다.
+ "Build when a change is pushed to GitLab. GitLab webhook URL: [http://k8c205.p.ssafy.io:8000/project/{item이름}](http://j8c209.p.ssafy.io:8080/project/{item이름})"
+- 변경 사항이 GitLab에 푸시될 때, 빌드는 연결된 GitLab 리포지토리에 새로운 커밋이나 변경 사항이 푸시될 때마다 Jenkins가 자동으로 빌드를 트리거해야 함을 의미합니다.
+- 제공된 GitLab WebHook URL "[http://k8c205.p.ssafy.io:8000/project/{itemname}](http://j8c209.p.ssafy.io:8080/project/%7Bitemname%7D)"는 GitLab이 Jenkins에게 새 이벤트를 알리는 데 사용할 URL입니다. 따라서 이 값을  Gitlab WebHook을 만들어 줄 때 사용하겠습니다.
 - Enabled GitLab triggers 에 `Push Events` 가 발생했을 때 트리거가 발생하도록 선택하여 줍니다.
 ```
 
 <img src='image/ec2_9.png'> 
 
-```
-Secret Token : 처음에 들어오셨다면 이 칸은 빈값입니다. 
-Generate를 눌러 토큰을 발급 받습니다. 이 값 또한 Gitlab의 Webhook 을 연결할때 사용합니다.
-
+``` 
+Generate를 눌러 ecret Token을 발급 받습니다. GitLab의 Webhook 을 연결할때 사용합니다.
 ```
 
 - GitLab WebHook 설정
 <img src='image/ec2_10.png'> 
 
 ```
- Gitlab  WebHook을 걸고 싶은 프로젝트에 들어가 Settings→Webhooks을 클릭합니다.
-누르면 해당 화면이 나오게 되는데요 
+ Gitlab  WebHook을 걸고 싶은 프로젝트에 들어가 Setting s→ Webhooks을 클릭합니다.
 
-`**URL**` : 위의 Jenkins  **`Build when a change is pushed to GitLab. GitLab webhook URL: [http://j8c209.p.ssafy.io:8080/project/{item이름}](http://j8c209.p.ssafy.io:8080/project/{item이름})`  의 URL을 입력합니다.
+-URL : 위의 Jenkins "Build when a change is pushed to GitLab. GitLab webhook URL: [http://j8c209.p.ssafy.io:8080/project/{item이름}](http://j8c209.p.ssafy.io:8080/project/{item이름})" 의 URL을 입력합니다.
 
-`Secret Token` :** Jenkins에서 발급한 Secret Token 값을 입력합니다. 
-
-Push events: 체크표시합니다. 트리거할 브랜치 이름 또는 와일드카드 패턴( 혹은 모두 비워두기)을 적습니다. 변경 사항이 Git 리포지토리로 푸시될 때 작업 빌드를 트리거해야 하는 브랜치를 지정하기 위해 Jenkins 작업 구성에서 사용되는 필드입니다.
-
-예를 들어 develop이라는 브랜치에만 트리거를 하고 싶다면 develop만 적습니다. 
-feature/*"와 같이 여러 분기를 일치시켜 "feature/"로 시작하는 모든 분기를 일치시킬 수 있습니다
+-Secret Token : Jenkins에서 발급한 Secret Token 값을 입력합니다. 
 ```
 
 
@@ -338,7 +327,7 @@ feature/*"와 같이 여러 분기를 일치시켜 "feature/"로 시작하는 �
 <img src='image/ec2_12.png'>
 
 ```
- Add webhook을 하고 Test버튼의 Push events를 클릭하여 해당 이벤트가 잘 발생하는지 확인합니다.
+ Add Webhook을 하고 Test버튼의 Push events를 클릭하여 해당 이벤트가 잘 발생하는지 확인합니다.
  정상적으로 동작하였다면 상단에 Hook excuted successfully:HTTP 200 메세지를 확인할 수 있습니다.
 
  ```
