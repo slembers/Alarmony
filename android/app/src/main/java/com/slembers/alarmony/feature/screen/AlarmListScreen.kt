@@ -212,26 +212,26 @@ fun AlarmListScreen(navController : NavHostController) {
                     ).show()
                 }
                 ////////////////// 테스트용 버튼
-                Button(onClick = {
-                    val alarm999 = AlarmDto(
-                    999L,
-                    "장덕모임",
-                    8,
-                    45,
-                    listOf(true, true, true, true, true, true, true),
-                    "Piano",
-                    0,
-                    false,
-                    false,
-                    "안수빈 마라탕 매운맛 고문하는 장덕 모임입니다."
-                )
-                    saveTestAlarm(alarm999, context)
-                    Toast.makeText(context, "8초 뒤에 알람이 울립니다.", Toast.LENGTH_SHORT).show()},
-                    colors = ButtonDefaults.buttonColors("#00C3FF".toColor())
-
-                ) {
-                    Text(text = "8초 뒤 울리는 테스트 알람")
-                }
+//                Button(onClick = {
+//                    val alarm999 = AlarmDto(
+//                    999L,
+//                    "장덕모임",
+//                    8,
+//                    45,
+//                    listOf(true, true, true, true, true, true, true),
+//                    "Piano",
+//                    0,
+//                    false,
+//                    false,
+//                    "안수빈 마라탕 매운맛 고문하는 장덕 모임입니다."
+//                )
+//                    saveTestAlarm(alarm999, context)
+//                    Toast.makeText(context, "8초 뒤에 알람이 울립니다.", Toast.LENGTH_SHORT).show()},
+//                    colors = ButtonDefaults.buttonColors("#00C3FF".toColor())
+//
+//                ) {
+//                    Text(text = "8초 뒤 울리는 테스트 알람")
+//                }
                 //////////////////
                 LazyColumn{
                     items(alarms.size) {model ->
