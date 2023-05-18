@@ -279,7 +279,8 @@ fun GroupScreen(
                             members = members?.map { it.nickname }?.toList(),
                             soundName = soundName?.soundName,
                             soundVolume = soundVolume,
-                            vibrate = vibration
+                            vibrate = vibration,
+                            content = alarmContent
                         )
                         if (groupId != null && groupId > 0) {
                             Log.d("response", "[그룹생성] response : $groupId")
@@ -297,7 +298,7 @@ fun GroupScreen(
                                                 soundVolume = soundVolume?.toInt()!!,
                                                 vibrate = vibration!!,
                                                 host = true,
-                                                content = content!!
+                                                content = alarmContent!!
                                             )
                                         ), context
                                     )
