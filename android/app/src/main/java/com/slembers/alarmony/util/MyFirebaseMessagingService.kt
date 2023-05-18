@@ -64,8 +64,38 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
             Log.d("LOGOUTED","로그아웃 상태라 FCM 요청이 거절되었습니다.")
             return
         }
+
+        if (remoteMessage.data["type"].equals("AUTO_LOGOUT")) {
+            if(!remoteMessage.data["receiver"].equals(MainActivity.prefs.getString("nickname",""))){
+                Log.d("자동로그아웃", "로그아웃 요청이 왔지만 로그인 유저가 달라 거절되었습니다.");
+                return
+            }
+            Log.d("자동로그아웃", "분기 입장");
+            remoteMessage.data["content"] = "다른 기기에서 로그인하여 로그아웃 처리 되었습니다."
+            sendDeletedNotification(remoteMessage)
+            CoroutineScope(Dispatchers.IO).launch {
+                val context = this@MyFirebaseMessagingService
+                Log.d("자동로그아웃", "자동 로그아웃되야 함");
+                showToast(context,"다른 기기에서 접속하여 로그아웃 처리됩니다.")
+                deleteAllAlarms(context)
+                deleteAllNotis(context)
+                val result = MemberService.logOut()
+                if (result) {
+                    val intent = Intent(applicationContext, MainActivity::class.java)
+                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                    applicationContext.startActivity(intent)
+                }
+            }
+            return
+        }
+
+        if (!remoteMessage.data["receiver"].equals(MainActivity.prefs.getString("nickname",""))){
+            Log.d("Duplicate Tokens","토큰이 같지만 다른 유저입니다.")
+            return
+        }
+
         // 알람 배달
-        if (remoteMessage.data?.get("type").equals("ALARM")) {
+        if (remoteMessage.data["type"].equals("ALARM")) {
             Log.i("디버깅", "알람 울려라!!!!!!!!!!!!!!!!!!!!!!!!!!");
             val newIntent = Intent(this, SendAlarmForegroundService::class.java)
             val alarmId = remoteMessage.data["alarmId"]!!.toLong()
@@ -84,31 +114,9 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
             }
 
 
-        } else if (remoteMessage.data?.get("type").equals("AUTO_LOGOUT")) {
-            Log.d("자동로그아웃", "분기 입장");
-            remoteMessage.data["content"] = "다른 기기에서 로그인하여 로그아웃 처리 되었습니다."
-//            sendNotification(remoteMessage)
-            sendDeletedNotification(remoteMessage)
-            CoroutineScope(Dispatchers.IO).launch {
-                val context = this@MyFirebaseMessagingService
-                Log.d("자동로그아웃", "자동 로그아웃되야 함");
-                showToast(context,"다른 기기에서 접속하여 로그아웃 처리됩니다.")
-                deleteAllAlarms(context)
-                deleteAllNotis(context)
-                val result = MemberService.logOut()
-                if (result) {
-                    val intent = Intent(applicationContext, MainActivity::class.java)
-                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-                    applicationContext.startActivity(intent)
-
-//                    loading.value = false
-                }
-//                loading.value = false
-            }
         }
-
-        else if (remoteMessage.data?.get("type").equals("DELETE") ||
-                        remoteMessage.data?.get("type").equals("BANN")) {
+        else if (remoteMessage.data["type"].equals("DELETE") ||
+                        remoteMessage.data["type"].equals("BANN")) {
             Log.d("myResponse", remoteMessage.toString())
             Log.d("myResponse", remoteMessage.data.toString())
             if (remoteMessage.data != null) {
