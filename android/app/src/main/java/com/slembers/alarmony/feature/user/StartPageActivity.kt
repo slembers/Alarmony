@@ -10,7 +10,10 @@ import android.content.Intent
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -44,6 +47,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Color.Companion.Black
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
@@ -59,11 +63,13 @@ import com.slembers.alarmony.feature.common.NavItem
 import com.slembers.alarmony.feature.common.ui.theme.toColor
 import com.slembers.alarmony.feature.notification.NotiApi
 import com.slembers.alarmony.feature.notification.NotiApi.getAllNotisApi
+import com.slembers.alarmony.feature.screen.ShakingImage
 import com.slembers.alarmony.feature.ui.common.BouncingAnimation
 import com.slembers.alarmony.network.repository.MemberService.getMyInfo
 import com.slembers.alarmony.network.repository.MemberService.login
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalGlideComposeApi::class, ExperimentalComposeUiApi::class)
@@ -106,7 +112,8 @@ fun LoginScreen(navController: NavController) {
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        mascott(drawing = R.drawable.mas)
+        ShakingImage2()
+//        mascott(drawing = R.drawable.mas)
         logo(drawing = R.drawable.alarmony2)
         Box(
             modifier = Modifier.fillMaxWidth(),
@@ -328,4 +335,40 @@ fun BackOnPressed() {
         }
         backPressedTime = System.currentTimeMillis()
     }
+}
+@Composable
+fun ShakingImage2() {
+    var isShaking by remember { mutableStateOf(false) }
+
+    val shakeAnimation by animateFloatAsState(
+        targetValue = if (isShaking) 30f else 0f,
+        animationSpec = tween ( durationMillis = 500 )
+    )
+    val imageRes = if (shakeAnimation in 20f..40f) {
+        // 기울기가 20~40도 사이일 때 이미지를 변경합니다.
+        R.drawable.winklemas2
+    } else {
+        // 기울기가 다른 각도일 때는 원래 이미지를 사용합니다.
+        R.drawable.mas
+    }
+
+    Image(
+        painter = painterResource(id = imageRes),
+        contentDescription = "character",
+        modifier = Modifier
+            .padding(top = 100.dp, bottom = 20.dp)
+            .size(120.dp)
+            .clickable {
+//                잠시 기다린 후에 애니메이션 실행
+                CoroutineScope(Dispatchers.Default).launch {
+                    delay(400)
+                }
+                isShaking = !isShaking
+                CoroutineScope(Dispatchers.Default).launch {
+                    delay(500)
+                    isShaking = !isShaking
+                }
+            }
+            .graphicsLayer(rotationZ = shakeAnimation)
+    )
 }
