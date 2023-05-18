@@ -231,7 +231,7 @@ Add를 누르면 다음과 같이 나온다.
 
 ### 이후 TestConnection을 눌러 테스트
 
-<img src='image/ec2_6.png'> 
+<img src='image/ec2_13.PNG'> 
 
 ```
 `Success` 문구가 떴다면 정상적으로 연동이 되었다는 것을 의미합니다.
@@ -239,53 +239,52 @@ Add를 누르면 다음과 같이 나온다.
 
 ### Gitlab WebHook  연결
 
-<aside>
-📢 여기서는  Pipline을 선택하여 연동해보겠습니다.
+- Pipline을 선택하여 연동
 
-Enter an item name에는 사용할 이름을 적어줍니다.
 
-</aside>
+<img src='image/ec2_6.png'> 
+
+```
+생성 후에 다음 페이지로 넘어가서 설정하여 봅시다.
+
+현재 GitLab Connetion을 보면 앞서서 Dashboard → Jenkins 관리 > System 들어가서 Gitlab 설정을 했기 때문에 ,
+자동으로 해당  설정한 Connection으로 바로 연결이 됩니다
+
+```
 
 <img src='image/ec2_7.png'> 
 
-<aside>
-📢 생성 후에 다음 페이지로 넘어가서 설정하여 봅시다.
-
-현재 GitLab Connetion을 보면 앞서서 Dashboard → Jenkins 관리 > System 들어가서 Gitlab 설정을 했기 때문에 자동으로 해당  설정한 Connection으로 바로 연결이 됩니다
-
-</aside>
-
-<img src='image/ec2_8.png'> 
 - Build Triggers 설정
 
-<aside>
-📢 Build Triggers(빌드 트리거) 설정은 젠킨스에서 빌드 작업이 자동으로 시작되는 조건을 설정하는 기능입니다. 이 설정을 통해 특정 이벤트가 발생했을 때 빌드가 자동으로 실행되도록 할 수 있습니
+```
+Build Triggers(빌드 트리거) 설정은 젠킨스에서 빌드 작업이 자동으로 시작되는 조건을 설정하는 기능입니다. 
+이 설정을 통해 특정 이벤트가 발생했을 때 빌드가 자동으로 실행되도록 할 수 있습니다.
+```
 
-</aside>
-<img src='image/ec2_9.png'> 
+<img src='image/ec2_8.png'> 
 
-<aside>
+```
 📢 **`Build when a change is pushed to GitLab. GitLab webhook URL: [http://k8c205.p.ssafy.io:8000/project/{item이름}](http://j8c209.p.ssafy.io:8080/project/{item이름})`**
 
 - 이는 변경 사항이 GitLab에 푸시될 때 빌드는 연결된 GitLab 리포지토리에 새로운 커밋이나 변경 사항이 푸시될 때마다 Jenkins가 자동으로 빌드를 트리거해야 함을 의미합니다.
 - 제공된 GitLab 웹후크 URL "[http://k8c205.p.ssafy.io:8000/project/{itemname}](http://j8c209.p.ssafy.io:8080/project/%7Bitemname%7D)
  "는 GitLab이 Jenkins에게 새 이벤트를 알리는 데 사용할 URL입니다. 따라서 이 값을  Gitlab WebHook을 만들어 줄 때 사용하겠습니다.
 - Enabled GitLab triggers 에 `Push Events` 가 발생했을 때 트리거가 발생하도록 선택하여 줍니다.
-</aside>
+```
 
-<img src='image/ec2_10.png'> 
+<img src='image/ec2_9.png'> 
 
-<aside>
-📢 Secret Token : 처음에 들어오셨다면 이 칸은 빈값입니다. Generate를 눌러 토큰을 발급 받습니다. 이 값 또한 Gitlab의 Webhook 을 연결할때 사용합니다.
+```
+Secret Token : 처음에 들어오셨다면 이 칸은 빈값입니다. 
+Generate를 눌러 토큰을 발급 받습니다. 이 값 또한 Gitlab의 Webhook 을 연결할때 사용합니다.
 
-</aside>
+```
 
 - GitLab WebHook 설정
+<img src='image/ec2_10.png'> 
 
-<img src='image/ec2_11.png'> 
-
-<aside>
-📢 Gitlab  WebHook을 걸고 싶은 프로젝트에 들어가 Settings→Webhooks을 클릭합니다.
+```
+ Gitlab  WebHook을 걸고 싶은 프로젝트에 들어가 Settings→Webhooks을 클릭합니다.
 누르면 해당 화면이 나오게 되는데요 
 
 `**URL**` : 위의 Jenkins  **`Build when a change is pushed to GitLab. GitLab webhook URL: [http://j8c209.p.ssafy.io:8080/project/{item이름}](http://j8c209.p.ssafy.io:8080/project/{item이름})`  의 URL을 입력합니다.
@@ -296,17 +295,20 @@ Push events: 체크표시합니다. 트리거할 브랜치 이름 또는 와일�
 
 예를 들어 develop이라는 브랜치에만 트리거를 하고 싶다면 develop만 적습니다. 
 feature/*"와 같이 여러 분기를 일치시켜 "feature/"로 시작하는 모든 분기를 일치시킬 수 있습니다
+```
 
-</aside>
 
-![Untitled](%E1%84%91%E1%85%A9%E1%84%90%E1%85%B5%E1%86%BC%E1%84%86%E1%85%A6%E1%84%82%E1%85%B2%E1%84%8B%E1%85%A5%E1%86%AF%203345f6ddb76b449394d17cf63c6c3be8/Untitled%2011.png)
+<img src='image/ec2_11.png'> 
 
-![Untitled](%E1%84%91%E1%85%A9%E1%84%90%E1%85%B5%E1%86%BC%E1%84%86%E1%85%A6%E1%84%82%E1%85%B2%E1%84%8B%E1%85%A5%E1%86%AF%203345f6ddb76b449394d17cf63c6c3be8/Untitled%2012.png)
+<img src='image/ec2_12.png'>
 
-<aside>
-💡 Add webhook을 하고 Test를 해봅니다. Test버튼의 Push events를 클릭하여 해당 이벤트가 잘 발생하는지 확인하도록 합시다. 정상적으로 동작하였다면 상단에 Hook excuted successfully:HTTP 200 메세지를 확인할 수 있습니다.
+```
+ Add webhook을 하고 Test버튼의 Push events를 클릭하여 해당 이벤트가 잘 발생하는지 확인합니다.
+ 정상적으로 동작하였다면 상단에 Hook excuted successfully:HTTP 200 메세지를 확인할 수 있습니다.
 
-</aside>
+ ```
+
+
 
 - PipeLine 작성
 
