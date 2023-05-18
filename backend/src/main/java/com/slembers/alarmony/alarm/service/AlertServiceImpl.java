@@ -354,7 +354,7 @@ public class AlertServiceImpl implements AlertService {
             // 메시지 설정
             Message message = Message.builder()
                     .putData("type", AlertTypeEnum.AUTO_LOGOUT.name())
-                    .putData("target", member.getNickname())
+                    .putData("receiver", member.getNickname())
                     .setAndroidConfig(config)
                     .setToken(member.getRegistrationToken())
                     .build();

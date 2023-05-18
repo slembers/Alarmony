@@ -66,7 +66,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         }
 
         if (remoteMessage.data["type"].equals("AUTO_LOGOUT")) {
-            if(!remoteMessage.data["target"].equals(MainActivity.prefs.getString("nickname",""))){
+            if(!remoteMessage.data["receiver"].equals(MainActivity.prefs.getString("nickname",""))){
                 Log.d("자동로그아웃", "로그아웃 요청이 왔지만 로그인 유저가 달라 거절되었습니다.");
                 return
             }
