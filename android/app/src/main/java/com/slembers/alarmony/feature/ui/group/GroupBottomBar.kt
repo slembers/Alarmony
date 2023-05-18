@@ -7,6 +7,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.material3.BottomAppBar
+import androidx.compose.material3.ButtonColors
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -33,20 +35,18 @@ fun GroupBottomButtom(
         contentPadding = PaddingValues(0.dp),
         content = {
             TextButton(
+                colors = ButtonDefaults.buttonColors(
+                     containerColor = "#7DC3F2".toColor(),
+                     contentColor = Color.Black
+                ),
+                shape = MaterialTheme.shapes.extraSmall,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .fillMaxHeight()
-                    .background(
-                        "#7DC3F2".toColor(),
-                        MaterialTheme.shapes.extraSmall
-                    ),
+                    .fillMaxHeight(),
                 onClick = onClick,
                 enabled = enabled,
                 content = {
-                    Text(
-                        text = text,
-                        color = Color.Black,
-                    )
+                    Text(text = text)
                 }
             )
         }

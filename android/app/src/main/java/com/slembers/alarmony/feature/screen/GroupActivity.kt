@@ -249,7 +249,7 @@ fun GroupScreen(
         bottomBar = {
             GroupBottomButtom(
                 text = "알람 생성하기",
-                enabled = !loading,
+                enabled = !loading && title!!.isNotEmpty(),
                 onClick = {
 
                     val selected = weeks.map {
