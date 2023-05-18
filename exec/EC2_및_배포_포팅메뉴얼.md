@@ -1,6 +1,31 @@
+# 목차📄
+[1.원격 서버 접속 및 관리자 권한 접속 ](#원격-서버-접속-및-관리자-권한-접속 )  
+
+[2.Docker 설치하기](#docker-설치)  
+
+[3.SSL 인증서 발급 (with letsencryp)](#ssl-인증서-발급-with-letsencryp)  
+
+[4.MySQL 설치](#mysql-설치)  
+
+[5.Redis 설치 (JWT 관리)](#redis-설치-jwt-관리)  
+
+[6.Jenkins 설치](#jenkins-설치)  
+
+[7.Jenkins 설정](#jenkins-설정)  
+
+   - [7-1.Git Lab & Jekins 연동](#git-lab--jenkins-연동하기)  
+
+   - [7-2.Pipeline 만들기](#jenkins-pipeline-만들기)
+
+
+
+</br>
+
 # EC2 접속 및 설정
 
-EC2 환경에 접속하여 Docker를 설치합니다. Docker를 이용하여 Backend Server, Mysql, Redis, Jenkins를 컨테이너화 하여 실행시킵니다. 
+EC2 환경에 접속하여 Docker를 설치합니다. Docker를 이용하여 `Backend Server`, `Mysql`, `Redis`, `Jenkins`를 컨테이너화하여 실행시킵니다. 
+
+
 
 </br>
 
@@ -25,10 +50,12 @@ sudo passwd root
 su
 ```
 ---
+</br> 
+
 ## Docker 설치 
 </br>
 
- - 기본 위치를 설정
+ - 기본 위치 설정
 
 ```
 mkdir {사용할 폴더명}
@@ -53,6 +80,7 @@ $ sudo apt-get update
 $ sudo apt-get install docker-ce docker-ce-cli containerd.io
 ```
 ---
+</br>
 
 ## SSL 인증서 발급 (with letsencryp)
 </br>
@@ -71,6 +99,7 @@ $ sudo apt-get install letsencrypt
 $ letsencrypt certonly --standalone -d {도메인}
 ```
 ---
+</br>
 
 ## MySQL 설치
 </br>
@@ -103,6 +132,7 @@ GRANT ALL privileges ON alarmony.* TO {계정명};
 ```
 
 ---
+</br>
 
 ## Redis 설치 (JWT 관리)
 </br>
@@ -125,8 +155,9 @@ AUTH {비밀번호}
 
 ```
 ---  
+</br>
 
-## Jenkins 설치
+## Jenkins 설치 
 
 </br>
 
@@ -140,6 +171,7 @@ docker start jenkins
 ```
 
 ---
+</br>
 
 ## Jenkins 설정
 
@@ -152,15 +184,18 @@ http://k8c205.p.ssafy.io:8000
 
 - Jenkins 초기 비밀번호 입력
 
-`docker logs {컨테이너명}` 로 접속후 사용되는 첫 비밀번호를 기입합니다.
+- `docker logs {컨테이너명}` 로 접속후 사용되는 첫 비밀번호를 기입합니다.
 
 
 <img src='image/ec2_0.PNG'> 
 <img src='image/jenkins_1.PNG'> 
 
+</br>
+
+
 - 계정 생성
 <img src='image/ec2_1.png'> 
-
+</br>
 
 - docker에서 제시하는 default설정으로 설치를 진행
 <img src='image/jenkins_2.PNG'> 
@@ -189,7 +224,7 @@ apt-get update
 apt-get install docker-ce docker-ce-cli containerd.io docker-compose-plugin
 ```
 
-### Git Lab + Jenkins Webhook 연동하기
+### Git Lab & Jenkins 연동하기
 
 - Git lab Project Acess Token 발급
 <img src='image/ec2_2.png'> 
@@ -229,7 +264,7 @@ Add를 누르면 다음과 같이 나온다.
 - `Description` : 설명란 입니다.
 ```
 
-### 이후 TestConnection을 눌러 테스트
+ 이후 TestConnection을 눌러 테스트
 
 <img src='image/ec2_13.PNG'> 
 
@@ -237,7 +272,7 @@ Add를 누르면 다음과 같이 나온다.
 `Success` 문구가 떴다면 정상적으로 연동이 되었다는 것을 의미합니다.
 ```
 
-### Gitlab WebHook  연결
+### Jenkins Pipeline 만들기
 
 - Pipline을 선택하여 연동
 
@@ -264,7 +299,7 @@ Build Triggers(빌드 트리거) 설정은 젠킨스에서 빌드 작업이 자�
 <img src='image/ec2_8.png'> 
 
 ```
-📢 **`Build when a change is pushed to GitLab. GitLab webhook URL: [http://k8c205.p.ssafy.io:8000/project/{item이름}](http://j8c209.p.ssafy.io:8080/project/{item이름})`**
+ **`Build when a change is pushed to GitLab. GitLab webhook URL: [http://k8c205.p.ssafy.io:8000/project/{item이름}](http://j8c209.p.ssafy.io:8080/project/{item이름})`**
 
 - 이는 변경 사항이 GitLab에 푸시될 때 빌드는 연결된 GitLab 리포지토리에 새로운 커밋이나 변경 사항이 푸시될 때마다 Jenkins가 자동으로 빌드를 트리거해야 함을 의미합니다.
 - 제공된 GitLab 웹후크 URL "[http://k8c205.p.ssafy.io:8000/project/{itemname}](http://j8c209.p.ssafy.io:8080/project/%7Bitemname%7D)
