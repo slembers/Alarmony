@@ -13,7 +13,7 @@ interface AlarmDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE) // 만약 동일한 PrimaryKey 가 있을 경우 덮어쓰기
     suspend fun insertAlarm(alarm: Alarm)
 
-    @Query("SELECT * FROM alarms")
+    @Query("SELECT * FROM alarms ORDER BY hour ASC, minute ASC")
     fun getAllAlarms(): LiveData<List<Alarm>>
 
     @Query("SELECT * FROM alarms")

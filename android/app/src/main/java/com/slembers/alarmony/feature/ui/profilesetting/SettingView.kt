@@ -21,6 +21,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -222,21 +223,20 @@ fun SettingView(
                             Text(
                                 text = "프로필 변경하기",
                                 fontSize = 17.sp,
-                                style = MaterialTheme.typography.subtitle2.copy(color = Color.Blue),
+                                style = MaterialTheme.typography.subtitle2.copy(color = "#7DC3F2".toColor()),
                                 modifier = Modifier
                                     .padding(20.dp)
                                     .clickable {
-                                        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                                             launcher.launch("image/*")
-                                        }
-                                        else { // 티라미수 미만 버전은 ExternalStorage 접근권한을 유저한테 요청해야함
+                                        } else { // 티라미수 미만 버전은 ExternalStorage 접근권한을 유저한테 요청해야함
                                             if (hasWriteExternalStoragePermission(context)) {
                                                 launcher.launch("image/*")
                                             } else {
                                                 requestWriteExternalStoragePermission()
                                             }
                                         }
-                               },
+                                    },
                             )
                         }
                     }
@@ -263,7 +263,7 @@ fun SettingView(
                     /** 아이디 **/
                     Row(
                         modifier = Modifier
-                            .padding(5.dp),
+                            .padding(start = 5.dp, top = 10.dp, bottom = 10.dp),
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
                         Row(
@@ -289,7 +289,7 @@ fun SettingView(
                     /** 닉네임 변경하기 **/
                     Row(
                         modifier = Modifier
-                            .padding(5.dp),
+                            .padding(start = 5.dp, top = 10.dp, bottom = 10.dp),
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
                         Row(
@@ -340,7 +340,7 @@ fun SettingView(
                                     )
                                     Text(
                                         text = "    변경하기",
-                                        style = MaterialTheme.typography.subtitle2.copy(color = Color.Blue),
+                                        style = MaterialTheme.typography.subtitle2.copy(color = "#7DC3F2".toColor()),
                                         modifier = Modifier
                                             .clickable {isEditMode.value = true}
                                     )
@@ -354,7 +354,7 @@ fun SettingView(
                     /** 이메일 **/
                     Row(
                         modifier = Modifier
-                            .padding(5.dp),
+                            .padding(start = 5.dp, top = 10.dp, bottom = 10.dp),
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
                         Row(
@@ -397,7 +397,7 @@ fun SettingView(
                     /** 어플리케이션 정보 **/
                     Row(
                         modifier = Modifier
-                            .padding(5.dp),
+                            .padding(start = 5.dp, top = 10.dp, bottom = 10.dp),
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
                         Row(
@@ -424,7 +424,7 @@ fun SettingView(
                     /** 푸쉬 알림 설정 **/
                     Row(
                         modifier = Modifier
-                            .padding(5.dp),
+                            .padding(start = 5.dp, top = 10.dp, bottom = 10.dp),
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
                         Row(
@@ -442,7 +442,7 @@ fun SettingView(
                         ) {
                             Text("푸쉬 알림 설정",)
                             Text("알림 설정 변경하기",
-                                style = MaterialTheme.typography.subtitle2.copy(color = Color.Blue),
+                                style = MaterialTheme.typography.subtitle2.copy(color = "#7DC3F2".toColor()),
                                 modifier = Modifier
                                     .clickable(onClick = { moveToPushAlertSetting(context) })
                             )
@@ -454,7 +454,7 @@ fun SettingView(
                     /** 신고하기 **/
                     Row(
                         modifier = Modifier
-                            .padding(5.dp)
+                            .padding(start = 5.dp, top = 10.dp, bottom = 10.dp)
                             .clickable(onClick = { navController.navigate(NavItem.ReportPage.route) }),
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
@@ -504,11 +504,20 @@ fun SettingView(
                 }
             ) {
                 Text(
-                    text = "로그아웃 |",
+                    text = "로그아웃",
                     style = MaterialTheme.typography.body1.copy(color = Color.Gray)
                 )
             }
-
+            TextButton(
+                onClick = {
+                },
+                modifier = Modifier.width(20.dp)
+            )  {
+                Text(
+                    text = "|",
+                    style = MaterialTheme.typography.body1.copy(color = Color.Gray)
+                )
+            }
             TextButton(
                 enabled = !loading.value,
                 onClick = {
@@ -564,4 +573,45 @@ fun moveToPushAlertSetting(context : Context) {
     val intent = Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS)
     intent.putExtra(Settings.EXTRA_APP_PACKAGE, context.packageName)
     context.startActivity(intent)
+}
+
+@Preview
+@Composable
+fun defaultView() {
+    Row(
+        modifier = Modifier.fillMaxSize(),
+        horizontalArrangement = Arrangement.Center,
+        verticalAlignment = Alignment.Bottom
+    ) {
+        TextButton(
+            onClick = {
+
+            }
+        ) {
+            Text(
+                text = "로그아웃",
+                style = MaterialTheme.typography.body1.copy(color = Color.Gray)
+            )
+        }
+        TextButton(
+            onClick = {
+            },
+            modifier = Modifier.width(20.dp)
+        )  {
+            Text(
+                text = "|",
+                style = MaterialTheme.typography.body1.copy(color = Color.Gray)
+            )
+        }
+
+        TextButton(
+            onClick = {
+
+            }) {
+            Text(
+                text = "회원탈퇴",
+                style = MaterialTheme.typography.body1.copy(color = Color.Gray)
+            )
+        }
+    }
 }

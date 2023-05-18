@@ -224,12 +224,11 @@ fun DrawCircle(alarmDto : AlarmDto) {
     )
 
     val motionColor by infiniteTransition.animateColor(
-//        다홍
-        initialValue = "#b32d61".toColor(),
+        initialValue = "#0f5e9c".toColor(),
 
 //        targetValue = Color.White,
 //      회색
-        targetValue ="#d2d5e4".toColor(),
+        targetValue ="#2389da".toColor(),
         animationSpec = infiniteRepeatable(
 //            animation = spring(),
             animation = tween(durationMillis = 1000),
@@ -239,8 +238,7 @@ fun DrawCircle(alarmDto : AlarmDto) {
 
     val motionColor2 by infiniteTransition.animateColor(
 //        회색
-        initialValue = "#d2d5e4".toColor(),
-
+        initialValue = "#1ca3ec".toColor(),
 //        targetValue = Color.White,
 //      흰색
         targetValue = Color.White,
@@ -267,7 +265,7 @@ fun DrawCircle(alarmDto : AlarmDto) {
         drawCircleWithInnerCircle(center, innerSize / 1.2f, Color.White.copy(alpha = 0.9f))
 
         drawIntoCanvas { canvas ->
-            val text = "알람 배달"
+            val text = alarmDto.title
             val typeface = Typeface.create("font/roboto_bold.ttf", Typeface.BOLD)
             val paint1 = Paint().asFrameworkPaint().apply {
                 textAlign = android.graphics.Paint.Align.CENTER
@@ -299,7 +297,7 @@ fun DrawCircle(alarmDto : AlarmDto) {
                 setTypeface(typeface)
                 isAntiAlias = true
             }
-            val text3 = "${alarmDto.title}"
+            val text3 = "알람 배달 왔어요"
             val paint3 = Paint().asFrameworkPaint().apply {
                 textAlign = android.graphics.Paint.Align.CENTER
                 textSize = 26.sp.toPx()
