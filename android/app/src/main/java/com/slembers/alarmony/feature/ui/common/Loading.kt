@@ -33,10 +33,10 @@ fun BouncingAnimation() {
     val infiniteTransition = rememberInfiniteTransition()
     val translationY by infiniteTransition.animateFloat(
         initialValue = 0f,
-        targetValue = 200f, // 이 값은 이미지가 얼마나 튀는지 결정합니다. 필요에 따라 조정할 수 있습니다.
+        targetValue = 50f, // 이미지가 튀는 값 조정 가능
         animationSpec = infiniteRepeatable(
             animation = tween(
-                durationMillis = 1000,
+                durationMillis = 300,
                 easing = FastOutSlowInEasing
             ),
             repeatMode = RepeatMode.Reverse
