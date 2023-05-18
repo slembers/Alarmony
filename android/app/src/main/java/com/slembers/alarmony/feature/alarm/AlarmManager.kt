@@ -16,7 +16,20 @@ import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.slembers.alarmony.MainActivity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
+
+fun getAlarm(alarmId : Long, context : Context) : Alarm {
+    lateinit var repository : AlarmRepository
+    var alarm : Alarm?
+    val alarmDao = AlarmDatabase.getInstance(context).alarmDao()
+    repository = AlarmRepository(alarmDao)
+    runBlocking(Dispatchers.IO) {
+        alarm = repository.findAlarm(alarmId)
+    }
+    return alarm!!
+}
 
 
 fun saveAlarm(alarmDto: AlarmDto, context: Context) {

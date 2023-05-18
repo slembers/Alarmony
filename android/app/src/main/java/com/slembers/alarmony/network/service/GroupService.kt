@@ -37,7 +37,8 @@ object GroupService {
         members : List<String>?,
         soundName : String? = "자장가",
         soundVolume : Float? = 7f,
-        vibrate : Boolean? = true
+        vibrate : Boolean? = true,
+        content : String? = "알람 설명이 없습니다."
     ) : Long? {
         val groupApi = AlarmonyServer().groupApi
         try {
@@ -48,7 +49,8 @@ object GroupService {
                 alarmDate = alarmDate,
                 soundName = soundName!!,
                 soundVolume = soundVolume!!,
-                vibrate = vibrate!!
+                vibrate = vibrate!!,
+                content = content!!
             )).body()
             Log.d("response","[그룹생성] response : $response")
             val message = groupApi.addMembers(

@@ -42,6 +42,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Paint
@@ -165,6 +166,12 @@ fun SendAlarmScreen(alarmDto : AlarmDto) {
 //                        border = BorderStroke(2.dp, "#63B1C2".toColor()),
                         modifier = Modifier
                             .padding(5.dp)
+                            .shadow(
+                                elevation = 10.dp,
+                                ambientColor = Color.Blue,
+                                spotColor = Color.Gray,
+                                shape = CircleShape
+                            )
                             .size(130.dp),
                         colors = ButtonDefaults.buttonColors("#7DC3F2".toColor())
                     ) {

@@ -77,6 +77,7 @@ import kotlinx.coroutines.withContext
 import androidx.compose.runtime.*
 import androidx.compose.animation.core.*
 import androidx.compose.animation.core.AnimationSpec
+import androidx.compose.ui.draw.shadow
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.Timer
@@ -244,7 +245,14 @@ fun AlarmScreen(alarmDto : AlarmDto) {
 //                        border = BorderStroke(2.dp, "#c4b3dc".toColor().copy(alpha= 0.1f)),
                         modifier = Modifier
                             .padding(5.dp)
+                            .shadow(
+                                elevation = 10.dp,
+                                ambientColor = Color.Blue,
+                                spotColor = Color.Gray,
+                                shape = CircleShape
+                                )
                             .size(90.dp),
+
 //                        colors = ButtonDefaults.buttonColors(Color.White)
                         colors = ButtonDefaults.buttonColors("#7DC3F2".toColor())
 //                        colors = ButtonDefaults.buttonColors("#a6d6c5".toColor())
@@ -275,6 +283,12 @@ fun AlarmScreen(alarmDto : AlarmDto) {
 //                        border = BorderStroke(4.dp, "#c4b3dc".toColor().copy(alpha= 0.1f)),
                         modifier = Modifier
                             .padding(5.dp)
+                            .shadow(
+                                elevation = 10.dp,
+                                ambientColor = Color.Blue,
+                                spotColor = Color.Gray,
+                                shape = CircleShape
+                            )
                             .size(120.dp),
 //                        개인
 //                        colors = ButtonDefaults.buttonColors("#dfbacf".toColor())
@@ -301,6 +315,12 @@ fun AlarmScreen(alarmDto : AlarmDto) {
 //                        border = BorderStroke(2.dp, "#c4b3dc".toColor().copy(alpha= 0.1f)),
                         modifier = Modifier
                             .padding(5.dp)
+                            .shadow(
+                                elevation = 10.dp,
+                                ambientColor = Color.Blue,
+                                spotColor = Color.Gray,
+                                shape = CircleShape
+                            )
                             .size(90.dp),
 //                        개인
 //                        colors = ButtonDefaults.buttonColors("#dfbacf".toColor())

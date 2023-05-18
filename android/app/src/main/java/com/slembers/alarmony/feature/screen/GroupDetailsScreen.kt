@@ -1,5 +1,6 @@
 package com.slembers.alarmony.feature.screen
 
+import android.app.Application
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
@@ -25,6 +26,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -39,7 +41,10 @@ import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.slembers.alarmony.feature.alarm.Alarm
 import com.slembers.alarmony.feature.alarm.AlarmDatabase
 import com.slembers.alarmony.feature.alarm.AlarmRepository
+import com.slembers.alarmony.feature.alarm.AlarmViewModel
+import com.slembers.alarmony.feature.alarm.AlarmViewModelFactory
 import com.slembers.alarmony.feature.alarm.deleteAlarm
+import com.slembers.alarmony.feature.alarm.getAlarm
 import com.slembers.alarmony.feature.common.CardBox
 import com.slembers.alarmony.feature.common.NavItem
 import com.slembers.alarmony.feature.common.ui.compose.GroupTitle
@@ -48,6 +53,7 @@ import com.slembers.alarmony.feature.ui.common.BouncingAnimation
 import com.slembers.alarmony.feature.ui.common.CommonDialog
 import com.slembers.alarmony.feature.ui.group.GroupToolBar
 import com.slembers.alarmony.feature.ui.groupDetails.GroupDetailsBoard
+import com.slembers.alarmony.feature.ui.groupDetails.GroupDetailsContent
 import com.slembers.alarmony.feature.ui.groupDetails.GroupDetailsTitle
 import com.slembers.alarmony.model.db.Record
 import com.slembers.alarmony.network.service.GroupService
@@ -80,23 +86,22 @@ fun GroupDetailsScreen(
         Toast.makeText(context,"에러가 발생했습니다.",Toast.LENGTH_SHORT)
         navController.popBackStack()
     }
-
-    val alarmDao = AlarmDatabase.getInstance(context).alarmDao()
     var loading by remember { mutableStateOf(false) }
     val isClosed = remember { mutableStateOf(false) }
     val openDialog = remember { mutableStateOf(true) }
-    val alarm = remember{ mutableStateOf<Alarm>(Alarm(
-        alarmId =  0,
-        title =  "",
-        hour =  0,
-        minute =  0,
-        alarmDate =  listOf(),
-        soundName =  "Nomal",
-        soundVolume =  7,
-        vibrate =  true,
-        host = false,
-        content = "임시내용"
-    )) }
+    val alarm = getAlarm(alarmId!!, LocalContext.current)
+//    val alarm = remember{ mutableStateOf<Alarm>(Alarm(
+//        alarmId =  0,
+//        title =  "",
+//        hour =  0,
+//        minute =  0,
+//        alarmDate =  listOf(),
+//        soundName =  "Nomal",
+//        soundVolume =  7,
+//        vibrate =  true,
+//        host = false,
+//        content = "임시내용"
+//    )) }
 
     var record = remember{ mutableStateOf<Map<String, List<Record>>>(
         hashMapOf(
@@ -108,37 +113,36 @@ fun GroupDetailsScreen(
     var memberCnt by details.memberCnt
 
     LaunchedEffect(Unit) {
-        Log.d("alarmDetails","[알람 상세] 초기화 불러오는 중 ...")
-        val repository = AlarmRepository(alarmDao)
-        val _alarm = withContext(Dispatchers.IO) {
-            repository.findAlarm(alarmId!!)
-        }
-
-        val _record = details.getRecord(alarmId!!)
-        Log.d("alarmDetails","[알람 상세] 초기화 불러오는 완료 ...")
-        Log.d("alarmDetails","[알람 상세] alarm : $_alarm")
-        Log.d("alarmDetails","[알람 상세] alarm : $memberCnt")
-
-        alarm.value = _alarm!!
+    //        Log.d("alarmDetails","[알람 상세] 초기화 불러오는 중 ...")
+    //        val repository = AlarmRepository(alarmDao)
+    //        val _alarm = withContext(Dispatchers.IO) {
+    //            repository.findAlarm(alarmId!!)
+    //        }
+    //
+            val _record = details.getRecord(alarmId!!)
+            Log.d("alarmDetails","[알람 상세] 초기화 불러오는 완료 ...")
+            Log.d("alarmDetails","[알람 상세] alarm : $alarm")
+            Log.d("alarmDetails","[알람 상세] alarm : $memberCnt")
+    //        alarm.value = _alarm!!
         record.value = _record
     }
+    //
+    //    Log.d("alarmDetails","[알람 상세] alarm : $alarm")
+    //    Log.d("alarmDetails","[알람 상세] alarm_date : ${alarm!!.alarmDate}")
+    //    Log.d("alarmDetails","[알람 상세] alarmId : $alarmId")
+    //    Log.d("alarmDetails","[알람 상세] record : $record")
+    //    Log.d("alarmDetails","[알람 상세] details : $details")
 
-    Log.d("alarmDetails","[알람 상세] alarm : $alarm")
-    Log.d("alarmDetails","[알람 상세] alarm_date : ${alarm.value.alarmDate}")
-    Log.d("alarmDetails","[알람 상세] alarmId : $alarmId")
-    Log.d("alarmDetails","[알람 상세] record : $record")
-    Log.d("alarmDetails","[알람 상세] details : $details")
-
-    val scrollState = rememberScrollState()
+        val scrollState = rememberScrollState()
 
     Scaffold(
         topBar = {
             GroupToolBar(
                 //title = NavItem.GroupDetails.title, 수정[1]
-                title = alarm.value.title,
+                title = alarm!!.title,
                 navClick = { navController.popBackStack() },
                 action = {
-                    if(alarm.value.host) {
+                    if(alarm!!.host) {
                         Row(
                             modifier = Modifier.wrapContentWidth(),
                             verticalAlignment = Alignment.CenterVertically,
@@ -182,13 +186,14 @@ fun GroupDetailsScreen(
             ) {
 
                 /** 알람 시간 **/
-                GroupDetailsTitle(alarm.value)
+                GroupDetailsTitle(alarm!!)
                 /** 오늘의 현황 **/
                 GroupDetailsBoard(
                     items = record.value,
                     groupId = alarmId!!,
-                    host = alarm.value.host && currentDay(alarm.value)
+                    host = alarm!!.host && currentDay(alarm!!)
                 )
+                GroupDetailsContent(alarm!!)
 //                CardBox(
 //                    title = { GroupTitle(
 //                        title = "그룹원 통계",
@@ -206,7 +211,7 @@ fun GroupDetailsScreen(
 //                        }
 //                    )}
 //                )
-                if(!alarm.value.host) {
+                if(!alarm!!.host) {
                     CardBox(title = {
                         GroupTitle(
                             title = "그룹 나가기",
@@ -234,7 +239,7 @@ fun GroupDetailsScreen(
                             }
                         )
                     })
-                } else if(alarm.value.host && memberCnt!! <= 1) {
+                } else if(alarm!!.host && memberCnt!! <= 1) {
                     CardBox(title = {
                         GroupTitle(
                             title = "그룹 나가기",
