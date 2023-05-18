@@ -14,7 +14,7 @@ import javax.validation.constraints.Pattern;
 public class SignUpDto {
 
     @NotEmpty(message = "아이디는 필수 입력값입니다.")
-    @Pattern(regexp = "^[a-z0-9]{4,20}$", message = "아이디는 영어 소문자와 숫자만 사용하여 4자리 이상 20자리 이하여야 합니다.")
+    @Pattern(regexp = "^[a-z0-9]{5,11}$", message = "아이디는 영어 소문자와 숫자만 사용하여 4자리 이상 20자리 이하여야 합니다.")
     private String username;
 
     @Pattern(regexp ="^[a-zA-Z\\d]{8,16}$", message = "비밀번호는 영문(대/소문자) 숫자를 포함하여 8자리 이상 16자리 이하여야 합니다.")
