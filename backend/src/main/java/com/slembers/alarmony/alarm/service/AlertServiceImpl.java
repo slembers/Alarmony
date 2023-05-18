@@ -128,6 +128,7 @@ public class AlertServiceImpl implements AlertService {
     @Transactional
     public boolean sendAlert(Alert alert) {
         try {
+
             alertRepository.save(alert);
             String targetMobile = alert.getReceiver().getRegistrationToken();
             String content = alert.getContent();
@@ -142,6 +143,7 @@ public class AlertServiceImpl implements AlertService {
                 .putData("profileImg", imageUrl == null ? "" : imageUrl)
                 .putData("content", content)
                 .putData("type", alert.getType().name())
+                .putData("receiver", alert.getReceiver().getNickname())
                 .setToken(targetMobile)
                 .setAndroidConfig(config)
                 .build();
@@ -314,6 +316,7 @@ public class AlertServiceImpl implements AlertService {
                 .putData("profileImg", imageUrl == null ? "" : imageUrl)
                 .putData("content", alert.getContent())
                 .putData("type", alert.getType().name())
+                .putData("receiver", alert.getReceiver().getNickname())
                 .setToken(targetMobile)
                 .build();
             // 웹 API 토큰을 가져와서 보냄
@@ -351,6 +354,7 @@ public class AlertServiceImpl implements AlertService {
             // 메시지 설정
             Message message = Message.builder()
                     .putData("type", AlertTypeEnum.AUTO_LOGOUT.name())
+                    .putData("target", member.getNickname())
                     .setAndroidConfig(config)
                     .setToken(member.getRegistrationToken())
                     .build();
@@ -385,7 +389,7 @@ public class AlertServiceImpl implements AlertService {
             log.error("멤버 알람 정보가 존재하지 않음");
             throw new CustomException(MemberAlarmErrorCode.MEMBER_ALARM_NOT_FOUND);
         }
-        sendAlarmTo(member.getRegistrationToken(), alarm.getId());
+        sendAlarmTo(nickname, member.getRegistrationToken(), alarm.getId());
     }
 
     /**
@@ -394,7 +398,7 @@ public class AlertServiceImpl implements AlertService {
      * @param targetToken 목표 기기 토큰
      * @param alarmId     그룹 아이디
      */
-    private void sendAlarmTo(String targetToken, Long alarmId) {
+    private void sendAlarmTo(String nickname, String targetToken, Long alarmId) {
         try {
             AndroidConfig config = AndroidConfig.builder()
                 .setPriority(Priority.HIGH)
@@ -404,6 +408,7 @@ public class AlertServiceImpl implements AlertService {
             Message message = Message.builder()
                 .putData("type", AlertTypeEnum.ALARM.name())
                 .putData("alarmId", String.valueOf(alarmId))
+                .putData("receiver", nickname)
                 .setAndroidConfig(config)
                 .setToken(targetToken)
                 .build();
