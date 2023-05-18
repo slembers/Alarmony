@@ -147,8 +147,9 @@ fun DetailsInviteScreen(
                                         bottom = 10.dp,
                                         end = 0.dp
                                     )
-                                    .heightIn( min(50.dp, 50.dp) ),
-                                userScrollEnabled = true
+                                    .heightIn( min(60.dp, 60.dp) ),
+                                userScrollEnabled = true,
+                                horizontalArrangement = Arrangement.spacedBy(5.dp)
                             ) {
 
                                 items(items = currentMembers ) { checked ->

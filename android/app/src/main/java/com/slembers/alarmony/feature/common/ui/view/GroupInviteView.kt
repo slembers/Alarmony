@@ -59,7 +59,7 @@ import com.slembers.alarmony.feature.common.CardTitle
 @ExperimentalMaterial3Api
 @ExperimentalGlideComposeApi
 fun GroupDefalutProfileView(
-    image : Painter = painterResource(id = R.drawable.baseline_account_circle_24),
+    image : Painter = painterResource(id = R.drawable.baseline_account_circle_48),
     nickname : String = "nothing",
     newMember : Boolean = true
 ) {
@@ -260,7 +260,7 @@ fun SearchMemberView() {
             )
         } else {
             Image(
-                painter = painterResource(id = R.drawable.baseline_account_circle_24),
+                painter = painterResource(id = R.drawable.baseline_account_circle_48),
                 contentDescription = "ImageRequest example",
                 modifier = Modifier.size(65.dp)
             )
