@@ -33,7 +33,7 @@
 - 그룹장이 설정 가능한 공유 알람
 - 가입 유저를 닉네임 기반으로 검색 후 알람 그룹에 초대 가능
 
----
+
 
 ### 프로젝트의 특징
 
@@ -44,7 +44,6 @@
 
 ## 🔧 **Tech Stacks**
 
----
 
 ### Android
 
@@ -77,17 +76,17 @@
 
 <img src='image/infra.png'> 
 
----
+
 
 ## 📐 **Infrastructure**
 
 <img src='image/architecture.png'> 
----
+
 
 ## 💻 피그마 설계
 
 <img src='image/figma.png'> 
----
+
 
 ## 🔎 ERD 설계
 
