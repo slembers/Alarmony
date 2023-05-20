@@ -170,6 +170,12 @@ public class GroupServiceImpl implements GroupService {
 
     }
 
+    /**
+     * 그룹장을 변경합니다.
+     * @param groupId 그룹 아이디
+     * @param username 현재 아이디
+     * @param newHost 바뀌는 사람의 닉네임
+     */
     @Transactional
     @Override
     public void changeGroupHost(Long groupId, String username, String newHost) {

@@ -191,6 +191,12 @@ public class GroupController {
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
+    /**
+     * 호스트를 변경한다.
+     * @param groupId 그룹 아이디
+     * @param changeGroupHostRequestDto 변경 호스트 내용
+     * @return 없음
+     */
     @PutMapping("/{group-id}/host")
     public ResponseEntity<Void> changeGroupHost(
             @PathVariable(name = "group-id") Long groupId,

@@ -1,5 +1,5 @@
 package com.slembers.alarmony.alarm.entity;
 
 public enum AlertTypeEnum {
-    INVITE, BANN, REPLY, BASIC, DELETE, ALARM, AUTO_LOGOUT, CHANGE_HOST
+    INVITE, BANN, REPLY, BASIC, DELETE, ALARM, AUTO_LOGOUT, CHANGE_HOST, MODIFY_ALARM
 }
