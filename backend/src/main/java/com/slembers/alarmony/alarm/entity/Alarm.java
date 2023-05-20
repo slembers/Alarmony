@@ -1,5 +1,7 @@
 package com.slembers.alarmony.alarm.entity;
 
+import com.slembers.alarmony.alarm.dto.AlarmInfoDto;
+import com.slembers.alarmony.global.util.CommonMethods;
 import com.slembers.alarmony.member.entity.Member;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
@@ -51,5 +53,15 @@ public class Alarm {
 
     public void changeHost(Member member) {
         this.host = member;
+    }
+
+    public void changeInfo(AlarmInfoDto infoDto) {
+        this.title = infoDto.getTitle();
+        this.content = infoDto.getContent();
+        this.time = LocalTime.of(infoDto.getHour(), infoDto.getMinute());
+        this.alarmDate = CommonMethods.changeBooleanListToString(infoDto.getAlarmDate());
+        this.soundName = infoDto.getSoundName();
+        this.soundVolume = infoDto.getSoundVolume();
+        this.vibrate = infoDto.isVibrate();
     }
 }
