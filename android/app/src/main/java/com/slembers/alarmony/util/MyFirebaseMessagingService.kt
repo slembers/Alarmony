@@ -127,6 +127,15 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
             }
         }
 
+        else if (remoteMessage.data["type"].equals("CHANGE_HOST")) {
+            Log.d("HostChange", remoteMessage.toString())
+            Log.d("HostChange", remoteMessage.data.toString())
+            val data = remoteMessage.data
+            sendNotification(remoteMessage)
+            val alarmId = data["alarmId"]!!.toLong()
+            Log.d("HostChange", "변경될 호스트 알람 아이디는 $alarmId")
+        }
+
         // 나머지 알림
         else {
             Log.d("myResponse", remoteMessage.data.toString())
