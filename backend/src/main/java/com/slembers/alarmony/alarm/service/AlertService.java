@@ -86,4 +86,12 @@ public interface AlertService {
      * @return 성공 여부
      */
     AutoLogoutValidDto sendAutoLogoutAlert(String username, String token);
+
+    /**
+     * 바뀐 정보를 멤버들에게 전송한다.
+     * @param username 아이디
+     * @param alarmId 알람 아이디
+     * @param previousName 이전 이름
+     */
+    void sendModifiedAlarm(String username, Long alarmId, String previousName);
 }
