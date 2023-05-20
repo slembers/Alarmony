@@ -62,4 +62,5 @@ public interface GroupService {
      */
     void deleteGroup(Long groupId, String hostUsername);
 
+    void changeGroupHost(Long groupId, String currentUsername, String newHost);
 }
