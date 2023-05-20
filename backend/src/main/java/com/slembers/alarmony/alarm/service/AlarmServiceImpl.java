@@ -2,7 +2,7 @@ package com.slembers.alarmony.alarm.service;
 
 import com.slembers.alarmony.alarm.dto.AlarmDto;
 import com.slembers.alarmony.alarm.dto.AlarmListDetailDto;
-import com.slembers.alarmony.alarm.dto.CreateAlarmDto;
+import com.slembers.alarmony.alarm.dto.AlarmInfoDto;
 import com.slembers.alarmony.alarm.dto.response.AlarmListResponseDto;
 import com.slembers.alarmony.alarm.entity.Alarm;
 import com.slembers.alarmony.alarm.entity.AlarmRecord;
@@ -21,6 +21,7 @@ import com.slembers.alarmony.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalTime;
 import java.util.List;
@@ -65,11 +66,11 @@ public class AlarmServiceImpl implements AlarmService {
      * 신규 알람을 생성한다.
      *
      * @param username       현재 로그인 아이디
-     * @param createAlarmDto 알람 생성 정보
+     * @param alarmInfoDto 알람 생성 정보
      * @return 알람 아이디
      */
     @Override
-    public Long createAlarm(String username, CreateAlarmDto createAlarmDto) {
+    public Long createAlarm(String username, AlarmInfoDto alarmInfoDto) {
 
         Member groupLeader = memberRepository.findByUsername(username)
             .orElseThrow(() -> new CustomException(MemberErrorCode.MEMBER_NOT_FOUND));
@@ -79,14 +80,14 @@ public class AlarmServiceImpl implements AlarmService {
         try {
             // 알람을 생성한다.
             alarm = Alarm.builder()
-                .title(createAlarmDto.getTitle())
-                .content(createAlarmDto.getContent())
-                .time(LocalTime.of(createAlarmDto.getHour(), createAlarmDto.getMinute()))
+                .title(alarmInfoDto.getTitle())
+                .content(alarmInfoDto.getContent())
+                .time(LocalTime.of(alarmInfoDto.getHour(), alarmInfoDto.getMinute()))
                 .host(groupLeader)
-                .alarmDate(CommonMethods.changeBooleanListToString(createAlarmDto.getAlarmDate()))
-                .soundName(createAlarmDto.getSoundName())
-                .soundVolume(createAlarmDto.getSoundVolume())
-                .vibrate(createAlarmDto.isVibrate())
+                .alarmDate(CommonMethods.changeBooleanListToString(alarmInfoDto.getAlarmDate()))
+                .soundName(alarmInfoDto.getSoundName())
+                .soundVolume(alarmInfoDto.getSoundVolume())
+                .vibrate(alarmInfoDto.isVibrate())
                 .build();
             alarmRepository.save(alarm);
         } catch (Exception e) {
@@ -189,5 +190,30 @@ public class AlarmServiceImpl implements AlarmService {
     public Alarm findAlarmByAlarmId(Long alarmID) {
         return alarmRepository.findById(alarmID)
             .orElseThrow(() -> new CustomException(AlarmErrorCode.ALARM_NOT_FOUND));
+    }
+
+    /**
+     * 알람 정보 변경
+     * @param username 현재 로그인 유저
+     * @param alarmId 알람 아이디
+     * @param alarmInfoDto 알람 변경 정보
+     * @return 알람 이전 이름
+     */
+    @Transactional
+    @Override
+    public String modifyAlarmInfo(String username, Long alarmId, AlarmInfoDto alarmInfoDto) {
+        Member member = memberRepository.findByUsername(username)
+                .orElseThrow(() -> new CustomException(MemberErrorCode.MEMBER_NOT_FOUND));
+        Alarm alarm = alarmRepository.findById(alarmId)
+                .orElseThrow(() -> new CustomException(AlarmErrorCode.ALARM_NOT_FOUND));
+
+        String previousName = alarm.getTitle();
+        if(!alarm.getHost().equals(member))
+            throw new CustomException(AlarmErrorCode.MEMBER_NOT_HOST);
+
+        alarm.changeInfo(alarmInfoDto);
+        alarmRepository.save(alarm);
+
+        return previousName;
     }
 }
