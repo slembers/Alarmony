@@ -49,4 +49,7 @@ public class Alarm {
     @ColumnDefault("false")
     private boolean vibrate;
 
+    public void changeHost(Member member) {
+        this.host = member;
+    }
 }
