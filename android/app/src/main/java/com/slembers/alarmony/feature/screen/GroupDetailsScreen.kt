@@ -219,7 +219,7 @@ fun GroupDetailsScreen(
                                 Icon(
                                     modifier = Modifier
                                         .padding(end = 10.dp)
-                                        .size(15.dp),
+                                        .size(20.dp),
                                     imageVector = Icons.Filled.ExitToApp,
                                     contentDescription = null,
                                     tint = Color.Red
@@ -247,7 +247,7 @@ fun GroupDetailsScreen(
                                 Icon(
                                     modifier = Modifier
                                         .padding(end = 10.dp)
-                                        .size(15.dp),
+                                        .size(20.dp),
                                     imageVector = Icons.Filled.ExitToApp,
                                     contentDescription = null,
                                     tint = Color.Red
