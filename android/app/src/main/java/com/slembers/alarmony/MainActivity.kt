@@ -14,6 +14,8 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
+import androidx.lifecycle.ViewModelStore
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.gun0912.tedpermission.PermissionListener
 import com.gun0912.tedpermission.normal.TedPermission
@@ -32,6 +34,7 @@ import kotlinx.coroutines.withContext
 class MainActivity : AppCompatActivity() {
     companion object {
         lateinit var prefs : PresharedUtil
+        var viewModelStore: ViewModelStore =  ViewModelStore()
 
     }
     override fun onCreate(savedInstanceState: Bundle?) {
