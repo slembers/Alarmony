@@ -27,6 +27,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -90,6 +91,7 @@ fun GroupDetailsScreen(
     val isClosed = remember { mutableStateOf(false) }
     val openDialog = remember { mutableStateOf(true) }
     val alarm = getAlarm(alarmId!!, LocalContext.current)
+    val refreshState = rememberSaveable { mutableStateOf(0) }
 //    val alarm = remember{ mutableStateOf<Alarm>(Alarm(
 //        alarmId =  0,
 //        title =  "",
@@ -112,7 +114,7 @@ fun GroupDetailsScreen(
 
     var memberCnt by details.memberCnt
 
-    LaunchedEffect(Unit) {
+    LaunchedEffect(refreshState.value) {
     //        Log.d("alarmDetails","[알람 상세] 초기화 불러오는 중 ...")
     //        val repository = AlarmRepository(alarmDao)
     //        val _alarm = withContext(Dispatchers.IO) {
@@ -191,7 +193,8 @@ fun GroupDetailsScreen(
                 GroupDetailsBoard(
                     items = record.value,
                     groupId = alarmId!!,
-                    host = alarm!!.host && currentDay(alarm!!)
+                    host = alarm!!.host && currentDay(alarm!!),
+                    refreshState = refreshState
                 )
                 GroupDetailsContent(alarm!!)
 //                CardBox(
