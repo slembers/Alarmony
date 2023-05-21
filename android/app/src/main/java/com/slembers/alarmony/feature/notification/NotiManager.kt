@@ -1,5 +1,6 @@
 package com.slembers.alarmony.feature.notification
 
+import android.app.NotificationManager
 import android.content.Context
 import android.util.Log
 import kotlinx.coroutines.CoroutineScope
@@ -28,6 +29,8 @@ fun deleteNoti(notiId: Long, context: Context) {
             repository.deleteNoti(noti)
         }
     }
+    val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+    notificationManager.cancel(notiId.toInt())
 }
 
 fun deleteAllNotis(context: Context) {

@@ -63,11 +63,11 @@ object NotiApi {
                     val myResponse = response.body()
                     Log.d("myResponse_Invite", myResponse.toString())
                     if (myResponse!!.alarm == null) { // 토큰이 유효하지 않으면 alarm에 null 들어옴
-                        Toast.makeText(
-                            context,
-                            myResponse.message,
-                            Toast.LENGTH_SHORT
-                        ).show()
+//                        Toast.makeText(
+//                            context,
+//                            myResponse.message,
+//                            Toast.LENGTH_SHORT
+//                        ).show()
                     } else {
                         lateinit var contentElse : String
                         if (myResponse.alarm.content == null) {
