@@ -62,4 +62,11 @@ public interface GroupService {
      */
     void deleteGroup(Long groupId, String hostUsername);
 
+    /**
+     * 그룹 호스트를 변경합니다.
+     * @param groupId 그룹 아이디
+     * @param currentUsername 현재 아이디
+     * @param newHost 바뀌는 사람의 닉네임
+     */
+    void changeGroupHost(Long groupId, String currentUsername, String newHost);
 }

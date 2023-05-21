@@ -11,10 +11,12 @@ import com.slembers.alarmony.alarm.dto.response.AlarmInviteResponseDto;
 import com.slembers.alarmony.alarm.dto.response.AlertListResponseDto;
 import com.slembers.alarmony.alarm.dto.response.AutoLogoutValidDto;
 import com.slembers.alarmony.alarm.entity.*;
+import com.slembers.alarmony.alarm.exception.AlarmErrorCode;
 import com.slembers.alarmony.alarm.exception.AlarmRecordErrorCode;
 import com.slembers.alarmony.alarm.exception.AlertErrorCode;
 import com.slembers.alarmony.alarm.exception.MemberAlarmErrorCode;
 import com.slembers.alarmony.alarm.repository.AlarmRecordRepository;
+import com.slembers.alarmony.alarm.repository.AlarmRepository;
 import com.slembers.alarmony.alarm.repository.AlertRepository;
 import com.slembers.alarmony.alarm.repository.MemberAlarmRepository;
 import com.slembers.alarmony.global.execption.CustomException;
@@ -42,6 +44,8 @@ public class AlertServiceImpl implements AlertService {
     private final AlarmService alarmService;
     private final MemberAlarmRepository memberAlarmRepository;
     private final AlarmRecordRepository alarmRecordRepository;
+
+    private final AlarmRepository alarmRepository;
 
     /**
      * 멤버 집합을 돌며 유효한 멤버에게 초대 알림을 보낸다.
@@ -370,6 +374,86 @@ public class AlertServiceImpl implements AlertService {
         }
 
         return AutoLogoutValidDto.builder().success(true).build();
+    }
+
+    /**
+     * 알람 변경 정보를 전달한다.
+     * @param username 아이디
+     * @param alarmId 알람 아이디
+     * @param previousName 이전 이름
+     */
+    @Transactional
+    @Override
+    public void sendModifiedAlarm(String username, Long alarmId, String previousName) {
+        Member host = memberRepository.findByUsername(username)
+                .orElseThrow(() -> new CustomException(MemberErrorCode.MEMBER_NOT_FOUND));
+
+        List<String> groupUsernameList = memberAlarmRepository.getUsernameByGroupIdWithoutHost(
+                alarmId, username);
+
+        Alarm alarm = alarmRepository.findById(alarmId)
+                .orElseThrow(() -> new CustomException(AlarmErrorCode.ALARM_NOT_FOUND));
+
+        String content = "'" + previousName + "' 그룹의 정보가 수정되었습니다.";
+        groupUsernameList.stream()
+                .map(memberRepository::findByUsername)
+                .flatMap(Optional::stream)
+                .map(receiver -> Alert.builder()
+                                    .sender(host)
+                                    .receiver(receiver)
+                                    .content(content)
+                                    .type(AlertTypeEnum.MODIFY_ALARM)
+                                    .alarm(alarm)
+                                    .build()
+                )
+                .forEach(this::sendAlertToChangeAlarm);
+    }
+
+    /**
+     * 알람 정보를 담아 알림 정보를 전송한다.
+     * @param alert 알림
+     * @return 성공과 실패
+     */
+    @Transactional
+    public boolean sendAlertToChangeAlarm(Alert alert) {
+        try {
+            alertRepository.save(alert);
+            String targetMobile = alert.getReceiver().getRegistrationToken();
+            String content = alert.getContent();
+            String imageUrl = alert.getSender() == null ? "" : alert.getSender().getProfileImgUrl();
+            AndroidConfig config = AndroidConfig.builder()
+                    .setPriority(Priority.HIGH)
+                    .build();
+            // 메시지 설정
+            Alarm alarm = alert.getAlarm();
+
+            Message message = Message.builder()
+                    .putData("alertId", String.valueOf(alert.getId()))
+                    .putData("profileImg", imageUrl == null ? "" : imageUrl)
+                    .putData("content", content)
+                    .putData("type", alert.getType().name())
+                    .putData("receiver", alert.getReceiver().getNickname())
+                    .putData("alarmId", String.valueOf(alarm.getId()))
+                    .putData("title", alarm.getTitle())
+                    .putData("alarmContent", alert.getContent())
+                    .putData("hour", String.valueOf(alarm.getTime().getHour()))
+                    .putData("minute", String.valueOf(alarm.getTime().getMinute()))
+                    .putData("alarmDate", String.valueOf(alarm.getAlarmDate()))
+                    .putData("soundName", alarm.getSoundName())
+                    .putData("soundVolume", String.valueOf(alarm.getSoundVolume()))
+                    .putData("vibrate", String.valueOf(alarm.isVibrate()))
+                    .setToken(targetMobile)
+                    .setAndroidConfig(config)
+                    .build();
+            // 웹 API 토큰을 가져와서 보냄
+            String response = FirebaseMessaging.getInstance().send(message);
+            // 결과 출력
+            log.info("메시지 전송 완료: " + response);
+            return true;
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return false;
+        }
     }
 
     /**

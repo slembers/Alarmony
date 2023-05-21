@@ -1,6 +1,8 @@
 package com.slembers.alarmony.alarm.service;
 
 import com.slembers.alarmony.alarm.entity.Alarm;
+import com.slembers.alarmony.alarm.entity.Alert;
+import com.slembers.alarmony.alarm.entity.AlertTypeEnum;
 import com.slembers.alarmony.alarm.entity.MemberAlarm;
 import com.slembers.alarmony.alarm.exception.AlarmErrorCode;
 import com.slembers.alarmony.alarm.repository.AlarmRecordRepository;
@@ -166,6 +168,41 @@ public class GroupServiceImpl implements GroupService {
             alarmRepository.deleteById(groupId);
         }
 
+    }
+
+    /**
+     * 그룹장을 변경합니다.
+     * @param groupId 그룹 아이디
+     * @param username 현재 아이디
+     * @param newHost 바뀌는 사람의 닉네임
+     */
+    @Transactional
+    @Override
+    public void changeGroupHost(Long groupId, String username, String newHost) {
+        Member member = memberRepository.findByUsername(username)
+                .orElseThrow(() -> new CustomException(MemberErrorCode.MEMBER_NOT_FOUND));
+        Alarm alarm = alarmRepository.findById(groupId)
+                .orElseThrow(() -> new CustomException(AlarmErrorCode.ALARM_NOT_FOUND));
+
+        if(!alarm.getHost().equals(member))
+            throw new CustomException(AlarmErrorCode.MEMBER_NOT_HOST);
+
+        Member nextHost = memberRepository.findByNickname(newHost)
+                .orElseThrow(() -> new CustomException(MemberErrorCode.MEMBER_NOT_FOUND));
+
+        alarm.changeHost(nextHost);
+        alarmRepository.save(alarm);
+
+        alertService.sendCustomAlert(
+                Alert.builder()
+                        .sender(member)
+                        .receiver(nextHost)
+                        .content("'" + alarm.getTitle() + "' 그룹의 호스트가 회원님으로 변경되었습니다.")
+                        .type(AlertTypeEnum.CHANGE_HOST)
+                        .alarm(alarm)
+                        .build(),
+                "그룹장 변경"
+        );
     }
 
 }

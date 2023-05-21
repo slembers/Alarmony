@@ -1,13 +1,14 @@
 package com.slembers.alarmony.alarm.controller;
 
 import com.slembers.alarmony.alarm.dto.AlarmEndRecordDto;
-import com.slembers.alarmony.alarm.dto.CreateAlarmDto;
+import com.slembers.alarmony.alarm.dto.AlarmInfoDto;
 import com.slembers.alarmony.alarm.dto.request.PutAlarmMessageRequestDto;
 import com.slembers.alarmony.alarm.dto.AlarmDto;
 import com.slembers.alarmony.alarm.dto.request.PutAlarmRecordTimeRequestDto;
 import com.slembers.alarmony.alarm.dto.response.AlarmListResponseDto;
 import com.slembers.alarmony.alarm.service.AlarmRecordService;
 import com.slembers.alarmony.alarm.service.AlarmService;
+import com.slembers.alarmony.alarm.service.AlertService;
 import com.slembers.alarmony.global.security.util.SecurityUtil;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -27,6 +28,8 @@ public class AlarmController {
 
     private final AlarmRecordService alarmRecordService;
 
+    private final AlertService alertService;
+
     /**
      * 현재 로그인 유저의 알람 리스트를 가져온다
      *
@@ -41,14 +44,14 @@ public class AlarmController {
     /**
      * 신규 알람을 생성한다.
      *
-     * @param createAlarmDto 생성 알람 정보
+     * @param alarmInfoDto 생성 알람 정보
      * @return 성공 메시지
      */
     @PostMapping
     public ResponseEntity<Map<String, Object>> createAlarm(
-        @Valid @RequestBody CreateAlarmDto createAlarmDto) {
+            @Valid @RequestBody AlarmInfoDto alarmInfoDto) {
         String username = SecurityUtil.getCurrentUsername();
-        Long alarmId = alarmService.createAlarm(username, createAlarmDto);
+        Long alarmId = alarmService.createAlarm(username, alarmInfoDto);
 
         Map<String, Object> map = new HashMap<>();
         map.put("groupId", alarmId);
@@ -64,8 +67,8 @@ public class AlarmController {
      */
     @PutMapping("/{alarm-id}/message")
     public ResponseEntity<Void> putAlarmMessage(
-        @PathVariable("alarm-id") Long alarmId,
-        @Valid @RequestBody PutAlarmMessageRequestDto putAlarmMessageRequestDto) {
+            @PathVariable("alarm-id") Long alarmId,
+            @Valid @RequestBody PutAlarmMessageRequestDto putAlarmMessageRequestDto) {
 
         String username = SecurityUtil.getCurrentUsername();
 
@@ -94,17 +97,17 @@ public class AlarmController {
      */
     @PutMapping("/{alarm-id}/record")
     public ResponseEntity<Void> putAlarmRecord(@PathVariable("alarm-id") Long alarmId,
-        @Valid @RequestBody PutAlarmRecordTimeRequestDto putAlarmRecordTimeRequestDto) {
+                                               @Valid @RequestBody PutAlarmRecordTimeRequestDto putAlarmRecordTimeRequestDto) {
         String username = SecurityUtil.getCurrentUsername();
         alarmRecordService.putAlarmRecord(AlarmEndRecordDto.builder()
-            .alarmId(alarmId)
-            .username(username)
-            .datetime(
-                    LocalDateTime.parse(putAlarmRecordTimeRequestDto.getDatetime(),
-                            DateTimeFormatter.ISO_DATE_TIME))
+                .alarmId(alarmId)
+                .username(username)
+                .datetime(
+                        LocalDateTime.parse(putAlarmRecordTimeRequestDto.getDatetime(),
+                                DateTimeFormatter.ISO_DATE_TIME))
 //                    putAlarmRecordTimeRequestDto.getDatetime()
-            .success(true)
-            .build());
+                .success(true)
+                .build());
         return ResponseEntity.noContent().build();
     }
 
@@ -118,10 +121,29 @@ public class AlarmController {
     public ResponseEntity<Void> putAlarmFailed(@PathVariable("alarm-id") Long alarmId) {
         String username = SecurityUtil.getCurrentUsername();
         alarmRecordService.putAlarmRecord(AlarmEndRecordDto.builder()
-            .alarmId(alarmId)
-            .username(username)
-            .success(false)
-            .build());
+                .alarmId(alarmId)
+                .username(username)
+                .success(false)
+                .build());
+        return ResponseEntity.noContent().build();
+    }
+
+    /**
+     * 알람 정보 변경
+     * @param alarmId 변경할 알람 아이디
+     * @param alarmInfoDto 변경 정보
+     * @return 없음
+     */
+    @PutMapping("/{alarm-id}")
+    public ResponseEntity<Void> modifyAlarmInfo(
+            @PathVariable(name = "alarm-id") Long alarmId,
+            @RequestBody AlarmInfoDto alarmInfoDto
+    ) {
+        String username = SecurityUtil.getCurrentUsername();
+        String previousName = alarmService.modifyAlarmInfo(
+                username,
+                alarmId, alarmInfoDto);
+        alertService.sendModifiedAlarm(username, alarmId, previousName);
         return ResponseEntity.noContent().build();
     }
 }

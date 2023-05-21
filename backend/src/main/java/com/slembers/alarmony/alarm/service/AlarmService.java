@@ -1,7 +1,7 @@
 package com.slembers.alarmony.alarm.service;
 
 import com.slembers.alarmony.alarm.dto.AlarmDto;
-import com.slembers.alarmony.alarm.dto.CreateAlarmDto;
+import com.slembers.alarmony.alarm.dto.AlarmInfoDto;
 import com.slembers.alarmony.alarm.dto.response.AlarmListResponseDto;
 import com.slembers.alarmony.alarm.entity.Alarm;
 
@@ -19,9 +19,9 @@ public interface AlarmService {
      * 신규 알람을 생성한다.
      *
      * @param username       현재 로그인 아이디
-     * @param createAlarmDto 알람 생성 정보
+     * @param alarmInfoDto 알람 생성 정보
      */
-    Long createAlarm(String username, CreateAlarmDto createAlarmDto);
+    Long createAlarm(String username, AlarmInfoDto alarmInfoDto);
 
     /**
      * 특정 알람아이디를 주면, 알람 기록을 찾아서 메시지를 기록해둔다.
@@ -46,4 +46,13 @@ public interface AlarmService {
      * @return 알람 객체
      */
     Alarm findAlarmByAlarmId(Long alarmID);
+
+    /**
+     * 알람 정보를 변경한다.
+     * @param username 현재 로그인 유저
+     * @param alarmId 알람 아이디
+     * @param alarmInfoDto 알람 변경 정보
+     * @return 이전 알람 이름
+     */
+    String modifyAlarmInfo(String username, Long alarmId, AlarmInfoDto alarmInfoDto);
 }

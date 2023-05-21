@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class CreateAlarmDto {
+public class AlarmInfoDto {
 
     @NotNull(message = "제목은 필수입니다.")
     private String title;
