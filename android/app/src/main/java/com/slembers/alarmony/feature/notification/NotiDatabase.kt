@@ -5,7 +5,7 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 
-@Database(entities = [Noti::class], version = 1, exportSchema = false)
+@Database(entities = [Noti::class], version = 3, exportSchema = false)
 abstract class NotiDatabase : RoomDatabase() {
     abstract fun notiDao(): NotiDao
 
