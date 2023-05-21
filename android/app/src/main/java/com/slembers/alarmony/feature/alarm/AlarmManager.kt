@@ -125,60 +125,60 @@ fun setAlarm(alarmDto: AlarmDto, context: Context) {
 
 ////////////////////// 테스트 코드입니다 ////////////////////
 
-fun saveTestAlarm(alarmDto: AlarmDto, context: Context) {
-    Log.d("save", alarmDto.toString())
-    CoroutineScope(Dispatchers.IO).launch {
-        lateinit var repository: AlarmRepository
-        val alarmDao = AlarmDatabase.getInstance(context).alarmDao()
-        repository = AlarmRepository(alarmDao)
-        val alarm : Alarm = Alarm.toEntity(alarmDto)
-        repository.addAlarm(alarm)
-    }
-    setTestAlarm(alarmDto, context)
-}
-
-fun setTestAlarm(alarmDto: AlarmDto, context: Context) {
-    val newTime = System.currentTimeMillis() + (8 * 1000)  // 테스트용 코드 (8초 뒤 알람 설정)
-    val intent = Intent(context, AlarmReceiver::class.java).apply {
-        putExtra("alarmId", alarmDto.alarmId)
-    }
-    val myPendingIntent : Int = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-        PendingIntent.FLAG_MUTABLE
-    } else {
-        PendingIntent.FLAG_UPDATE_CURRENT
-    }
-    val alarmIntentRTC: PendingIntent =
-        PendingIntent.getBroadcast(
-            context,
-            alarmDto.alarmId.toInt(),
-            intent,
-            myPendingIntent
-        )
-    val alarmManager = context.getSystemService(ALARM_SERVICE) as AlarmManager
-    when {
-        Build.VERSION.SDK_INT >= Build.VERSION_CODES.M -> {
-            alarmManager.setExactAndAllowWhileIdle(
-                AlarmManager.RTC_WAKEUP,
-                newTime,
-                alarmIntentRTC
-            )
-        }
-        else -> {
-            alarmManager.setExact(
-                AlarmManager.RTC_WAKEUP,
-                newTime,
-                alarmIntentRTC
-            )
-        }
-    }
-
-    val receiver = ComponentName(context, AlarmReceiver::class.java)
-    context.packageManager.setComponentEnabledSetting(
-        receiver,
-        PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
-        PackageManager.DONT_KILL_APP
-    )
-}
+//fun saveTestAlarm(alarmDto: AlarmDto, context: Context) {
+//    Log.d("save", alarmDto.toString())
+//    CoroutineScope(Dispatchers.IO).launch {
+//        lateinit var repository: AlarmRepository
+//        val alarmDao = AlarmDatabase.getInstance(context).alarmDao()
+//        repository = AlarmRepository(alarmDao)
+//        val alarm : Alarm = Alarm.toEntity(alarmDto)
+//        repository.addAlarm(alarm)
+//    }
+//    setTestAlarm(alarmDto, context)
+//}
+//
+//fun setTestAlarm(alarmDto: AlarmDto, context: Context) {
+//    val newTime = System.currentTimeMillis() + (8 * 1000)  // 테스트용 코드 (8초 뒤 알람 설정)
+//    val intent = Intent(context, AlarmReceiver::class.java).apply {
+//        putExtra("alarmId", alarmDto.alarmId)
+//    }
+//    val myPendingIntent : Int = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+//        PendingIntent.FLAG_MUTABLE
+//    } else {
+//        PendingIntent.FLAG_UPDATE_CURRENT
+//    }
+//    val alarmIntentRTC: PendingIntent =
+//        PendingIntent.getBroadcast(
+//            context,
+//            alarmDto.alarmId.toInt(),
+//            intent,
+//            myPendingIntent
+//        )
+//    val alarmManager = context.getSystemService(ALARM_SERVICE) as AlarmManager
+//    when {
+//        Build.VERSION.SDK_INT >= Build.VERSION_CODES.M -> {
+//            alarmManager.setExactAndAllowWhileIdle(
+//                AlarmManager.RTC_WAKEUP,
+//                newTime,
+//                alarmIntentRTC
+//            )
+//        }
+//        else -> {
+//            alarmManager.setExact(
+//                AlarmManager.RTC_WAKEUP,
+//                newTime,
+//                alarmIntentRTC
+//            )
+//        }
+//    }
+//
+//    val receiver = ComponentName(context, AlarmReceiver::class.java)
+//    context.packageManager.setComponentEnabledSetting(
+//        receiver,
+//        PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
+//        PackageManager.DONT_KILL_APP
+//    )
+//}
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalGlideComposeApi::class)
 fun goMain(context : Context) {

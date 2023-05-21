@@ -116,7 +116,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
 
         }
         else if (remoteMessage.data["type"].equals("DELETE") ||
-                        remoteMessage.data["type"].equals("BANN")) {
+            remoteMessage.data["type"].equals("BANN")) {
             Log.d("myResponse", remoteMessage.toString())
             Log.d("myResponse", remoteMessage.data.toString())
             if (remoteMessage.data != null) {

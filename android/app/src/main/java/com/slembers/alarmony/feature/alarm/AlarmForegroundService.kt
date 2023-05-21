@@ -44,8 +44,7 @@ class AlarmForegroundService : Service() {
         if (intent!!.getStringExtra(OPEN_TYPE) == REFRESH) {
             CoroutineScope(Dispatchers.IO).launch {
                 val alarms = repository.getAllAlarms()
-                Log.d("myResponse", alarms.toString())
-                Log.d("myResponse", repository.findAlarm(194L)!!.title.toString())
+                Log.d("myResponse", "알람을 불러옵니다.")
                 if (alarms != null) {
                     refreshAlarms(alarms)
                 }
@@ -59,11 +58,11 @@ class AlarmForegroundService : Service() {
     }
     private fun refreshAlarms(alarms : List<Alarm>) {
         Log.d("myResponse", "리프레시알람")
-        Log.d("myResponse", "${alarms}")
         CoroutineScope(Dispatchers.IO).launch {
             val alarmList = alarms ?: return@launch
             for (alarm in alarmList) {
                 val alarmDto = AlarmDto.toDto(alarm)
+                Log.d("myResponse", "${alarmDto} 재세팅")
                 setAlarm(alarmDto, this@AlarmForegroundService)
             }
             delay(2000)
@@ -96,7 +95,7 @@ class AlarmForegroundService : Service() {
 
         val notificationBuilder = NotificationCompat.Builder(this, channelId)
         val notification = notificationBuilder.setOngoing(true)
-            .setSmallIcon(R.mipmap.ic_launcher)
+            .setSmallIcon(R.drawable.mas)
             .setPriority(NotificationCompat.PRIORITY_HIGH)
             .setContentTitle("")
             .setContentText(type)
