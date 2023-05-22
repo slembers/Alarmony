@@ -193,29 +193,10 @@ fun nothingItem(
     )
 }
 
-private fun currentDate(): String {
+private fun currentDate() : String {
     val local = LocalDate.now(ZoneId.of("Asia/Seoul"))
-
-    val dayMap = hashMapOf(
-        1 to "월",
-        2 to "화",
-        3 to "수",
-        4 to "목",
-        5 to "금",
-        6 to "토",
-        7 to "일"
-    )
-
-    val dateTimeFormat = DateTimeFormatter.ofPattern("M월 d일 ")
-        .withResolverStyle(java.time.format.ResolverStyle.STRICT)
-        .withChronology(java.time.chrono.IsoChronology.INSTANCE)
-        .withLocale(java.util.Locale.KOREAN)
-        .withZone(java.time.ZoneId.of("Asia/Seoul"))
-
-    val dayOfWeek = local.dayOfWeek.value
-    val dayOfWeekKorean = dayMap[dayOfWeek] ?: ""
-
-    return local.format(dateTimeFormat) + dayOfWeekKorean + "요일"
+    val dateTimeFormat = DateTimeFormatter.ofPattern("M월 d일 E요일")
+    return local.format(dateTimeFormat)
 }
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalGlideComposeApi::class)
