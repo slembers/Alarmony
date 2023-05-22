@@ -48,7 +48,6 @@ fun GroupDetailsBoardBtn(
                     while (remainingSec.value!! > 0) {
                         delay(1000) // 1초 대기
                         remainingSec.value = remainingSec.value!! - 1
-                        Log.d("myResponse-remain", remainingSec.value.toString())
                     }
                     onAlarm.value = true
                     remainingSec.value = 60

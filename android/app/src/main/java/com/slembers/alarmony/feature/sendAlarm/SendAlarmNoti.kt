@@ -52,7 +52,7 @@ object SendAlarmNoti {
         mediaPlayer.isLooping = true
         val maxVolume = audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC)
         Log.d("MaxVolumn", maxVolume.toString())
-        val newVolume = (maxVolume * 0.5).roundToInt() // 볼륨 값을 최대 볼륨의 절반으로 설정
+        val newVolume = alarmDto.soundVolume
         audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, newVolume, 0)
         mediaPlayer.start()
 
@@ -76,8 +76,7 @@ object SendAlarmNoti {
             val channelId = "channel_id"
             val channel =
                 NotificationChannel(channelId, "channel name", NotificationManager.IMPORTANCE_HIGH)
-            channel.enableVibration(true)
-            channel.vibrationPattern = longArrayOf(500, 1000, 500, 1000)
+            channel.enableVibration(alarmDto.vibrate)
             notificationManager!!.createNotificationChannel(channel)
             mBuilder!!.setChannelId(channelId)
         }
