@@ -1,6 +1,8 @@
 package com.slembers.alarmony.feature.ui.groupDetails
 
 import android.util.Log
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -19,10 +21,14 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -40,6 +46,7 @@ import com.slembers.alarmony.model.db.Record
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
+import kotlinx.coroutines.delay
 import java.time.LocalDate
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
@@ -48,6 +55,7 @@ import java.time.format.DateTimeFormatter
 @ExperimentalMaterial3Api
 @ExperimentalGlideComposeApi
 fun GroupDetailsBoard(
+
     items: Map<String, List<Record>> = hashMapOf(
         "success" to listOf(),
         "failed" to listOf()
@@ -56,6 +64,22 @@ fun GroupDetailsBoard(
     host : Boolean = false,
     refreshState : MutableState<Int>
 ) {
+
+    var rotationAngle  = remember {
+        mutableStateOf(0f)
+    }
+    val targetAngle = 360f
+    val animatedAngle by animateFloatAsState(
+        targetValue = rotationAngle.value,
+        animationSpec = tween(durationMillis = 1000)
+    )
+    LaunchedEffect(animatedAngle) {
+        if (animatedAngle == targetAngle) {
+            delay(1000)
+            rotationAngle.value = 0f
+        }
+    }
+
 
     CardBox(
         title = { CardTitle(
@@ -76,9 +100,13 @@ fun GroupDetailsBoard(
                         textAlign = TextAlign.Start
                     )
                     IconButton(
-                        onClick = { refreshState.value++
+                        onClick = {
+                            rotationAngle.value = targetAngle
+                            refreshState.value++
                             Log.d("myResposne", refreshState.value.toString())},
-                        modifier = Modifier.padding(end = 5.dp)
+                        modifier = Modifier
+                            .padding(end = 5.dp)
+                            .graphicsLayer(rotationZ = animatedAngle)
                     ) {
                         Icon(
                             imageVector = Icons.Default.Refresh,
