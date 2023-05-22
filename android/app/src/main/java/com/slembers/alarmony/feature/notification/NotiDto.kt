@@ -6,7 +6,7 @@ import com.slembers.alarmony.feature.alarm.Alarm
 import com.slembers.alarmony.feature.alarm.AlarmDto
 
 class NotiDto (
-    @SerializedName("notiId") val notiId : Long,
+    @SerializedName("id") val notiId : Long,
     @SerializedName("profileImg") var profileImg : String,
     @SerializedName("content") val content : String,
     @SerializedName("type") val type : String
@@ -22,5 +22,4 @@ class NotiDto (
             return notiDto
         }
     }
-
 }

@@ -116,7 +116,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
 
         }
         else if (remoteMessage.data["type"].equals("DELETE") ||
-                        remoteMessage.data["type"].equals("BANN")) {
+            remoteMessage.data["type"].equals("BANN")) {
             Log.d("myResponse", remoteMessage.toString())
             Log.d("myResponse", remoteMessage.data.toString())
             if (remoteMessage.data != null) {
@@ -162,13 +162,13 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
     private fun sendNotification(remoteMessage: RemoteMessage){
         val data = remoteMessage.data
         val type = data["type"]
-        val alertId = data["alertId"]
+        val notiId = data["alertId"]
         val profileImg = data["profileImg"]
         val content = data["content"]
 
         // 알림 저장
         val noti = NotiDto(
-            alertId!!.toLong(),
+            notiId!!.toLong(),
             profileImg!!,
             content!!,
             type!!
@@ -176,7 +176,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         saveNoti(noti, this)
 
         // RemoteCode, ID를 고유값으로 지정하여 알림이 개별 표시 되도록 함
-        val uniId: Int = (System.currentTimeMillis() / 7).toInt()
+        val uniId: Int = notiId.toInt()
         val intent = Intent(this, MainActivity::class.java)
         intent.putExtra("GO", "Noti")
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)

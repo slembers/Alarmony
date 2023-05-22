@@ -69,6 +69,7 @@ import com.slembers.alarmony.feature.notification.NotiApi.InviteResponseApi
 import com.slembers.alarmony.feature.notification.NotiApi.deleteNotiApi
 import com.slembers.alarmony.feature.notification.NotiViewModel
 import com.slembers.alarmony.feature.notification.NotiViewModelFactory
+import com.slembers.alarmony.feature.notification.deleteNoti
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -240,7 +241,7 @@ fun GroupNoti(item : Noti, isClicked : MutableState<Boolean>, mNotiViewModel : N
                         onClick = {
                             openDialog.value = false
                             InviteResponseApi(false, item.notiId, context)
-                            mNotiViewModel.deleteNoti(item)
+                            deleteNoti(item.notiId, context)
                         },
                         colors = ButtonDefaults.buttonColors(containerColor = "#C93636".toColor())
                     ) {
@@ -256,7 +257,7 @@ fun GroupNoti(item : Noti, isClicked : MutableState<Boolean>, mNotiViewModel : N
                         onClick = {
                             openDialog.value = false
                             InviteResponseApi(true, item.notiId, context)
-                            mNotiViewModel.deleteNoti(item)
+                            deleteNoti(item.notiId, context)
                         },
                         colors = ButtonDefaults.buttonColors(containerColor = "#31AF91".toColor()),
                     ) {

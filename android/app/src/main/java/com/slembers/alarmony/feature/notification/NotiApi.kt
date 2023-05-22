@@ -37,6 +37,7 @@ object NotiApi {
                             if (notiDto.profileImg == null) {
                                 notiDto.profileImg = ""
                             }
+                            Log.d("myResponse-Noti", "${notiDto.content.toString()} : 알림 불러오기")
                             saveNoti(notiDto, context)
                         }
                     }
@@ -50,8 +51,8 @@ object NotiApi {
         })
     }
 
-    fun InviteResponseApi(accept : Boolean, alertId : Long, context : Context) {
-        val call = notiApi.responseInvite(accept, alertId)
+    fun InviteResponseApi(accept : Boolean, notiId : Long, context : Context) {
+        val call = notiApi.responseInvite(accept, notiId)
         Log.d("myResponse", "active")
         call.enqueue(object: Callback<InviteResponseDto>{
             override fun onResponse(
@@ -62,11 +63,11 @@ object NotiApi {
                     val myResponse = response.body()
                     Log.d("myResponse_Invite", myResponse.toString())
                     if (myResponse!!.alarm == null) { // 토큰이 유효하지 않으면 alarm에 null 들어옴
-                        Toast.makeText(
-                            context,
-                            myResponse.message,
-                            Toast.LENGTH_SHORT
-                        ).show()
+//                        Toast.makeText(
+//                            context,
+//                            myResponse.message,
+//                            Toast.LENGTH_SHORT
+//                        ).show()
                     } else {
                         lateinit var contentElse : String
                         if (myResponse.alarm.content == null) {
@@ -111,24 +112,24 @@ object NotiApi {
         })
     }
 
-    fun deleteNotiApi(alertId : Long, context : Context) {
-        val call = notiApi.deleteNoti(alertId)
+    fun deleteNotiApi(notiId : Long, context : Context) {
+        val call = notiApi.deleteNoti(notiId)
         call.enqueue(object : Callback<Unit>{
             override fun onResponse(call: Call<Unit>, response: Response<Unit>) {
                 Log.d("myResponse", response.toString())
                 Log.d("myResponse", response.body().toString())
                 Log.d("myResponse", response.code().toString())
                 if (response.isSuccessful) {
-                    deleteNoti(alertId, context)
+                    deleteNoti(notiId, context)
                     // 서버에서 알림 삭제 성공시, Room 에서도 알림을 삭제함
                     Log.d("myResponse-deleteNoti", "알림 삭제 성공.")
                 }
                 else if (response.code() == 404) {
-                    deleteNoti(alertId, context)
+                    deleteNoti(notiId, context)
                     // 서버에서 이미 삭제된 알림, Room 에서도 알림을 삭제함
                     Log.d("myResponse-deleteNoti(noServer)", "알림 삭제 성공.")
                 }
-                 else {
+                else {
                     Log.e("myResponse-deleteNoti", "알림 삭제에 실패했습니다.")
                 }
             }
