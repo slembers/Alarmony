@@ -6,6 +6,7 @@ package com.slembers.alarmony.feature.user
 
 //통신api
 import android.app.Activity
+import android.app.Application
 import android.content.Intent
 import android.util.Log
 import android.widget.Toast
@@ -67,6 +68,7 @@ import com.slembers.alarmony.feature.screen.ShakingImage
 import com.slembers.alarmony.feature.ui.common.BouncingAnimation
 import com.slembers.alarmony.network.repository.MemberService.getMyInfo
 import com.slembers.alarmony.network.repository.MemberService.login
+import com.slembers.alarmony.util.WifiUtil.isNetworkConnected
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -102,6 +104,8 @@ fun LoginScreen(navController: NavController) {
     val usernameRegex = "^[a-z0-9]{5,11}$".toRegex()
     val passwordRegex = "^(?=.*[0-9])(?=.*[a-zA-Z])[a-zA-Z\\d]{8,16}\$".toRegex()
     val scrollState = rememberScrollState()
+
+    val application = context.applicationContext as Application
 
 
 
@@ -208,29 +212,33 @@ fun LoginScreen(navController: NavController) {
         }
         Button(
             onClick = {
-                Log.d("확인", "${idState.value}, ${passwordState.value} +로그인")
-                loading = true
-                CoroutineScope(Dispatchers.Main).launch {
-                    val result = login(
-                        username = idState.value,
-                        password = passwordState.value,
-                        context
-                    )
-                    if (result) {
-                        getMyInfo()
-                        Log.d("StartPageActiviy","로그인 정보 저장 : ${MainActivity.prefs.getString("nickname","")}")
-                    }
-                    getAllAlarmsApi(context)
-                    getAllNotisApi(context)
-                    Log.d("INFO","result : $result")
-                    if(result) {
-                        NotiApi.sendAutoLogoutAndChangeToken()
-                        val intent = Intent(context,MainActivity::class.java)
-                        context.startActivity(intent)
-                        (context as Activity).finish()
+                if (isNetworkConnected(application)) {
+                    Log.d("확인", "${idState.value}, ${passwordState.value} +로그인")
+                    loading = true
+                    CoroutineScope(Dispatchers.Main).launch {
+                        val result = login(
+                            username = idState.value,
+                            password = passwordState.value,
+                            context
+                        )
+                        if (result) {
+                            getMyInfo()
+                            Log.d("StartPageActiviy","로그인 정보 저장 : ${MainActivity.prefs.getString("nickname","")}")
+                        }
+                        getAllAlarmsApi(context)
+                        getAllNotisApi(context)
+                        Log.d("INFO","result : $result")
+                        if(result) {
+                            NotiApi.sendAutoLogoutAndChangeToken()
+                            val intent = Intent(context,MainActivity::class.java)
+                            context.startActivity(intent)
+                            (context as Activity).finish()
+                            loading = false
+                        }
                         loading = false
                     }
-                    loading = false
+                } else {
+                    Toast.makeText(context, "네트워크 연결을 확인하세요", Toast.LENGTH_SHORT).show()
                 }
             },
             enabled = isFilledId.value && isFilledPassword.value,

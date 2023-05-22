@@ -62,6 +62,7 @@ import coil.request.ImageRequest
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.gun0912.tedpermission.PermissionListener
 import com.gun0912.tedpermission.normal.TedPermission
+import com.slembers.alarmony.MainActivity.Companion.prefs
 import com.slembers.alarmony.R
 import com.slembers.alarmony.feature.alarm.deleteAllAlarms
 import com.slembers.alarmony.feature.common.CardBox
@@ -120,8 +121,15 @@ fun SettingView(
         CoroutineScope(Dispatchers.IO).launch {
             val result = MemberService.modifyMemberNickname(changeName.trim('"'))
             if (result?.success == true) {
+                val pref = context.getSharedPreferences("prefs_name", Context.MODE_PRIVATE)
+                val editor = pref.edit()
                 showToast(context, "닉네임이 변경되었습니다.")
                 curNickname.value = changeName
+                Log.d("myResponse-beforechangenickname", pref.getString("nickname", "").toString())
+                // 닉네임 변경시 sharedpreference도 같이 바꿔줘야함
+                editor.putString("nickname", "${changeName.trim('\"')}")
+                editor.apply()
+                Log.d("myResponse-afterchangenickname", pref.getString("nickname", "").toString())
             } else {
                 showToast(context, "닉네임이 이미 사용중입니다.")
                 nickname.value = result?.nickname.toString()
