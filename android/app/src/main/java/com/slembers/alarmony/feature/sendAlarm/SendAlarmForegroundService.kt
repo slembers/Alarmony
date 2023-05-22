@@ -69,7 +69,7 @@ class SendAlarmForegroundService : Service() {
 
         val notificationBuilder = NotificationCompat.Builder(this, channelId)
         val notification = notificationBuilder.setOngoing(true)
-            .setSmallIcon(R.mipmap.ic_launcher)
+            .setSmallIcon(R.mipmap.alarmony_logo_foreground)
             .setPriority(NotificationCompat.PRIORITY_MIN)
             .setContentTitle("")
             .setContentText(type)
