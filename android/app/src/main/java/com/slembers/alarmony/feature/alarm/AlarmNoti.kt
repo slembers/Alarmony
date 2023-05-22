@@ -84,8 +84,7 @@ object AlarmNoti {
             val channelId = "channel_id"
             val channel =
                 NotificationChannel(channelId, "channel name", NotificationManager.IMPORTANCE_HIGH)
-            channel.enableVibration(true)
-            channel.vibrationPattern = longArrayOf(500, 1000, 500, 1000)
+            channel.enableVibration(alarmDto.vibrate)
             notificationManager!!.createNotificationChannel(channel)
             mBuilder!!.setChannelId(channelId)
         }
