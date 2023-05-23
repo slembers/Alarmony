@@ -564,7 +564,7 @@ fun NicknameText(
 
             ErrorMessageText(
                 message = "닉네임은 특수문자를 제외하고 입력해주세요.(2-10자)",
-                color = MaterialTheme.colors.error
+                color = "#EF2B2A".toColor()
             )
         } else {
             Log.d("eeeeeeeee", "닉네임 정규식 통과")
