@@ -237,8 +237,8 @@ fun GroupScreen(
                     WindowInsetsSides.Vertical
                 )
             )
-            .imePadding()
-            .padding(bottom = 20.dp),
+            .imePadding(),
+           // .padding(bottom = 20.dp),
         topBar = {
             GroupToolBar(
                 title = NavItem.Group.title,
