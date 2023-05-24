@@ -52,7 +52,7 @@ public class Member {
     @Column(name = "registration_token")
     private String registrationToken;
 
-    public void modifyAuthority(AuthorityEnum authority) {
+    public void updateAuthority(AuthorityEnum authority) {
         this.authority = authority;
     }
 
