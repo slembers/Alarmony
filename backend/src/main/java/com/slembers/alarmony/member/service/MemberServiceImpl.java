@@ -28,7 +28,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -36,6 +36,7 @@ import java.util.Map;
 @Service
 @RequiredArgsConstructor
 @Slf4j
+@Transactional(readOnly = true)
 public class MemberServiceImpl implements MemberService {
 
     private final ModelMapper modelMapper;
@@ -50,7 +51,7 @@ public class MemberServiceImpl implements MemberService {
 
     private final MemberAlarmRepository memberAlarmRepository;
 
-    private final EmailVerifyService emailVerifyService;
+    private final EmailService emailService;
 
     private final PasswordEncoder passwordEncoder;
 
@@ -60,14 +61,8 @@ public class MemberServiceImpl implements MemberService {
 
     private final AmazonS3Util amazonS3Util;
 
-
-    /**
-     * 회원가입
-     *
-     * @param signUpDto 회원가입 정보
-     */
-    @Transactional
     @Override
+    @Transactional
     public void signUp(SignUpDto signUpDto) {
 
         checkDuplicatedField(signUpDto);
@@ -76,31 +71,21 @@ public class MemberServiceImpl implements MemberService {
 
         member.encodePassword(passwordEncoder);
 
-        emailVerifyService.sendVerificationMail(member.getUsername(), member.getEmail());
+        emailService.sendSignUpVerificationMail(member.getUsername(), member.getEmail());
 
         memberRepository.save(member);
 
     }
 
-    /**
-     * 아이디 중복체크
-     *
-     * @param username 유저 아이디
-     * @return 존재여부
-     **/
     @Override
     public CheckDuplicateDto checkForDuplicateId(String username) {
+
         return CheckDuplicateDto.builder()
                 .isDuplicated(memberRepository.existsByUsername(username))
                 .build();
+
     }
 
-    /**
-     * 이메일 중복 체크
-     *
-     * @param email :이메일주소
-     * @return 존재여부
-     */
     @Override
     public CheckDuplicateDto checkForDuplicateEmail(String email) {
         return CheckDuplicateDto.builder()
@@ -108,12 +93,6 @@ public class MemberServiceImpl implements MemberService {
                 .build();
     }
 
-    /**
-     * 닉네임 중복 체크
-     *
-     * @param nickname : 닉네임
-     * @return 존재여부
-     */
     @Override
     public CheckDuplicateDto checkForDuplicateNickname(String nickname) {
         return CheckDuplicateDto.builder()
@@ -121,20 +100,18 @@ public class MemberServiceImpl implements MemberService {
                 .build();
     }
 
-    /**
-     * 회원 가입시 발생하는 중복 체크
-     *
-     * @param signUpDto: 회원 가입 정보
-     */
 
     private void checkDuplicatedField(SignUpDto signUpDto) {
-        if (checkForDuplicateId(signUpDto.getUsername()).isDuplicated()) {
+
+        if (checkForDuplicateId(signUpDto.getUsername()).isDuplicated())
             throw new CustomException(MemberErrorCode.ID_DUPLICATED);
-        }
+
         if (checkForDuplicateNickname(signUpDto.getNickname()).isDuplicated())
             throw new CustomException(MemberErrorCode.NICKNAME_DUPLICATED);
+
         if (checkForDuplicateEmail(signUpDto.getEmail()).isDuplicated())
             throw new CustomException(MemberErrorCode.EMAIL_DUPLICATED);
+
     }
 
     @Override
@@ -191,7 +168,7 @@ public class MemberServiceImpl implements MemberService {
         Map<String, String> values = new HashMap<>();
         values.put("username", member.getUsername());
 
-        emailVerifyService.sendTemplateEmail("알라모니 아이디 찾기", findMemberIdDto.getEmail(), "FindId", values);
+        emailService.sendTemplateEmail("알라모니 아이디 찾기", findMemberIdDto.getEmail(), "FindId", values);
 
     }
 
@@ -213,7 +190,7 @@ public class MemberServiceImpl implements MemberService {
         values.put("temp_password", tempPassword);
 
         //이메일 보내기
-        emailVerifyService.sendTemplateEmail("알라모니 임시 비밀번호 발급 안내", findPasswordDto.getEmail(), "FindPw", values);
+        emailService.sendTemplateEmail("알라모니 임시 비밀번호 발급 안내", findPasswordDto.getEmail(), "FindPw", values);
 
         //이메일 전송 완료후 임시비밀번호로 변경
         member.changePassword(tempPassword);
