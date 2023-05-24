@@ -16,7 +16,6 @@ import java.io.IOException;
 
 
 public interface MemberService {
-
     /**
      * 회원 가입
      */
@@ -47,51 +46,25 @@ public interface MemberService {
 
     void putRegistrationToken(String username, String registrationToken);
 
-    /**
-     * 아이디 찾기
-     */
 
     void findMemberId (FindMemberIdDto findMemberIdDto) throws MessagingException;
 
-    /**
-     * 비밀 번호 찾기
-     */
-
     void findMemberPassword(FindPasswordDto findPasswordDto);
 
-    /**
-     * 회원 정보 조회하기
-     */
 
     MemberResponseDto getMemberInfo(String username);
 
-    /**
-     *  회원 탈퇴
-     */
     void deleteMember(String username);
 
-
-    /**
-     * 회원 정보 변경
-     */
     MemberInfoDto modifyMemberInfo(String username , ModifiedMemberInfoDto modifiedMemberInfoDto) throws IOException;
 
-    /**
-     * 비밀 번호 변경
-     */
     void changePassword(String username,ChangePasswordDto changePasswordDto);
 
     Member findMemberByUsername(String username);
 
     Member findMemberByNickName(String nickname);
 
-    /**
-     * 이미지 변경
-     */
     ImageResponseDto modifyMemberImage(String username, MultipartFile modifyImage);
 
-    /**
-     * 닉네임 변경
-     */
     NicknameResponseDto modifyMemberNickname(String currentUsername, String changeName);
 }
