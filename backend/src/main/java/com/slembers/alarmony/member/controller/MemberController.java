@@ -6,7 +6,7 @@ import com.slembers.alarmony.member.dto.ChangePasswordDto;
 import com.slembers.alarmony.member.dto.MemberInfoDto;
 import com.slembers.alarmony.member.dto.request.*;
 import com.slembers.alarmony.member.dto.response.*;
-import com.slembers.alarmony.member.service.EmailVerifyService;
+import com.slembers.alarmony.member.service.EmailService;
 import com.slembers.alarmony.member.service.MemberService;
 import com.slembers.alarmony.report.dto.ModifiedMemberInfoDto;
 import lombok.RequiredArgsConstructor;
@@ -28,8 +28,7 @@ import java.io.IOException;
 public class MemberController {
 
     private final MemberService memberService;
-    private final EmailVerifyService emailVerifyService;
-
+    private final EmailService emailService;
 
     /**
      * 회원가입
@@ -65,20 +64,15 @@ public class MemberController {
     }
 
 
-    /**
-     * 회원 가입 인증 이메일 확인
-     */
     @GetMapping("/verify/{key}")
-    public ResponseEntity<String> getVerify(@PathVariable String key) {
-        emailVerifyService.verifyEmail(key);
-        return new ResponseEntity<>("이메일 인증에 성공하였습니다.", HttpStatus.OK);
+    public ResponseEntity<String> confirmSignUp(@PathVariable String key) {
+        emailService.confirmSignUp(key);
+        return new ResponseEntity<>("인증에 성공하였습니다.", HttpStatus.OK);
     }
 
-    /**
-     * Access 토큰 및 Refresh 토큰 재발급
-     */
+
     @PostMapping("/refresh")
-    public ResponseEntity<TokenResponseDto> refresh(@RequestBody ReissueTokenDto reissueTokenDto) {
+    public ResponseEntity<TokenResponseDto> reissueToken(@RequestBody ReissueTokenDto reissueTokenDto) {
         return  ResponseEntity.ok(memberService.reissueToken(reissueTokenDto));
     }
 
