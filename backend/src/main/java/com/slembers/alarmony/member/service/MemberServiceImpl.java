@@ -370,6 +370,7 @@ public class MemberServiceImpl implements MemberService {
      * 닉네임 변경
      */
     @Override
+    @Transactional
     public NicknameResponseDto modifyMemberNickname(String currentUsername, String changeName) {
         CheckDuplicateDto nicknameCheck = checkForDuplicateNickname(changeName);
 
