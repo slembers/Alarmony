@@ -140,6 +140,7 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
+    @Transactional
     public void putRegistrationToken(String username, String registrationToken) {
         Member member = findMemberByUsername(username);
         if (registrationToken == null || registrationToken.length() == 0)
@@ -334,6 +335,7 @@ public class MemberServiceImpl implements MemberService {
      * 이미지 변경
      */
     @Override
+    @Transactional
     public ImageResponseDto modifyMemberImage(String username, MultipartFile modifyImage) {
         Member member = findMemberByUsername(username);
 
