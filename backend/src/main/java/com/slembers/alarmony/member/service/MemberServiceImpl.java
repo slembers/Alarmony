@@ -380,7 +380,9 @@ public class MemberServiceImpl implements MemberService {
                     .nickname(member.getNickname()).build();
         } else {
             member.changeNickname(changeName);
+            log.info("이전 닉네임"+ currentUsername+"  새 닉네임"+changeName);
             memberRepository.save(member);
+            log.info("save : 이전 닉네임"+ currentUsername+"  새 닉네임"+changeName);
             return NicknameResponseDto.builder()
                     .success(true)
                     .nickname(changeName).build();
