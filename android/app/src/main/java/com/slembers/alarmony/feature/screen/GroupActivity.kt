@@ -29,6 +29,7 @@ import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBars
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
@@ -123,6 +124,7 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.time.LocalTime
+import kotlin.math.log
 
 @ExperimentalMaterial3Api
 @ExperimentalGlideComposeApi
@@ -226,6 +228,15 @@ fun GroupScreen(
     // 디스플레이의 너비를 구하는 변수
     val px = context.applicationContext.resources?.displayMetrics?.widthPixels
     val displayWidth = DisplayDpUtil.px2dp(px!!, context)
+
+    var WheelTimePickerPadding = if(displayWidth >=1000){
+        250.dp
+    }
+        else if(displayWidth >= 750 && displayWidth <1000) {
+        145.dp
+    } else {
+        45.dp
+    }
 
     Log.d("checked", "[그룹생성] 선택한 크기 : ${px.dp}")
     Log.d("checked", "[그룹생성] 선택한 크기 : $displayWidth")
@@ -340,7 +351,7 @@ fun GroupScreen(
                             WheelTimePicker(
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .padding(horizontal = 45.dp, vertical = 7.dp)
+                                    .padding(horizontal = WheelTimePickerPadding, vertical = 7.dp)
                                     .heightIn(
                                         minOf(140.dp)
                                     ),
