@@ -216,6 +216,17 @@ public class AlertServiceImpl implements AlertService {
         Alert alert = alertRepository.findById(alertId)
             .orElseThrow(() -> new CustomException(AlertErrorCode.ALERT_NOT_FOUND));
         confirmAlertReceiver(alert);
+        // 이미 해당 알람에 가입되어 있는 상태면 에러를 던진다.
+        if(memberAlarmRepository.existsByMemberAndAlarm(alert.getReceiver(), alert.getAlarm())) {
+            try {
+                alertRepository.delete(alert);
+            } catch (Exception e) {
+                log.error(e.getMessage());
+                throw new CustomException(AlertErrorCode.ALERT_DELETE_ERROR);
+            }
+            throw new CustomException(AlarmErrorCode.ALARM_ALREADY_INCLUDED);
+        }
+
         // 알람 초대를 수락했으니, 멤버-알람과 알람-기록을 추가해야 한다. 이 코드 실행은 alarmservice로 넘긴다.
 
         MemberAlarm memberAlarm;
