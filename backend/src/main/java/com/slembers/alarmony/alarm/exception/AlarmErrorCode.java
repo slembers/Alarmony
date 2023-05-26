@@ -15,7 +15,9 @@ public enum AlarmErrorCode implements ErrorCode {
     CANNOT_REMOVE_HOST(HttpStatus.BAD_REQUEST, "그룹장은 퇴출할 수 없습니다."),
     CANNOT_SEND_TO_HOST(HttpStatus.BAD_REQUEST, "그룹장에게 알람을 보낼 수 없습니다."),
     MEMBER_NOT_HOST(HttpStatus.FORBIDDEN, "호스트 권한이 없습니다."),
-    ALARM_DATE_INFO_WRONG(HttpStatus.BAD_REQUEST, "요일 정보가 잘못되었습니다.")
+    ALARM_DATE_INFO_WRONG(HttpStatus.BAD_REQUEST, "요일 정보가 잘못되었습니다."),
+
+    ALARM_ALREADY_INCLUDED(HttpStatus.MULTI_STATUS,"이미 알람 멤버에 포함되었습니다.")
 
     ;
 
