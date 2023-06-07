@@ -80,7 +80,7 @@
 
 ## 📐 **Infrastructure**
 
-<img src='image/architecture.png'> 
+<img src='image/alarmony_architecture.png'> 
 
 
 ## 💻 피그마 설계
